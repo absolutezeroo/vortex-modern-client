@@ -179,11 +179,17 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     // is built here — see ChatViewController.ts's header for the scope cut — so there is no panel
     // to hand back or hide (AS3's setter forwards to `_chatHistoryPulldown.visible`).
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::isNotificationStyle()
-    // (the IHabboFreeFlowChat-equivalent interface member) reads `isNotification` off the chat
-    // style. This port's ChatBubbleStyle carries no such flag: only style id 0 is registered until
-    // the chatstyles catalog XML is parsed (see ChatBubbleStyle.ts), so the answer would be a
-    // constant false rather than a lookup.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::isNotificationStyle()
+    // (declared on _SafeCls_70.as, the IHabboFreeFlowChat-equivalent interface). AS3 casts the
+    // narrowed IChatStyleLibrary result back to the concrete ChatStyle to read `isNotification` -
+    // IChatStyle's public contract doesn't carry the flag, only IChatStyleInternal does - the same
+    // cast createPreviewBitmap() above already uses.
+    isNotificationStyle(styleId: number): boolean
+    {
+        const style = this.chatStyleLibrary?.getStyle(styleId) ?? null;
+
+        return style !== null && (style as unknown as IChatStyleInternal).isNotification;
+    }
 
     // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get gameManager(),
     // get windowManager() and get toolbar() hand callers three components this class holds as

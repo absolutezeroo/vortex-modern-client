@@ -477,9 +477,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
                 break;
 
             case 'calendar':
-                // TODO(AS3): AS3 calls questController.seasonalCalendarWindow.onToolbarClick() -
-                // the seasonal calendar isn't ported (see QuestController's own TODOs).
-                log.warn('QuestEngine "calendar" link received but the seasonal calendar is not ported');
+                this._questController?.seasonalCalendarWindow?.onToolbarClick();
                 break;
 
             case 'quests':

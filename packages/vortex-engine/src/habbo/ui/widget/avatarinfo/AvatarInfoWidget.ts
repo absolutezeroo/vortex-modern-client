@@ -13,9 +13,18 @@ import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
  *
  * Rentable bots are ported too (RentableBotMenuView plus the `botskills/` configuration views).
  *
- * TODO(AS3): five AS3 sibling views have no counterpart here — AvatarMenuView/AvatarContextInfoView
- * (the other-avatar menu), DecorateModeView, NewUserHelpView, and UserNameView (the avatar name
- * bubbles, with the avatar-highlight timer that drives them).
+ * `UserNameView` (the avatar name bubble) and its base `AvatarContextInfoView` are ported, and
+ * `showUserName()`/`showGamePlayerName()` are complete, callable methods (`_avatarNameBubbles`,
+ * positioned every frame alongside the other bubbles). What is NOT ported: the room-engine
+ * `REOE_ADDED`/`REOE_REMOVED` listeners that would call `showUserName()` automatically for a
+ * friend's avatar walking into view (AS3's own onRoomObjectAdded()/onRoomObjectRemoved()), and the
+ * `AvatarMenuView`-selection integration that drops a friend's name bubble in favour of the full
+ * menu on click. `showGamePlayerName()` itself is also not yet reachable end-to-end — see
+ * RoomDesktop.ts's and IRoomUI.ts's own TODO(AS3) at their (currently absent) `showGamePlayerName()`.
+ *
+ * TODO(AS3): three AS3 sibling views still have no counterpart here — AvatarMenuView (the
+ * click-to-select other-avatar menu, built on AvatarContextInfoButtonView), DecorateModeView, and
+ * NewUserHelpView.
  *
  * AS3 adaptations: positioning uses roomEngine.getRoomObjectBoundingRectangle
  * directly (no RWGOI message round-trip); the per-frame tick uses the window
@@ -73,6 +82,7 @@ import {ConfirmPetBreedingView} from './ConfirmPetBreedingView';
 import {BreedPetsResultView} from './BreedPetsResultView';
 import {BreedPetsResultData} from './BreedPetsResultData';
 import {NestBreedingSuccessView} from './NestBreedingSuccessView';
+import {UserNameView} from './UserNameView';
 import {RoomWidgetPetBreedingEvent} from '@habbo/ui/widget/events/RoomWidgetPetBreedingEvent';
 import {RoomWidgetPetBreedingResultEvent} from '@habbo/ui/widget/events/RoomWidgetPetBreedingResultEvent';
 import {RoomWidgetConfirmPetBreedingEvent} from '@habbo/ui/widget/events/RoomWidgetConfirmPetBreedingEvent';
@@ -154,6 +164,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     private _useProductBubbles: Map<string, UseProductView> = new Map();
     // AS3: AvatarInfoWidget.as::_breedPetBubbles
     private _breedPetBubbles: Map<string, BreedPetView> = new Map();
+    // AS3: AvatarInfoWidget.as::_avatarNameBubbles — one bubble per named avatar (friend or game
+    // player), keyed on its display name (AS3 keys its own map by the same string).
+    private _avatarNameBubbles: Map<string, UserNameView> = new Map();
 
     // The five modal pet dialogs, each at most one at a time.
     // AS3: AvatarInfoWidget.as::_useProductConfirmationView (obfuscated `_SafeStr_4966`)
@@ -227,13 +240,45 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // createLinkEvent() header note. No standalone `component` accessor is added: it would return
     // an object no code here actually models.
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::showUserName()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::showGamePlayerName()
-    // Both build a `UserNameView` (the avatar name bubble shown over a friend or a game NPC), which
-    // this file's own header already documents as unported. showUserName() is called from
-    // onRoomObjectAdded() when the newly-added avatar is on the friend list; showGamePlayerName()
-    // is RoomDesktop's forwarding target for RoomUI.showGamePlayerName() — see that member's own
-    // TODO(AS3) in RoomDesktop.ts and IRoomUI.ts.
+    /**
+     * The avatar-name bubble shown over a friend's avatar. Called (in AS3) from
+     * onRoomObjectAdded() when a newly-added avatar is on the friend list — that room-engine
+     * REOE_ADDED wiring is not ported in this file (see the header TODO(AS3)); this method itself
+     * is complete and callable independently.
+     */
+    // AS3: AvatarInfoWidget.as::showUserName()
+    public showUserName(userData: IUserData, objectId: number): void
+    {
+        if(this._avatarNameBubbles.has(userData.name)) return;
+
+        const view = new UserNameView(this);
+
+        UserNameView.setup(
+            view, userData.webID, userData.name, -1, 1, objectId,
+            UserNameView.DEFAULT_BG_COLOR, UserNameView.DEFAULT_FADE_DELAY_MS, userData.isBlocked
+        );
+
+        this._avatarNameBubbles.set(userData.name, view);
+        this.checkUpdateNeed();
+    }
+
+    /**
+     * The avatar-name bubble shown over a game NPC/player — RoomUI.showGamePlayerName()'s
+     * eventual forwarding target via RoomDesktop (see that member's own TODO(AS3) in
+     * RoomDesktop.ts and IRoomUI.ts; neither is wired to call this yet).
+     */
+    // AS3: AvatarInfoWidget.as::showGamePlayerName()
+    public showGamePlayerName(objectId: number, name: string, color: number, fadeDelayMs: number): void
+    {
+        if(this._avatarNameBubbles.has(name)) return;
+
+        const view = new UserNameView(this, true);
+
+        UserNameView.setup(view, objectId, name, objectId, 1, objectId, color, fadeDelayMs);
+
+        this._avatarNameBubbles.set(name, view);
+        this.checkUpdateNeed();
+    }
 
     private get container(): IRoomWidgetHandlerContainer | null
     {
@@ -270,6 +315,12 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         if(view === this._activeView)
         {
             this._activeView = null;
+        }
+
+        if(view instanceof UserNameView)
+        {
+            this._avatarNameBubbles.delete(view.userName);
+            view.dispose();
         }
 
         if(view instanceof UseProductView)
@@ -1176,7 +1227,8 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // AS3: AvatarInfoWidget.as::checkUpdateNeed()
     private checkUpdateNeed(): void
     {
-        const needed = this._activeView !== null || this._useProductBubbles.size > 0 || this._breedPetBubbles.size > 0;
+        const needed = this._activeView !== null || this._avatarNameBubbles.size > 0
+            || this._useProductBubbles.size > 0 || this._breedPetBubbles.size > 0;
 
         if(needed && !this._updateRegistered)
         {
@@ -1195,6 +1247,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     {
         if(this._activeView) this.positionView(this._activeView, deltaTime);
 
+        for(const view of this._avatarNameBubbles.values()) this.positionView(view, deltaTime);
         for(const view of this._useProductBubbles.values()) this.positionView(view, deltaTime);
         for(const view of this._breedPetBubbles.values()) this.positionView(view, deltaTime);
     }
@@ -1213,7 +1266,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // `(left + width/2, bottom)` off the bounding box. Those are near but not equal, so swapping
     // the source would move every bubble — it needs its own before/after check rather than being
     // folded into a handler port.
-    private positionView(view: AvatarContextInfoButtonView, deltaTime: number): void
+    private positionView(view: AvatarContextInfoButtonView | UserNameView, deltaTime: number): void
     {
         const container = this.container;
 
@@ -1464,6 +1517,13 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this._botSkillsByBotId.clear();
         this._buttonsSetup = null;
         this._activeView = null;
+
+        for(const view of this._avatarNameBubbles.values())
+        {
+            view.dispose();
+        }
+
+        this._avatarNameBubbles.clear();
 
         this.removeUseProductViews();
         this.removeBreedPetViews();

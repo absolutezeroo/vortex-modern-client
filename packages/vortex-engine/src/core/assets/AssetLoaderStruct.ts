@@ -81,14 +81,28 @@ export class AssetLoaderStruct implements IDisposable
     }
 
     /**
-	 * Dispatch an event
+	 * Dispatch an event to both subscription styles
+	 *
+	 * Two idioms grew here and only one worked. `events.on('event', …)` — used by
+	 * `LocalizationCatalogWidget` and the seasonal calendar — reads the type off the payload, and
+	 * fired. `addEventListener(AssetLoaderEvent.COMPLETE, …)` — the AS3-shaped call in
+	 * `HabboCatalog.retrievePreviewAsset()` and `OfficialRoomImageLoader` — subscribed under the
+	 * type string while this only ever emitted `'event'`, so those listeners never ran and the
+	 * catalog's preview asset and the official-room images silently never arrived.
+	 *
+	 * Emitting under both keeps every existing listener working. The typed emit is the AS3 shape;
+	 * the `'event'` emit is what this port's own callers already rely on.
 	 */
+    // AS3: .../src/com/sulake/core/assets/AssetLoaderStruct.as::dispatchEvent()
     dispatchEvent(event: unknown): void
     {
-        if(!this._disposed)
-        {
-            this._events.emit('event', event);
-        }
+        if(this._disposed) return;
+
+        this._events.emit('event', event);
+
+        const type = (event as {type?: unknown} | null)?.type;
+
+        if(typeof type === 'string' && type !== 'event') this._events.emit(type, event);
     }
 
     /**

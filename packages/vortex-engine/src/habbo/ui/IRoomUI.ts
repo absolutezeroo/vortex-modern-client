@@ -79,10 +79,10 @@ export interface IRoomUI
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomUI.as::hideWidget()
     hideWidget(widgetType: string): void;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomUI.as::showGamePlayerName()
-    // Forwards to RoomDesktop.showGamePlayerName() -> AvatarInfoWidget.showGamePlayerName(), which
-    // needs `UserNameView` (the avatar name bubble view). AvatarInfoWidget.ts's own header already
-    // documents UserNameView as unported; RoomDesktop.ts's TODO at its own showGamePlayerName()
-    // mislabels the blocker as the game/ad manager — the AS3 body reads only the RWE_AVATAR_INFO
-    // widget and never touches either.
+    /**
+	 * Shows the name bubble over a game NPC or player, through the room desktop's avatar-info
+	 * widget. Silent when no room desktop or no such widget exists yet.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomUI.as::showGamePlayerName()
+    showGamePlayerName(objectId: number, name: string, color: number, fadeDelayMs: number): void;
 }

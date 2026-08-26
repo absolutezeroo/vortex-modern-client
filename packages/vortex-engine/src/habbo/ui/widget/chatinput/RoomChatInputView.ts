@@ -3,12 +3,12 @@
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as
  *
- * TODO(AS3): scope-reduced for the first pass — the habbicon selector
- * (HabbiconSelector), the NUX first-time chat reminder animation, the "chat
- * dimmer" room-enter-effect overlay, and the help-button hover tooltip are
- * not ported. The core input box (create/position/focus/type/send,
- * whisper+shout mode parsing, typing indicator, flood control) and the chat
- * style selector are.
+ * TODO(AS3): scope-reduced for the first pass — the NUX first-time chat
+ * reminder animation, the "chat dimmer" room-enter-effect overlay, and the
+ * help-button hover tooltip are not ported. The core input box
+ * (create/position/focus/type/send, whisper+shout mode parsing, typing
+ * indicator, flood control), the chat style selector, and the habbicon
+ * selector (HabbiconSelector) are.
  */
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -16,12 +16,34 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IFocusWindow} from '@core/window/components/IFocusWindow';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {RoomWidgetChatTypingMessage} from '@habbo/ui/widget/messages/RoomWidgetChatTypingMessage';
+import type {IHabbiconController} from '@habbo/catalog/habbicons/IHabbiconController';
+import {HabbiconControllerEvent} from '@habbo/catalog/habbicons/HabbiconControllerEvent';
+import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
+import {HabboUnseenItemsUpdatedEvent} from '@habbo/inventory/events/HabboUnseenItemsUpdatedEvent';
 import {ChatStyleSelector} from './styleselector/ChatStyleSelector';
+import {HabbiconSelector} from './habbiconselector/HabbiconSelector';
 import type {RoomChatInputWidget} from './RoomChatInputWidget';
+
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::isWindowInTree()
+function isWindowInTree(window: IWindow | null, root: IWindow | null): boolean
+{
+    let current = window;
+
+    while(current !== null)
+    {
+        if(current === root) return true;
+
+        current = current.parent;
+    }
+
+    return false;
+}
 
 export class RoomChatInputView
 {
@@ -44,6 +66,24 @@ export class RoomChatInputView
     private _bubbleCont: IWindowContainer | null = null;
     private _chatStyleMenuContainer: IWindowContainer | null = null;
     private _chatStyleSelector: ChatStyleSelector | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_7469
+    private _habbiconMenuContainer: IWindowContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_5167
+    private _habbiconButton: IWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_5065
+    private _habbiconButtonSetIcon: IBitmapWrapperWindow | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_6589
+    private _habbiconButtonSetIconBitmap: ImageBitmap | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_8332
+    private _habbiconButtonSetIconCollectionId: number = 0;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_4753
+    private _habbiconSelector: HabbiconSelector | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_5559
+    private _habbiconButtonControllerRef: IHabbiconController | null = null;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_7376
+    private _habbiconAssetsListenerRegistered: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_SafeStr_5058
+    private _habbiconUnseenCounter: IWindowContainer | null = null;
     private _whisperModeId: string;
     private _shoutModeId: string;
     private _speakModeId: string;
@@ -87,6 +127,15 @@ export class RoomChatInputView
     {
         this.clearTimers();
 
+        if(this._widget?.roomUi?.inventory?.events)
+        {
+            this._widget.roomUi.inventory.events.off(HabboUnseenItemsUpdatedEvent.HUIUE_UNSEEN_ITEMS_CHANGED, this.onUnseenItemsUpdated);
+        }
+
+        this.unregisterHabbiconButtonListeners();
+        this.unregisterHabbiconAssetsListener();
+        this.clearHabbiconButtonSetIcon();
+
         this._chatStyleSelector?.dispose();
         this._chatStyleSelector = null;
 
@@ -97,6 +146,18 @@ export class RoomChatInputView
             this._input.removeEventListener(WindowEvent.WE_CHANGE, this.onInputChanged);
             this._input = null;
         }
+
+        if(this._habbiconButton)
+        {
+            this._habbiconButton.removeEventListener(WindowMouseEvent.CLICK, this.onHabbiconButtonMouseEvent);
+            this._habbiconButton = null;
+        }
+
+        this._habbiconButtonSetIcon = null;
+        this._habbiconUnseenCounter = null;
+
+        this._habbiconSelector?.dispose();
+        this._habbiconSelector = null;
 
         if(this._window)
         {
@@ -153,6 +214,25 @@ export class RoomChatInputView
         this._blockText = this._bubbleCont?.findChildByName('block_text') ?? null;
         this._helpHoverRegion = this._bubbleCont?.findChildByName('helpbutton_show_hover_region') as IRegionWindow | null;
         this._chatStyleMenuContainer = this._window.findChildByName('chatstyles_menu') as IWindowContainer | null;
+        this._habbiconMenuContainer = this._window.findChildByName('habbicon_menu') as IWindowContainer | null;
+        this._habbiconButton = this._bubbleCont?.findChildByName('chat_extra_button') ?? null;
+        this._habbiconButtonSetIcon = this._bubbleCont?.findChildByName('chat_extra_set_icon') as IBitmapWrapperWindow | null ?? null;
+
+        if(this._habbiconButtonSetIcon)
+        {
+            (this._habbiconButtonSetIcon as unknown as IWindow).visible = false;
+        }
+
+        if(this._habbiconButton)
+        {
+            this._habbiconButton.visible = this.habbiconsEnabled();
+            this._habbiconButton.addEventListener(WindowMouseEvent.CLICK, this.onHabbiconButtonMouseEvent);
+        }
+
+        if(this._widget.roomUi?.inventory?.events)
+        {
+            this._widget.roomUi.inventory.events.on(HabboUnseenItemsUpdatedEvent.HUIUE_UNSEEN_ITEMS_CHANGED, this.onUnseenItemsUpdated);
+        }
 
         this.updatePosition();
 
@@ -169,6 +249,8 @@ export class RoomChatInputView
         this._window.addEventListener(WindowEvent.WE_PARENT_RESIZED, this.onParentResized);
 
         this.createOrUpdateChatStylesView();
+        this.createOrUpdateHabbiconSelector();
+        this.updateHabbiconUnseenCounter();
     }
 
     private onParentResized = (): void => this.updatePosition();
@@ -533,10 +615,9 @@ export class RoomChatInputView
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideHabbiconSelector()
-    // TODO(AS3): no-op - HabbiconSelector isn't ported (matches AS3's own
-    // `if(_habbiconSelector) ...` guard, which is always false here).
     public hideHabbiconSelector(): void
     {
+        this._habbiconSelector?.hide();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideChatStyleSelector()
@@ -567,10 +648,27 @@ export class RoomChatInputView
         this._isTyping = false;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::openHabbiconHub()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::insertHabbiconToken()
-    // Both require the habbicon selector/button (HabbiconSelector + habbiconController), which this
-    // file's own header already documents as unported.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::openHabbiconHub()
+    public openHabbiconHub(): void
+    {
+        if(!this.habbiconsEnabled()) return;
+
+        this.habbiconController?.resetUnseenHabbicons();
+        this.updateHabbiconUnseenCounter();
+
+        this._widget?.roomUi?.context.createLinkEvent('habbicons/open');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::insertHabbiconToken()
+    public insertHabbiconToken(token: string): void
+    {
+        if(!this.habbiconsEnabled() || !this._input || token.length === 0) return;
+
+        this.setInputFieldFocus();
+        this._input.text += token;
+        this._input.setSelection(this._input.text.length, this._input.text.length);
+        this._lastText = this._input.text;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::chatInputWindowProcedure()
     private chatInputWindowProcedure = (event: WindowEvent, window: IWindow): void =>
@@ -580,10 +678,14 @@ export class RoomChatInputView
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::hideSelectorsIfClickOutside()
-    // TODO(AS3): the habbicon-selector half of this guard is omitted - always false, see
-    // hideHabbiconSelector()'s header.
     private hideSelectorsIfClickOutside(clicked: IWindow | null): void
     {
+        if(this._habbiconSelector?.visible && !isWindowInTree(clicked, this._habbiconButton) && !this._habbiconSelector.containsWindow(clicked))
+        {
+            this._habbiconSelector.hide();
+            this.updateHabbiconUnseenCounter();
+        }
+
         if(this._chatStyleSelector?.visible && !this._chatStyleSelector.containsWindow(clicked))
         {
             this._chatStyleSelector.hide();
@@ -610,5 +712,302 @@ export class RoomChatInputView
         const elements: Array<IWindow | null> = [this._bubbleCont, this._input];
 
         return elements.filter((w): w is IWindow => w !== null);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onHabbiconButtonMouseEvent()
+    private onHabbiconButtonMouseEvent = (event: WindowMouseEvent): void =>
+    {
+        if(!this.habbiconsEnabled()) return;
+
+        if(event.type === WindowMouseEvent.CLICK)
+        {
+            if(this._habbiconSelector)
+            {
+                this.hideChatStyleSelector();
+                this._habbiconSelector.toggle();
+                this.updateHabbiconUnseenCounter();
+            }
+            else
+            {
+                this.openHabbiconHub();
+            }
+        }
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::createOrUpdateHabbiconSelector()
+    private createOrUpdateHabbiconSelector(): void
+    {
+        if(!this.habbiconsEnabled())
+        {
+            if(this._habbiconSelector)
+            {
+                this._habbiconSelector.dispose();
+                this._habbiconSelector = null;
+            }
+
+            if(this._habbiconMenuContainer)
+            {
+                this._habbiconMenuContainer.visible = false;
+            }
+
+            this.unregisterHabbiconButtonListeners();
+            this.unregisterHabbiconAssetsListener();
+            this.clearHabbiconButtonSetIcon();
+
+            return;
+        }
+
+        this.registerHabbiconButtonListeners();
+        this.registerHabbiconAssetsListener();
+
+        if(!this._habbiconSelector && this._habbiconButton && this._habbiconMenuContainer)
+        {
+            this._habbiconSelector = new HabbiconSelector(this, this._habbiconButton, this._habbiconMenuContainer);
+        }
+
+        this.updateHabbiconUnseenCounter();
+        this.updateHabbiconButtonSetIcon();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::habbiconsEnabled()
+    private habbiconsEnabled(): boolean
+    {
+        return this._widget !== null && this._widget.roomUi !== null && this._widget.roomUi.getBoolean('habbicons.enabled');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onUnseenItemsUpdated()
+    private onUnseenItemsUpdated = (): void =>
+    {
+        this.updateHabbiconUnseenCounter();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::registerHabbiconButtonListeners()
+    private registerHabbiconButtonListeners(): void
+    {
+        const controller = this.habbiconController;
+
+        if(this._habbiconButtonControllerRef === controller) return;
+
+        this.unregisterHabbiconButtonListeners();
+
+        this._habbiconButtonControllerRef = controller;
+
+        if(this._habbiconButtonControllerRef !== null)
+        {
+            this._habbiconButtonControllerRef.addEventListener(HabbiconControllerEvent.OWNED_HABBICONS_UPDATED, this.onHabbiconButtonDataUpdated);
+            this._habbiconButtonControllerRef.addEventListener(HabbiconControllerEvent.RECENT_HABBICONS_UPDATED, this.onHabbiconButtonDataUpdated);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::unregisterHabbiconButtonListeners()
+    private unregisterHabbiconButtonListeners(): void
+    {
+        if(this._habbiconButtonControllerRef === null) return;
+
+        this._habbiconButtonControllerRef.removeEventListener(HabbiconControllerEvent.OWNED_HABBICONS_UPDATED, this.onHabbiconButtonDataUpdated);
+        this._habbiconButtonControllerRef.removeEventListener(HabbiconControllerEvent.RECENT_HABBICONS_UPDATED, this.onHabbiconButtonDataUpdated);
+        this._habbiconButtonControllerRef = null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::registerHabbiconAssetsListener()
+    private registerHabbiconAssetsListener(): void
+    {
+        if(this._habbiconAssetsListenerRegistered) return;
+
+        HabbiconAssetManager.addEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+        this._habbiconAssetsListenerRegistered = true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::unregisterHabbiconAssetsListener()
+    private unregisterHabbiconAssetsListener(): void
+    {
+        if(!this._habbiconAssetsListenerRegistered) return;
+
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+        this._habbiconAssetsListenerRegistered = false;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onHabbiconButtonDataUpdated()
+    private onHabbiconButtonDataUpdated = (): void =>
+    {
+        this.updateHabbiconButtonSetIcon();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onHabbiconAssetsLoaded()
+    private onHabbiconAssetsLoaded = (): void =>
+    {
+        this.updateHabbiconButtonSetIcon();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::updateHabbiconButtonSetIcon()
+    private updateHabbiconButtonSetIcon(): void
+    {
+        if(!this._habbiconButtonSetIcon || !this.habbiconsEnabled())
+        {
+            this.clearHabbiconButtonSetIcon();
+
+            return;
+        }
+
+        const collectionId = this.resolveHabbiconButtonSetIconCollectionId();
+
+        if(collectionId <= 0)
+        {
+            this.clearHabbiconButtonSetIcon();
+
+            return;
+        }
+
+        if(this._habbiconButtonSetIconCollectionId === collectionId && this._habbiconButtonSetIconBitmap !== null)
+        {
+            (this._habbiconButtonSetIcon as unknown as IWindow).visible = true;
+
+            return;
+        }
+
+        const bitmap = HabbiconAssetManager.getOutlinedCollectionIconBitmap(collectionId);
+
+        if(bitmap === null)
+        {
+            this.clearHabbiconButtonSetIcon();
+
+            return;
+        }
+
+        this.setHabbiconButtonSetIconBitmap(collectionId, bitmap);
+    }
+
+    /**
+     * TS-only: AS3 makes a defensive `copyPixels()` copy of the collection icon before handing it
+     * to the wrapper (so disposing it later never touches `HabbiconAssetManager`'s own cache). This
+     * port shares the manager's cached `ImageBitmap` directly instead — the same treatment already
+     * used by `MessengerHabbiconPickerTileView`/`HabbiconSelector` for the identical shared-cache
+     * problem — and `clearHabbiconButtonSetIcon()` below never closes it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::setHabbiconButtonSetIconBitmap()
+    private setHabbiconButtonSetIconBitmap(collectionId: number, bitmap: ImageBitmap): void
+    {
+        this.clearHabbiconButtonSetIcon();
+
+        this._habbiconButtonSetIconCollectionId = collectionId;
+        this._habbiconButtonSetIconBitmap = bitmap;
+
+        if(this._habbiconButtonSetIcon !== null)
+        {
+            this._habbiconButtonSetIcon.bitmap = bitmap;
+            (this._habbiconButtonSetIcon as unknown as IWindow).visible = true;
+            (this._habbiconButtonSetIcon as unknown as IWindow).invalidate();
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::clearHabbiconButtonSetIcon()
+    private clearHabbiconButtonSetIcon(): void
+    {
+        this._habbiconButtonSetIconCollectionId = 0;
+        this._habbiconButtonSetIconBitmap = null;
+
+        if(this._habbiconButtonSetIcon !== null)
+        {
+            this._habbiconButtonSetIcon.bitmap = null;
+            (this._habbiconButtonSetIcon as unknown as IWindow).visible = false;
+            (this._habbiconButtonSetIcon as unknown as IWindow).invalidate();
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::resolveHabbiconButtonSetIconCollectionId()
+    private resolveHabbiconButtonSetIconCollectionId(): number
+    {
+        const controller = this.habbiconController;
+
+        if(controller === null || !controller.hasLoadedShopData) return 0;
+
+        const recentHabbiconIds = controller.recentHabbiconIds;
+
+        if(recentHabbiconIds && recentHabbiconIds.length > 0)
+        {
+            const collectionId = this.resolveCollectionIdForHabbicon(controller, recentHabbiconIds[0]);
+
+            if(collectionId > 0) return collectionId;
+        }
+
+        return this.resolveDefaultHabbiconButtonCollectionId(controller);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::resolveCollectionIdForHabbicon()
+    private resolveCollectionIdForHabbicon(controller: IHabbiconController, habbiconId: number): number
+    {
+        if(habbiconId <= 0) return 0;
+
+        const shopItem = controller.tryGetShopItem(habbiconId);
+
+        if(shopItem !== null && shopItem.collectionId > 0) return shopItem.collectionId;
+
+        const collections = controller.shopCollections;
+
+        if(!collections) return 0;
+
+        for(const collection of collections)
+        {
+            if(collection != null && collection.rewardHabbiconId === habbiconId) return collection.collectionId;
+        }
+
+        return 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::resolveDefaultHabbiconButtonCollectionId()
+    private resolveDefaultHabbiconButtonCollectionId(controller: IHabbiconController): number
+    {
+        const collections = controller.shopCollections;
+
+        if(!collections || collections.length === 0) return 0;
+
+        return collections[0].collectionId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::updateHabbiconUnseenCounter()
+    private updateHabbiconUnseenCounter(): void
+    {
+        if(!this._habbiconButton || !this.habbiconsEnabled())
+        {
+            if(this._habbiconUnseenCounter) this._habbiconUnseenCounter.visible = false;
+
+            return;
+        }
+
+        if(this._habbiconSelector && this._habbiconSelector.visible)
+        {
+            if(this._habbiconUnseenCounter) this._habbiconUnseenCounter.visible = false;
+
+            return;
+        }
+
+        const count = this.habbiconController?.unseenHabbiconCount ?? 0;
+
+        if(this._habbiconUnseenCounter === null)
+        {
+            const buttonContainer = this._habbiconButton as unknown as IWindowContainer | null;
+
+            if(!buttonContainer) return;
+
+            this._habbiconUnseenCounter = this._widget?.windowManager.createUnseenItemCounter() ?? null;
+
+            if(this._habbiconUnseenCounter === null) return;
+
+            buttonContainer.addChild(this._habbiconUnseenCounter);
+            this._habbiconUnseenCounter.x = buttonContainer.width - this._habbiconUnseenCounter.width - 2;
+            this._habbiconUnseenCounter.y = 2;
+        }
+
+        const countLabel = this._habbiconUnseenCounter.findChildByName('count') as ITextWindow | null;
+
+        if(countLabel !== null) countLabel.caption = count.toString();
+
+        this._habbiconUnseenCounter.visible = count > 0;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::get habbiconController()
+    private get habbiconController(): IHabbiconController | null
+    {
+        return this._widget !== null && this._widget.roomUi !== null ? this._widget.roomUi.habbiconController : null;
     }
 }

@@ -62,6 +62,8 @@ import {AchievementResolutionTrophyFurniWidget} from './widget/furniture/trophy/
 import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
+import {CraftingWidget} from './widget/crafting/CraftingWidget';
+import {PlayListEditorWidget} from './widget/playlisteditor/PlayListEditorWidget';
 
 const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
 
@@ -324,6 +326,28 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                     handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization,
                     this._roomUI.config!, this._chatWidgetIdCounter++, this._roomUI
                 );
+            case 'RWE_CRAFTING':
+                return new CraftingWidget(handler, this._roomUI.windowManager, this._roomUI);
+            case 'RWE_PLAYLIST_EDITOR_WIDGET':
+            {
+                // The editor is driven entirely by the music controller — with no sound manager
+                // there is nothing for it to read a playlist from, so it is not built at all
+                // rather than opened empty.
+                const soundManager = this._roomUI.soundManager;
+
+                if(soundManager === null)
+                {
+                    log.warn('RWE_PLAYLIST_EDITOR_WIDGET requested before the sound manager resolved');
+
+                    return null;
+                }
+
+                return new PlayListEditorWidget(
+                    handler, this._roomUI.windowManager, soundManager,
+                    this._roomUI.assets, this._roomUI.localization, this._roomUI.config,
+                    this._roomUI.catalog
+                );
+            }
             default:
                 log.debug(`Widget creation requested: ${type} (stub — returning null)`);
 

@@ -60,6 +60,7 @@ import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
 import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
+import type {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 import {CustomUserNotificationWidgetHandler} from './handler/CustomUserNotificationWidgetHandler';
 import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
@@ -802,12 +803,20 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     // `habbo/game` is 0/63 here and there is no ad manager at all — see RoomEngine's
     // handleObjectRoomAdEvent() for the other half of the same gap.
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::showGamePlayerName()
-    // Correction: this member does NOT reach the game/ad manager — its AS3 body only looks up the
-    // RWE_AVATAR_INFO widget and forwards to AvatarInfoWidget.showGamePlayerName(), which is the
-    // real blocker: it needs `UserNameView` (the avatar name bubble), documented as unported in
-    // AvatarInfoWidget.ts's own header. Filed here (previously lumped in with the game-manager
-    // group above, which was a misdiagnosis) and at IRoomUI.ts::showGamePlayerName().
+    /**
+	 * Shows the name bubble over a game NPC or player
+	 *
+	 * A pure forward: the widget owns the bubble and its fade. Returns silently when the avatar-info
+	 * widget has not been built yet, which is AS3's own guard — the widget is created lazily and a
+	 * game can ask before a room has one.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::showGamePlayerName()
+    public showGamePlayerName(objectId: number, name: string, color: number, fadeDelayMs: number): void
+    {
+        const widget = (this._widgets.get('RWE_AVATAR_INFO') ?? null) as AvatarInfoWidget | null;
+
+        widget?.showGamePlayerName(objectId, name, color, fadeDelayMs);
+    }
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::initCameraLocation()
     // reads camera_init_x/y/z off the room and hands them to RoomEngine.updateRoomCamera(), which

@@ -302,4 +302,14 @@ export interface IHabboFreeFlowChat
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomLeft()
     roomLeft(): void;
+
+    /**
+	 * Whether a style id is a "notification" style (its markup applies special
+	 * elements, e.g. the recycle-bot notification bubbles) rather than a
+	 * regular user-facing chat skin.
+	 *
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::isNotificationStyle()
+	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::isNotificationStyle()
+    isNotificationStyle(styleId: number): boolean;
 }

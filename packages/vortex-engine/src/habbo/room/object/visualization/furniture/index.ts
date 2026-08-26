@@ -11,6 +11,8 @@ export {AnimatedFurnitureVisualizationData} from './AnimatedFurnitureVisualizati
 // Core
 export {FurnitureVisualization} from './FurnitureVisualization';
 export {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
+export {FurnitureThumbnailVisualization} from './FurnitureThumbnailVisualization';
+export {FurnitureDynamicThumbnailVisualization} from './FurnitureDynamicThumbnailVisualization';
 export {FurnitureResettingAnimatedVisualization} from './FurnitureResettingAnimatedVisualization';
 export {FurnitureCuboidVisualization} from './FurnitureCuboidVisualization';
 export {FurniturePlane} from './FurniturePlane';

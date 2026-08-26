@@ -366,9 +366,7 @@ export class QuestDetails implements IDisposable
 
         if(this._window) this._window.visible = false;
 
-        // TODO(AS3): AS3 also calls questController.seasonalCalendarWindow.close() here -
-        // the seasonal calendar isn't ported (QuestController.seasonalCalendarWindow is a
-        // documented always-null stub), so there is nothing to close.
+        engine.questController?.seasonalCalendarWindow?.close();
 
         if(this._openedForNextQuest && engine.isSeasonalQuest(quest))
         {

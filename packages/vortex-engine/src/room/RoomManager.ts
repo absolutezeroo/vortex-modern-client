@@ -539,6 +539,12 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
             {
                 const spriteViz = visualization as IRoomObjectSpriteVisualization;
                 spriteViz.assetCollection = assetCollection;
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::createRoomObject() (line 343)
+                spriteViz.setExternalBaseUrls(
+                    this.context.configuration?.getProperty('stories.image_url_base') ?? '',
+                    this.context.configuration?.getProperty('extra_data_service_url') ?? '',
+                    this.context.configuration?.getBoolean('extra_data_batches_enabled') ?? false
+                );
 
                 // Get or create cached visualization data
                 const vizData = this._visualizationFactory.getRoomObjectVisualizationData(
@@ -860,6 +866,12 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
                         {
                             const spriteViz = visualization as IRoomObjectSpriteVisualization;
                             spriteViz.assetCollection = this._contentLoader.getGraphicAssetCollection(contentType);
+                            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as (line 560)
+                            spriteViz.setExternalBaseUrls(
+                                this.context.configuration?.getProperty('stories.image_url_base') ?? '',
+                                this.context.configuration?.getProperty('extra_data_service_url') ?? '',
+                                this.context.configuration?.getBoolean('extra_data_batches_enabled') ?? false
+                            );
                             const vizData = this._visualizationFactory.getRoomObjectVisualizationData(
                                 contentType, visualizationType, visualizationConfig
                             );

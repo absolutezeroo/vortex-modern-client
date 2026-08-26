@@ -563,6 +563,26 @@ import {
     SendHabbiconMessageComposer
 } from './messages/outgoing/habbicons/SendHabbiconMessageComposer';
 import {
+    TriggerHabbiconMessageComposer
+} from './messages/outgoing/habbicons/TriggerHabbiconMessageComposer';
+
+// Outgoing Composers - Crafting
+import {GetCraftableProductsComposer} from './messages/outgoing/crafting/GetCraftableProductsComposer';
+import {GetCraftingRecipeComposer} from './messages/outgoing/crafting/GetCraftingRecipeComposer';
+import {
+    GetCraftingRecipesAvailableComposer
+} from './messages/outgoing/crafting/GetCraftingRecipesAvailableComposer';
+import {CraftComposer} from './messages/outgoing/crafting/CraftComposer';
+import {CraftSecretComposer} from './messages/outgoing/crafting/CraftSecretComposer';
+
+// Incoming Events - Crafting
+import {CraftableProductsMessageEvent} from './messages/incoming/crafting/CraftableProductsMessageEvent';
+import {CraftingRecipeMessageEvent} from './messages/incoming/crafting/CraftingRecipeMessageEvent';
+import {CraftingResultMessageEvent} from './messages/incoming/crafting/CraftingResultMessageEvent';
+import {
+    CraftingRecipesAvailableMessageEvent
+} from './messages/incoming/crafting/CraftingRecipesAvailableMessageEvent';
+import {
     GetBadgeLeaderboardMessageComposer
 } from './messages/outgoing/users/GetBadgeLeaderboardMessageComposer';
 import {
@@ -2416,6 +2436,14 @@ export class HabboMessages implements IMessageConfiguration
         // === CAMPAIGN ===
         this._events.set(2503, BadgeLeaderboardMessageEvent);
         this._events.set(1641, SeasonalCalendarDailyOfferMessageEvent);
+
+        // === CRAFTING (incoming) ===
+        // Four ids from WIN63's registry, corroborated by the emulator's Headers.cs. The
+        // emulator's crafting handlers are empty stubs today, so nothing answers yet.
+        this._events.set(3155, CraftableProductsMessageEvent);
+        this._events.set(425, CraftingRecipeMessageEvent);
+        this._events.set(2999, CraftingResultMessageEvent);
+        this._events.set(3282, CraftingRecipesAvailableMessageEvent);
         this._events.set(3794, RewardTracksMessageEvent);
         this._events.set(522, RewardTrackClaimResultMessageEvent);
         this._events.set(58, RewardTrackPremiumPurchaseResultMessageEvent);
@@ -3610,6 +3638,10 @@ export class HabboMessages implements IMessageConfiguration
         // Posts a habbicon into a messenger conversation — the habbicon twin of
         // SendMsgMessageComposer. Name derived, same reason as the six above.
         this._composers.set(1163, SendHabbiconMessageComposer);
+        // Triggers a habbicon bubble over your own avatar, sent by the chat-input selector.
+        // AS3: _SafeCls_2046.as::_composers[1176] = _SafeCls_3701, one int. Name derived — the
+        // emulator has no habbicon header at all, so there is nothing to corroborate against.
+        this._composers.set(1176, TriggerHabbiconMessageComposer);
 
         // === BADGE LEADERBOARD ===
         // Both ids come from WIN63's own registry (1225 -> _SafeCls_3493, 2503 -> _SafeCls_3446).
@@ -3640,6 +3672,16 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(701, DeleteRoomMessageComposer);
         this._composers.set(159, RemoveAllRightsMessageComposer);
         this._composers.set(2804, UnbanUserFromRoomMessageComposer);
+
+        // === CRAFTING ===
+        // All five ids from WIN63's own registry and corroborated by the emulator's
+        // Headers.cs. Note the emulator's crafting handlers are all empty stubs, so these
+        // reach a server that accepts and drops them — the client side is correct regardless.
+        this._composers.set(369, GetCraftableProductsComposer);
+        this._composers.set(1398, GetCraftingRecipeComposer);
+        this._composers.set(1302, GetCraftingRecipesAvailableComposer);
+        this._composers.set(3274, CraftComposer);
+        this._composers.set(323, CraftSecretComposer);
 
         // === VORTEX-SPECIFIC (no AS3 backing) ===
         // See the matching note in registerEvents() for why these headers sit at 8000+.

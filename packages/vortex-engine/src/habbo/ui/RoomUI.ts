@@ -238,6 +238,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // Needed by the me-menu's settings tab.
     private _soundManager: IHabboSoundManager | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get soundManager()
+    public get soundManager(): IHabboSoundManager | null
+    {
+        return this._soundManager;
+    }
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_messenger
     private _messenger: IHabboMessenger | null = null;
 
@@ -375,6 +381,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     public hideWidget(widgetType: string): void
     {
         this._currentDesktop?.processEvent(new HideRoomWidgetEvent(widgetType));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::showGamePlayerName()
+    public showGamePlayerName(objectId: number, name: string, color: number, fadeDelayMs: number): void
+    {
+        this._currentDesktop?.showGamePlayerName(objectId, name, color, fadeDelayMs);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::mouseEventPositionHasContextMenu()

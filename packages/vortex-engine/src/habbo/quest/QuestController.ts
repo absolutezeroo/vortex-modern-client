@@ -6,16 +6,14 @@ import {QuestDetails} from './QuestDetails';
 import {QuestCompleted} from './QuestCompleted';
 import {NextQuestTimer} from './NextQuestTimer';
 import {QuestTracker} from './QuestTracker';
-import {Logger} from '@core/utils/Logger';
-
-const log = Logger.getLogger('habbo.quest.QuestController');
+import {MainWindow} from './seasonalcalendar/MainWindow';
 
 /**
  * Quest lifecycle controller.
  *
- * Owns the quest list/details/completed/next-quest-timer windows and one QuestTracker
- * per active campaign chain, and fans every quest lifecycle event out to all of them -
- * matching AS3 exactly.
+ * Owns the quest list/details/completed/next-quest-timer windows, the seasonal calendar's
+ * MainWindow, and one QuestTracker per active campaign chain, and fans every quest lifecycle
+ * event out to all of them - matching AS3 exactly.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/QuestController.as
  */
@@ -31,6 +29,8 @@ export class QuestController implements IDisposable
     private _questCompleted: QuestCompleted | null;
     // AS3: QuestController.as::_SafeStr_5813
     private _nextQuestTimer: NextQuestTimer | null;
+    // AS3: QuestController.as::_SafeStr_5435
+    private _seasonalCalendarWindow: MainWindow | null;
     // AS3: QuestController.as::_questTrackers
     private _questTrackers: Map<string, QuestTracker> = new Map();
 
@@ -42,12 +42,7 @@ export class QuestController implements IDisposable
         this._questDetails = new QuestDetails(engine);
         this._questCompleted = new QuestCompleted(engine);
         this._nextQuestTimer = new NextQuestTimer(engine);
-
-        // TODO(AS3): AS3 also constructs seasonalcalendar.MainWindow here
-        // (com.sulake.habbo.quest.seasonalcalendar) - the entire seasonal-calendar
-        // subsystem (MainWindow/Calendar/CalendarArrowButton/CatalogPromo/RareTeaser) is
-        // out of scope for this pass; only CalendarEntityStateEnums.ts exists so far. See
-        // onToolbarClick()/seasonalCalendarWindow below for the safe-default fallback.
+        this._seasonalCalendarWindow = new MainWindow(engine);
     }
 
     private _disposed: boolean = false;
@@ -70,15 +65,10 @@ export class QuestController implements IDisposable
         return this._questDetails!;
     }
 
-    /**
-	 * TODO(AS3): AS3's seasonalcalendar.MainWindow isn't ported (see the constructor's own
-	 * TODO) - always null here, matching the safe default other unported-subsystem getters
-	 * in this codebase use.
-	 */
     // AS3: QuestController.as::get seasonalCalendarWindow()
-    get seasonalCalendarWindow(): null
+    get seasonalCalendarWindow(): MainWindow | null
     {
-        return null;
+        return this._seasonalCalendarWindow;
     }
 
     // AS3: QuestController.as::onToolbarClick()
@@ -86,13 +76,13 @@ export class QuestController implements IDisposable
     {
         if(this._engine?.isSeasonalCalendarEnabled())
         {
-            // TODO(AS3): AS3 opens seasonalcalendar.MainWindow and closes questsList here -
-            // the calendar window isn't ported (see constructor's TODO), so fall back to the
-            // regular quest list rather than silently doing nothing.
-            log.warn('Seasonal calendar enabled but not ported - falling back to the regular quest list');
+            this._seasonalCalendarWindow?.onToolbarClick();
+            this._questsList?.close();
         }
-
-        this._questsList?.onToolbarClick();
+        else
+        {
+            this._questsList?.onToolbarClick();
+        }
     }
 
     // AS3: QuestController.as::getOrCreateTracker()
@@ -190,7 +180,7 @@ export class QuestController implements IDisposable
     onRoomExit(): void
     {
         this._questsList?.onRoomExit();
-        // TODO(AS3): seasonalCalendarWindow.onRoomExit() - not ported, see class-level TODOs.
+        this._seasonalCalendarWindow?.onRoomExit();
 
         for(const tracker of this._questTrackers.values())
         {
@@ -214,16 +204,15 @@ export class QuestController implements IDisposable
         this._nextQuestTimer?.update(deltaTime);
         this._questsList?.update(deltaTime);
         this._questDetails?.update(deltaTime);
-        // TODO(AS3): seasonalCalendarWindow.update(deltaTime) - not ported, see class-level TODOs.
+        this._seasonalCalendarWindow?.update(deltaTime);
 
         this.cleanTrackers(false);
     }
 
     // AS3: QuestController.as::onActivityPoints()
-    onActivityPoints(_type: number, _amount: number): void
+    onActivityPoints(type: number, amount: number): void
     {
-        // TODO(AS3): forwards to seasonalCalendarWindow.onActivityPoints() - not ported, see
-        // class-level TODOs. No-op until the seasonal calendar exists.
+        this._seasonalCalendarWindow?.onActivityPoints(type, amount);
     }
 
     // AS3: QuestController.as::getDefaultCampaign()
@@ -266,6 +255,12 @@ export class QuestController implements IDisposable
         {
             this._nextQuestTimer.dispose();
             this._nextQuestTimer = null;
+        }
+
+        if(this._seasonalCalendarWindow)
+        {
+            this._seasonalCalendarWindow.dispose();
+            this._seasonalCalendarWindow = null;
         }
 
         this._disposed = true;
