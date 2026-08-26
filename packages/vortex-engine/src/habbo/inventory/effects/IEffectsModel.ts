@@ -4,8 +4,11 @@ import type {Effect} from './Effect';
  * Effect filter types
  */
 export const EffectFilter = {
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::FILTER_NONE
     ALL: -1,
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::FILTER_INCLUDE_INACTIVE
     INACTIVE: 0,
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::FILTER_INCLUDE_ACTIVE
     ACTIVE: 1,
 } as const;
 

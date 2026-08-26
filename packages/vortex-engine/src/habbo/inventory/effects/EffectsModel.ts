@@ -101,6 +101,19 @@ export class EffectsModel implements IEffectsModel, IInventoryModel
         return null;
     }
 
+    /**
+	 * The same effect as getEffect(), under AS3's name for the interface-typed variant
+	 *
+	 * AS3 casts the concrete `Effect` to its read-only interface here so a caller cannot reach the
+	 * mutators. This port has no separate effect interface — `Effect` is the only type — so the
+	 * two methods return the same thing and the pair is kept because AS3's callers use both names.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/effects/EffectsModel.as::getEffectInterface()
+    getEffectInterface(type: number): Effect | null
+    {
+        return this.getEffect(type);
+    }
+
     // AS3: EffectsModel.as::getEffects()
     getEffects(filter: EffectFilterType = EffectFilter.ALL): Effect[]
     {

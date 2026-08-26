@@ -43,6 +43,7 @@ import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
 import {RoomObjectAvatarSelectedMessage} from './messages/RoomObjectAvatarSelectedMessage';
+import {RoomObjectSelectedMessage} from './messages/RoomObjectSelectedMessage';
 import {RoomObjectVisibilityUpdateMessage} from './messages/RoomObjectVisibilityUpdateMessage';
 import {LookToMessageComposer} from '@habbo/communication/messages/outgoing/room/avatar/LookToMessageComposer';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
@@ -8730,14 +8731,25 @@ export class RoomEngine extends Component implements IRoomEngine,
      */
     // AS3 declares this on IRoomEngine (public); the port had it private, which is why
     // no widget could highlight an object. Made public with the interface declaration.
-    selectRoomObject(roomId: number, id: number, category: number): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::setSelectedObject()
+    selectRoomObject(roomId: number, id: number, category: number): void
     {
-        if(this._selectedObject && (this._selectedObject.id !== id || this._selectedObject.category !== category)) 
+        if(this._selectedObject && (this._selectedObject.id !== id || this._selectedObject.category !== category))
         {
             this.deselectRoomObject();
         }
 
         this._selectedObject = {roomId, id, category};
+
+        // AS3 tells the object itself, not just the listeners: a furni draws its own selection
+        // outline off this message, so emitting REOE_SELECTED alone left the highlight unpainted.
+        // Avatars are excluded — their selection runs through setSelectedAvatar() instead.
+        if(category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        {
+            const object = this.getRoomObject(roomId, id, category) as IRoomObjectController | null;
+
+            object?.getEventHandler()?.processUpdateMessage(new RoomObjectSelectedMessage(true));
+        }
 
         this.events.emit(
             RoomEngineObjectEvent.REOE_SELECTED,

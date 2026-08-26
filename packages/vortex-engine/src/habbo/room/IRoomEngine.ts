@@ -727,4 +727,21 @@ export interface IRoomEngine extends IDisposable {
         region?: IRoomEngineRectangle | null,
         backgroundColor?: number
     ): Promise<ImageBitmap | null>;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserOwnUserAvatar()
+    updateObjectUserOwnUserAvatar(roomId: number, roomIndex: number): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserGesture()
+    updateObjectUserGesture(roomId: number, roomIndex: number, gesture: number): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoomBackgroundColor()
+    updateObjectRoomBackgroundColor(
+        roomId: number, enable: boolean, hue: number, saturation: number, lightness: number
+    ): boolean;
+
+    /**
+	 * The numeric pet type at the head of a pet figure string, or -1 when there is none.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_86.as::getPetTypeId()
+    getPetTypeId(figure: string | null): number;
 }
