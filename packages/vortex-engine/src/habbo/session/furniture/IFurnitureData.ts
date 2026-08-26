@@ -63,4 +63,26 @@ export interface IFurnitureData
     readonly excludedFromDynamic: boolean;
     // AS3: sources/win63_version/habbo/session/furniture/class_1800.as::get furniLine()
     readonly furniLine: string;
+
+    /**
+	 * The furnidata's category string, not the numeric `category` — that one is the special-type
+	 * id the room engine switches on, this is the catalogue-facing grouping.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/_SafeCls_2302.as::get furniDataCategory()
+    readonly furniDataCategory: string;
+
+    /**
+	 * Whether furniture stacks on top of this item — `canStandOn` above is about avatars.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/_SafeCls_2302.as::get canPutStuffOn()
+    readonly canPutStuffOn: boolean;
+
+    /**
+	 * Stacking height in tiles: how high the next item sits, not the footprint's z extent.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/_SafeCls_2302.as::get height()
+    readonly height: number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/_SafeCls_2302.as::get recyclable()
+    readonly recyclable: boolean;
 }

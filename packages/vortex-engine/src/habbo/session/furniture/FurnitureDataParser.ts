@@ -190,8 +190,25 @@ export class FurnitureDataParser
             this.childString(values, 'excludeddynamic') === '1',
             this.childString(values, 'furniline'),
             this.childNumber(values, 'bcofferid', 0),
-            this.childString(values, 'tradeable') === '1'
+            this.childString(values, 'tradeable') === '1',
+            this.furniDataCategory(item, values),
+            this.childString(values, 'canputstuffon') === '1',
+            this.childNumber(values, 'height', 0),
+            // AS3 reads this as "not explicitly disabled": an absent field means recyclable.
+            this.childString(values, 'recyclable') !== '0'
         );
+    }
+
+    /**
+	 * The furnidata's category, which appears as a child element on some items and an attribute on
+	 * others — AS3 prefers the element and falls back to the attribute.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseFloorItem()
+    private furniDataCategory(item: Element, values: Map<string, string>): string
+    {
+        const child = this.childString(values, 'category');
+
+        return child.length > 0 ? child : this.getAttributeString(item, 'category');
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseWallItem()
@@ -229,7 +246,13 @@ export class FurnitureDataParser
             this.childString(values, 'excludeddynamic') === '1',
             this.childString(values, 'furniline'),
             this.childNumber(values, 'bcofferid', 0),
-            this.childString(values, 'tradeable') === '1'
+            this.childString(values, 'tradeable') === '1',
+            this.furniDataCategory(item, values),
+            // A wall item is never stacked on and has no stacking height; AS3 passes both as
+            // false/0 here and reads only `recyclable` from the data.
+            false,
+            0,
+            this.childString(values, 'recyclable') !== '0'
         );
     }
 
@@ -295,7 +318,12 @@ export class FurnitureDataParser
             this.getRawBoolean(item, 'excludeddynamic'),
             this.getRawString(item, 'furniline'),
             this.getRawNumber(item, 0, 'bcofferid'),
-            this.getRawBoolean(item, 'tradeable')
+            this.getRawBoolean(item, 'tradeable'),
+            this.getRawString(item, 'category'),
+            this.getRawBoolean(item, 'canputstuffon'),
+            this.getRawNumber(item, 0, 'height'),
+            // Absent means recyclable, as in the XML branch.
+            item['recyclable'] === undefined || this.getRawBoolean(item, 'recyclable')
         );
     }
 
@@ -331,7 +359,11 @@ export class FurnitureDataParser
             this.getRawBoolean(item, 'excludeddynamic'),
             this.getRawString(item, 'furniline'),
             this.getRawNumber(item, 0, 'bcofferid'),
-            this.getRawBoolean(item, 'tradeable')
+            this.getRawBoolean(item, 'tradeable'),
+            this.getRawString(item, 'category'),
+            false,
+            0,
+            item['recyclable'] === undefined || this.getRawBoolean(item, 'recyclable')
         );
     }
 

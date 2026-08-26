@@ -16,6 +16,7 @@ export class MathUtils
 	 * @param max The maximum of the range
 	 * @returns The normalized value (0-1)
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/_SafeCls_2916.as::normalize()
     static normalize(value: number, min: number, max: number): number
     {
         return (value - min) / (max - min);
@@ -29,6 +30,7 @@ export class MathUtils
 	 * @param max The end value
 	 * @returns The interpolated value
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/_SafeCls_2916.as::lerp()
     static lerp(t: number, min: number, max: number): number
     {
         return t * (max - min) + min;
@@ -42,6 +44,7 @@ export class MathUtils
 	 * @param max The maximum bound (default 1)
 	 * @returns The clamped value
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/_SafeCls_2916.as::clamp()
     static clamp(value: number, min: number = 0, max: number = 1): number
     {
         return Math.max(min, Math.min(max, value));
@@ -57,8 +60,14 @@ export class MathUtils
 	 * @param outMax The output range maximum
 	 * @returns The mapped value
 	 */
+    // AS3: .../src/com/sulake/habbo/utils/_SafeCls_2916.as::map()
     static map(value: number, inMin: number, inMax: number, outMin: number, outMax: number): number
     {
         return MathUtils.lerp(MathUtils.normalize(value, inMin, inMax), outMin, outMax);
     }
+
+    // TODO(AS3): .../src/com/sulake/habbo/utils/_SafeCls_2916.as::rectangleTransformMatrix() builds
+    // the `flash.geom.Matrix` that maps one rectangle onto another. Nothing in this port draws
+    // through a Flash matrix — the equivalent scaling happens on the PixiJS transform — so there is
+    // no matrix type to return.
 }

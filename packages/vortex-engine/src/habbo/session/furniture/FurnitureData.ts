@@ -80,7 +80,15 @@ export class FurnitureData implements IFurnitureData
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::bcOfferId
         bcOfferId: number,
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::tradeable
-        tradeable: boolean = false
+        tradeable: boolean = false,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::furniDataCategory
+        furniDataCategory: string = '',
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::canPutStuffOn
+        canPutStuffOn: boolean = false,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::height
+        height: number = 0,
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::recyclable
+        recyclable: boolean = true
     )
     {
         this._type = type;
@@ -111,6 +119,68 @@ export class FurnitureData implements IFurnitureData
         this._furniLine = furniLine;
         this._bcOfferId = bcOfferId;
         this._tradeable = tradeable;
+        this._furniDataCategory = furniDataCategory;
+        this._canPutStuffOn = canPutStuffOn;
+        this._height = height;
+        this._recyclable = recyclable;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::_SafeStr_9958 (name derived: read back by furniDataCategory)
+    private _furniDataCategory: string;
+
+    /**
+	 * The furnidata's own category string, which is not the numeric `category` above
+	 *
+	 * `category` is the special-type id the room engine switches on; this is the catalogue-facing
+	 * grouping the furnidata carries as either a child element or an attribute.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::get furniDataCategory()
+    get furniDataCategory(): string
+    {
+        return this._furniDataCategory;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::_SafeStr_9525 (name derived: read back by canPutStuffOn)
+    private _canPutStuffOn: boolean;
+
+    /**
+	 * Whether other furniture can be stacked on top of this one
+	 *
+	 * Distinct from canStandOn, which is about avatars.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::get canPutStuffOn()
+    get canPutStuffOn(): boolean
+    {
+        return this._canPutStuffOn;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::_SafeStr_4970 (name derived: read back by height)
+    private _height: number;
+
+    /**
+	 * Stacking height in tiles, as the furnidata declares it
+	 *
+	 * Not tileSizeZ: that is the footprint's z extent, this is how high the next item sits.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::get height()
+    get height(): number
+    {
+        return this._height;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::_SafeStr_8102 (name derived: read back by recyclable)
+    private _recyclable: boolean;
+
+    /**
+	 * Whether the recycler accepts this item
+	 *
+	 * Defaults to *true* on an absent furnidata field, which is AS3's own rule — the data marks
+	 * exceptions, not the norm.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::get recyclable()
+    get recyclable(): boolean
+    {
+        return this._recyclable;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureData.as::get type()
