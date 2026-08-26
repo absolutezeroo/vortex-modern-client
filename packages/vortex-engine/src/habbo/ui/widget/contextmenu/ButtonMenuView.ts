@@ -25,6 +25,27 @@ export class ButtonMenuView extends ContextInfoView
     // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::LINK_COLOR_MODERATE_HOVER
     private static readonly LINK_COLOR_MODERATE_HOVER: number = 16756591;
 
+    /**
+	 * The named children a menu button can carry, and the gap an arrow keeps from its label
+	 *
+	 * The two arrows are matched on the icon's *tags*, not its name, because a layout tags the one
+	 * icon window rather than shipping two — which is why these are strings and not child names.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::ICON_MARGIN
+    protected static readonly ICON_MARGIN: number = 8;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::ICON_VIP
+    protected static readonly ICON_VIP: string = 'icon_vip';
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::ICON_DUCKET
+    protected static readonly ICON_DUCKET: string = 'icon_ducket';
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::ICON_ARROW_LEFT
+    protected static readonly ICON_ARROW_LEFT: string = 'arrow_left';
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::ICON_ARROW_RIGHT
+    protected static readonly ICON_ARROW_RIGHT: string = 'arrow_right';
+
     // TS-only: the three below have no AS3 constant — the original writes these values as literals
     // at the call site, and this port names them rather than repeating the numbers.
     private static readonly BUTTON_COLOR_MODERATE_HOVER: number = 4288230144;
@@ -103,14 +124,14 @@ export class ButtonMenuView extends ContextInfoView
 
             if(label)
             {
-                if(icon.tags.indexOf('arrow_left') !== -1)
+                if(icon.tags.indexOf(ButtonMenuView.ICON_ARROW_LEFT) !== -1)
                 {
-                    icon.x = label.x + (label.width - label.textWidth) / 2 - icon.width - 8;
+                    icon.x = label.x + (label.width - label.textWidth) / 2 - icon.width - ButtonMenuView.ICON_MARGIN;
                 }
 
-                if(icon.tags.indexOf('arrow_right') !== -1)
+                if(icon.tags.indexOf(ButtonMenuView.ICON_ARROW_RIGHT) !== -1)
                 {
-                    icon.x = label.x + (label.width + label.textWidth) / 2 + 8;
+                    icon.x = label.x + (label.width + label.textWidth) / 2 + ButtonMenuView.ICON_MARGIN;
                 }
             }
 
@@ -119,14 +140,14 @@ export class ButtonMenuView extends ContextInfoView
 
         if(vipIcon)
         {
-            const vip = button.getChildByName('icon_vip');
+            const vip = button.getChildByName(ButtonMenuView.ICON_VIP);
 
             if(vip) vip.visible = vipIcon;
         }
 
         if(ducketIcon)
         {
-            const ducket = button.getChildByName('icon_ducket');
+            const ducket = button.getChildByName(ButtonMenuView.ICON_DUCKET);
 
             if(ducket) ducket.visible = ducketIcon;
         }

@@ -75,9 +75,26 @@ export class BadgesModel implements IBadgesModel, IInventoryModel, IBadgeSelecti
         return this._disposed;
     }
 
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getMaxActiveCount()
     get maxActiveCount(): number
     {
         return BadgesModel.MAX_ACTIVE_BADGE_COUNT;
+    }
+
+    /**
+	 * The badge at a position within one filtered view, or null when the index is out of range
+	 *
+	 * The index is into the *filtered* list, not the whole collection — asking for index 0 of the
+	 * active badges is not the same badge as index 0 of all of them.
+	 */
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::getItemInIndex()
+    getItemInIndex(index: number, filter: BadgeFilterType = BadgeFilter.ALL): Badge | null
+    {
+        const badges = this.getBadges(filter);
+
+        if(index < 0 || index >= badges.length) return null;
+
+        return badges[index];
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::dispose()

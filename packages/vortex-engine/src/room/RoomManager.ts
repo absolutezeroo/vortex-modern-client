@@ -49,6 +49,28 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS
     private static readonly CONTENT_PROCESSING_TIME_LIMIT_MILLISECONDS = 40;
 
+    /**
+	 * The five states a room's content can be in, as AS3 numbers them
+	 *
+	 * Declared and never read — in AS3 either, where nothing outside this class references them.
+	 * They are kept so the state space is written down somewhere rather than implied by the
+	 * loading code.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::ROOM_MANAGER_ERROR
+    public static readonly ROOM_MANAGER_ERROR = -1;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::ROOM_MANAGER_LOADING
+    public static readonly ROOM_MANAGER_LOADING = 0;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::ROOM_MANAGER_LOADED
+    public static readonly ROOM_MANAGER_LOADED = 1;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::ROOM_MANAGER_INITIALIZING
+    public static readonly ROOM_MANAGER_INITIALIZING = 2;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::ROOM_MANAGER_INITIALIZED
+    public static readonly ROOM_MANAGER_INITIALIZED = 3;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/RoomManager.as::_rooms
     private _rooms: Map<string, IRoomInstance> = new Map();
     private _contentLoader: IRoomContentLoader | null = null;

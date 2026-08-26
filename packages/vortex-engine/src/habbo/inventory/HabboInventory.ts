@@ -464,6 +464,24 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         return this._purse.clubPastPeriods;
     }
 
+    /**
+	 * Whether the player has ever held club, which is not the same as holding it now
+	 *
+	 * The upsell copy differs between a first-time buyer and a lapsed member, so the two flags are
+	 * kept apart from clubDays/clubPeriods.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubHasEverBeenMember()
+    get clubHasEverBeenMember(): boolean
+    {
+        return this._purse.clubHasEverBeenMember;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get clubIsExpiring()
+    get clubIsExpiring(): boolean
+    {
+        return this._purse.clubIsExpiring;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::get web3tradeEnabled()
     get web3tradeEnabled(): boolean
     {

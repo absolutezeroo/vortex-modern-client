@@ -295,4 +295,23 @@ export interface IHabboInventory
 
     // AS3: HabboInventory.as::notifyChangedEffects()
     notifyChangedEffects(): void;
+
+    /**
+	 * The three club facts a caller needs to word an upsell, and which are not interchangeable:
+	 * whether membership has ever existed, whether it is running out, and how long is left.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::get clubHasEverBeenMember()
+    readonly clubHasEverBeenMember: boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::get clubIsExpiring()
+    readonly clubIsExpiring: boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::get clubMinutesUntilExpiration()
+    readonly clubMinutesUntilExpiration: number;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::getAllMyBadgeIds()
+    getAllMyBadgeIds(exclude: string[] | null): string[];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_588.as::setupTrading()
+    setupTrading(userId: number): void;
 }

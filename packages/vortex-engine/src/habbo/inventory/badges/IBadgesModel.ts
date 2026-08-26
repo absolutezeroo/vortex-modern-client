@@ -4,8 +4,11 @@ import type {Badge} from './Badge';
  * Badge filter types
  */
 export const BadgeFilter = {
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::BADGES_ALL
     ALL: -1,
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::BADGES_INACTIVE
     INACTIVE: 0,
+    // AS3: .../src/com/sulake/habbo/inventory/badges/BadgesModel.as::BADGES_ACTIVE
     ACTIVE: 1,
 } as const;
 
