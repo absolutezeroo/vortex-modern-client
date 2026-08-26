@@ -14,28 +14,24 @@ import {ContextInfoView} from './ContextInfoView';
 
 export class ButtonMenuView extends ContextInfoView
 {
-    // AS3 button/link/icon colors (uint constants from ContextInfoView/ButtonMenuView).
-    private static readonly BUTTON_COLOR_DEFAULT: number = 4281149991;
+    /**
+	 * Six of the colours this view used to redeclare now come from ContextInfoView, where AS3
+	 * declares them protected: BUTTON_COLOR_DEFAULT/HOVER, ICON_COLOR_ENABLED/DISABLED and
+	 * LINK_COLOR_ACTIONS_DEFAULT/HOVER. Only the two moderate link colours are AS3's own here.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::LINK_COLOR_MODERATE_DEFAULT
+    private static readonly LINK_COLOR_MODERATE_DEFAULT: number = 16744755;
 
-    private static readonly BUTTON_COLOR_HOVER: number = 4282950861;
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ButtonMenuView.as::LINK_COLOR_MODERATE_HOVER
+    private static readonly LINK_COLOR_MODERATE_HOVER: number = 16756591;
 
+    // TS-only: the three below have no AS3 constant — the original writes these values as literals
+    // at the call site, and this port names them rather than repeating the numbers.
     private static readonly BUTTON_COLOR_MODERATE_HOVER: number = 4288230144;
 
     private static readonly LABEL_COLOR_ENABLED: number = 16777215;
 
     private static readonly LABEL_COLOR_DISABLED: number = 5789011;
-
-    private static readonly ICON_COLOR_ENABLED: number = 13947341;
-
-    private static readonly ICON_COLOR_DISABLED: number = 5789011;
-
-    private static readonly LINK_COLOR_ACTIONS_DEFAULT: number = 16777215;
-
-    private static readonly LINK_COLOR_ACTIONS_HOVER: number = 9552639;
-
-    private static readonly LINK_COLOR_MODERATE_DEFAULT: number = 16744755;
-
-    private static readonly LINK_COLOR_MODERATE_HOVER: number = 16756591;
 
     protected _buttons: IItemListWindow | null = null;
 

@@ -13,6 +13,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import {FixedSizeStack} from '@habbo/utils/FixedSizeStack';
+import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
 import type {IContextMenuParentWidget} from './IContextMenuParentWidget';
 
 export interface IScreenRectangle
@@ -35,6 +36,31 @@ export class ContextInfoView
 {
     // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::CONTEXT_INFO_DELAY
     protected static readonly CONTEXT_INFO_DELAY: number = 3000;
+
+    /**
+	 * The palette every context-menu subclass paints its own controls with
+	 *
+	 * All six are ARGB with the alpha byte set, which is why the button and icon values look
+	 * larger than a colour: `0xFF` << 24 is already 4 278 190 080. The link pair is plain RGB —
+	 * AS3 writes them into `textColor`, which takes no alpha.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::BUTTON_COLOR_DEFAULT
+    protected static readonly BUTTON_COLOR_DEFAULT: number = 4281149991;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::BUTTON_COLOR_HOVER
+    protected static readonly BUTTON_COLOR_HOVER: number = 4282950861;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::LINK_COLOR_ACTIONS_DEFAULT
+    protected static readonly LINK_COLOR_ACTIONS_DEFAULT: number = 16777215;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::LINK_COLOR_ACTIONS_HOVER
+    protected static readonly LINK_COLOR_ACTIONS_HOVER: number = 9552639;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::ICON_COLOR_ENABLED
+    protected static readonly ICON_COLOR_ENABLED: number = 13947341;
+
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::ICON_COLOR_DISABLED
+    protected static readonly ICON_COLOR_DISABLED: number = 5789011;
 
     protected static _minimized: boolean = false;
 
@@ -108,6 +134,46 @@ export class ContextInfoView
     // AS3: ContextInfoView.as::updateWindow() — overridden by subclasses.
     protected updateWindow(): void
     {
+    }
+
+    /**
+	 * Forces the next `update()` to re-activate the view even if nothing about it changed
+	 *
+	 * Set by a subclass that has just rebuilt its contents, so the menu comes back to the front
+	 * rather than being left where the last position pass parked it.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::set forceActivateOnUpdate()
+    public set forceActivateOnUpdate(value: boolean)
+    {
+        this._forceActivateOnUpdate = value;
+    }
+
+    /**
+	 * Binds a click handler to a control, tolerating a control the layout does not have
+	 *
+	 * Every subclass wires optional children this way — a menu row that a given context does not
+	 * offer is simply absent from the layout rather than hidden.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::addMouseClickListener()
+    protected addMouseClickListener(window: IWindow | null, handler: (event: WindowEvent) => void): void
+    {
+        window?.addEventListener('WME_CLICK', handler);
+    }
+
+    /**
+	 * The base click: start a name change, then close the menu
+	 *
+	 * AS3 puts this on the base class because the name row is the one control every context menu
+	 * shares. Subclasses that offer more bind their own handlers on top.
+	 */
+    // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::clickHandler()
+    protected clickHandler(_event: WindowEvent): void
+    {
+        this._widget.messageListener?.processWidgetMessage(
+            new RoomWidgetUserActionMessage(RoomWidgetUserActionMessage.START_NAME_CHANGE)
+        );
+
+        this._widget.removeView(this, false);
     }
 
     // AS3: ContextInfoView.as::set activeView()

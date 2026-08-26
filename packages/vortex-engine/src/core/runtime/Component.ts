@@ -32,7 +32,9 @@ function hasRelease(obj: unknown): obj is { release: (iid: IID) => void }
  * Component Events
  */
 export const ComponentEvents = {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_RUNNING
     RUNNING: 'component:running',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_DISPOSING
     DISPOSING: 'component:disposing',
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_UNLOCKED
     // Public: re-dispatched on the root context (see ComponentContext.onComponentUnlocked()) when
@@ -44,8 +46,11 @@ export const ComponentEvents = {
     // distinct from UNLOCKED above so a Component that is itself a nested Context does not
     // conflate "my parent unlocked me" with "one of my own children unlocked" on the same emitter.
     INTERNAL_UNLOCKED: 'component:internal-unlocked',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_ERROR
     ERROR: 'component:error',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_WARNING
     WARNING: 'component:warning',
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_DEBUG
     DEBUG: 'component:debug',
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_EVENT_REBOOT
     // Only ever dispatched by the root context (CoreComponentContext) in AS3, though declared here
@@ -56,11 +61,17 @@ export const ComponentEvents = {
 
 /**
  * Component Flags
+ *
+ * A bit set, not an enum: a context that owns disposable interfaces carries CONTEXT|DISPOSABLE.
  */
 export const ComponentFlags = {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_FLAG_NULL
     NULL: 0,
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_FLAG_INTERFACE
     INTERFACE: 1,
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_FLAG_CONTEXT
     CONTEXT: 2,
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::COMPONENT_FLAG_DISPOSABLE
     DISPOSABLE: 4,
 } as const;
 
@@ -434,6 +445,12 @@ export class Component implements IDisposable
 
         return struct.references;
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::_references
+    // is a component-wide reference counter, and it is dead in AS3 itself: the field is reset to 0
+    // in dispose() and printed by toString(), and nothing ever increments it. The count that is
+    // actually kept is per-interface (`IInterfaceStruct.references` here), which is what the total
+    // above sums — so reproducing the field would add a number that is always zero.
 
     /**
 	 * Register an interface that this component provides
