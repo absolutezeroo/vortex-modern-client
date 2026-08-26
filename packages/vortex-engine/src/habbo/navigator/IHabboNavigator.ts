@@ -1,3 +1,4 @@
+import type EventEmitter from 'eventemitter3';
 import type {EventCategory, GuestRoomData} from '../communication/messages/incoming/navigator';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {NavigatorData} from './domain';
@@ -161,4 +162,15 @@ export interface IHabboNavigator
 	 * Dispose the navigator
 	 */
     dispose(): void;
+
+    /**
+	 * The component's own event emitter, which callers subscribe to for navigator state changes.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_93.as::get events()
+    readonly events: EventEmitter;
+
+    // TODO(AS3): .../src/com/sulake/habbo/navigator/_SafeCls_93.as::showToolbarHover() and
+    // hideToolbarHover() are empty in every AS3 implementor — the toolbar drives its own hover.
+    // LegacyNavigator carries the pair because the transitional interface declares it; declaring
+    // it here too would oblige the component to grow two more no-ops.
 }

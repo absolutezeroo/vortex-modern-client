@@ -9,6 +9,7 @@
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomInstance} from '@room/IRoomInstance';
+import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
@@ -512,4 +513,20 @@ export interface IRoomCreator
 	 */
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectRoomPlaneThicknesses()
     updateObjectRoomPlaneThicknesses(roomId: number, wallThicknessMultiplier: number, floorThicknessMultiplier: number): boolean;
+
+    /**
+	 * The room object itself — the floor-and-walls object, not anything standing in the room.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::getObjectRoom()
+    getObjectRoom(roomId: number): IRoomObjectController | null;
+
+    /**
+	 * A room variable, by name. The number form answers NaN when the room has no value under that
+	 * name, so a caller can tell an absent variable from a legitimate zero.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::getRoomNumberValue()
+    getRoomNumberValue(roomId: number, key: string): number;
+
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_89.as::getRoomStringValue()
+    getRoomStringValue(roomId: number, key: string): string | null;
 }

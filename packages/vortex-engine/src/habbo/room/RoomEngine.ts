@@ -4536,7 +4536,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getObjectRoom()
-    private getObjectRoom(roomId: number): IRoomObjectController | null
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::getObjectRoom()
+    getObjectRoom(roomId: number): IRoomObjectController | null
     {
         return this.getRoomObject(
             roomId,
