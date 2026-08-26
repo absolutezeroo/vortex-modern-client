@@ -18,6 +18,16 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboNavigator} from './IHabboNavigator';
 import type {IHabboNewNavigator} from './IHabboNewNavigator';
 import type {RoomInfoViewCtrl} from './inroom/RoomInfoViewCtrl';
+import type {ITransitionalMainViewCtrl} from './mainview/ITransitionalMainViewCtrl';
+import type {Tabs} from './domain/Tabs';
+import type {GuestRoomPasswordInput} from './GuestRoomPasswordInput';
+import type {GuestRoomDoorbell} from './GuestRoomDoorbell';
+import type {OfficialRoomEntryManager} from './mainview/OfficialRoomEntryManager';
+import type {RoomEventViewCtrl} from './inroom/RoomEventViewCtrl';
+import type {RoomEventInfoCtrl} from './inroom/RoomEventInfoCtrl';
+import type {RoomFilterCtrl} from './roomsettings/RoomFilterCtrl';
+import type {EnforceCategoryCtrl} from './roomsettings/EnforceCategoryCtrl';
+import {ConvertGlobalRoomIdMessageComposer} from '@habbo/communication/messages/outgoing/navigator/ConvertGlobalRoomIdMessageComposer';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
@@ -481,6 +491,101 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * (`return _SafeStr_5440`). This port keeps it on the new navigator, so the same
      * accessor reaches it through `legacyWrapper` instead.
      */
+    /**
+	 * The nine controllers AS3 holds as its own fields
+	 *
+	 * They live on `LegacyNavigator` in this port (see `transitionalNavigator` above), so each is
+	 * a hop through the wrapper rather than a field read. Null while the wrapper is not attached —
+	 * AS3 cannot express that because the fields are constructed with the component.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get mainViewCtrl()
+    get mainViewCtrl(): ITransitionalMainViewCtrl | null
+    {
+        return this.transitionalNavigator?.mainViewCtrl ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get tabs()
+    get tabs(): Tabs | null
+    {
+        return this.transitionalNavigator?.tabs ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get passwordInput()
+    get passwordInput(): GuestRoomPasswordInput | null
+    {
+        return this.transitionalNavigator?.passwordInput ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get doorbell()
+    get doorbell(): GuestRoomDoorbell | null
+    {
+        return this.transitionalNavigator?.doorbell ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get roomEventViewCtrl()
+    get roomEventViewCtrl(): RoomEventViewCtrl | null
+    {
+        return this.transitionalNavigator?.roomEventViewCtrl ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get officialRoomEntryManager()
+    get officialRoomEntryManager(): OfficialRoomEntryManager | null
+    {
+        return this.transitionalNavigator?.officialRoomEntryManager ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get roomEventInfoCtrl()
+    get roomEventInfoCtrl(): RoomEventInfoCtrl | null
+    {
+        return this.transitionalNavigator?.roomEventInfoCtrl ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get roomFilterCtrl()
+    get roomFilterCtrl(): RoomFilterCtrl | null
+    {
+        return this.transitionalNavigator?.roomFilterCtrl ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get enforceCategoryCtrl()
+    get enforceCategoryCtrl(): EnforceCategoryCtrl | null
+    {
+        return this.transitionalNavigator?.enforceCategoryCtrl ?? null;
+    }
+
+    /**
+	 * Enters a room the website asked for, by its global id string
+	 *
+	 * The two flags travel with the request rather than with the reply: the server answers with an
+	 * ordinary room entry, so `webRoomReport` and `webRoomReportedName` are what let the room-info
+	 * path tell an ordinary entry from one opened to report a room.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::enterRoomWebRequest()
+    enterRoomWebRequest(globalRoomId: string, report: boolean = false, reportedName: string | null = null): void
+    {
+        this._webRoomReport = report;
+        this._webRoomReportedName = reportedName;
+
+        this.send(new ConvertGlobalRoomIdMessageComposer(globalRoomId));
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::_SafeStr_9205 (name derived: read by get webRoomReport())
+    private _webRoomReport: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::_webRoomReportedName
+    private _webRoomReportedName: string | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get webRoomReport()
+    get webRoomReport(): boolean
+    {
+        return this._webRoomReport;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get webRoomReportedName()
+    get webRoomReportedName(): string | null
+    {
+        return this._webRoomReportedName;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get roomInfoViewCtrl()
     private get roomInfoViewCtrl(): RoomInfoViewCtrl | null
     {

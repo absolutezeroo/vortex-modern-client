@@ -148,6 +148,9 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     private _bgColorTransitioner: ColorTransitioner;
     private _widgetFactory: IRoomWidgetFactory | null = null;
     // Widget management
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::STATE_UNDEFINED
+    public static readonly STATE_UNDEFINED: number = -1;
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/RoomDesktop.as::_widgets
     private _widgets: Map<string, unknown> = new Map();
     // AS3 keys these on an array of handlers per type, not one handler: every handler
@@ -752,6 +755,62 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         return this._canvasIds.length > 0 ? this._canvasIds[0] : 1;
     }
 
+    /**
+	 * The state a widget is currently in, or STATE_UNDEFINED when there is no such widget
+	 *
+	 * Widgets are created lazily, so asking for one that does not exist is ordinary rather than
+	 * exceptional — AS3 logs it and answers -1 instead of throwing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::getWidgetState()
+    public getWidgetState(type: string): number
+    {
+        const widget = (this._widgets.get(type) ?? null) as IRoomWidget | null;
+
+        if(widget === null)
+        {
+            log.debug(`Requested the state of an unknown widget ${type}`);
+
+            return RoomDesktop.STATE_UNDEFINED;
+        }
+
+        return widget.state;
+    }
+
+    /**
+	 * Drops the spectator overlay once the player joins the room for real
+	 *
+	 * The container is built into the room view rather than being a widget, so it is removed by
+	 * name and disposed here rather than through disposeWidget().
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::enterAfterSpectate()
+    public enterAfterSpectate(): void
+    {
+        const roomView = this._layoutManager.getRoomView() as IWindowContainer | null;
+
+        if(roomView === null) return;
+
+        const container = roomView.findChildByName('spectator_mode_container');
+
+        if(container === null) return;
+
+        roomView.removeChild(container);
+        container.dispose();
+    }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get gameManager(),
+    // set gameManager(), set adManager(), requestInterstitial() and showGamePlayerName() all reach
+    // a game or ad manager. `habbo/game` is 0/63 here and there is no ad manager at all — see
+    // RoomEngine's handleObjectRoomAdEvent() for the other half of the same gap.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::initCameraLocation()
+    // reads camera_init_x/y/z off the room and hands them to RoomEngine.updateRoomCamera(), which
+    // this port does not expose — its cameras are driven from inside the engine's own update.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::addListenerToStage()
+    // and removeListenerFromStage() attach a weak listener to the Flash `stage` through the room
+    // canvas's DisplayObject. There is no stage here; the equivalent is the browser document, and
+    // nothing in the port asks RoomDesktop to reach it.
+
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getRoomViewRect()
     public getRoomViewRect(): { x: number; y: number; width: number; height: number } | null 
     {
@@ -1026,6 +1085,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
      * the same six RoomWidgetFactory.ts's header enumerates (camera, crafting, playlist editor,
      * youtube, vimeo, room-thumbnail camera) — each blocked on an unported subsystem.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::createWidget()
     public createWidget(type: string): void 
     {
         if(this._widgets.has(type)) 
