@@ -277,7 +277,7 @@ function indexTsByBasename(tsFiles)
 
 const tsBodies = new Map();
 
-function tsDeclares(tsFile, name)
+function tsBody(tsFile)
 {
     let body = tsBodies.get(tsFile);
 
@@ -289,7 +289,67 @@ function tsDeclares(tsFile, name)
         tsBodies.set(tsFile, body);
     }
 
-    return new RegExp(`\\b${name}\\b`).test(body);
+    return body;
+}
+
+// The path aliases both packages declare, so an `extends` can be followed across them.
+const ALIASES =
+{
+    '@core/': 'packages/vortex-engine/src/core/',
+    '@habbo/': 'packages/vortex-engine/src/habbo/',
+    '@room/': 'packages/vortex-engine/src/room/',
+    '@iid/': 'packages/vortex-engine/src/iid/',
+    '@ui/': 'packages/vortex-client/src/ui/'
+};
+
+function resolveImport(fromFile, spec)
+{
+    let path = null;
+
+    for(const [alias, target] of Object.entries(ALIASES))
+    {
+        if(spec.startsWith(alias)) { path = target + spec.slice(alias.length); break; }
+    }
+
+    if(path === null && spec.startsWith('.')) path = join(dirname(fromFile), spec).split('\\').join('/');
+
+    if(path === null) return null;
+
+    for(const candidate of [`${path}.ts`, `${path}/index.ts`])
+    {
+        if(existsSync(join(ROOT, candidate))) return candidate;
+    }
+
+    return null;
+}
+
+// AS3 has no shared base for composers and parsers, so every one of them re-declares `dispose()`
+// and `get disposed()`; this port declares both once on `MessageComposer`/`MessageEvent` and the
+// 200-odd subclasses inherit them. Searching only the file itself counted all of those as absent —
+// 234 of 449 gaps on the 2026-08-26 run, over half the worklist, none of them a real gap. So a
+// member not found in the file is looked for up the `extends` chain, which is what "does the port
+// have this member" actually means for an instance. Capped at four hops: deeper than that and a
+// coincidental name match up a long chain is likelier than a real inheritance.
+function tsDeclares(tsFile, name, depth = 0)
+{
+    const body = tsBody(tsFile);
+
+    if(new RegExp(`\\b${name}\\b`).test(body)) return true;
+
+    if(depth >= 4) return false;
+
+    const extendsMatch = body.match(/\bclass\s+\w+(?:<[^>]*>)?\s+extends\s+(\w+)/);
+
+    if(extendsMatch === null) return false;
+
+    const base = extendsMatch[1];
+    const importMatch = body.match(new RegExp(`import\\s*(?:type\\s*)?\\{[^}]*\\b${base}\\b[^}]*\\}\\s*from\\s*['"]([^'"]+)['"]`));
+
+    if(importMatch === null) return false;
+
+    const baseFile = resolveImport(tsFile.split('\\').join('/'), importMatch[1]);
+
+    return baseFile === null ? false : tsDeclares(baseFile, name, depth + 1);
 }
 
 function main()
