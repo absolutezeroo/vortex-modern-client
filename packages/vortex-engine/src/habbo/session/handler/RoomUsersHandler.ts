@@ -88,21 +88,20 @@ import {RoomSessionNestBreedingSuccessEvent} from '../events/RoomSessionNestBree
 import {RoomSessionErrorMessageEvent} from '../events/RoomSessionErrorMessageEvent';
 import {BotErrorEvent} from '@habbo/communication/messages/incoming/room/bot/BotErrorEvent';
 import type {BotErrorParser} from '@habbo/communication/messages/parser/room/bot/BotErrorParser';
+import {
+    UserNameChangedMessageEvent
+} from '@habbo/communication/messages/incoming/help/UserNameChangedMessageEvent';
+import type {
+    UserNameChangedMessageParser
+} from '@habbo/communication/messages/parser/help/UserNameChangedMessageParser';
 
 /**
  * Room users handler
  *
  * Based on AS3: com.sulake.habbo.session.handler.RoomUsersHandler
  *
- * Handles user-related messages and manages user data in the session.
- * This is a simplified implementation focusing on core functionality.
- *
- * TODO: Implement additional handlers:
- * - UserChangeMessageEvent (figure updates)
- * - UserNameChangedMessageEvent
- * - PetInfoMessageEvent, PetCommandsMessageEvent, etc. (pet-related)
- * - DanceMessageEvent
- * - FavoriteMembershipUpdateMessageEvent
+ * Handles user-related messages and manages user data in the session. All 22 of AS3's
+ * registrations are present, in its own order.
  */
 export class RoomUsersHandler extends BaseHandler
 {
@@ -144,6 +143,11 @@ export class RoomUsersHandler extends BaseHandler
         this.addMessageEvent(connection, new BotErrorEvent(this.onBotError.bind(this)));
 
         this.addMessageEvent(connection, new UserChangeMessageEvent(this.onUserChange.bind(this)));
+
+        // AS3: RoomUsersHandler.as:84 — the last registration this port was missing. Without it a
+        // rename landed in the session's user list and nowhere else: the room kept rendering the
+        // old nameplate until the next room entry.
+        this.addMessageEvent(connection, new UserNameChangedMessageEvent(this.onUserNameChange.bind(this)));
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::RoomUsersHandler()
         // Both events were ported, registered and dispatched by nobody. `RoomSessionDanceEvent` and
@@ -915,8 +919,23 @@ export class RoomUsersHandler extends BaseHandler
         }
     }
 
-    // TODO: Implement additional handlers
+    /**
+	 * Applies a rename to the user already in the room
+	 *
+	 * The parser carries both ids: `webId` is the account, `id` the room index, and it is the room
+	 * index the user list is keyed by.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/handler/RoomUsersHandler.as::onUserNameChange()
+    private onUserNameChange(event: IMessageEvent): void
+    {
+        const parser = (event as UserNameChangedMessageEvent).parser as UserNameChangedMessageParser | null;
 
-    // private onUserChange(event: IMessageEvent): void { ... }
-    // private onDance(event: IMessageEvent): void { ... }
+        if(parser === null) return;
+
+        const session = this.listener.getSession(this.roomId);
+
+        if(session === null || session.userDataManager === null) return;
+
+        session.userDataManager.updateNameByIndex(parser.id, parser.newName);
+    }
 }
