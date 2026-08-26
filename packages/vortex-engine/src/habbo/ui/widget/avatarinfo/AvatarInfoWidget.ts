@@ -41,6 +41,7 @@ import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IUpdateReceiver} from '@core/runtime/IContext';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
@@ -222,6 +223,12 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.container?.userDefinedRoomEvents?.events.on(
             WiredUserClickHandledEvent.WIRED_USER_CLICK_HANDLED, this.onUserClickHandledEvent
         );
+
+        // AS3: AvatarInfoWidget.as:167-168 — these two are on the ROOM ENGINE's emitter, not the
+        // desktop's, because they fire for every room object appearing and disappearing rather
+        // than for a widget message.
+        this.container?.roomEngine?.events.on(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAdded);
+        this.container?.roomEngine?.events.on(RoomEngineObjectEvent.REOE_REMOVED, this.onRoomObjectRemoved);
     }
 
     // AS3: AvatarInfoWidget.as::get handler()
@@ -241,10 +248,47 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // an object no code here actually models.
 
     /**
-     * The avatar-name bubble shown over a friend's avatar. Called (in AS3) from
-     * onRoomObjectAdded() when a newly-added avatar is on the friend list — that room-engine
-     * REOE_ADDED wiring is not ported in this file (see the header TODO(AS3)); this method itself
-     * is complete and callable independently.
+	 * A friend walked into view — put their name bubble up
+	 *
+	 * Only avatars (category 100), and only names already on the friend list: this is what makes a
+	 * friend's nameplate appear on its own, without anyone clicking. A non-friend gets nothing.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::onRoomObjectAdded()
+    private onRoomObjectAdded = (event: RoomEngineObjectEvent): void =>
+    {
+        if(event.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) return;
+
+        const container = this.container;
+
+        if(container === null) return;
+
+        const userData = container.roomSession?.userDataManager.getUserDataByIndex(event.objectId) ?? null;
+        const friendList = this.friendList;
+
+        if(userData === null || friendList === null) return;
+
+        if(friendList.getFriendNames().indexOf(userData.name) > -1) this.showUserName(userData, event.objectId);
+    };
+
+    /**
+	 * ...and drop it again when they leave
+	 *
+	 * Keyed by name in `_avatarNameBubbles`, so the match has to go through the view's objectId.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::onRoomObjectRemoved()
+    private onRoomObjectRemoved = (event: RoomEngineObjectEvent): void =>
+    {
+        if(event.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) return;
+
+        for(const view of [...this._avatarNameBubbles.values()])
+        {
+            if(view.objectId === event.objectId) this.removeView(view, false);
+        }
+    };
+
+    /**
+     * The avatar-name bubble shown over a friend's avatar, put up automatically by
+     * onRoomObjectAdded() above when a friend enters the room.
      */
     // AS3: AvatarInfoWidget.as::showUserName()
     public showUserName(userData: IUserData, objectId: number): void
@@ -1472,6 +1516,8 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     {
         if(this.disposed) return;
 
+        this.container?.roomEngine?.events.off(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAdded);
+        this.container?.roomEngine?.events.off(RoomEngineObjectEvent.REOE_REMOVED, this.onRoomObjectRemoved);
         this.container?.desktopEvents.off(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
         this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
         this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected);
