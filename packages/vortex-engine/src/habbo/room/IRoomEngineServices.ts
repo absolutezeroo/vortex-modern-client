@@ -10,6 +10,17 @@ import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomInstance} from '@room/IRoomInstance';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomObjectController} from '@room/object/IRoomObjectController';
+import type {IVector3d} from '@room/utils/IVector3d';
+import type {IStuffData} from '@habbo/room/object/data/IStuffData';
+import type {LegacyWallGeometry} from './utils/LegacyWallGeometry';
+import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
+import type {TileObjectMap} from './utils/TileObjectMap';
+import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
+import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
+import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 
 export interface IRoomEngineServices
 {
@@ -68,4 +79,69 @@ export interface IRoomEngineServices
     isMoveBlocked(): boolean;
 
     isWhereYouClickWhereYouGo(): boolean;
+
+    // Per-room maps, all three owned by the room's instance data.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getLegacyGeometry()
+    getLegacyGeometry(roomId: number): LegacyWallGeometry | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getFurniStackingHeightMap()
+    getFurniStackingHeightMap(roomId: number): FurniStackingHeightMap | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getTileObjectMap()
+    getTileObjectMap(roomId: number): TileObjectMap | null;
+
+    /**
+	 * The ghost that follows the cursor while an object is being placed or moved
+	 *
+	 * AS3 takes five more arguments than this port does — stuff data, a wall position and a
+	 * second type string — which only the paths this port has not built yet ever pass.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::setObjectMoverIconSprite()
+    setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra?: string | null, posture?: string | null): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::removeObjectMoverIconSprite()
+    removeObjectMoverIconSprite(): void;
+
+    /**
+	 * AS3 takes `(roomId, SelectedRoomObjectData)`; this port takes the struct's fields flat,
+	 * because it is the only caller shape RoomEngine ever builds one from — the struct is
+	 * constructed inside rather than by the caller.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::setSelectedObjectData()
+    setSelectedObjectData(
+        roomId: number, id: number, category: number, loc: IVector3d, dir: IVector3d, operation: string,
+        typeId?: number, instanceData?: string | null, stuffData?: IStuffData | null,
+        state?: number, animFrame?: number, posture?: string | null
+    ): void;
+
+    // Components the engine holds and its widgets reach through it rather than depending on twice.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get configuration()
+    readonly configuration: IHabboConfigurationManager | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get roomSessionManager()
+    readonly roomSessionManager: IRoomSessionManager | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get sessionDataManager()
+    readonly sessionDataManager: ISessionDataManager | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get toolbar()
+    readonly toolbar: IHabboToolbar | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get roomEvents()
+    readonly roomEvents: IHabboUserDefinedRoomEvents | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get windowManager()
+    readonly windowManager: IHabboWindowManager | null;
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get gameEngine()
+    // returns the game manager. `habbo/game` is 0/63 in this port — see RoomEngine.ts's own note.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::requestRoomAdImage()
+    // forwards to the ad manager, which this port does not have — see RoomEngine's
+    // handleObjectRoomAdEvent().
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getActiveRoomActiveCanvas()
+    // returns the active room's active rendering canvas. RoomEngine reaches its canvases through
+    // the renderer rather than exposing one, so declaring it here would oblige an accessor the
+    // port has no caller for.
 }

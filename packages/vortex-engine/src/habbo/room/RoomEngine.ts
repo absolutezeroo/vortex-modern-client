@@ -727,6 +727,24 @@ export class RoomEngine extends Component implements IRoomEngine,
         return null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get configuration()
+    get configuration(): IHabboConfigurationManager | null
+    {
+        return this._configurationManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get toolbar()
+    get toolbar(): IHabboToolbar | null
+    {
+        return this._toolbar;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomEvents()
+    get roomEvents(): IHabboUserDefinedRoomEvents | null
+    {
+        return this._roomEvents;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get roomSessionManager()
     get roomSessionManager(): IRoomSessionManager | null
     {
@@ -5803,7 +5821,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::setSelectedObjectData()
-    private setSelectedObjectData(
+    setSelectedObjectData(
         roomId: number, id: number, category: number, loc: IVector3d, dir: IVector3d, operation: string,
         typeId: number = 0, instanceData: string | null = null, stuffData: IStuffData | null = null,
         state: number = -1, animFrame: number = -1, posture: string | null = null
@@ -5918,7 +5936,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // Passing it through crashes FurnitureMultiStateLogic.handleDataUpdateMessage(). The icon
     // preview doesn't need it anyway (matches the old getFurnitureIcon()-based icon, whose
     // getGenericRoomObjectThumbnail() path silently ignored this same stuffData).
-    private setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra: string | null = null, posture: string | null = null): void 
+    setObjectMoverIconSprite(id: number, category: number, direct: boolean, extra: string | null = null, posture: string | null = null): void 
     {
         this.removeObjectMoverIconSprite();
 
@@ -5998,7 +6016,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::removeObjectMoverIconSprite()
-    private removeObjectMoverIconSprite(): void 
+    removeObjectMoverIconSprite(): void 
     {
         if(this._moverIconSprite) 
         {
