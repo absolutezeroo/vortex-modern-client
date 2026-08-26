@@ -157,6 +157,18 @@ export class RoomChatInputWidget extends RoomWidgetBase
         this._view?.updatePosition();
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputWidget.as::refreshChatStyles()
+    public refreshChatStyles(): void
+    {
+        this._view?.createOrUpdateChatStylesView();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputWidget.as::hideTransientSelectors()
+    public hideTransientSelectors(): void
+    {
+        this._view?.hideTransientSelectors();
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputWidget.as::getFriendBarWidth()
     public getFriendBarWidth(): number
     {
@@ -253,6 +265,9 @@ export class RoomChatInputWidget extends RoomWidgetBase
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputWidget.as::release()
     public override release(): void
     {
+        // AS3 releases the view before hiding/clearing the desktop reference — dropped here
+        // previously, which skipped RoomChatInputView.release()'s timer/flag reset on pooled reuse.
+        this._view?.release();
         this.hide();
         this._desktop = null;
 

@@ -17,6 +17,13 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/utils/GraphicAssetCollection.as::PALETTE_ASSET_DISPOSE_THRESHOLD
     private static readonly PALETTE_ASSET_DISPOSE_THRESHOLD: number = 10;
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/utils/GraphicAssetCollection.as::set assetLibrary / get assetLibrary
+    // AS3's `_SafeCls_76` asset library is a lazy, name-keyed lookup object
+    // (`getAssetByName()`/`setAsset()`) that defineAssets()/definePalettes()/addAsset() etc. all
+    // resolve individual assets through. This port's define()/defineFromSpritesheet() take a
+    // pre-resolved `Map<string, Texture>` instead — a .nitro bundle's spritesheet is decoded up
+    // front, so there is no per-asset library round trip left to hold a reference to. No
+    // `_assetLibrary` field exists to expose.
     private _name: string = '';
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/utils/GraphicAssetCollection.as::_assets
     private _assets: Map<string, GraphicAsset> = new Map();
@@ -94,6 +101,7 @@ export class GraphicAssetCollection implements IGraphicAssetCollection
         return this._referenceCount;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/utils/GraphicAssetCollection.as::getLastReferenceTimeStamp()
     getLastReferenceTimestamp(): number
     {
         return this._lastReferenceTimestamp;

@@ -319,6 +319,11 @@ export class BitmapDataRenderer extends SkinRenderer
                 const scaleX = (isFlippedX ? -1 : 1) * drawW / srcW;
                 const scaleY = (isFlippedY ? -1 : 1) * drawH / srcH;
 
+                // AS3's single static `_MATRIX` is reused as the a/d/tx/ty passed to each
+                // BitmapData.draw() call in the tile loop below; ctx.setTransform() takes
+                // the same 6 components directly, so there is no persisted Matrix object
+                // to port - scaleX/scaleY (a/d) and px/py (tx/ty) are its TS equivalent.
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapDataRenderer.as::_MATRIX
                 // Tile loop (AS3 l.127-176): etch silhouette first, then the main bitmap.
                 for(let ty = 0; ty < tilesY; ty++)
                 {
@@ -632,7 +637,16 @@ export class BitmapDataRenderer extends SkinRenderer
     /**
 	 * Converts the whole scratch buffer to luminance, tinted by window.color
 	 * (AS3 greyscale matrix l.135 — Rec.709 weights, per-channel colour multiply).
+	 *
+	 * Replaces AS3's static `_GREYSCALE_FILTER` (a `flash.filters.ColorMatrixFilter`
+	 * applied via `BitmapData.applyFilter()`) - Canvas 2D has no matching filter type,
+	 * so the same 5x4 matrix is applied by hand below, per pixel, via getImageData/
+	 * putImageData. `B` (= 0.072169, the blue-channel Rec.709 weight in that matrix)
+	 * is the literal below rather than a named constant, alongside its R/G weights
+	 * (0.212671/0.71516), which are equally obfuscated in AS3's own source.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapDataRenderer.as::_GREYSCALE_FILTER
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/renderer/BitmapDataRenderer.as::B
     private applyGreyscale(
         ctx: OffscreenCanvasRenderingContext2D,
         w: number,

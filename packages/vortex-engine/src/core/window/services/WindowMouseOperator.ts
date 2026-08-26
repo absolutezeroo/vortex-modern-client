@@ -15,6 +15,7 @@ export class WindowMouseOperator
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_window
     protected _window: WindowController | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_working
     protected _active: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::_offset
     protected _offset: { x: number; y: number } = {x: 0, y: 0};
@@ -121,6 +122,12 @@ export class WindowMouseOperator
 	 * @param x - Current mouse X (clientX)
 	 * @param y - Current mouse Y (clientY)
 	 */
+    // AS3's handler() is one listener for mouseDown/mouseUp/enterFrame registered on the
+    // DisplayObject passed to the constructor; its enterFrame branch polls stage.mouseX/Y
+    // each frame and calls operate() on a change - this port has no per-frame Flash event
+    // loop to poll from, so the client renderer calls this method directly off the DOM
+    // mousemove event instead, with the same "position changed -> operate()" body.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::handler()
     public handleMouseMove(x: number, y: number): void
     {
         if(!this._active || !this._window || this._window.disposed) return;
@@ -136,6 +143,8 @@ export class WindowMouseOperator
     /**
 	 * Called by the client renderer on document mouseup.
 	 */
+    // The other half of AS3's handler() - its mouseUp branch just calls end(_window).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::handler()
     public handleMouseUp(): void
     {
         if(this._active && this._window)

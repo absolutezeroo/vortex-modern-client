@@ -8,7 +8,10 @@ import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IAssetReceiver} from '@core/window/IAssetReceiver';
+import type {XmlAsset} from '@core/assets/XmlAsset';
+import {CatalogEvent} from '@habbo/catalog/event/CatalogEvent';
 import {HabboToolbarIconEnum} from './HabboToolbarIconEnum';
 import type {Motion} from '@core/window/motion/Motion';
 import {Motions} from '@core/window/motion/Motions';
@@ -162,6 +165,43 @@ export class BottomBarLeft
         else 
         {
             this.iconVisibility(HabboToolbarIconEnum.getIconName('HTIE_ICON_GAMES') ?? '', false);
+        }
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as
+        // (constructor) - the "new items" badge overlaid on the catalog icon, shown/hidden by
+        // onCatalogEvent() below in response to CATALOG_NEW_ITEMS_SHOW/HIDE.
+        const catalogIcon = (this._window as IWindowContainer)
+            .findChildByName(HabboToolbarIconEnum.getIconName('HTIE_ICON_CATALOGUE') ?? '');
+
+        if(catalogIcon)
+        {
+            const labelAsset = toolbar.assets?.getAssetByName('new_items_label_xml') as XmlAsset | null;
+
+            if(!labelAsset)
+            {
+                log.warn('Missing layout "new_items_label_xml" - the catalog new-items badge cannot be built');
+            }
+            else
+            {
+                const label = windowManager.buildFromXML(labelAsset.content as unknown as string, 2) as IWindowContainer | null;
+
+                if(!label)
+                {
+                    throw new Error('Failed to construct toolbar label from XML!');
+                }
+
+                this._newItemsLabel = label;
+                (catalogIcon as unknown as IWindowContainer).addChild(label);
+
+                const labelText = label.findChildByName('new_textfield') as ITextWindow | null;
+                const localizedText = toolbar.localization?.getLocalization('toolbar.new_additions.notification', '') ?? '';
+
+                if(labelText && localizedText.length > 0) labelText.text = localizedText;
+
+                label.visible = false;
+                label.x = catalogIcon.width - label.width;
+                label.y = 0;
+            }
         }
 
         this._newItemsNotificationEnabled = this.isNewItemsNotificationEnabled();
@@ -675,6 +715,80 @@ export class BottomBarLeft
         }
 
         this.checkSize();
+    }
+
+    /**
+	 * Enable/disable the catalog toolbar icon and its "new items" badge as the catalog's
+	 * readiness and unseen-item state changes, and auto-open a deep-linked catalog page
+	 * once the catalog becomes ready.
+	 *
+	 * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onCatalogEvent()
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::onCatalogEvent()
+    public onCatalogEvent(event: CatalogEvent): void
+    {
+        switch(event.type)
+        {
+            case CatalogEvent.CATALOG_INITIALIZED:
+            {
+                const icon = this.getCatalogIcon();
+
+                if(icon)
+                {
+                    icon.blend = 1;
+                    icon.enable();
+                }
+
+                const pageToOpen = this._toolbar?.getProperty('open.catalog.page') ?? '';
+
+                if(pageToOpen.length > 0 && this._toolbar?.catalog)
+                {
+                    this._toolbar.catalog.openCatalogPage('hc_membership');
+                    this._toolbar.setProperty('open.catalog.page', '');
+                }
+
+                break;
+            }
+            case CatalogEvent.CATALOG_NOT_READY:
+                this.disableCatalogIcon();
+                break;
+            case CatalogEvent.CATALOG_NEW_ITEMS_SHOW:
+                if(this._newItemsLabel && this._newItemsNotificationEnabled)
+                {
+                    this._newItemsLabel.visible = true;
+                }
+
+                break;
+            case CatalogEvent.CATALOG_NEW_ITEMS_HIDE:
+                if(this._newItemsLabel)
+                {
+                    this._newItemsLabel.visible = false;
+                }
+
+                break;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/BottomBarLeft.as::disableCatalogIcon()
+    private disableCatalogIcon(): void
+    {
+        const icon = this.getCatalogIcon();
+
+        if(!icon) return;
+
+        icon.blend = 0.5;
+        icon.disable();
+    }
+
+    // TS-only: shared lookup for the CATALOGUE icon, used by both onCatalogEvent() and
+    // disableCatalogIcon() (AS3 repeats the same findChildByName() call in each).
+    private getCatalogIcon(): IWindow | null
+    {
+        if(!this._window) return null;
+
+        const iconName = HabboToolbarIconEnum.getIconName('HTIE_ICON_CATALOGUE');
+
+        return iconName ? (this._window as IWindowContainer).findChildByName(iconName) : null;
     }
 
     /**

@@ -38,6 +38,9 @@ export class InfoStandFurniData
     public rentOfferId: number = -1;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get availableForBuildersClub()
     public availableForBuildersClub: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::get tradeable()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::set tradeable()
+    public tradeable: boolean = false;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandFurniData.as::setData()
     public setData(event: RoomWidgetFurniInfoUpdateEvent): void
@@ -57,5 +60,6 @@ export class InfoStandFurniData
         this.availableForBuildersClub = event.availableForBuildersClub;
         this.classId = event.classId;
         this.bcOfferId = event.bcOfferId;
+        this.tradeable = event.tradeable;
     }
 }

@@ -55,6 +55,19 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         this._assetCollection = value;
     }
 
+    /**
+     * A no-op at this level in AS3 too — RoomManager calls it on every visualization it creates
+     * (right after assetCollection), but only FurnitureExternalImageVisualization overrides it to
+     * do anything (it records the URLs to build a thumbnail request). That subclass is a stub in
+     * this port (external/user-uploaded furniture images are not implemented), so the override
+     * has nothing to store yet; the base no-op is kept for interface parity.
+     */
+    // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::setExternalBaseUrls()
+    setExternalBaseUrls(_baseUrl: string, _secureBaseUrl: string, _batchesEnabled: boolean): void
+    {
+        // Override in subclasses
+    }
+
     private _object: IRoomObject | null = null;
 
     // AS3: .../src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::get object()

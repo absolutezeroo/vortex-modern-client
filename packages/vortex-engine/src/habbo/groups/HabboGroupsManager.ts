@@ -310,6 +310,16 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         log.debug('showGroupBadgeInfo:', groupId, 'staff:', isStaff);
     }
 
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::showBadgeLeaderboard()
+    // A thin facade over `badgeLeaderboardController`; AS3 has no caller for it either (the
+    // controller is registered directly as its own "badge_leaderboard/" link tracker — see
+    // BadgeLeaderboardController.as / this file's initComponent()), kept for API parity with
+    // showGroupBadgeInfo()'s equivalent facade above.
+    showBadgeLeaderboard(type: number, rarity: number = -1, page: number = 0): void
+    {
+        this._badgeLeaderboardController?.showBadgeLeaderboard(type, rarity, page);
+    }
+
     /**
 	 * Open the group info panel for the given group
 	 *

@@ -27,12 +27,12 @@ import {MapStuffData} from '@habbo/room/object/data/MapStuffData';
  *
  * Based on AS3 com.sulake.habbo.inventory.furni.FurniView
  *
- * Phase 1 scope (see project decision): the 3D room-preview panel
- * (RoomPreviewer) and the marketplace "sell" flow are not wired yet —
- * MarketplaceModel doesn't exist, and RoomPreviewer.ts is a stub. Both are
- * tracked as follow-up work; this view shows the grid, selection, filters,
- * and the buttons that don't depend on either (place/goto-room/trade/
- * recycle/rent), matching AS3's own null-guards for an absent marketplace.
+ * Phase 1 scope (see project decision): the marketplace "sell" flow is not
+ * wired yet — MarketplaceModel doesn't exist. RoomPreviewer.ts itself is
+ * fully ported (not a stub); this view shows the grid, selection, filters,
+ * and the buttons that don't depend on the marketplace (place/goto-room/
+ * trade/recycle/rent), matching AS3's own null-guards for an absent
+ * marketplace.
  */
 export class FurniView
 {
@@ -122,6 +122,19 @@ export class FurniView
             this._window = null;
         }
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::update()
+    // AS3 implements IUpdateReceiver and registers itself (priority 1) purely to call
+    // `_roomPreviewer.updatePreviewRoomView()` every tick. RoomPreviewer.ts already re-runs
+    // updatePreviewRoomView() every frame on its own — its constructor calls
+    // `roomEngine.registerCanvasSyncCallback(this.updatePreviewRoomViewBound)` (see that file's
+    // "TS deviation" comment) — so a second registerUpdateReceiver() here would only call the
+    // same method a second time per tick with no behavioural difference.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::displayItemInfo()
+    // Dead in AS3 itself: its only caller, FurniModel.as::displayItemInfo(), has zero call sites
+    // anywhere in the primary tree either - both ends of this forward are unreachable in the
+    // shipped client. (FurniModel.ts already carries the matching note on its own dead forwarder.)
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::getWindowContainer()
     getWindowContainer(): IWindowContainer | null

@@ -23,6 +23,9 @@ import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
 import {IID_HabboCatalog} from '@iid/IIDHabboCatalog';
+import {IID_HabbiconController} from '@iid/IIDHabbiconController';
+import type {IHabbiconController} from '@habbo/catalog/habbicons/IHabbiconController';
+import {HabbiconControllerEvent} from '@habbo/catalog/habbicons/HabbiconControllerEvent';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
@@ -90,6 +93,8 @@ import type {IRoomUI} from './IRoomUI';
 import type {IRoomDesktop} from './IRoomDesktop';
 import {RoomDesktop} from './RoomDesktop';
 import {RoomWidgetFactory} from './RoomWidgetFactory';
+import {HideRoomWidgetEvent} from './widget/events/HideRoomWidgetEvent';
+import type {IDisplayObjectWrapper} from '@core/window/components/IDisplayObjectWrapper';
 
 const log = Logger.getLogger('habbo.ui.RoomUI');
 
@@ -245,6 +250,9 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::_moderation
     private _moderation: IHabboModeration | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::_habbiconController
+    private _habbiconController: IHabbiconController | null = null;
+
     /**
      * The catalog manager, used to construct widgets that need it (e.g. infostand).
      */
@@ -258,6 +266,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     public get habboGroupsManager(): IHabboGroupsManager | null
     {
         return this._habboGroupsManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get habbiconController()
+    public get habbiconController(): IHabbiconController | null
+    {
+        return this._habbiconController;
     }
 
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::get inventory()
@@ -341,6 +355,26 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     public get desktop(): IRoomDesktop | null 
     {
         return this._currentDesktop;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get chatContainer()
+    public get chatContainer(): IDisplayObjectWrapper | null
+    {
+        if(this._currentDesktop === null) return null;
+
+        return this._currentDesktop.layoutManager.getChatContainer();
+    }
+
+    /**
+     * Routes a HideRoomWidgetEvent to the current desktop's widget handlers. AS3's sole consumer
+     * (ChatInputWidgetHandler) does not yet declare HIDE_ROOM_WIDGET in getProcessedEvents() on
+     * this port — see that handler's own TODO(AS3) — so this currently reaches no handler, exactly
+     * like the un-dispatched AS3 event would if nothing had wired the call.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::hideWidget()
+    public hideWidget(widgetType: string): void
+    {
+        this._currentDesktop?.processEvent(new HideRoomWidgetEvent(widgetType));
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::mouseEventPositionHasContextMenu()
@@ -510,6 +544,28 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     for(const desktop of this._desktops.values())
                     {
                         desktop.catalog = catalog;
+                    }
+                },
+                false
+            ),
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — wires the
+            // room-side habbicon-equip bridge: HabboCatalog attaches HabbiconController under this
+            // IID, and RoomUI listens for ROOM_USE_HABBICON to push the equipped habbicon into the
+            // avatar's `figure_habbicon` user action via the room engine.
+            new ComponentDependency(
+                IID_HabbiconController,
+                (habbiconController: IHabbiconController | null) =>
+                {
+                    if(this._habbiconController !== null)
+                    {
+                        this._habbiconController.removeEventListener(HabbiconControllerEvent.ROOM_USE_HABBICON, this.onRoomUseHabbicon);
+                    }
+
+                    this._habbiconController = habbiconController;
+
+                    if(this._habbiconController !== null && this.getBoolean('habbicons.enabled'))
+                    {
+                        this._habbiconController.addEventListener(HabbiconControllerEvent.ROOM_USE_HABBICON, this.onRoomUseHabbicon);
                     }
                 },
                 false
@@ -947,6 +1003,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             }
         }
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::dispose()
+        if(this._habbiconController !== null)
+        {
+            this._habbiconController.removeEventListener(HabbiconControllerEvent.ROOM_USE_HABBICON, this.onRoomUseHabbicon);
+            this._habbiconController = null;
+        }
+
         // Dispose all desktops
         for(const desktop of this._desktops.values())
         {
@@ -967,13 +1030,32 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::bottomBarResizeHandler()
-    private bottomBarResizeHandler(event: FriendBarResizeEvent): void 
+    private bottomBarResizeHandler(event: FriendBarResizeEvent): void
     {
-        for(const desktop of this._desktops.values()) 
+        for(const desktop of this._desktops.values())
         {
             desktop.processEvent(event);
         }
     }
+
+    /**
+     * Pushes an equipped habbicon into the current room's avatar as a `figure_habbicon` user
+     * action. Declared as an arrow-function field because `IHabbiconController.addEventListener()`
+     * has no context parameter (unlike the EventEmitter `.on(type, fn, context)` pairs above).
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::onRoomUseHabbicon()
+    private onRoomUseHabbicon = (event: HabbiconControllerEvent): void =>
+    {
+        if(!this.getBoolean('habbicons.enabled') || event === null || event.roomIndex < 0 || event.habbiconId <= 0 ||
+            this._currentDesktop === null || this._currentDesktop.roomSession === null || this._roomEngine === null)
+        {
+            return;
+        }
+
+        const roomId = this._currentDesktop.roomSession.roomId;
+
+        this._roomEngine.updateObjectUserAction(roomId, event.roomIndex, 'figure_habbicon', event.habbiconId);
+    };
 
     /**
      * Handles room session lifecycle events.

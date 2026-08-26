@@ -148,6 +148,13 @@ export class CurrencyIndicatorBase implements ICurrencyIndicator
     {
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::_assets
+    // AS3 threads an IAssetLibrary through the constructor solely so createWindow() can call
+    // `_assets.getAssetByName(name)` before handing the XML to `_windowManager.buildFromXML()`.
+    // This port's `buildWidgetLayout()` does that asset-name-to-window resolution internally (see
+    // its own definition), so there is no separate field to hold — nothing else in this class
+    // reads `_assets`.
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as::createWindow()
     protected createWindow(layoutName: string, iconUri: string | null): void
     {

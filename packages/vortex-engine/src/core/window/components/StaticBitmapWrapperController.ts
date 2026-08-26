@@ -18,6 +18,13 @@ import type {WindowEvent} from '../events/WindowEvent';
  */
 export class StaticBitmapWrapperController extends BitmapDataController implements IStaticBitmapWrapperWindow, IAssetReceiver
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/StaticBitmapWrapperController.as::_bitmapDataOwned
+    // AS3's receiveAsset() sets this true only when the delivered BitmapData's size differs
+    // from the asset's own rectangle, forcing a copyPixels() crop into a fresh, owned
+    // BitmapData; otherwise it shares the asset's BitmapData unowned. This port's resource
+    // pipeline delivers an already-cropped ImageBitmap with no separate rectangle (see
+    // tools/import-manifest-subassets.mjs, which cuts every region out at build time), so
+    // receiveAsset() below never needs the copy branch and this flag is only ever false.
     private _ownsBitmapData: boolean = false;
 
     constructor(

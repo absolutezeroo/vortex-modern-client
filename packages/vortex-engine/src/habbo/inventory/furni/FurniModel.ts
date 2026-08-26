@@ -1225,12 +1225,17 @@ export class FurniModel implements IFurniModel
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::updateUnseenItemsThumbs()
-    updateUnseenItems(unseenIds: number[]): void
+    // AS3's `param2:Boolean = true` (refresh) gates the trailing
+    // `_view.grid.itemsWereUpdated(changedGroups)` call — true from UnseenItemTracker's own
+    // refresh, false from onFurnitureAddOrUpdate() (HabboInventory.ts's onFurniListAddOrUpdate),
+    // which calls setViewToState()/updateView() itself right after.
+    updateUnseenItems(unseenIds: number[], refresh: boolean = true): void
     {
         if(unseenIds.length === 0) return;
 
         const unseenSet = new Set(unseenIds);
         const tracker = this._habboInventory.unseenItemTracker;
+        const changedGroups: GroupItem[] = [];
 
         for(const groupItem of this._furniData)
         {
@@ -1267,6 +1272,7 @@ export class FurniModel implements IFurniModel
             if(!hasUnseen || (groupItem.hasUnseenItems && !needsMove)) continue;
 
             groupItem.hasUnseenItems = true;
+            changedGroups.push(groupItem);
 
             if(needsMove)
             {
@@ -1274,6 +1280,12 @@ export class FurniModel implements IFurniModel
                 tracker.setUnseenItemMovedToTop(UnseenItemCategory.OWNED_FURNI, movedOwned);
                 tracker.setUnseenItemMovedToTop(UnseenItemCategory.RENTED_FURNI, movedRented);
             }
+        }
+
+        // AS3: `if(_loc11_.length > 0 && param2) _SafeStr_4550.grid.itemsWereUpdated(_loc11_)`.
+        if(changedGroups.length > 0 && refresh)
+        {
+            this._view.grid?.itemsWereUpdated(changedGroups);
         }
     }
 

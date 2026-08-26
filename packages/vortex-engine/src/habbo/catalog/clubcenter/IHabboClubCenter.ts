@@ -45,4 +45,10 @@ export interface IHabboClubCenter
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::isKickbackEnabled()
     isKickbackEnabled(): boolean;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::processHotelLink()
+    processHotelLink(link: string): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::indicateRewards()
+    indicateRewards(): void;
 }

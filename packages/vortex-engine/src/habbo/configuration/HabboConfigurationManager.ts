@@ -21,7 +21,12 @@ const log = Logger.getLogger('habbo.configuration.HabboConfigurationManager');
  * - External variables download
  * - Gamedata hashes loading
  */
-export class HabboConfigurationManager extends Component implements IHabboConfigurationManager 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::dispose()
+// AS3's override is `override public function dispose() : void { super.dispose(); }` - a pure
+// pass-through with no added cleanup, so it is intentionally not re-declared here: TS/JS already
+// runs the inherited Component.dispose() when nothing overrides it, which is the same behaviour
+// without the boilerplate override.
+export class HabboConfigurationManager extends Component implements IHabboConfigurationManager
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/HabboConfigurationManager.as::INTERPOLATION_DEPTH_LIMIT
     private static readonly INTERPOLATION_DEPTH_LIMIT: number = 3;

@@ -60,6 +60,7 @@ import {VideoOfferExtension} from './extensions/VideoOfferExtension';
 import {OfferExtension} from './offers/OfferExtension';
 import {EventLogMessageComposer} from '../communication/messages/outgoing/tracking/EventLogMessageComposer';
 import {PurseEvent} from '../catalog/purse/PurseEvent';
+import {CatalogEvent} from '../catalog/event/CatalogEvent';
 import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import type {Motion} from '@core/window/motion/Motion';
 import {Logger} from '@core/utils/Logger';
@@ -457,7 +458,13 @@ export class HabboToolbar extends Component implements IHabboToolbar
                 {
                     this._catalog = manager;
                 },
-                true
+                true,
+                [
+                    {type: CatalogEvent.CATALOG_INITIALIZED, callback: this.onCatalogEvent.bind(this)},
+                    {type: CatalogEvent.CATALOG_NOT_READY, callback: this.onCatalogEvent.bind(this)},
+                    {type: CatalogEvent.CATALOG_NEW_ITEMS_SHOW, callback: this.onCatalogEvent.bind(this)},
+                    {type: CatalogEvent.CATALOG_NEW_ITEMS_HIDE, callback: this.onCatalogEvent.bind(this)}
+                ]
             ),
             new ComponentDependency(
                 IID_HabboNavigator,
@@ -1046,6 +1053,19 @@ export class HabboToolbar extends Component implements IHabboToolbar
     private onWiredMenuEvent(..._args: unknown[]): void
     {
         this._bottomBarLeft?.onWiredMenuEvent('WIRED_MENU_BUTTON_PREFERENCE_CHANGED');
+    }
+
+    /**
+	 * Forward a catalog state-change to BottomBarLeft (icon enable/disable and the
+	 * "new items" badge). Unlike onWiredMenuEvent()'s literal-type forward, HabboCatalog's
+	 * emit() passes the CatalogEvent instance itself, so it is forwarded as-is.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/HabboToolbar.as::onCatalogEvent()
+    private onCatalogEvent(...args: unknown[]): void
+    {
+        const event = (args[0] ?? null) as CatalogEvent | null;
+
+        if(event) this._bottomBarLeft?.onCatalogEvent(event);
     }
 
     /**

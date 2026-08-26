@@ -135,4 +135,13 @@ export class Matrix4x4
             this._data[2], this._data[5], this._data[8]
         );
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/Matrix4x4.as::skew()
+    // Empty body in AS3 itself (no parameters, no statements) and no call site anywhere in the
+    // primary tree - dead code left behind, not a feature to port.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/Matrix4x4.as::equals()
+    // Unconditionally `return false` in AS3 regardless of the argument - dead code with a body
+    // that would be wrong to port faithfully (an equality check that never equals) and no call
+    // site anywhere in the primary tree to confirm intended behaviour either way.
 }

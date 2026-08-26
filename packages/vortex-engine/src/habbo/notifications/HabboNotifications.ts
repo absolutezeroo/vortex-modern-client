@@ -33,6 +33,8 @@ import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {GetMOTDMessageComposer} from "@habbo/communication";
 import type {IHabboLocalizationManager} from "@habbo/localization";
 import {IID_HabboLocalizationManager} from "@iid";
+import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
+import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
 
 const log = Logger.getLogger('habbo.notifications.HabboNotifications');
 
@@ -196,6 +198,15 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return this._freeFlowChat;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::_avatarRenderManager
+    private _avatarRenderManager: IAvatarRenderManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get avatarRenderManager()
+    get avatarRenderManager(): IAvatarRenderManager | null
+    {
+        return this._avatarRenderManager;
+    }
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_petImageUtility
     // (obfuscated `_SafeStr_6444`; named from the getter that builds it)
     private _petImageUtility: PetImageUtility | null = null;
@@ -210,6 +221,18 @@ export class HabboNotifications extends Component implements IHabboNotifications
 
         return this._petImageUtility;
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get feedController()
+    // Dead in AS3 itself: the backing field (_SafeStr_6523) is declared and read only by this
+    // getter, and never assigned anywhere in either tree — `notification.feed.enabled`'s
+    // addFeedItem() branch would null-reference the moment it fired. See
+    // NotificationMessageHandler.onModMessageEvent()/onModCautionEvent() for the call sites this
+    // blocks, both faithfully ported minus that dead branch.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get productImageUtility()
+    // No ProductImageUtility port exists (nothing in this port references one) — the one caller,
+    // _SafeCls_1951.as::onClubGiftSelected(), ships without its product icon; see
+    // NotificationMessageHandler.onClubGiftSelected() for the documented gap.
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_disabled
     private _disabled: boolean = false;
@@ -334,6 +357,16 @@ export class HabboNotifications extends Component implements IHabboNotifications
                 (freeFlowChat: IHabboFreeFlowChat | null) =>
                 {
                     this._freeFlowChat = freeFlowChat;
+                },
+                false
+            ),
+            // Exposed via avatarRenderManager for callers building preview avatar images
+            // (e.g. purchase-confirmation "r" offers) alongside a notification.
+            new ComponentDependency(
+                IID_AvatarRenderManager,
+                (manager: IAvatarRenderManager | null) =>
+                {
+                    this._avatarRenderManager = manager;
                 },
                 false
             ),

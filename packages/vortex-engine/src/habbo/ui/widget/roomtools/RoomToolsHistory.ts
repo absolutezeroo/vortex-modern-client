@@ -11,9 +11,9 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {GuestRoomData} from '@habbo/communication/messages/incoming/navigator/GuestRoomData';
 import type {RoomToolsWidgetHandler} from '@habbo/ui/handler/RoomToolsWidgetHandler';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import type {RoomVisitHistoryEntry} from './RoomVisitHistoryEntry';
 
 export class RoomToolsHistory
 {
@@ -43,7 +43,7 @@ export class RoomToolsHistory
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsHistory.as::populate()
-    public populate(rooms: GuestRoomData[]): void
+    public populate(rooms: RoomVisitHistoryEntry[]): void
     {
         if(!this._window || !this._windowManager) return;
 

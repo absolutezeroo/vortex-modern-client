@@ -15,6 +15,10 @@ import type {IGraphicAssetCollection} from './object/visualization/utils/IGraphi
 
 export type RoomContentData = Record<string, unknown>;
 
+// AS3's IRoomContentLoader declares its own `dispose()` directly (AS3 interfaces do not share a
+// common IDisposable base the way this port's do); `extends IDisposable` below is where that
+// member lands here.
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::dispose()
 export interface IRoomContentLoader extends IDisposable
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/IRoomContentLoader.as::getPlaceHolderType()

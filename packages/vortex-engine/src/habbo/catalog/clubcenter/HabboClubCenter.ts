@@ -310,6 +310,12 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         this.context.createLinkEvent('habbopages/habboclub');
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::processHotelLink()
+    processHotelLink(link: string): void
+    {
+        this.context.createLinkEvent(link);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::getOffers()
     getOffers(): void
     {
@@ -324,6 +330,15 @@ export class HabboClubCenter extends Component implements IHabboClubCenter, ILin
         if(!value) return true;
 
         return value === '1' || value === 'true';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::indicateRewards()
+    // Empty in AS3 too — HabboClubCenter's IOfferExtension conformance (OfferCenter.as::203 calls
+    // it on whichever extension is active) requires the member, but only the toolbar's
+    // OfferExtension actually reacts to it. Neither IOfferExtension nor OfferCenter is ported, so
+    // nothing calls this yet; kept as a faithful no-op for when they are.
+    indicateRewards(): void
+    {
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/clubcenter/HabboClubCenter.as::indicateVideoAvailable()

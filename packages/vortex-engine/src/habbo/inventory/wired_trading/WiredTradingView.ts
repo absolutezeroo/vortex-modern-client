@@ -610,6 +610,10 @@ export class WiredTradingView implements IWiredTradingView, IInventoryView
         return (this._window?.findChildByName('item_grid_0') as unknown as IItemGridWindow | null) ?? null;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/WiredTradingView.as::yourItemGridBorder()
+    // `yourItemGrid.getChildByID(id) as _SafeCls_2254` (a grid-item border widget lookup) - dead
+    // code in AS3 itself, no call site anywhere in the primary tree or win63_version.
+
     // AS3: WiredTradingView.as::get yourItemCountText()
     private get yourItemCountText(): ITextWindow | null
     {
@@ -645,6 +649,10 @@ export class WiredTradingView implements IWiredTradingView, IInventoryView
     {
         return (this._window?.findChildByName('item_grid_1') as unknown as IItemGridWindow | null) ?? null;
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/WiredTradingView.as::wiredItemGridBorder()
+    // `wiredItemGrid.getChildByID(id) as _SafeCls_2254` - dead code in AS3 itself, same as
+    // yourItemGridBorder() above: no call site anywhere in the primary tree or win63_version.
 
     // AS3: WiredTradingView.as::get wiredItemCountText()
     private get wiredItemCountText(): ITextWindow | null

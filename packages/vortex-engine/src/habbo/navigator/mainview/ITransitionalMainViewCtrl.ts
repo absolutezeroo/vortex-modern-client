@@ -9,6 +9,9 @@ import type {TextSearchInputs} from '../TextSearchInputs';
  *
  * @see sources/win63_version/habbo/navigator/mainview/ITransitionalMainViewCtrl.as
  */
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get disposed()
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::dispose()
+// Both satisfied by `extends IDisposable` rather than redeclared here.
 export interface ITransitionalMainViewCtrl extends IDisposable
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/ITransitionalMainViewCtrl.as::get mainWindow()

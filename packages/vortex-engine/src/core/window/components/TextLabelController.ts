@@ -592,6 +592,11 @@ export class TextLabelController extends WindowController implements ILabelWindo
 	 * why both `set properties` and `set textStyle` have to come through this.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyle()
+    // Also covers TextFieldCache.as::getTextFieldByStyleName() - AS3 splits name resolution
+    // (getTextFieldByStyleName: look up the style object by name, called from
+    // TextLabelController.as::get textField()) from field configuration (getTextFieldByStyle);
+    // this port folds both into one call since there is no pooled TextField to look up by name.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/TextFieldCache.as::getTextFieldByStyleName()
     private applyTextStyle(name: string): void
     {
         this._textStyleName = name;

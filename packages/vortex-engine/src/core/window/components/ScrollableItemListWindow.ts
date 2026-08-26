@@ -249,7 +249,8 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Gets the internal item list child.
      */
-    protected get itemList(): IItemListWindow | null 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::get _itemList()
+    protected get itemList(): IItemListWindow | null
     {
         if(!this._itemListRef) 
         {
@@ -262,7 +263,8 @@ export class ScrollableItemListWindow extends ContainerController implements ISc
     /**
      * Gets the internal scrollbar child.
      */
-    protected get scrollBar(): IScrollbarWindow | null 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemListWindow.as::get _scrollBar()
+    protected get scrollBar(): IScrollbarWindow | null
     {
         if(!this._scrollBarRef) 
         {

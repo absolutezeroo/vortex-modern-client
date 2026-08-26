@@ -66,6 +66,7 @@ export class WindowContext implements IWindowContext
     public inputEventTrackers: IInputEventTracker[] = [];
     // AS3: .../src/com/sulake/core/window/WindowContext.as::_localization
     protected _localization: ICoreLocalizationManager | null = null;
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_windowServices
     protected _services: IInternalWindowServices | null = null;
     protected _parser: IWindowParser | null = null;
     protected _factory: IWindowFactory;
@@ -82,6 +83,11 @@ export class WindowContext implements IWindowContext
     protected _updating: boolean = false;
     // AS3: .../src/com/sulake/core/window/WindowContext.as::_rendering
     protected _rendering: boolean = false;
+    // Narrowed to the width/height + resize-listener surface AS3 actually reads off
+    // DisplayObjectContainer here; addChild(desktop)/doubleClickEnabled have no
+    // equivalent because this port's desktop attaches to the PixiJS tree elsewhere
+    // (HabboWindowManager), not through WindowContext itself.
+    // AS3: .../src/com/sulake/core/window/WindowContext.as::_rootDisplayObject
     private _resizeHost: WindowContextResizeHost | null = null;
     private _resizeListener: ((event?: Event) => void) | null = null;
     private _isListeningToResizeHost: boolean = false;

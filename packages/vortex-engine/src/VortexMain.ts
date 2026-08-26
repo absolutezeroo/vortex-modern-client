@@ -889,9 +889,14 @@ export class VortexMain implements IVortexMain
         // disposal), duplicating the avatar and every other room object on rejoin.
         if(this._roomSessionManager) 
         {
-            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_STARTED, (event: RoomSessionEvent) => 
+            this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_STARTED, (event: RoomSessionEvent) =>
             {
                 this._roomMessageHandler?.setCurrentRoom(event.session.roomId);
+                // AS3: _SafeCls_90.as::onRoomSessionEvent() RSE_STARTED also calls
+                // `_SafeStr_4619.enterNewRoom()` on its object-handler field — clears the previous
+                // room's selected avatar/object and any in-progress move/place before the new room
+                // is entered.
+                this._roomEngine?.enterNewRoom();
             });
 
             this._roomSessionManager.sessionEvents.on(RoomSessionEvent.RSE_ENDED, (event: RoomSessionEvent) => 

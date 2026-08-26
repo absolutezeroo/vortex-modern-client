@@ -96,6 +96,7 @@ export class AnimationLayerData implements IAnimationLayerData
 
     private _dd: number;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/AnimationLayerData.as::get directionOffset()
     public get dd(): number
     {
         return this._dd;

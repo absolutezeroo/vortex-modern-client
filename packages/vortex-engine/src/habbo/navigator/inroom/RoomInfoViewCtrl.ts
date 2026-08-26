@@ -549,6 +549,7 @@ export class RoomInfoViewCtrl
         return this._navigator.getText('navigator.embed.src');
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::onAddFavouriteClick()
     private _onAddFavouriteClick = (_event: WindowEvent): void =>
     {
         if(!this._navigator) return;
@@ -573,6 +574,7 @@ export class RoomInfoViewCtrl
         }
     };
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/inroom/RoomInfoViewCtrl.as::onRemoveFavouriteClick()
     private _onRemoveFavouriteClick = (_event: WindowEvent): void =>
     {
         if(!this._navigator) return;

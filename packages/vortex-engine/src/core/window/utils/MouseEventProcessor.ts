@@ -23,9 +23,12 @@ import type {MouseEventQueue} from './MouseEventQueue';
  */
 export class MouseEventProcessor
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventProcessor.as::_mouseCursorTypes
     private static _cursorByState: number[] = [2, 0, 2, 2, 2, 0, 2];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventProcessor.as::_mouseCursorStates
     private static _stateFlags: number[] = [1, 2, 4, 64, 8, 16, 32];
     private static _mousePoint: { x: number; y: number } = {x: 0, y: 0};
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventProcessor.as::GLOBAL_POINT
     private static _globalPoint: { x: number; y: number } = {x: 0, y: 0};
 
     private _focused: WindowController | null = null;

@@ -47,6 +47,15 @@ export class BadgesMessageParser implements IMessageParser
         return this._fragmentNo;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3206/_SafeCls_3564.as::get currentFragment()
+    // AS3's parse() only reads the raw per-fragment bytes here (a generic buffer, `_SafeCls_481`);
+    // the actual per-badge field parsing happens later, in BadgesModel.initBadges(), after
+    // HabboInventory's message handler (unknowns/_SafeCls_1951.as::onBadges()) has concatenated
+    // every fragment's currentFragment together via addMessageFragment(). This port instead parses
+    // each badge's fields directly inside parse() into `_badges` below, one call per fragment, with
+    // no cross-fragment reassembly - safe against this project's own emulator, which always sends
+    // totalFragments=1 for badges (BadgesEventMessageComposerSerializer.cs hardcodes it), but not a
+    // faithful port of the reassembly AS3 does for a server that actually fragments this list.
     private _badges: IBadgeData[] = [];
 
     get badges(): IBadgeData[]

@@ -1308,6 +1308,12 @@ export class TextController extends WindowController implements ITextWindow
         return props;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::parseVariableSet() —
+    // not ported. It parses an XML <var> node through the same _propertySetters-style lookup
+    // this set properties() below uses for the array form, but it is dead in AS3 itself: it is
+    // `protected`, never called from TextController, never overridden or called by any
+    // subclass, and grepping `parseVariableSet` across WIN63, win63_version and PRODUCTION
+    // finds only this one declaration in each tree, no caller.
     public override set properties(value: unknown[])
     {
         this._drawing = true;

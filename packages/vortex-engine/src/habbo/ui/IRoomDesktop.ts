@@ -57,6 +57,24 @@ export interface IRoomDesktop
     getWidget(type: string): unknown | null;
 
     /**
+	 * Creates a widget by type code (builds the handler, hands it to RoomWidgetFactory).
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomDesktop.as::createWidget()
+    createWidget(type: string): void;
+
+    /**
+	 * Disposes a widget by type code.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomDesktop.as::disposeWidget()
+    disposeWidget(type: string): void;
+
+    /**
+	 * Drops the spectator overlay once the player joins the room for real.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomDesktop.as::enterAfterSpectate()
+    enterAfterSpectate(): void;
+
+    /**
 	 * The room canvas's zoom scale, snapped to the nearest whole step.
 	 */
     // AS3: .../src/com/sulake/habbo/ui/IRoomDesktop.as::getCurrentRoomCanvasZoomScale()

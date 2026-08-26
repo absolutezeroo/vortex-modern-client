@@ -53,6 +53,7 @@ export class Badge
     // AS3: .../src/com/sulake/habbo/inventory/badges/Badge.as::_name
     private _name: string;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::get badgeName()
     get name(): string
     {
         return this._name;
@@ -60,6 +61,7 @@ export class Badge
 
     private _description: string;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/badges/Badge.as::get badgeDescription()
     get description(): string
     {
         return this._description;

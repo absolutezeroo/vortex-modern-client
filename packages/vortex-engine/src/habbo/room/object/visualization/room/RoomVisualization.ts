@@ -141,6 +141,15 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         return RoomVisualization.ROOM_DEPTH_OFFSET + 0.5;
     }
 
+    // Sits between floorRelativeDepth (+0.1) and wallRelativeDepth (+0.5) for a wall-ad plane.
+    // Dead in AS3 itself too - declared, never read anywhere in the primary tree - kept for
+    // parity with its two siblings above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::get wallAdRelativeDepth()
+    get wallAdRelativeDepth(): number
+    {
+        return RoomVisualization.ROOM_DEPTH_OFFSET + 0.49;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::get planeCount()
     get planeCount(): number
     {

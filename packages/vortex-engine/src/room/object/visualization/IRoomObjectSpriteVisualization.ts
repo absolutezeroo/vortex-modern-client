@@ -17,6 +17,12 @@ export interface IRoomObjectSpriteVisualization extends IRoomObjectVisualization
     spriteCount: number;
     assetCollection: IGraphicAssetCollection | null;
 
+    // AS3 declares this on the parent IRoomObjectGraphicVisualization, which this port did not
+    // add as a separate interface (RoomManager sets it on every visualization it creates, right
+    // after assetCollection, regardless of subtype).
+    // AS3: .../src/com/sulake/room/object/visualization/IRoomObjectGraphicVisualization.as::setExternalBaseUrls()
+    setExternalBaseUrls(baseUrl: string, secureBaseUrl: string, batchesEnabled: boolean): void;
+
     // AS3: .../src/com/sulake/room/object/visualization/IRoomObjectSpriteVisualization.as::getSprite()
     getSprite(index: number): IRoomObjectSprite | null;
 

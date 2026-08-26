@@ -21,14 +21,12 @@ import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import {WiredAchievementsUpdatedEvent} from '@habbo/roomevents/events/WiredAchievementsUpdatedEvent';
 import {RoomToolsInfoCtrl} from './RoomToolsInfoCtrl';
 import {RoomToolsToolbarCtrl} from './RoomToolsToolbarCtrl';
+import {RoomVisitHistory} from './RoomVisitHistory';
 
 export class RoomToolsWidget extends RoomWidgetBase
 {
-    private static readonly ROOM_HISTORY_MAX_LENGTH = 10;
-
-    private static _currentRoomIndex: number = 0;
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::_visitedRooms
-    private static _visitedRooms: GuestRoomData[] = [];
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::ROOM_VISIT_HISTORY
+    private static readonly ROOM_VISIT_HISTORY: RoomVisitHistory = RoomVisitHistory.shared;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::_currentRoomName
     private _currentRoomName: string = '';
@@ -115,31 +113,14 @@ export class RoomToolsWidget extends RoomWidgetBase
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::updateRoomData()
     public updateRoomData(data: GuestRoomData): void
     {
-        for(const room of RoomToolsWidget._visitedRooms)
-        {
-            if(room.flatId === data.flatId)
-            {
-                room.roomName = data.roomName;
-            }
-        }
+        RoomToolsWidget.ROOM_VISIT_HISTORY.updateRoomName(data.flatId, data.roomName);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::storeRoomData()
     public storeRoomData(data: GuestRoomData): void
     {
-        for(const room of RoomToolsWidget._visitedRooms)
-        {
-            if(room.flatId === data.flatId) return;
-        }
+        RoomToolsWidget.ROOM_VISIT_HISTORY.onRoomEntered(data.flatId, data.roomName);
 
-        RoomToolsWidget._visitedRooms.push(data);
-
-        if(RoomToolsWidget._visitedRooms.length > RoomToolsWidget.ROOM_HISTORY_MAX_LENGTH)
-        {
-            RoomToolsWidget._visitedRooms.shift();
-        }
-
-        RoomToolsWidget._currentRoomIndex = RoomToolsWidget._visitedRooms.length - 1;
         this._toolbarCtrl?.setLikeButton(this.handler.canRate);
     }
 
@@ -153,17 +134,11 @@ export class RoomToolsWidget extends RoomWidgetBase
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::enterNewRoom()
-    public enterNewRoom(flatId: number): void
+    // AS3's own parameter (`param1:int`, the entered room's flat id) is unused in its body too —
+    // kept in the signature to match the caller's call shape.
+    public enterNewRoom(_flatId: number): void
     {
         if(!this._toolbarCtrl || !this._infoCtrl) return;
-
-        RoomToolsWidget._visitedRooms.forEach((room, index) =>
-        {
-            if(room.flatId === flatId)
-            {
-                RoomToolsWidget._currentRoomIndex = index;
-            }
-        });
 
         this._toolbarCtrl.disableRoomHistoryButtons();
 
@@ -263,35 +238,29 @@ export class RoomToolsWidget extends RoomWidgetBase
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::goToNextRoom()
     public goToNextRoom(): void
     {
-        const nextIndex = Math.min(RoomToolsWidget._currentRoomIndex + 1, RoomToolsWidget._visitedRooms.length);
-        const room = RoomToolsWidget._visitedRooms[nextIndex];
+        const entry = RoomToolsWidget.ROOM_VISIT_HISTORY.goForward();
 
-        if(room) this.handler.goToPrivateRoom(room.flatId);
+        if(entry === null) return;
 
+        this.handler.goToPrivateRoom(entry.flatId);
         this._toolbarCtrl?.disableRoomHistoryButtons();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::goToPreviousRoom()
     public goToPreviousRoom(): void
     {
-        const prevIndex = Math.max(RoomToolsWidget._currentRoomIndex - 1, 0);
-        const room = RoomToolsWidget._visitedRooms[prevIndex];
+        const entry = RoomToolsWidget.ROOM_VISIT_HISTORY.goBack();
 
-        if(room) this.handler.goToPrivateRoom(room.flatId);
+        if(entry === null) return;
 
+        this.handler.goToPrivateRoom(entry.flatId);
         this._toolbarCtrl?.disableRoomHistoryButtons();
     }
 
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::get visitedRooms()
-    public get visitedRooms(): GuestRoomData[]
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::get roomHistory()
+    public get roomHistory(): RoomVisitHistory
     {
-        return RoomToolsWidget._visitedRooms;
-    }
-
-    // AS3: sources/win63_version/habbo/ui/widget/roomtools/RoomToolsWidget.as::get currentRoomIndex()
-    public get currentRoomIndex(): number
-    {
-        return RoomToolsWidget._currentRoomIndex;
+        return RoomToolsWidget.ROOM_VISIT_HISTORY;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsWidget.as::get freeFlowChat()

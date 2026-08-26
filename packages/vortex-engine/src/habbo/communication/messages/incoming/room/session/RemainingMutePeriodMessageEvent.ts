@@ -12,6 +12,12 @@ import {RemainingMutePeriodMessageParser} from '../../../parser/room/session/Rem
  */
 export class RemainingMutePeriodMessageEvent extends MessageEvent implements IMessageEvent
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2213/_SafeCls_3585.as::get secondsRemaining()
+    // AS3 re-exposes the parser's field on the event itself; this port's MessageEvent subclasses
+    // never do that (callers read `event.parser.secondsRemaining` instead - see
+    // RoomChatHandler.ts::onRemainingMutePeriod()), so there is no forwarding getter to declare
+    // here.
+
     // AS3: _SafeCls_3585.as::_SafeCls_3585()
     constructor(callback: MessageEventCallback)
     {

@@ -798,9 +798,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
     }
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get gameManager(),
-    // set gameManager(), set adManager(), requestInterstitial() and showGamePlayerName() all reach
-    // a game or ad manager. `habbo/game` is 0/63 here and there is no ad manager at all — see
-    // RoomEngine's handleObjectRoomAdEvent() for the other half of the same gap.
+    // set gameManager(), set adManager() and requestInterstitial() all reach a game or ad manager.
+    // `habbo/game` is 0/63 here and there is no ad manager at all — see RoomEngine's
+    // handleObjectRoomAdEvent() for the other half of the same gap.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::showGamePlayerName()
+    // Correction: this member does NOT reach the game/ad manager — its AS3 body only looks up the
+    // RWE_AVATAR_INFO widget and forwards to AvatarInfoWidget.showGamePlayerName(), which is the
+    // real blocker: it needs `UserNameView` (the avatar name bubble), documented as unported in
+    // AvatarInfoWidget.ts's own header. Filed here (previously lumped in with the game-manager
+    // group above, which was a misdiagnosis) and at IRoomUI.ts::showGamePlayerName().
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::initCameraLocation()
     // reads camera_init_x/y/z off the room and hands them to RoomEngine.updateRoomCamera(), which

@@ -193,6 +193,15 @@ export class MeMenuController
         }
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::getUnseenItemCounter()
+    // Builds/caches an unseen-count badge widget under a named toolbar icon. This class is dead
+    // per the class doc above (ToolbarView, its only owner, is never constructed in either tree),
+    // so there is no live window here to attach a badge to. The live equivalent - same lookup,
+    // same lazy-create-and-cache logic - is AbstractSubMenuController.ts's getUnseenItemCounter(),
+    // ported from the separate sources/WIN63-202607011411-782849652/.../abstractsubmenu/
+    // AbstractSubMenuController.as, which MeMenuNewController (BottomBarLeft's live me-menu)
+    // extends and actually uses.
+
     /**
 	 * Set unseen item count for a category
 	 *

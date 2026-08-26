@@ -9,6 +9,10 @@ import type {Texture} from 'pixi.js';
 
 export interface IRoomObjectSprite
 {
+    // AS3's `asset` is a Flash BitmapData; this port renders via PixiJS, so the sprite holds a
+    // Texture instead — same role (the pixel data actually drawn), different graphics API.
+    // AS3: .../src/com/sulake/room/object/visualization/IRoomObjectSprite.as::get asset()
+    // AS3: .../src/com/sulake/room/object/visualization/IRoomObjectSprite.as::set asset()
     texture: Texture | null;
     // AS3: .../src/com/sulake/room/object/visualization/IRoomObjectSprite.as::get assetName()
     assetName: string;

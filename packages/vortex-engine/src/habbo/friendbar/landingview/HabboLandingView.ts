@@ -216,6 +216,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
     /**
 	 * The localization manager
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get localizationManager()
     get localization(): IHabboLocalizationManager | null
     {
         return this._localizationManager;
@@ -224,6 +225,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
     /**
 	 * The session data manager
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::get sessionDataManager()
     get sessionData(): ISessionDataManager | null
     {
         return this._sessionDataManager;

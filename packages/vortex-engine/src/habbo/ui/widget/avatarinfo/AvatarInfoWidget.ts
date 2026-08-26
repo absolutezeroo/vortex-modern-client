@@ -217,6 +217,24 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         return this.widgetHandler as AvatarInfoWidgetHandler;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::get component()
+    // AS3 returns the raw `Component`/IContext the widget was constructed with, used internally
+    // for registerUpdateReceiver()/removeUpdateReceiver() and externally (RentableBotMenuView.as)
+    // as `widget.component.context.createLinkEvent(...)`. This port's RoomWidgetBase carries no
+    // such reference: register/removeUpdateReceiver already go through `windowManager` (see
+    // this.windowManager.registerUpdateReceiver() below), and the one external caller reaches the
+    // link bus through the room engine's context instead — see RentableBotMenuView.ts's
+    // createLinkEvent() header note. No standalone `component` accessor is added: it would return
+    // an object no code here actually models.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::showUserName()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::showGamePlayerName()
+    // Both build a `UserNameView` (the avatar name bubble shown over a friend or a game NPC), which
+    // this file's own header already documents as unported. showUserName() is called from
+    // onRoomObjectAdded() when the newly-added avatar is on the friend list; showGamePlayerName()
+    // is RoomDesktop's forwarding target for RoomUI.showGamePlayerName() — see that member's own
+    // TODO(AS3) in RoomDesktop.ts and IRoomUI.ts.
+
     private get container(): IRoomWidgetHandlerContainer | null
     {
         return this.handler?.container ?? null;

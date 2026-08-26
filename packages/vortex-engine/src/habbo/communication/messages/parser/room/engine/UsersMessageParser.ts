@@ -14,10 +14,15 @@ export class UsersMessageParser implements IMessageParser
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::_users
     private _users: RoomUserData[] = [];
 
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::getUserCount()
     get userCount(): number
     {
         return this._users.length;
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::convertOldPetFigure()
+    // Static legacy-figure-string converter with zero call sites anywhere in the primary tree
+    // (nor in win63_version) - dead code left over from an old pet figure format migration.
 
     getUser(index: number): RoomUserData | null
     {

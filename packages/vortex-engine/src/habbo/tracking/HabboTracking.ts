@@ -43,6 +43,14 @@ const log = Logger.getLogger('habbo.tracking.HabboTracking');
  */
 export class HabboTracking extends Component implements IHabboTracking, IUpdateReceiver
 {
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/HabboTracking.as::getInstance()
+    // AS3 reaches tracking through a global singleton (`_SafeStr_4847`, set to `this` in the
+    // constructor and cleared in dispose()) that dozens of unrelated classes call directly. This
+    // port replaced every one of those call sites with the standard DI ComponentDependency
+    // pattern instead (`IID_HabboTracking`) - see HabboCatalog.ts's `get tracking()` for the
+    // documented precedent. A static getInstance() here would be a second, competing way to reach
+    // the same instance and invites the DI lifecycle being bypassed.
+
     // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::ERROR_DATA_FLAG_COUNT
     private static readonly ERROR_DATA_FLAG_COUNT: number = 11;
 

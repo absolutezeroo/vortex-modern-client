@@ -165,6 +165,25 @@ export class RoomPlane
         this._rasterizer = value;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::set maskManager
+    // AS3's PlaneMaskManager resolves door/window cutouts to real bitmap assets (via
+    // resolveMasks()/updateMask(), keyed by the mask's `type` string) and RoomPlane composites
+    // them onto the rendered texture. This port's PlaneMaskManager exists
+    // (habbo/room/object/visualization/room/mask/PlaneMaskManager.ts) but is not wired to any
+    // RoomPlane — this class instead computes door/window holes geometrically
+    // (getRectMaskScreenPoints()/getMaskHolePoints() below), approximating shapes AS3 draws
+    // from real assets. Wiring the real asset-driven pipeline in is a larger visual-fidelity
+    // change, not a mechanical port of this one setter.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::getDrawingDatas()
+    // AS3 walks the rasterizer's layers/material-cell-matrix here and returns PlaneDrawingData
+    // (asset-name columns) for an external renderer to composite. This port instead lets the
+    // rasterizer paint straight to a canvas: FloorRasterizer/WallRasterizer's render() delegates
+    // to FloorPlane/WallPlane.render(), which resolves the same layer/material/column data
+    // internally and returns a finished bitmap — the equivalent of getDrawingDatas() is folded
+    // into that render() the same way _SafeCls_1821 is folded into RoomEngine. No separate
+    // drawing-data step exists to port.
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_disposed
     private _disposed: boolean = false;
 
@@ -348,16 +367,15 @@ export class RoomPlane
         return this._height;
     }
 
-    /**
-	 * Copy the rendered plane bitmap data into a reusable target.
-	 * AS3: copyBitmapData(target) — copies pixels if dimensions match.
-	 *
-	 * In PixiJS, we return the internal texture directly (the canvas is reused
-	 * and the texture source is updated in place).
-	 *
-	 * @see sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as
-	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::copyBitmapData()
+    // This is AS3's `cloneBitmapData()`, not `copyBitmapData(target)`: the only caller
+    // (RoomVisualization.updateSprite()) matches AS3's getPlaneBitmap(), which calls
+    // `plane.cloneBitmapData()`. A PixiJS Texture is immutable per source swap (render()
+    // replaces `_bitmapDataTexture` wholesale rather than mutating it in place), so handing
+    // out the texture itself is already safe and no clone is needed. AS3's other overload,
+    // one-argument `copyBitmapData(target)` that copies pixels into a caller-supplied
+    // BitmapData, has no callers anywhere in the primary tree (dead code in AS3 itself) and
+    // was not ported.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::cloneBitmapData()
     copyBitmapData(): Texture | null
     {
         if(!this.visible)

@@ -16,6 +16,7 @@ import type {FrontPageItem} from '@habbo/communication/messages/incoming/catalog
 import type {IMarketPlace} from './marketplace/IMarketPlace';
 import type {IRecycler} from './recycler/IRecycler';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
+import type {IHabboNavigator} from '@habbo/navigator/IHabboNavigator';
 
 /**
  * Interface for the Habbo catalog.
@@ -28,6 +29,8 @@ export interface IHabboCatalog
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get assets()
     readonly assets: IAssetLibrary | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get navigator()
+    readonly navigator: IHabboNavigator | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get events()

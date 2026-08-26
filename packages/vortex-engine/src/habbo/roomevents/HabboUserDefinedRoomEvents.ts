@@ -355,6 +355,18 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         return this._transactionDetails;
     }
 
+    // AS3: HabboUserDefinedRoomEvents.as::get rewardNotificationController()
+    get rewardNotificationController(): RewardNotificationController
+    {
+        return this._rewardNotificationController;
+    }
+
+    // AS3: HabboUserDefinedRoomEvents.as::get selfDonationTool()
+    get selfDonationTool(): SelfDonationTool
+    {
+        return this._selfDonationTool;
+    }
+
     // AS3: HabboUserDefinedRoomEvents.as::get variablePickerHelper()
     get variablePickerHelper(): NewVariablePickerHelper
     {

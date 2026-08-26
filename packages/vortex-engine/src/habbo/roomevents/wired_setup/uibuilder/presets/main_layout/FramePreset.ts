@@ -5,6 +5,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 import {WiredDebugCommandMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredDebugCommandMessageComposer';
+import {UserDefinedRoomEventsCtrl} from '../../../UserDefinedRoomEventsCtrl';
 
 import {ActionTypeCodes} from '../../../actiontypes/ActionTypeCodes';
 import type {PresetManager} from '../../PresetManager';
@@ -426,7 +427,7 @@ export class FramePreset extends WiredUIPreset
     // AS3: FramePreset.as::onSaveMenuClick()
     public onSaveMenuClick = (): void =>
     {
-        this._roomEvents.wiredCtrl.update(1);
+        this._roomEvents.wiredCtrl.update(UserDefinedRoomEventsCtrl.UPDATE_MODE_KEEP_OPEN);
     };
 
     // AS3: FramePreset.as::onCloseMenuClick()

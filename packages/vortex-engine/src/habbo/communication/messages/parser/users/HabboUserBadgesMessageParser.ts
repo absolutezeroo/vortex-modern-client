@@ -6,9 +6,18 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  *
  * AS3 builds a `_SafeCls_3300` from the same four fields — its `slotIndex` is this
  * interface's `slotId`, the name the rest of the port's badge code already uses.
+ * `slotIndex` is `badgeIndex - 1` (`_SafeCls_3300.as::get slotIndex()`/`get badgeIndex()`): the
+ * wire carries the 1-based slot number, and `slotIndex` converts it to the 0-based value
+ * `InfoStandUserView.updateBadges()` bounds-checks to [0,4] and indexes the 5 badge slots with -
+ * so `slotId` here must already be that converted, 0-based value; see parse() below.
  *
  * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1891/_SafeCls_2978.as
  */
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3300.as::get badgeIndex()
+// The raw 1-based wire value `slotIndex` (above) converts from. No AS3 caller anywhere in the
+// primary tree reads `badgeIndex` directly - only `slotIndex`'s own `- 1` computation touches it -
+// so there is nothing for a `badgeIndex` accessor here to serve; `parse()` below applies the same
+// `- 1` inline instead of exposing the pre-conversion value.
 export interface ISelectedBadge
 {
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3300.as::get slotIndex()
@@ -83,7 +92,14 @@ export class HabboUserBadgesMessageParser implements IMessageParser
 
         for(let i = 0; i < count; i++)
         {
-            const slotId = wrapper.readInt();
+            // AS3: `_SafeCls_3300`'s constructor stores the raw wire int as `badgeIndex`, and every
+            // consumer (InfoStandUserView.updateBadges()) reads `slotIndex` (`badgeIndex - 1`)
+            // instead - the wire's 1-based slot number, converted here to the 0-based index this
+            // port's `slotId` is used as everywhere else (see ISelectedBadge above). Reading the
+            // raw value straight through, as this used to, put every equipped badge one slot off
+            // and silently dropped whichever badge occupied wire slot 5 (5 > the [0,4] bounds
+            // check).
+            const slotId = wrapper.readInt() - 1;
             const badgeCode = wrapper.readString();
             const ownerCount = wrapper.readInt();
             const badgeRarityId = wrapper.readInt();

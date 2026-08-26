@@ -42,6 +42,12 @@ export class GraphicContext implements IGraphicContext
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::_rectangle
     private _rectangle: { x: number; y: number; width: number; height: number };
+    // AS3 lazily creates a Sprite the first child needs and removes it when the
+    // last child does. This port never adds child contexts to a real display
+    // list (see class doc comment), so the plain array below is present from
+    // construction and needs no lazy create/teardown step of its own.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::setupChildContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::removeChildContainer()
     private _children: IGraphicContext[] = [];
 
     // Derived name: AS3 calls this _SafeStr_6028 (_Str_7873 in the 2016 tree) and

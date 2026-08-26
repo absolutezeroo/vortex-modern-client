@@ -220,6 +220,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
         // No-op per AS3
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get _itemGrid()
     protected get itemGrid(): IItemGridWindow | null
     {
         if(!this._itemGridRef)
@@ -230,6 +231,7 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
         return this._itemGridRef;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollableItemGridWindow.as::get _scrollBar()
     protected get scrollBar(): IScrollbarWindow | null
     {
         if(!this._scrollBarRef)

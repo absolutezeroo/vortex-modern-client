@@ -12,7 +12,12 @@ import {Vector3d} from '@room/utils/Vector3d';
 
 export class LegacyWallGeometry
 {
+    // AS3's sibling constant (obfuscated as _SafeStr_11005 = "l") is never named DIRECTION_LEFT
+    // in any tree; every AS3 site — including this class's own methods — compares against the
+    // raw "l"/"r" literal instead of either constant, so this port's use of R below (unlike
+    // AS3, which never reads its own DIRECTION_RIGHT) is this port's own improvement, not a trace.
     private static readonly L = 'l';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1855.as::DIRECTION_RIGHT
     private static readonly R = 'r';
     private _heightMap: number[][] = [];
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_1855.as::_width

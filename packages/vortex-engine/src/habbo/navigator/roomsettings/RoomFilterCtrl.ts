@@ -227,6 +227,7 @@ export class RoomFilterCtrl implements IDisposable
         return entry;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomFilterCtrl.as::getBgColor()
     private _getBgColor(index: number, highlighted: boolean): number
     {
         if(index === this._selectedIndex) return 0xFF9988D9;

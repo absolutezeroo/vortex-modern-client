@@ -239,6 +239,10 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
         this._spriteZOffsets = [];
         this._spriteMouseCaptures = [];
         this._spriteInks = [];
+        // AS3 calls the protected clearSprites() here (dispose every sprite, then empty the
+        // array). createSprites(0) already does exactly that — it disposes down to the target
+        // count and this target is 0 — so no separate clearSprites() was ported.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::clearSprites()
         this.createSprites(0);
     }
 

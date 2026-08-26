@@ -128,39 +128,48 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/roomtools/RoomToolsToolbarCtrl.as::updateRoomHistoryButtons()
-    public updateRoomHistoryButtons(): void 
+    public updateRoomHistoryButtons(): void
     {
         if(!this._window || !this._widget) return;
 
         const forward = this._window.findChildByName('button_history_forward');
         const back = this._window.findChildByName('button_history_back');
         const historyBtn = this._window.findChildByName('button_history');
+        const roomHistory = this._widget.roomHistory;
 
-        if(this._widget.currentRoomIndex >= this._widget.visitedRooms.length - 1) 
-        {
-            forward?.disable();
-        }
-        else 
+        if(roomHistory.canGoForward())
         {
             forward?.enable();
         }
+        else
+        {
+            forward?.disable();
+        }
 
-        if(this._widget.currentRoomIndex === 0) 
+        if(!roomHistory.canGoBack())
         {
             back?.disable();
         }
-        else 
+        else
         {
             back?.enable();
         }
 
-        if(this._widget.visitedRooms.length <= 1) 
+        if(roomHistory.length <= 1)
         {
             historyBtn?.disable();
         }
-        else 
+        else
         {
             historyBtn?.enable();
+        }
+
+        // AS3: if the history dropdown is currently open, it is repainted with the fresh order
+        // and repositioned rather than left stale.
+        if(this._history)
+        {
+            this._history.populate(roomHistory.getHistoryView());
+            this.updatePosition();
         }
     }
 
@@ -380,7 +389,7 @@ export class RoomToolsToolbarCtrl extends RoomToolsCtrlBase
         if(!this.handler || !this._widget) return;
 
         this._history = new RoomToolsHistory(this._windowManager, this._assets, this.handler);
-        this._history.populate(this._widget.visitedRooms);
+        this._history.populate(this._widget.roomHistory.getHistoryView());
         this.updatePosition();
     }
 

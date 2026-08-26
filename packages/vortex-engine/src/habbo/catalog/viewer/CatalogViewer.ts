@@ -59,6 +59,14 @@ export class CatalogViewer implements ICatalogViewer
         return this._catalog!.roomEngine!;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get mainContainer()
+    // The catalog page window's parent — the same value showCatalogPage() computes inline via
+    // `this._container!.parent!.width` when it sizes/positions the page window.
+    get mainContainer(): IWindowContainer | null
+    {
+        return this._container === null ? null : (this._container.parent as IWindowContainer | null);
+    }
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::dispose()
     dispose(): void
     {

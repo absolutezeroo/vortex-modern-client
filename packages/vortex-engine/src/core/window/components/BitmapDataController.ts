@@ -16,6 +16,10 @@ import {PIVOT_NAMES, pivotFromName} from '../enum/PivotPoint';
 export class BitmapDataController extends WindowController 
 {
     private _pivot: number = 0;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapDataController.as::_etchingPoint
+    // Split into two primitives rather than kept as one Point object; the field's AS3 default
+    // `new Point(0, -1)` is why _etchingPointX defaults to 0 here and _etchingPointY (below)
+    // is primed to -1 in finalize().
     private _etchingPointX: number = 0;
     // Declared without a non-default initializer: WindowController's
     // applyProperties() phase dispatches to our `set etching()`/

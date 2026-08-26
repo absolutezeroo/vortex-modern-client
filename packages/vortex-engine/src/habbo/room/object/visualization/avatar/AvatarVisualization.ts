@@ -103,6 +103,12 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE (and siblings, l.65-79)
     // ADDITION_ID_HABBICON_BUBBLE (8) is declared there too; nothing in this port reads it yet.
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get habbiconFacingDirection()
+    // Maps `_avatarImage.getDirection()` to the reduced direction set HabbiconBubble's sprites
+    // use. Its one and only caller in the primary tree is
+    // .../avatar/additions/HabbiconBubble.as, the in-room habbicon-bubble addition — which is
+    // not ported (no HabbiconBubble.ts/addition id 8 wiring here, unlike the catalog/messenger
+    // habbicon data subsystem, which is). No consumer to feed, so nothing to port yet.
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE
     private static readonly ADDITION_ID_IDLE_BUBBLE: number = 1;
 
@@ -237,9 +243,11 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     }
 
     /**
-     * Gets the number of active additions.
+     * Gets the number of active additions. Unused within this class in AS3 itself (declared,
+     * never read anywhere in the primary tree) — kept because it is a 1:1 port of a real getter.
      */
-    protected get additionCount(): number 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get numAdditions()
+    protected get additionCount(): number
     {
         return (this._additions) ? this._additions.size : 0;
     }

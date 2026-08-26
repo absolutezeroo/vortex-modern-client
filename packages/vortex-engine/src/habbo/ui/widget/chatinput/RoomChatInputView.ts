@@ -553,6 +553,25 @@ export class RoomChatInputView
         this.hideChatStyleSelector();
     }
 
+    /**
+     * Resets the view for widget-pool reuse (RoomChatInputWidget.release()) rather than tearing it
+     * fully down (that's dispose()). AS3 also resets a help-button hide timer and a second typing
+     * flag (`_SafeStr_6063`) that both belong to the unported help-button hover tooltip — see this
+     * file's header TODO(AS3).
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::release()
+    public release(): void
+    {
+        this.clearTimers();
+
+        this._isTyping = false;
+    }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::openHabbiconHub()
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::insertHabbiconToken()
+    // Both require the habbicon selector/button (HabbiconSelector + habbiconController), which this
+    // file's own header already documents as unported.
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::chatInputWindowProcedure()
     private chatInputWindowProcedure = (event: WindowEvent, window: IWindow): void =>
     {

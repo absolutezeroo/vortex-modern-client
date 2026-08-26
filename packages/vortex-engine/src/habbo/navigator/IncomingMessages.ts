@@ -152,6 +152,7 @@ export class IncomingMessages
         return this._navigator.data;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_2208.as::removeLegacyMessageListeners()
     dispose(): void
     {
         for(const event of this._messageEvents)
@@ -162,6 +163,7 @@ export class IncomingMessages
         this._messageEvents = [];
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_2208.as::addMessageListeners()
     private registerEvents(): void
     {
         // Settings & Favourites

@@ -7,6 +7,11 @@ import type {IFurnitureData} from './IFurnitureData';
 
 const log = Logger.getLogger('habbo.session.furniture.FurnitureDataParser');
 
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::READY
+// Dead in AS3 itself: `dispatchEvent(new Event("FDP_furniture_data_ready"))` and
+// `SessionDataManager`'s (add|remove)EventListener calls all use the literal string, never the
+// `READY` constant — so this port matches AS3's actual (odd) behaviour by using the same literal
+// as the event-map key below rather than porting an unused symbol.
 export interface IFurnitureDataParserEvents
 {
     FDP_furniture_data_ready: [];

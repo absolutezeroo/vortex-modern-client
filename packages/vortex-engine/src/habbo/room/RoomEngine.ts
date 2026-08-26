@@ -403,7 +403,7 @@ export class RoomEngine extends Component implements IRoomEngine,
     // Derived name: `_objectPlacementSource` is declared in no AS3 tree — the trace points
     // at the class it belongs to, but the identifier itself is this port's.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::_objectPlacementSource
-    private _objectPlacementSource: string = '';
+    private _objectPlacementSource: string | null = '';
 
     private _pendingThumbnailListeners: Map<string, IGetImageListener[]> = new Map();
     private _thumbnailIdCounter: number = 0;
@@ -1038,6 +1038,12 @@ export class RoomEngine extends Component implements IRoomEngine,
     // is the hook AS3 leaves for a subclass to supply its own event handler. This port folded
     // `_SafeCls_1821` into RoomEngine itself rather than keeping it a separate object, so there is
     // no instance to create — see clickRoomObject() and the other handleRoomObject* members here.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::get roomEngine
+    // was `_SafeCls_1821`'s accessor onto the `_SafeCls_90` (RoomEngine) instance that owned it —
+    // every `roomEngine.foo()` call inside that class went through it. Folding `_SafeCls_1821`
+    // into RoomEngine itself collapses the accessor to `this`, which is not a meaningful member to
+    // expose; every former `roomEngine.x` call site in this class already reads `this.x` directly.
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::SETUP_WITHOUT_TOOLBAR
     // and SETUP_WITHOUT_GAME_MANAGER are bit flags for a `setup()` overload this port does not
@@ -1827,6 +1833,27 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._repeatedPlacement = false;
         this.clearRepeatedPlacementData();
         this.resetSelectedObjectData(this._activeRoomId);
+    }
+
+    /**
+     * Clears whatever selection/placement state survived from the room just left, so a stale
+     * selected avatar id or an in-progress move/place does not bleed into the next room. AS3 calls
+     * this from `_SafeCls_90.as::onRoomSessionEvent()` on RSE_STARTED; this port's composition
+     * root (VortexMain) owns that listener and calls this directly, the same way it already does
+     * for RoomMessageHandler.setCurrentRoom().
+     *
+     * `startMoveOrPlacing()`/`stopMoveOrPlacing()` are not ported (nothing currently flips
+     * "object_handler" click-through on), so unlike AS3 this always clears the owner rather than
+     * only when a flag was set — `setClickSettings()` is a Set add/delete and clearing an owner
+     * that was never added is a no-op, so the end state matches.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::enterNewRoom()
+    enterNewRoom(): void
+    {
+        this._selectedAvatarId = -1;
+        this._selectedObject = null;
+        this._objectPlacementSource = null;
+        this.setClickSettings('object_handler', false, false);
     }
 
     /**
@@ -7463,6 +7490,10 @@ export class RoomEngine extends Component implements IRoomEngine,
         return String(roomId);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectEvent()
+    // AS3 switches on `param1.type` (a RoomObjectEvent subtype's string constant) inside one method;
+    // this port dispatches on the event's runtime class instead — see the per-branch AS3: traces
+    // below for which switch case each `instanceof` arm replaces.
     private onRoomObjectEvent(event: unknown): void
     {
         // Handle tile mouse events for tile cursor

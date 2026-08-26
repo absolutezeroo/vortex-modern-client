@@ -85,6 +85,11 @@ export class FriendRequestDialog
         return this._userId;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/friendrequest/FriendRequestDialog.as::setImageAsset()
+    // Dead in AS3 itself: a repo-wide grep finds no caller for this class's copy (only
+    // ContextInfoView's differently-signed setImageAsset(), invoked from ButtonMenuView, is ever
+    // called). Not ported.
+
     // AS3: .../widget/friendrequest/FriendRequestDialog.as::show()
     show(): void
     {

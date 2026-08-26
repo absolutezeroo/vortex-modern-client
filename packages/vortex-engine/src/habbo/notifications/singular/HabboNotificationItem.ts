@@ -56,6 +56,7 @@ export class HabboNotificationItem
     /**
 	 * Execute internal link associated with this notification
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItem.as::ExecuteUiLinks()
     executeUiLinks(): void
     {
         if(this._style?.internalLink)

@@ -24,6 +24,12 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
     private _disposed: boolean = false;
     private _networkId: number = 0;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::get xmlAssetName()
+    protected static get xmlAssetName(): string
+    {
+        return 'room_hopper_network';
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::RoomHopperNetworkWidget()
     constructor(landingView: HabboLandingView)
     {
@@ -33,7 +39,7 @@ export class RoomHopperNetworkWidget implements ILandingViewWidget, ISettingsAwa
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/widget/RoomHopperNetworkWidget.as::initialize()
     initialize(): void
     {
-        this._container = this._landingView!.getXmlWindow('room_hopper_network') as IWindowContainer | null;
+        this._container = this._landingView!.getXmlWindow(RoomHopperNetworkWidget.xmlAssetName) as IWindowContainer | null;
         this._networkId = this._landingView!.getInteger('landing.view.roomhopper.network.id', 0);
 
         const bitmap = this._container?.findChildByName('bitmap') as IStaticBitmapWrapperWindow | null;

@@ -51,6 +51,12 @@ export interface IHabboToolbar
     setToolbarState(state: string): void;
 
     /**
+	 * Get the toolbar's current state (hotel view, room view, hidden, etc.)
+	 */
+    // AS3: .../src/com/sulake/habbo/toolbar/IHabboToolbar.as::getToolbarState()
+    getToolbarState(): string;
+
+    /**
 	 * Get the screen location of a toolbar icon
 	 *
 	 * @param iconId Icon identifier

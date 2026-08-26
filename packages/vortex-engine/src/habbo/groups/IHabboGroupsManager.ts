@@ -24,6 +24,16 @@ export interface IHabboGroupsManager
     openGroupInfo(groupId: number): void;
 
     /**
+	 * Show the badge leaderboard, delegating to the badge leaderboard controller
+	 *
+	 * @param type The leaderboard type (total badges / badges by rarity / achievement level)
+	 * @param rarity The badge rarity filter, or -1 for none
+	 * @param page The page to open
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::showBadgeLeaderboard()
+    showBadgeLeaderboard(type: number, rarity?: number, page?: number): void;
+
+    /**
 	 * Update a currently visible extended profile
 	 *
 	 * @param userId The user ID whose profile should be updated

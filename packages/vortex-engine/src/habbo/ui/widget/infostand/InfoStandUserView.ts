@@ -199,6 +199,28 @@ export class InfoStandUserView
         nameText.visible = true;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set realName()
+    public set realName(value: string)
+    {
+        const realNameText = this._elementList?.getListItemByName('realname_text') as ITextWindow | null;
+
+        if(!realNameText) return;
+
+        if(value.length === 0)
+        {
+            realNameText.text = '';
+        }
+        else
+        {
+            realNameText.text = this._widget.localizations?.getLocalizationWithParams(
+                'infostand.text.realname', '', 'realname', value
+            ) ?? '';
+        }
+
+        realNameText.height = realNameText.textHeight + 5;
+        realNameText.visible = value.length > 0;
+    }
+
     /**
      * AS3 wires every icon in this view to one `onButtonClicked`, which reads
      * the clicked window's name to pick a message; `home_icon` is the only name
@@ -504,6 +526,40 @@ export class InfoStandUserView
     }
 
     /**
+     * AS3 registers "infostand.text.xp" as a localization parameter but never calls
+     * getLocalization()/getLocalizationWithParams() for it anywhere — a grep across the whole
+     * primary source tree finds no other reference to that key. Ported for its observable half
+     * only (height/visibility/list re-arrangement); the dead registration call is skipped rather
+     * than invented onto `IHabboLocalizationManager`, which does not expose a standalone
+     * registerParameter() member (every other setter in this file that needs one uses the combined
+     * getLocalizationWithParams() the interface does declare).
+     *
+     * Called live from updateInfo() below, but always with 0: no AS3 producer anywhere sets
+     * `RoomWidgetUserInfoUpdateEvent.xp` to anything else, so the row this setter shows/hides
+     * never actually appears in the shipped client either.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::set xp()
+    public set xp(value: number)
+    {
+        const xpText = this._elementList?.getListItemByName('xp_text') as ITextWindow | null;
+        const xpSpacer = this._elementList?.getListItemByName('xp_spacer');
+
+        if(!xpText || !xpSpacer) return;
+
+        xpText.height = xpText.textHeight + 5;
+
+        const wasVisible = xpText.visible;
+        const visible = value > 0;
+
+        xpText.visible = visible;
+        xpSpacer.visible = visible;
+
+        if(visible !== wasVisible) this._elementList?.arrangeListItems();
+
+        this.updateWindow();
+    }
+
+    /**
      * Puts one badge in one of the five slots.
      *
      * The glow colour is only set for a *standalone* rarity tier — the tiers that share a colour
@@ -633,7 +689,13 @@ export class InfoStandUserView
         this.name = event.name;
         this.setMotto(event.motto, event.type === 'RWUIUE_OWN_USER');
         this.achievementScore = event.achievementScore;
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::updateInfo()
+        // Two calls AS3 makes here were missing — `badgesRank` (the setter already existed on this
+        // class but nothing fed it from an update) and `xp` (the setter is new; see its own header
+        // for why the value is always 0 in the shipped client).
+        this.badgesRank = event.badgesRank;
         this.carryItem = event.carryItem;
+        this.xp = event.xp;
         this.setFigure(event.figure);
 
         if(updateBadges) this.updateBadges(event.badges, event.selectedBadges, playGlow);

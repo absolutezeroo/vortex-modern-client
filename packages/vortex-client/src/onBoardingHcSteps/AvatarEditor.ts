@@ -468,6 +468,14 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         }
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::returnFromPayment()
+    // Dead in AS3 itself: no call site anywhere in the primary tree or win63_version, and never
+    // registered as an ExternalInterface.addCallback() target either (unlike checkForHcMembership,
+    // which the web side calls back into via the flow's own JS bridge). It would call
+    // HabboWebTools.closeWebPageAndRestoreClient() and, through Flash's ExternalInterface, invoke
+    // the page's `NewUserReception.newUserCheckHcMembership` - both Flash-era JS-interop calls with
+    // nothing left in AS3 to trigger them.
+
     // AS3: onAddedToStage(_arg_1:Event)
     private _onAddedToStage = (): void =>
     {

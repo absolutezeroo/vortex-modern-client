@@ -140,6 +140,18 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         return (this._window?.findChildByName('product_image') as unknown as IBitmapWrapperWindow | null) ?? null;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getNftImage()
+    // Part of the `nft_image` widget branch this class's header documents as unported — would
+    // return the RenderableNftImage widget behind the "nft_image" child so an NFT preview can be set.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getAvatarFaceBitmap()
+    // Only called from updateGiftDialogAvatarImage(), part of the gift flow (showGiftDialog() and
+    // everything under it) this class's header documents as unported.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::turnIntoGifting()
+    // Swaps the buy button/window caption over to the gift variant — part of the gift flow this
+    // class's header documents as unported; nothing currently calls into a gift confirmation state.
+
     /**
      * AS3: PurchaseConfirmationDialog.as::showOffer()
      *

@@ -53,6 +53,16 @@ export class AvatarStructure
         return this._animationManager;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::get renderManager()
+    // AS3 stores the owning AvatarRenderManager (constructor param `param1:_SafeCls_582`) and
+    // exposes it back so AvatarAssetDownloadManager/EffectAssetDownloadManager can reach
+    // `.renderManager.isReady` and listen for `AVATAR_RENDER_READY`. This port's AvatarStructure
+    // has no such back-reference; AvatarRenderManager.ts instead injects `renderReadyProvider`/
+    // `mandatoryLibrariesReadyCallback` callbacks directly into AvatarAssetDownloadManager's
+    // constructor (see its `() => this._isReady` / `() => this.onMandatoryLibrariesReady()`
+    // arguments), which is the same behaviour without the circular reference. Adding this getter
+    // would require changing AvatarStructure's constructor signature for no behavioural gain.
+
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::get figureData()
     public get figureData(): IFigureData
     {
@@ -138,6 +148,13 @@ export class AvatarStructure
     {
         this._figureSetData.injectXML(data);
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::registerAnimations()
+    // Dead in AS3 itself: no call site anywhere in the primary tree (nor win63_version) invokes
+    // it. It would probe an AssetLibraryCollection for "fx0".."fx199" and call registerAnimation()
+    // on each hit; the port's actual fx-animation registration (AvatarRenderManager.
+    // registerBuiltInAnimations(), EffectAssetDownloadManager.onLibraryComplete()) already calls
+    // registerAnimation() per already-resolved asset without needing this probe loop.
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::registerAnimation()
     public registerAnimation(data: any): void
@@ -666,6 +683,12 @@ export class AvatarStructure
         this._defaultLayAction = null;
         this._mandatorySetTypeCache.clear();
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::displayGeometry()
+    // Flash-only debug visualization: draws each body part as a labelled circle into a
+    // BitmapData attached to a flash.display.Stage using Shape/TextField/Matrix, none of which
+    // this port has an equivalent for. No caller anywhere in the primary AS3 tree - dead debug
+    // tooling left over from development, not a feature to port.
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getPopulatedArray()
     private getPopulatedArray(count: number): number[]

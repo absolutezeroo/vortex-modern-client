@@ -221,6 +221,12 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         return this._toolbar;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get roomEngine()
+    get roomEngine(): IRoomEngine | null
+    {
+        return this._roomEngine;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get catalog()
     get catalog(): IHabboCatalog | null
     {

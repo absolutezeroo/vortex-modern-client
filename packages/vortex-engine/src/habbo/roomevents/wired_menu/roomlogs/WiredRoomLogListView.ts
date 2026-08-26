@@ -34,6 +34,23 @@ export class WiredRoomLogListView extends PagedTableView
     // AS3: WiredRoomLogListView.as::REFRESH_TIME
     private static readonly REFRESH_TIME: number = 2500;
 
+    // AS3: WiredRoomLogListView.as::LOG_COLUMN_TIMESTAMP
+    private static readonly LOG_COLUMN_TIMESTAMP: string = 'timestamp';
+
+    // AS3: WiredRoomLogListView.as::LOG_COLUMN_SOURCE
+    // Derived name: obfuscated in every tree (`_SafeStr_10810` primary, `const_343`
+    // win63_version). Named after the column's own value/purpose, matching the sibling
+    // LOG_COLUMN_* constants either side of it.
+    private static readonly LOG_COLUMN_SOURCE: string = 'source';
+
+    // AS3: WiredRoomLogListView.as::LOG_COLUMN_LEVEL
+    // Derived name: obfuscated in every tree (`_SafeStr_11712` primary, `const_601`
+    // win63_version).
+    private static readonly LOG_COLUMN_LEVEL: string = 'level';
+
+    // AS3: WiredRoomLogListView.as::LOG_COLUMN_MESSAGE
+    private static readonly LOG_COLUMN_MESSAGE: string = 'message';
+
     // AS3: WiredRoomLogListView.as::_SafeStr_4593 (name derived: the controller)
     private _controller: WiredRoomLogListController;
 
@@ -141,10 +158,10 @@ export class WiredRoomLogListView extends PagedTableView
     {
         this._table = new TableView(this._windowManager, this.tableViewContainer, true);
         const columns = [
-            new TableColumn('timestamp', this.loc('wiredmenu.logs_overview.col.timestamp'), 0.2),
-            new TableColumn('source', this.loc('wiredmenu.logs_overview.col.source'), 0.08),
-            new TableColumn('level', this.loc('wiredmenu.logs_overview.col.level'), 0.08),
-            new TableColumn('message', this.loc('wiredmenu.logs_overview.col.message'), 0.64)
+            new TableColumn(WiredRoomLogListView.LOG_COLUMN_TIMESTAMP, this.loc('wiredmenu.logs_overview.col.timestamp'), 0.2),
+            new TableColumn(WiredRoomLogListView.LOG_COLUMN_SOURCE, this.loc('wiredmenu.logs_overview.col.source'), 0.08),
+            new TableColumn(WiredRoomLogListView.LOG_COLUMN_LEVEL, this.loc('wiredmenu.logs_overview.col.level'), 0.08),
+            new TableColumn(WiredRoomLogListView.LOG_COLUMN_MESSAGE, this.loc('wiredmenu.logs_overview.col.message'), 0.64)
         ];
         this._table.initialize(columns, true, true);
     }

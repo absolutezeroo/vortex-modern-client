@@ -139,6 +139,12 @@ const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
  *
  * @see source_as_win63/habbo/notifications/class_3353.as
  */
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::avatarImageReady()
+// Part of the entirely-unported treasure-hunt notification chain: onTreasureHuntProgress(),
+// onTreasureHuntFail(), onTreasureHuntFirstWinner(), showTreasureHuntWinner(), getHuntName(), and
+// this `_SafeCls_67` (IAvatarImageListener) callback, which re-renders the winner's face once its
+// async avatar image resolves. None of the three message events/parsers this chain needs exist in
+// this port either, so this is a chain gap, not a single missing method.
 export class NotificationMessageHandler
 {
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::CALL_FOR_HELP_NOTIFICATION_TYPE
@@ -681,6 +687,7 @@ export class NotificationMessageHandler
         localization?.registerParameter('room.error.pets.respectfailed', 'required_age', `${parser.requiredDays}`);
         localization?.registerParameter('room.error.pets.respectfailed', 'avatar_age', `${parser.avatarAgeInDays}`);
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onAlert()
         this._notifications?.windowManager?.alert(
             '${error.title}',
             '${room.error.pets.respectfailed}',

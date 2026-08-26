@@ -3064,9 +3064,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         this._furniModel?.insertFurniture(items);
     };
 
-    // Derived name: `onFurniListAddOrUpdate` is declared in no AS3 tree — the trace points
-    // at the class it belongs to, but the identifier itself is this port's.
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFurniListAddOrUpdate()
+    // Named `onFurniListAddOrUpdate` here for symmetry with its sibling handlers
+    // (onFurniList/onFurniListRemove/...); the real AS3 name is `onFurnitureAddOrUpdate`.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFurnitureAddOrUpdate()
     private onFurniListAddOrUpdate = (event: IMessageEvent): void =>
     {
         const parser = event.parser as FurniListAddOrUpdateMessageParser | null;
@@ -3089,7 +3089,9 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // panel to the list; updateView() redraws the grid.
         if(addedIds.length > 0)
         {
-            this._furniModel.updateUnseenItems(addedIds);
+            // AS3: `updateUnseenItemsThumbs(_loc8_, false)` - no grid refresh here; setViewToState()/
+            // updateView() below already redraw it.
+            this._furniModel.updateUnseenItems(addedIds, false);
         }
 
         this._furniModel.setViewToState();

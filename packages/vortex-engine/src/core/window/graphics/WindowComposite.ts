@@ -338,6 +338,16 @@ export class WindowComposite
             }
         }
 
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/WindowRendererItem.as::MATRIX
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/WindowRendererItem.as::COLOR_TRANSFORM
+        // AS3 blits its skin buffer onto the parent BitmapData via
+        // `param5.draw(_SafeStr_4797, MATRIX, COLOR_TRANSFORM, blendMode, param3, false)`,
+        // with MATRIX carrying the draw offset and COLOR_TRANSFORM.alphaMultiplier
+        // carrying window.blend, only when blend<1 or a BLEND_* tag is set (otherwise
+        // it takes the cheaper `copyPixels()` path). Canvas 2D has no matching
+        // "draw with alpha + offset" primitive; ctx.drawImage(buffer, absX, absY)
+        // below already carries the offset MATRIX.tx/ty applied, so only the alpha
+        // half needs reproducing here, via globalAlpha before that same drawImage call.
         // Apply blend (opacity)
         const blend = window.blend;
 

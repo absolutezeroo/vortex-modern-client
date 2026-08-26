@@ -66,6 +66,28 @@ export class InfoStandUserData
     // against the incoming one to decide whether to repaint and whether to glow.
     public selectedBadges: ISelectedBadge[] = [];
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::getSelectedBadge()
+    public getSelectedBadge(slotIndex: number): ISelectedBadge | null
+    {
+        for(const badge of this.selectedBadges)
+        {
+            if(badge !== null && badge.slotId === slotIndex) return badge;
+        }
+
+        return null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::getBadgeSlot()
+    public getBadgeSlot(badgeCode: string): number
+    {
+        for(const badge of this.selectedBadges)
+        {
+            if(badge !== null && badge.badgeCode === badgeCode) return badge.slotId;
+        }
+
+        return this._badges.indexOf(badgeCode);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserData.as::setData()
     public setData(event: RoomWidgetUserInfoUpdateEvent): void
     {

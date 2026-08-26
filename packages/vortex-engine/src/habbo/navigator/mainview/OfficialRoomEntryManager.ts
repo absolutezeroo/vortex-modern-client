@@ -1,6 +1,7 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
+import type {OfficialRoomEntryData} from '@habbo/communication/messages/incoming/navigator/OfficialRoomEntryData';
 import {UserCountRenderer} from '../UserCountRenderer';
 import {Util} from '../Util';
 
@@ -100,5 +101,36 @@ export class OfficialRoomEntryManager implements IDisposable
     private refreshNormalEntry(container: IWindowContainer, _isWide: boolean, _entryData: unknown): void
     {
         container.visible = true;
+    }
+
+    /**
+     * The caption for an entry's details panel: its own popup caption, else the guest room's
+     * name, else the search tag it represents, else a last-resort placeholder.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::getPopupCaption()
+    getPopupCaption(entry: OfficialRoomEntryData): string
+    {
+        if(entry.popupCaption !== '') return entry.popupCaption;
+
+        if(entry.guestRoomData !== null) return entry.guestRoomData.roomName;
+
+        if(entry.tag !== '') return entry.tag;
+
+        return 'NA';
+    }
+
+    /**
+     * The description for an entry's details panel: its own popup description (only once a popup
+     * caption is set — AS3 gates on `popupCaption`, not `popupDesc`), else the guest room's
+     * description, else empty.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/OfficialRoomEntryManager.as::getPopupDesc()
+    getPopupDesc(entry: OfficialRoomEntryData): string
+    {
+        if(entry.popupCaption !== '') return entry.popupDesc;
+
+        if(entry.guestRoomData !== null) return entry.guestRoomData.description;
+
+        return '';
     }
 }

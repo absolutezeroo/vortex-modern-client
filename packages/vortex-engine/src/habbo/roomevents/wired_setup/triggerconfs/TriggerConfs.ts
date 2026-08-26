@@ -73,6 +73,12 @@ export class TriggerConfs implements IWiredTypeHolder
         new VariableUpdate()
     ];
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/triggerconfs/TriggerConfs.as::get confs()
+    // Not part of the shared IWiredTypeHolder contract (_SafeCls_2661 declares only
+    // getElementByCode()/getKey()/acceptTriggerable()) and no call site anywhere in the primary
+    // tree ever reads `.confs` off a TriggerConfs instance - dead code, only getByCode() below
+    // iterates the backing array internally.
+
     // AS3: TriggerConfs.as::getByCode()
     getByCode(code: number): IWiredElement | null
     {

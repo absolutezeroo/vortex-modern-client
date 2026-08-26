@@ -118,6 +118,14 @@ export class ExtendedProfileWindowCtrl
         this._badgeUpdateExpected = value;
     }
 
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get relationshipUpdateExpected() / set relationshipUpdateExpected()
+    // Part of the relationship-status (heart/smile/bobba) feature cut noted in the class header —
+    // this flag gates onRelationshipStatusInfo(), which is deferred with it.
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onRelationshipStatusInfo()
+    // Deferred with the relationship-status feature cut noted in the class header — would apply an
+    // incoming _SafeCls_481 relationship snapshot and call the not-yet-ported refreshRelationships().
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::prepareWindow()
     private prepareWindow(): void
     {
@@ -321,6 +329,10 @@ export class ExtendedProfileWindowCtrl
 
         if(blockButton) blockButton.visible = !isOwnProfile;
     }
+
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onGroupDetails()
+    // Deferred with the groups-list feature cut noted in the class header — would swap the
+    // "group_cont" child for the selected group's details, driven by the unported GroupDetailsCtrl.
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshAvatarImage()
     private refreshAvatarImage(): void

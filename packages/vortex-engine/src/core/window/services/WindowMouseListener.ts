@@ -60,10 +60,27 @@ export class WindowMouseListener extends WindowMouseOperator implements IMouseLi
     /**
 	 * Check if a mouse event passes the area limit filter.
 	 *
+	 * Ports the `areaLimit`/hit-test half of AS3 `handler()` — the other half (matching
+	 * `param1.type` against `_eventTypes`, then calling `_window.update(null, event)`)
+	 * has no caller here: this method itself is not invoked anywhere in the engine or
+	 * client. `WindowController.ts`'s mousedown case still calls
+	 * `getMouseListenerService().begin(this)` / pushes `WindowMouseEvent.UP` into
+	 * `eventTypes` / sets `areaLimit = 3`, exactly as AS3 does, but nothing reads those
+	 * back — because the behaviour those calls exist for (guarantee the mousedown window
+	 * gets its UP event even when the pointer is released elsewhere) is instead provided
+	 * by `vortex-client/src/App.ts`'s document-level `_docUpHandler`, which delivers
+	 * `WindowMouseEvent.UP` straight to `_mouseDownWindow` unconditionally on mouseup.
+	 * That is a coarser rule than AS3's (no areaLimit distinction: AS3 only forces
+	 * delivery when the release is OUTSIDE the window, since an inside release is
+	 * already delivered through the ordinary hit-test dispatch), but it reaches every
+	 * case AS3's handler() exists for, which is why this predicate was written but never
+	 * wired up.
+	 *
 	 * @param stageX - Stage X coordinate of the event
 	 * @param stageY - Stage Y coordinate of the event
 	 * @returns true if the event should be processed
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseListener.as::handler()
     public passesAreaFilter(stageX: number, stageY: number): boolean
     {
         if(!this._active || !this._window || this._window.disposed) return false;

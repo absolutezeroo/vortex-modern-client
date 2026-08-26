@@ -104,6 +104,18 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::STYLE_OPTIONS
     public static readonly STYLE_OPTIONS: string[] = ['illumina', 'volter'];
 
+    // AS3: UserDefinedRoomEventsCtrl.as::UPDATE_MODE_NORMAL
+    public static readonly UPDATE_MODE_NORMAL: number = 0;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::UPDATE_MODE_KEEP_OPEN
+    // Derived name: obfuscated in every tree (`_SafeStr_10545` primary, `const_475`
+    // win63_version, absent from PRODUCTION). Named after onSaveSuccess()'s own behaviour for
+    // this value - notify and leave the dialog open, as opposed to NORMAL's save+close.
+    public static readonly UPDATE_MODE_KEEP_OPEN: number = 1;
+
+    // AS3: UserDefinedRoomEventsCtrl.as::UPDATE_MODE_SAVE_INTO_OTHER
+    public static readonly UPDATE_MODE_SAVE_INTO_OTHER: number = 2;
+
     // AS3: UserDefinedRoomEventsCtrl.as::_roomEvents
     private _roomEvents: HabboUserDefinedRoomEvents;
 
@@ -271,15 +283,16 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     {
         // Paste-into: the open dialog is in "copy into" mode, so clicking another wired does not
         // open it — it writes this dialog's settings onto it. **Only onto the same element type**;
-        // anything else is refused with a notification and the dialog stays as it was. `update(2, …)`
-        // is the paste-into save mode, targeting the clicked def's id rather than the open one's.
+        // anything else is refused with a notification and the dialog stays as it was.
+        // `update(UPDATE_MODE_SAVE_INTO_OTHER, …)` is the paste-into save mode, targeting the
+        // clicked def's id rather than the open one's.
         if(this._frame != null && this._currentElement != null && this._frame.isCopyingIntoMode)
         {
             const target = this.resolveHolderFor(def)?.getElementByCode(def.code) ?? null;
 
             if(target === this._currentElement)
             {
-                this.update(2, def.id);
+                this.update(UserDefinedRoomEventsCtrl.UPDATE_MODE_SAVE_INTO_OTHER, def.id);
             }
             else
             {
@@ -1453,37 +1466,37 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     // AS3: UserDefinedRoomEventsCtrl.as::onSaveFailure()
     onSaveFailure(): void
     {
-        if(this._updateMode === 1)
+        if(this._updateMode === UserDefinedRoomEventsCtrl.UPDATE_MODE_KEEP_OPEN)
         {
-            this._updateMode = 0;
+            this._updateMode = UserDefinedRoomEventsCtrl.UPDATE_MODE_NORMAL;
         }
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::onSaveSuccess()
     onSaveSuccess(): void
     {
-        if(this._updateMode === 0)
+        if(this._updateMode === UserDefinedRoomEventsCtrl.UPDATE_MODE_NORMAL)
         {
             this.close();
         }
-        else if(this._updateMode === 1)
+        else if(this._updateMode === UserDefinedRoomEventsCtrl.UPDATE_MODE_KEEP_OPEN)
         {
             this._roomEvents.notifications.addItem(
                 '${notification.wired.saved}', 'wired', null, null, UserDefinedRoomEventsCtrl.WIRED_NOTIFICATION_OPTIONS
             );
         }
-        else if(this._updateMode === 2)
+        else if(this._updateMode === UserDefinedRoomEventsCtrl.UPDATE_MODE_SAVE_INTO_OTHER)
         {
             this._roomEvents.notifications.addItem(
                 '${notification.wired.pasted_into}', 'wired', null, null, UserDefinedRoomEventsCtrl.WIRED_NOTIFICATION_OPTIONS
             );
         }
 
-        this._updateMode = 0;
+        this._updateMode = UserDefinedRoomEventsCtrl.UPDATE_MODE_NORMAL;
     }
 
     // AS3: UserDefinedRoomEventsCtrl.as::update()
-    update(mode: number = 0, id: number = -1): void
+    update(mode: number = UserDefinedRoomEventsCtrl.UPDATE_MODE_NORMAL, id: number = -1): void
     {
         if(this._currentDef == null || this._currentElement == null)
         {

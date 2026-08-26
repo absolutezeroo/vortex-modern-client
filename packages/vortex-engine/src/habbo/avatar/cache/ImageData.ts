@@ -45,6 +45,7 @@ export class ImageData
     /**
 	 * The rendered texture for this image data.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/cache/ImageData.as::get bitmap()
     public get texture(): Texture | null
     {
         return this._texture;
