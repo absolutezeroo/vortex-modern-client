@@ -8,7 +8,15 @@ import {RoomSessionEvent} from './RoomSessionEvent';
  */
 export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
 {
-    public static readonly RSUFE_FIGURE_UPDATE = 'RSUFE_FIGURE_UPDATE';
+    /**
+	 * The event type, whose string is AS3's own
+	 *
+	 * The value matters beyond this class: it is what listeners subscribe by, and the port had
+	 * been using `RSUFE_FIGURE_UPDATE` on both sides — internally consistent, but nothing written
+	 * against AS3's name would have matched it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::USER_FIGURE
+    public static readonly USER_FIGURE = 'RSUBE_FIGURE';
 
     constructor(
         session: IRoomSession,
@@ -21,7 +29,7 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
         badgesRank: number
     )
     {
-        super(RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE, session);
+        super(RoomSessionUserFigureUpdateEvent.USER_FIGURE, session);
         this._roomIndex = roomIndex;
         this._figure = figure;
         this._sex = sex;
@@ -32,6 +40,11 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
 
     private _roomIndex: number;
 
+    /**
+	 * AS3 calls this `userId`; it carries the *room index*, which is what every caller passes and
+	 * what the user data manager is keyed by. Named for what it holds.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::get userId()
     get roomIndex(): number
     {
         return this._roomIndex;
@@ -47,6 +60,7 @@ export class RoomSessionUserFigureUpdateEvent extends RoomSessionEvent
 
     private _sex: string;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/events/RoomSessionUserFigureUpdateEvent.as::get gender()
     get sex(): string
     {
         return this._sex;

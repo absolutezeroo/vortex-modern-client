@@ -864,7 +864,7 @@ export class RoomUsersHandler extends BaseHandler
         if(this.listener.sessionEvents)
         {
             this.listener.sessionEvents.emit(
-                RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE,
+                RoomSessionUserFigureUpdateEvent.USER_FIGURE,
                 new RoomSessionUserFigureUpdateEvent(
                     session,
                     parser.id,

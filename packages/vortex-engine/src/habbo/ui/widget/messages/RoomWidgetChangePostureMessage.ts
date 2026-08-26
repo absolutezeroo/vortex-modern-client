@@ -9,13 +9,13 @@ import {RoomWidgetMessage} from './RoomWidgetMessage';
 
 export class RoomWidgetChangePostureMessage extends RoomWidgetMessage
 {
-    // AS3: RoomWidgetChangePostureMessage.as::CHANGE_POSTURE
+    // AS3: RoomWidgetChangePostureMessage.as::WIDGET_MESSAGE_CHANGE_POSTURE
     public static readonly CHANGE_POSTURE: string = 'RWCPM_MESSAGE_CHANGE_POSTURE';
 
-    // AS3: RoomWidgetChangePostureMessage.as::STAND
+    // AS3: RoomWidgetChangePostureMessage.as::POSTURE_STAND
     public static readonly STAND: number = 0;
 
-    // AS3: RoomWidgetChangePostureMessage.as::SIT
+    // AS3: RoomWidgetChangePostureMessage.as::POSTURE_SIT
     public static readonly SIT: number = 1;
 
     private _posture: number;

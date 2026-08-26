@@ -34,8 +34,36 @@ export class ErrorReportStorage
         return new Map(this._data);
     }
 
+    /**
+	 * The parameter store, which is not the debug-data store above
+	 *
+	 * Debug data is the ordered narrative a crash report dumps; parameters are named values a
+	 * report is *tagged* with. AS3 keeps them in two separate maps and so does this.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/ErrorReportStorage.as::_SafeStr_6042 (name derived: the parameter map)
+    private static _parameters: Map<string, string> = new Map();
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/ErrorReportStorage.as::setParameter()
+    static setParameter(key: string, value: string): void
+    {
+        this._parameters.set(key, value);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/ErrorReportStorage.as::getParameter()
+    static getParameter(key: string): string | null
+    {
+        return this._parameters.get(key) ?? null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/ErrorReportStorage.as::getParameterNames()
+    static getParameterNames(): string[]
+    {
+        return [...this._parameters.keys()];
+    }
+
     static clear(): void
     {
         this._data.clear();
+        this._parameters.clear();
     }
 }

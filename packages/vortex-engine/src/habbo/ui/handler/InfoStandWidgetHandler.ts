@@ -194,7 +194,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(previousEvents)
         {
-            previousEvents.off(RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE, this.onFigureUpdate);
+            previousEvents.off(RoomSessionUserFigureUpdateEvent.USER_FIGURE, this.onFigureUpdate);
             previousEvents.off(RoomSessionFavouriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, this.onFavouriteGroupUpdated);
             previousEvents.off(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onPetInfo);
             previousEvents.off(RoomSessionPetCommandsUpdateEvent.PET_COMMANDS, this.onPetCommands);
@@ -216,7 +216,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(sessionEvents)
         {
-            sessionEvents.on(RoomSessionUserFigureUpdateEvent.RSUFE_FIGURE_UPDATE, this.onFigureUpdate);
+            sessionEvents.on(RoomSessionUserFigureUpdateEvent.USER_FIGURE, this.onFigureUpdate);
             sessionEvents.on(RoomSessionFavouriteGroupUpdateEvent.FAVOURITE_GROUP_UPDATE, this.onFavouriteGroupUpdated);
             sessionEvents.on(RoomSessionPetInfoUpdateEvent.PET_INFO, this.onPetInfo);
             sessionEvents.on(RoomSessionPetCommandsUpdateEvent.PET_COMMANDS, this.onPetCommands);
