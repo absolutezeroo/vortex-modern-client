@@ -828,9 +828,24 @@ export class RoomEngine extends Component implements IRoomEngine,
         return room.getObject(RoomEngine.OBJECT_ID_SELECTION_ARROW, RoomObjectCategoryEnum.OBJECT_CATEGORY_CURSOR) as IRoomObjectController | null;
     }
 
-    getIsPlayingGame(_roomId: number): boolean 
+    /**
+	 * Whether a game is running in the given room
+	 *
+	 * Two independent sources, either of which is enough: the wired room-events component's own
+	 * game mode (active room only), and the room instance's `is_playing_game` variable, which the
+	 * server sets on a real minigame.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getIsPlayingGame()
+    getIsPlayingGame(roomId: number): boolean
     {
-        return false; // TODO: implement game state
+        if(roomId === this._activeRoomId && this._roomEvents !== null && this._roomEvents.isGameMode)
+        {
+            return true;
+        }
+
+        const room = this.getRoomInstance(roomId);
+
+        return room !== null && room.getNumber(RoomVariableEnum.IS_PLAYING_GAME) > 0;
     }
 
     getActiveRoomIsPlayingGame(): boolean

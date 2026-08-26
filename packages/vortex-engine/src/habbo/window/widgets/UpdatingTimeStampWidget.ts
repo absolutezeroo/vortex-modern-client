@@ -5,6 +5,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import type {IIterator} from '@core/window/utils/IIterator';
 import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
+import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 
 /**
  * Updating timestamp display widget.
@@ -193,16 +194,19 @@ export class UpdatingTimeStampWidget implements IWidget
     }
 
     /**
-	 * Timer tick handler called every 60 seconds by the shared static timer.
+	 * Timer tick handler called every 60 seconds by the shared static timer
 	 *
-	 * In AS3, this updates the label caption via FriendlyTime.getFriendlyTime().
-	 * In TS, this is a stub — the UI layer reads elapsedSeconds directly.
+	 * `.ago` is a key suffix, not text: FriendlyTime looks up `friendlytime.minutes.ago`.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/UpdatingTimeStampWidget.as::onTimerTick()
     private onTimerTick(): void
     {
-        if(this._disposed) return;
+        if(this._disposed || this._label === null || this._windowManager === null) return;
 
-        // TODO: update label caption via localization/FriendlyTime
+        const localization = this._windowManager.localization;
+
+        if(localization === null) return;
+
+        this._label.caption = FriendlyTime.getFriendlyTime(localization, this.elapsedSeconds, '.ago', 1);
     }
 }

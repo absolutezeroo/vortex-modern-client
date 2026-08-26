@@ -1,5 +1,7 @@
 import type {IMessageParser} from '@core/communication/messages/IMessageParser';
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import type {PetFigureData} from '@habbo/inventory/pets/PetFigureData';
+import {parsePetFigureData} from '../../../incoming/notifications/PetFigureDataParser';
 
 /**
  * Parser for open pet package requested message
@@ -16,10 +18,10 @@ export class OpenPetPackageRequestedMessageEventParser implements IMessageParser
         return this._objectId;
     }
 
-    private _figureData: unknown = null;
+    private _figureData: PetFigureData | null = null;
 
     // AS3: sources/win63_version/habbo/communication/messages/parser/room/furniture/OpenPetPackageRequestedMessageEventParser.as::get figureData()
-    get figureData(): unknown
+    get figureData(): PetFigureData | null
     {
         return this._figureData;
     }
@@ -39,7 +41,12 @@ export class OpenPetPackageRequestedMessageEventParser implements IMessageParser
 
         this._objectId = wrapper.readInt();
 
-        // TODO: Parse figureData (obfuscated class_1657 in AS3)
+        // The server omits the figure entirely for a package that has not been opened yet, so the
+        // rest of the packet is optional — AS3 returns early on an exhausted buffer rather than
+        // reading past its end.
+        if(wrapper.bytesAvailable <= 0) return true;
+
+        this._figureData = parsePetFigureData(wrapper);
 
         return true;
     }
