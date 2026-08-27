@@ -1,7 +1,7 @@
 /**
  * IHabboWebApiListener
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/IHabboWebApiListener.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_83.as
  *
  * External listener interface for HabboWebApiSession responses.
  * Implemented by WebApiLoginProvider and other components that need

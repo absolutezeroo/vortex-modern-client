@@ -39,7 +39,7 @@ export class AvatarAction
     public static readonly EXPRESSION_WAVE: string = 'wave';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::EXPRESSION_BLOW_A_KISS
     public static readonly EXPRESSION_BLOW_A_KISS: string = 'blow';
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/AvatarAction.as::EXPRESSION_67
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::EXPRESSION_67
     public static readonly EXPRESSION_67: string = '67';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::EXPRESSION_LAUGH
     public static readonly EXPRESSION_LAUGH: string = 'laugh';

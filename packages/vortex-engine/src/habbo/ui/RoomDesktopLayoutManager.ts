@@ -2,7 +2,7 @@
  * RoomDesktopLayoutManager
  *
  * @see sources/win63_version/habbo/ui/class_3019.as
- * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/DesktopLayoutManager.as (clean
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/_SafeCls_2850.as (clean
  *      cross-reference — win63_version's setLayout()/getWidgetContainer() are corrupted
  *      by decompiler artifacts: a `null.`-ref infinite loop and a dropped final
  *      return statement respectively)
@@ -46,7 +46,7 @@ export class RoomDesktopLayoutManager
 	 * @param windowManager - The window manager to build the layout with
 	 * @param _config - Configuration manager (unused for now, matches AS3 signature)
 	 */
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::setLayout()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/_SafeCls_2850.as::setLayout()
     public setLayout(layoutName: string, windowManager: IHabboWindowManager, _config: IHabboConfigurationManager | null): void
     {
         if(this._layoutContainer)
@@ -73,7 +73,7 @@ export class RoomDesktopLayoutManager
             this._layoutContainer.width = desktop.width;
             this._layoutContainer.height = desktop.height;
 
-            // AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::setLayout()
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/_SafeCls_2850.as::setLayout()
             // buildWidgetLayout() no longer auto-attaches the built root to a desktop (that was a
             // bug of its own - see HabboWindowManager.buildFromXML()'s note); AS3 always did this
             // explicitly right here, this port was silently relying on that other bug for the
@@ -106,7 +106,7 @@ export class RoomDesktopLayoutManager
 	 * Shrink-wraps a single-child widget slot container to match its child's
 	 * size whenever that child resizes.
 	 */
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::trimContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/_SafeCls_2850.as::trimContainer()
     private trimContainer = (event: WindowEvent): void =>
     {
         const window = event.window as IWindowContainer | null;
@@ -126,7 +126,7 @@ export class RoomDesktopLayoutManager
     /**
 	 * Gets the widget container for a given widget name.
 	 */
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::getWidgetContainer()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/_SafeCls_2850.as::getWidgetContainer()
     private getWidgetContainer(name: string, window: IWindow): IWindowContainer | null
     {
         if(!this._layoutContainer || !window) return null;
@@ -165,7 +165,7 @@ export class RoomDesktopLayoutManager
     /**
 	 * Adds a widget window to the appropriate container in the layout.
 	 */
-    // AS3: sources/win63_2023_version/com/sulake/habbo/ui/DesktopLayoutManager.as::addWidgetWindow()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/_SafeCls_2850.as::addWidgetWindow()
     public addWidgetWindow(name: string, window: IWindow): boolean
     {
         if(!window) return false;

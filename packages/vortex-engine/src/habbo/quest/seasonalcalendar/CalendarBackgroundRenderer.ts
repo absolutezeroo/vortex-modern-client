@@ -20,18 +20,18 @@ import type {IDisposable} from '@core/runtime';
  * port stores `ImageBitmap[]` (matching `IBitmapWrapperWindow.bitmap`) and composites with a 2D
  * canvas `drawImage()` per source image, which is the same crop-and-blit operation.
  *
- * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as (primary; obfuscated class name, readable members)
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as (primary; obfuscated class name, readable members)
  * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/seasonalcalendar/CalendarBackgroundRenderer.as (2016; class-name lineage only)
  */
 export class CalendarBackgroundRenderer implements IDisposable
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::_images
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::_images
     private _images: ImageBitmap[] | null = null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::_disposed
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::_disposed
     private _disposed: boolean = false;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::get disposed()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::get disposed()
     get disposed(): boolean
     {
         return this._disposed;
@@ -42,7 +42,7 @@ export class CalendarBackgroundRenderer implements IDisposable
      * `disposed` getter above reads a field nothing ever sets true. Ported literally: this is the
      * real AS3 mechanism (however odd), not a workaround to "fix".
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::dispose()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::dispose()
     dispose(): void
     {
         if(!this._disposed)
@@ -51,13 +51,13 @@ export class CalendarBackgroundRenderer implements IDisposable
         }
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::initializeImageChain()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::initializeImageChain()
     initializeImageChain(images: ImageBitmap[]): void
     {
         this._images = images;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::getSlice()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::getSlice()
     getSlice(offset: number, width: number): ImageBitmap
     {
         if(this._disposed || this._images === null || this._images.length === 0)
@@ -120,7 +120,7 @@ export class CalendarBackgroundRenderer implements IDisposable
         return canvas.transferToImageBitmap();
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::getImageIndexForOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::getImageIndexForOffset()
     getImageIndexForOffset(offset: number): number
     {
         if(this._images === null) return -1;
@@ -142,7 +142,7 @@ export class CalendarBackgroundRenderer implements IDisposable
         return -1;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4471.as::getRelativeXForOffset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/seasonalcalendar/_SafeCls_4471.as::getRelativeXForOffset()
     private getRelativeXForOffset(offset: number): number
     {
         if(this._images === null) return -1;

@@ -1,7 +1,7 @@
 /**
  * IHabboWebApiSession
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/IHabboWebApiSession.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_1762.as
  *
  * Interface for the Habbo Web API HTTP session.
  *
@@ -24,7 +24,7 @@ export interface IWebApiRouteDefinition {
  * Static route map — maps method name to route definition.
  * This replaces AS3's describeType() + [HabboWebApiRoute] reflection pattern.
  *
- * @see sources/win63_2021_version/com/sulake/habbo/communication/IHabboWebApiSession.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_1762.as
  */
 export const WEB_API_ROUTES: Record<string, IWebApiRouteDefinition> = {
     emailChange: {uri: '/api/force/email-change', method: 'POST'},

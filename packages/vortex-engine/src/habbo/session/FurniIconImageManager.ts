@@ -14,7 +14,7 @@ const log = Logger.getLogger('habbo.session.FurniIconImageManager');
 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/FurniIconImageManager.as::FurniIconImageManager() param3
 export interface IFurniIconConfiguration
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/configuration/IHabboConfigurationManager.as::getProperty()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_49.as::getProperty()
     getProperty(key: string): string;
 }
 
