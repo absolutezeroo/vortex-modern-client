@@ -24,3 +24,4 @@ export * from './PetRespectNotificationEvent';
 export * from './ClubGiftSelectedEvent';
 export * from './RoomMessageNotificationMessageEvent';
 export * from './ElementPointerMessageEvent';
+export * from './ClaimProductResultMessageEvent';

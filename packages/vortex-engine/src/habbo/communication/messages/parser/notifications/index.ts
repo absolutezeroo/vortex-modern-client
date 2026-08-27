@@ -21,3 +21,4 @@ export * from './PetRespectNotificationEventParser';
 export * from './ClubGiftSelectedEventParser';
 export * from './RoomMessageNotificationMessageEventParser';
 export * from './ElementPointerMessageEventParser';
+export * from './ClaimProductResultMessageParser';

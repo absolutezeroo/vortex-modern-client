@@ -647,6 +647,15 @@ import {
     WiredTransactionSuccessMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
 import {
+    WiredTransactionFailMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionFailMessageEvent';
+import {
+    WiredTradeTransactionNotificationMessageEvent
+} from './messages/incoming/userdefinedroomevents/wiredtrading/WiredTradeTransactionNotificationMessageEvent';
+import {
+    ClaimProductResultMessageEvent
+} from './messages/incoming/notifications/ClaimProductResultMessageEvent';
+import {
     OpenWiredChestMessageEvent
 } from './messages/incoming/userdefinedroomevents/wiredtrading/chests/OpenWiredChestMessageEvent';
 import {
@@ -2196,6 +2205,9 @@ export class HabboMessages implements IMessageConfiguration
         // A wired transaction completed, and what it paid out (WIN63 registry: 2677 -> _SafeCls_3244).
         // Subscribed by RewardNotificationController. Name derived, same reason as 2910.
         this._events.set(2677, WiredTransactionSuccessMessageEvent);
+        this._events.set(352, WiredTransactionFailMessageEvent);
+        this._events.set(655, WiredTradeTransactionNotificationMessageEvent);
+        this._events.set(431, ClaimProductResultMessageEvent);
         // Wired contracts (WIN63 registry: 2976 -> _SafeCls_2429, 3720 -> _SafeCls_3091,
         // 1479 -> _SafeCls_3800). All three subscribed by WiredContractController. Names derived —
         // no unobfuscated tree carries them. The emulator's 1479 is an unrelated *client->server*
