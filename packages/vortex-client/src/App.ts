@@ -164,6 +164,32 @@ async function loadWebFonts(bundle: AssetBundle): Promise<void>
     }));
 }
 
+/**
+ * Gives `url.prefix` / `pocket.api` the origin the client is being served from, wherever the
+ * shipped configuration leaves them empty.
+ *
+ * Empty is how that file spells "same origin", and it is the one thing it cannot spell:
+ * `HabboConfigurationManager.parseKeyValueConfiguration()` keeps a line only while
+ * `parts[1].length > 0`, so an empty value means the key does not EXIST — and `interpolate()`
+ * returns `''` for the WHOLE value the moment one `${...}` key is missing. `external.variables.txt`
+ * then comes back blank and the boot dies on "Missing external.variables.txt". Both behaviours are
+ * AS3's, so the value has to be real.
+ *
+ * It has to be computed rather than written down: this client is served at its own root, under
+ * vortex-web's `/client`, and through a tunnel, and each one needs a different prefix — including
+ * a different SCHEME, which is what an absolute `http://…` in the file gets blocked for on an
+ * https page. A non-empty value is left alone, so a deployment that really does serve its assets
+ * from another origin keeps saying so; a checkout that regenerates `configurations/` from the dump
+ * gets `http://vortex-assets.local` back and is the case to look at first if this returns.
+ */
+function fillOriginPrefixes(configuration: string): string
+{
+    // `\r?` before the anchor: the shipped file has CRLF endings, and `$` under /m stops before the
+    // newline but not before the carriage return.
+    return configuration.replace(/^([ \t]*(?:url\.prefix|pocket\.api)(?:\.[a-z0-9]+)?=)[ \t]*\r?$/gim,
+        (_line, assignment: string) => `${assignment}${window.location.origin}`);
+}
+
 function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, string>
 {
     const assets: Record<string, string> = {};
@@ -172,7 +198,7 @@ function readEmbeddedConfigurationAssets(bundle: AssetBundle): Record<string, st
 
     if(commonConfiguration !== null)
     {
-        assets.common_configuration = commonConfiguration;
+        assets.common_configuration = fillOriginPrefixes(commonConfiguration);
     }
 
     if(localizationConfiguration !== null)
