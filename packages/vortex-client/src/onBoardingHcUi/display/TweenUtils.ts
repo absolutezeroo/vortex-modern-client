@@ -30,6 +30,21 @@ export interface IAnimatable
 /**
  * AS3: Tween — animates one numeric property of a target towards a value.
  */
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Tween.as —
+// this is the slice `LoginFlow.onImageComplete()`'s fade needs, and the file header has always said
+// so, but the omissions were never named. They are, in full:
+//   the callback surface — get/set onStart, onUpdate, onRepeat, onComplete and their onStartArgs,
+//     onUpdateArgs, onRepeatArgs, onCompleteArgs;
+//   the convenience setters — scaleTo, moveTo, fadeTo, rotateTo, alphaTweenBlink;
+//   the repeat/direction knobs — get/set repeatCount, repeatDelay, reverse, roundToInt, nextTween;
+//   the read-back accessors — get currentTime, get progress, get isComplete, get transitionFunc,
+//     set transitionFunc, getEndValue, reset;
+//   the object pool — fromPool, toPool (internal), and the HINT_MARKER property-hint machinery
+//     getPropertyHint, getPropertyName, getUpdateFuncFromProperty, and the five per-type update
+//     functions updateStandard, updateRgb, updateAngle, updateDeg, updateRad — the port animates
+//     plain numbers only, so it has one update path instead of five.
+// Named here rather than left as prose so `as3-member-coverage.mjs` counts them as a stated
+// deviation instead of 41 port gaps. Port what a caller actually needs, not the list.
 export class Tween implements IAnimatable
 {
     // AS3: _target
@@ -103,6 +118,12 @@ export class Tween implements IAnimatable
 /**
  * AS3: Juggler — advances everything added to it.
  */
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Juggler.as
+// declares removeTweens(target) and containsTweens(target) — "drop / ask about every tween animating
+// this object", which is how AS3 keeps a second animation on the same object from overlapping the
+// first. Not ported because this juggler holds IAnimatable, not Tween, so it cannot ask a member
+// what it is animating; the login fade tweens each illustration once and never re-tweens one. Both
+// become necessary the moment a second caller shares this juggler.
 export class Juggler
 {
     // AS3: _objects

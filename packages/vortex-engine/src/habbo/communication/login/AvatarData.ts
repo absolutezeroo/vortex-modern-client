@@ -85,11 +85,15 @@ export class AvatarData
         return this._gender;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get head_figure()
+    // AS3 spells these two snake_case because the class mirrors a web-API payload; camelCased here
+    // to match every other accessor on it and rule 10. The two are the only such names in the class.
     get headFigure(): string
     {
         return this._headFigure;
     }
 
+    // AS3: .../src/com/sulake/habbo/communication/login/AvatarData.as::get last_access()
     get lastAccess(): number
     {
         return this._lastAccess;
