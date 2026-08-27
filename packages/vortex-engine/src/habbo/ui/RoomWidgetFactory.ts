@@ -10,9 +10,10 @@
  *   - "RWE_CRAFTING" — CraftingWidget
  *   - "RWE_PLAYLIST_EDITOR_WIDGET" — PlayListEditorWidget (takes `_roomUI.soundManager`)
  *   - "RWE_YOUTUBE" / "RWE_VIMEO" — YoutubeDisplayWidget / VimeoDisplayWidget
- * "RWE_CHAT_WIDGET" is handled here without an AS3 counterpart in this tree: the 2026 client
- * dropped it for freeFlowChat, and ChatWidgetHandler.processEvent() returns early the moment
- * that dependency resolves (see its own header).
+ * "RWE_CHAT_WIDGET" used to be handled here and is gone. The 2026 client replaced the
+ * widget-based chat bubbles with `habbo/freeflowchat` outright — the primary tree has no
+ * `ui/widget/roomchat/` package and `RoomWidgetEnum` no longer declares the constant — so the
+ * port's copy was tracing an architecture that no longer exists.
  */
 import {Logger} from '@core/utils/Logger';
 import type {IRoomWidgetFactory} from './IRoomWidgetFactory';
@@ -21,7 +22,6 @@ import type {RoomUI} from './RoomUI';
 import {InfoStandWidget} from './widget/infostand/InfoStandWidget';
 import {RoomToolsWidget} from './widget/roomtools/RoomToolsWidget';
 import {RoomChatInputWidget} from './widget/chatinput/RoomChatInputWidget';
-import {RoomChatWidget} from './widget/roomchat/RoomChatWidget';
 import {EffectsWidget} from './widget/effects/EffectsWidget';
 import {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 import {TrophyFurniWidget} from './widget/furniture/trophy/TrophyFurniWidget';
@@ -72,11 +72,6 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
     // AS3: .../src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as::_roomUI
     private _roomUI: RoomUI;
     private _disposed: boolean = false;
-    // AS3: sources/win63_version/habbo/ui/widget/RoomWidgetFactory.as::var_3906
-    // Derived name. The field is obfuscated in the only tree that has it
-    // (`var_3906`), and the primary tree's RoomWidgetFactory declares no such
-    // counter at all — its only field is `_roomUI`. It numbers chat widgets.
-    private _chatWidgetIdCounter: number = 0;
 
     constructor(roomUI: RoomUI)
     {
@@ -320,11 +315,6 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new FurnitureContextMenuWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI.habboGroupsManager, this._roomUI.catalog
-                );
-            case 'RWE_CHAT_WIDGET':
-                return new RoomChatWidget(
-                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization,
-                    this._roomUI.config!, this._chatWidgetIdCounter++, this._roomUI
                 );
             case 'RWE_CRAFTING':
                 return new CraftingWidget(handler, this._roomUI.windowManager, this._roomUI);

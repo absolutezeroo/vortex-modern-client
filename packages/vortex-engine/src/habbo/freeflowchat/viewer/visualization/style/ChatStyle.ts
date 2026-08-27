@@ -8,9 +8,7 @@ import type {IChatLinkStyleSheet, IChatStyleInternal} from './IChatStyleInternal
  *
  * All data ChatStyleLibrary reads out of a style's `regpoints` config text and
  * `style_<assetId>_*` assets, gathered up-front so ChatStyle's constructor can
- * take a single object instead of AS3's 27 positional constructor params
- * (same descriptor-object approach already used by
- * `@habbo/ui/widget/roomchat/style/ChatBubbleStyle`'s `IChatBubbleStyleDescriptor`).
+ * take a single object instead of AS3's 27 positional constructor params.
  */
 export interface IChatStyleDescriptor
 {
@@ -159,8 +157,7 @@ export class ChatStyle implements IChatStyle, IChatStyleInternal
 
                 // AS3: BitmapData.draw(_color, null, new ColorTransform(r/255,g/255,b/255), "darken")
                 // — tint the color-mask bitmap by the requested color, then darken-blend
-                // it over the plain background already drawn above (same technique as
-                // @habbo/ui/widget/roomchat/style/ChatBubbleFactory::buildBubbleImage()).
+                // it over the plain background already drawn above.
                 const tintCanvas = new OffscreenCanvas(this._color.width, this._color.height);
                 const tintCtx = tintCanvas.getContext('2d');
 

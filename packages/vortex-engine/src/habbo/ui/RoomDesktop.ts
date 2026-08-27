@@ -66,7 +66,6 @@ import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {CameraWidgetHandler} from './handler/CameraWidgetHandler';
 import {RoomThumbnailCameraWidgetHandler} from './handler/RoomThumbnailCameraWidgetHandler';
-import {ChatWidgetHandler} from './handler/ChatWidgetHandler';
 import {FurnitureTrophyWidgetHandler} from './handler/FurnitureTrophyWidgetHandler';
 import {FurnitureStickieWidgetHandler} from './handler/FurnitureStickieWidgetHandler';
 import {SpamWallPostItWidgetHandler} from './handler/SpamWallPostItWidgetHandler';
@@ -135,7 +134,7 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as:71 (var_4627)
     private static readonly REUSABLE_WIDGET_TYPES = new Set([
-        'RWE_INFOSTAND', 'RWE_CHAT_INPUT_WIDGET', 'RWE_ME_MENU', 'RWE_CHAT_WIDGET',
+        'RWE_INFOSTAND', 'RWE_CHAT_INPUT_WIDGET', 'RWE_ME_MENU',
         'RWE_EXTERNAL_IMAGE', 'RWE_CAMERA', 'RWE_ROOM_TOOLS', 'RWE_FURNITURE_CONTEXT_MENU',
     ]);
 
@@ -1328,14 +1327,6 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
                 contextMenuHandler.connection = this._connection;
                 handler = contextMenuHandler;
-                break;
-            }
-            case 'RWE_CHAT_WIDGET': {
-                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::734-737
-                const chatHandler = new ChatWidgetHandler();
-
-                chatHandler.connection = this._connection;
-                handler = chatHandler;
                 break;
             }
             default:

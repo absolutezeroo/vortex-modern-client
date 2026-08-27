@@ -13,7 +13,7 @@ export interface IRoomWidgetFactory extends IDisposable
     /**
 	 * Creates a widget of the given type with the given handler.
 	 *
-	 * @param type - Widget type code (e.g. "RWE_CHAT_WIDGET")
+	 * @param type - Widget type code (e.g. "RWE_INFOSTAND")
 	 * @param handler - The handler for the widget
 	 * @returns The created widget, or null if type is unknown
 	 */

@@ -1246,21 +1246,23 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createRoomView(canvasId);
 
                     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::roomEventHandler()
-                    // (REE_INITIALIZED case) - when freeFlowChat is present, its
-                    // displayObject is mounted into the room_new_chat layout slot instead
-                    // of creating the legacy chat-bubble widget. This source tree dropped
-                    // RWE_CHAT_WIDGET entirely (RoomWidgetEnum no longer even declares a
-                    // CHAT_WIDGET constant) - freeflowchat is the sole renderer now.
-                    if(desktop.freeFlowChat)
+                    // (REE_INITIALIZED case) — freeFlowChat's displayObject is mounted into the
+                    // room_new_chat layout slot. It is the sole chat renderer: this tree dropped
+                    // RWE_CHAT_WIDGET entirely and RoomWidgetEnum no longer declares the constant.
+                    //
+                    // There is deliberately no fallback. The port used to build the legacy
+                    // roomchat widget when this dependency was absent — a branch AS3 does not
+                    // have — which meant a component that silently failed to attach produced a
+                    // room rendering chat through a superseded architecture instead of an
+                    // obvious failure. IID_HabboFreeFlowChat is optional, so absence is possible
+                    // and is now loud.
+                    if(desktop.freeFlowChat === null)
                     {
-                        if(desktop.freeFlowChat.displayObject)
-                        {
-                            desktop.layoutManager.getChatContainer()?.setDisplayObject(desktop.freeFlowChat.displayObject);
-                        }
+                        log.error('No free-flow chat component: this room will render no chat bubbles at all');
                     }
-                    else
+                    else if(desktop.freeFlowChat.displayObject)
                     {
-                        desktop.createWidget('RWE_CHAT_WIDGET');
+                        desktop.layoutManager.getChatContainer()?.setDisplayObject(desktop.freeFlowChat.displayObject);
                     }
 
                     // Create room widgets (stubs for now)
