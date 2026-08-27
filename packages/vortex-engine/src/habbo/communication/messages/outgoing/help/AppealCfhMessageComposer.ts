@@ -13,6 +13,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class AppealCfhMessageComposer extends MessageComposer<[number]>
 {
+    // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/AppealCfhMessageComposer.as::var_4100 (the cfh topic id)
     private _data: [number];
 
     // AS3: sources/win63_version/habbo/communication/messages/outgoing/help/AppealCfhMessageComposer.as::AppealCfhMessageComposer()

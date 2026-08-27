@@ -13,7 +13,10 @@ import {MyReportStatusColumn} from '../MyReportStatusColumn';
  */
 export class ReportStatusTableObject implements ITableObject
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/reportstatus/ReportStatusTableObject.as::_myReportStatus
     private _myReportStatus: MyReportStatus;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/reportstatus/ReportStatusTableObject.as::_SafeStr_5626 (the report row)
     private _message: CfhReportStatusData;
 
     /**
@@ -21,8 +24,11 @@ export class ReportStatusTableObject implements ITableObject
      * reads it back in two places. Kept as three fields rather than an object literal — the shape
      * never leaves this class.
      */
+    // TS-only: unpacked from AS3's single `_SafeStr_7987:Object`.
     private _reportedUserDeleted: boolean;
+    // TS-only: unpacked from AS3's single `_SafeStr_7987:Object`.
     private _reportedUserName: string;
+    // TS-only: unpacked from AS3's single `_SafeStr_7987:Object`.
     private _reportedUserTextColor: number;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/help/reportstatus/ReportStatusTableObject.as::ReportStatusTableObject()
