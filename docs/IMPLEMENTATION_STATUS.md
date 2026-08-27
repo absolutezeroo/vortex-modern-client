@@ -2413,11 +2413,34 @@ At 2026-08-13 — emulator 506 client→server / 511 server→client, client reg
 
 | Direction                                        | Gaps | Meaning                                                    |
 |--------------------------------------------------|------|------------------------------------------------------------|
-| **Send** (client cannot trigger)                 | 52   | 44 have a real server handler waiting                       |
-| **Recv** (server data the client drops)          | 57   | A screen stays empty or stale rather than erroring          |
+| **Send** (client cannot trigger)                 | ~~52~~ 25 | 19 are SnowWar; 5 room-state, 1 other — see the section below |
+| **Recv** (server data the client drops)          | ~~57~~ 26 | 22 are SnowWar; 4 left, and 2 of those are emulator-side name errors |
 
 By family, excluding SnowWar (17 send / 22 recv — see `habbo/game`), every remaining cluster is
 small and self-contained:
+
+### A wire "gap" is often a wrong id, or a wrong name on the emulator's side
+
+Re-worked **2026-08-27**. `wire-coverage.mjs` compares the client registry to the *emulator*, so it
+cannot tell "the client never wrote this message" from "the client wrote it and registered it under
+an id the emulator does not know". Of the 11 non-SnowWar gaps standing that morning, only **four**
+were genuinely missing client code:
+
+| What it looked like | What it was |
+|---|---|
+| Recycler: 3 send gaps | 9/9 ported and wired; all three composers on ids (1246/2516/2956) that are **in no registry table at all** |
+| `WiredUpdateRoomEvent` 3814 | not wired, not a composer: the registry has `_SafeStr_4546[3814] = _SafeCls_2624` = **AvatarEffectActivated**, which the client already registers correctly. The emulator's name *and* its "moderation mute/freeze" comment are both wrong |
+| `OfficialSongId` 2264 | 2264 is in no registry table; the client's 3050 is the registry entry |
+| `ProgressTreasureHunt` 762 | in neither registry table; nothing in the 2026 client constructs it |
+| `GiveStarGemToUser`, `CreditVaultStatus` | `-1` — removed in 2026 |
+| `GetOccupiedTiles` 3426 / `GetRoomEntryTile` 880 | real, but the emulator has the two **swapped**: `_composers[880] = _SafeCls_2600` and `[3426] = _SafeCls_3777`, and `BCFloorPlanEditor` sends them in mirrored order at two call sites in both trees, which pins 3777 to the entry tile |
+
+**`scripts/check-header-ids.mjs` is the check that catches the first kind**: it joins every id in
+`HabboMessages` to the WIN63 registry, and an id in no table is wrong with certainty. Both
+directions are clean as of 2026-08-27; the 10 allowed absences are the vortex-custom blocks.
+
+Run it *before* concluding a message is unported — a wrong id is worse than a missing one, because
+the packet is sent, the server reads it as something else, and nothing errors.
 
 **"Server" below means the handler body does something** — not that a `*MessageHandler.cs` exists.
 The distinction is not academic: 117 of 515 handlers are empty stubs, and reading the filename

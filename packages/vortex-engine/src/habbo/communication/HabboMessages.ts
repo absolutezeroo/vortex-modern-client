@@ -494,8 +494,8 @@ import {
     SaveWiredMenuSettingsComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/SaveWiredMenuSettingsComposer';
 import {
-    ReloadWiredRoomStateComposer
-} from './messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
+    WiredUpdateRoomComposer
+} from './messages/outgoing/userdefinedroomevents/wiredmenu/WiredUpdateRoomComposer';
 import {
     RequestWiredMenuSettingsComposer
 } from './messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredMenuSettingsComposer';
@@ -956,6 +956,7 @@ import {
     MyCfhReportStatusMessageEvent
 } from './messages/incoming/callforhelp/MyCfhReportStatusMessageEvent';
 import {AppealCfhMessageComposer} from './messages/outgoing/help/AppealCfhMessageComposer';
+import {ClaimNewUserNameMessageComposer} from './messages/outgoing/help/ClaimNewUserNameMessageComposer';
 import {ModeratorInitMessageEvent} from './messages/incoming/moderation/ModeratorInitMessageEvent';
 import {ModeratorToolPreferencesMessageEvent} from './messages/incoming/moderation/ModeratorToolPreferencesMessageEvent';
 import {ModeratorUserInfoMessageEvent} from './messages/incoming/moderation/ModeratorUserInfoMessageEvent';
@@ -2805,7 +2806,7 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3124, SetWiredMenuPreferencesComposer);
         this._composers.set(706, RequestWiredRoomLogsComposer);
         this._composers.set(2553, SaveWiredMenuSettingsComposer);
-        this._composers.set(501, ReloadWiredRoomStateComposer);
+        this._composers.set(501, WiredUpdateRoomComposer);
         this._composers.set(1862, RequestWiredMenuSettingsComposer);
         this._composers.set(427, RequestWiredRoomStatsComposer);
         this._composers.set(452, RequestWiredErrorLogsComposer);
@@ -3546,6 +3547,9 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1834, GetMyCfhReportStatusMessageComposer);
         // WIN63 registry: _composers[3028] = _SafeCls_3470, sent by MyReportStatus::onClickAppeal().
         this._composers.set(3028, AppealCfhMessageComposer);
+        // WIN63 registry: _composers[879] = _SafeCls_3401, the onboarding name claim. Distinct
+        // from ChangeUserName (1703), which is the help-side rename — see the composer's header.
+        this._composers.set(879, ClaimNewUserNameMessageComposer);
         this._composers.set(3336, GuideSessionInviteRequesterMessageComposer);
         this._composers.set(2545, ChatReviewGuideDecidesOnOfferMessageComposer);
         this._composers.set(349, ChatReviewGuideDetachedMessageComposer);

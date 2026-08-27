@@ -33,7 +33,7 @@ import {ChangeUserNameResultMessageEvent} from '@habbo/communication/messages/in
 import {CheckUserNameResultMessageEvent} from '@habbo/communication/messages/incoming/help/CheckUserNameResultMessageEvent';
 import type {ChangeUserNameResultMessageParser} from '@habbo/communication/messages/parser/help/ChangeUserNameResultMessageParser';
 import type {CheckUserNameResultMessageParser} from '@habbo/communication/messages/parser/help/CheckUserNameResultMessageParser';
-import {ChangeUserNameMessageComposer} from '@habbo/communication/messages/outgoing/help/ChangeUserNameMessageComposer';
+import {ClaimNewUserNameMessageComposer} from '@habbo/communication/messages/outgoing/help/ClaimNewUserNameMessageComposer';
 import {CheckUserNameMessageComposer} from '@habbo/communication/messages/outgoing/help/CheckUserNameMessageComposer';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IOnBoardingHcContext} from './IOnBoardingHcContext';
@@ -547,7 +547,10 @@ export class NameChangeDialog
             this._context?.nameChangeCompleted();
         }
 
-        this._context?.communicationManager?.connection?.send(new ChangeUserNameMessageComposer(name));
+        // AS3 sends `_SafeCls_3401` (879) here, NOT the help-side `_SafeCls_3913` (1703) this used
+        // to send. The two are different messages with different servers behind them; the claim
+        // was arriving as a rename request.
+        this._context?.communicationManager?.connection?.send(new ClaimNewUserNameMessageComposer(name));
         this._context?.nameChangeCompleted();
     }
 

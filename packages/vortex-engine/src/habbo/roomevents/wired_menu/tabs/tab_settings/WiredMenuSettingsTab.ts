@@ -13,7 +13,7 @@ import type {WiredMenuController} from '../../WiredMenuController';
 import type {WiredMenuSettingsParser} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredMenuSettingsParser';
 import {WiredMenuSettingsEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredMenuSettingsEvent';
 import {SaveWiredMenuSettingsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/SaveWiredMenuSettingsComposer';
-import {ReloadWiredRoomStateComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
+import {WiredUpdateRoomComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/WiredUpdateRoomComposer';
 import {RequestWiredMenuSettingsComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/RequestWiredMenuSettingsComposer';
 import {WiredMenuDefaultTab} from '../WiredMenuDefaultTab';
 
@@ -103,7 +103,7 @@ export class WiredMenuSettingsTab extends WiredMenuDefaultTab
     {
         if(event.type === 'WE_OK')
         {
-            this.controller.send(new ReloadWiredRoomStateComposer(true));
+            this.controller.send(new WiredUpdateRoomComposer(true));
         }
 
         dialog.dispose();
@@ -112,7 +112,7 @@ export class WiredMenuSettingsTab extends WiredMenuDefaultTab
     // AS3: WiredMenuSettingsTab.as::onClickReload()
     private _onClickReload = (_event: WindowMouseEvent): void =>
     {
-        this.controller.send(new ReloadWiredRoomStateComposer(false));
+        this.controller.send(new WiredUpdateRoomComposer(false));
     };
 
     // AS3: WiredMenuSettingsTab.as::onWiredSettings()

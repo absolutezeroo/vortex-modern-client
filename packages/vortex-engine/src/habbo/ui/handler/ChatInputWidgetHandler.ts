@@ -35,7 +35,7 @@ import {RoomEngineZoomEvent} from '@habbo/room/events/RoomEngineZoomEvent';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {RoomShakingEffect} from '@room/utils/RoomShakingEffect';
-import {ReloadWiredRoomStateComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/ReloadWiredRoomStateComposer';
+import {WiredUpdateRoomComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/wiredmenu/WiredUpdateRoomComposer';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
@@ -992,7 +992,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::onRollbackConfirmed()
     private onRollbackConfirmed = (dialog: IDisposable, event: WindowEvent): void =>
     {
-        if(event.type === 'WE_OK') this._container?.connection?.send(new ReloadWiredRoomStateComposer(true));
+        if(event.type === 'WE_OK') this._container?.connection?.send(new WiredUpdateRoomComposer(true));
 
         dialog.dispose();
     };
@@ -1000,7 +1000,7 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::onReloadConfirmed()
     private onReloadConfirmed = (dialog: IDisposable, event: WindowEvent): void =>
     {
-        if(event.type === 'WE_OK') this._container?.connection?.send(new ReloadWiredRoomStateComposer(false));
+        if(event.type === 'WE_OK') this._container?.connection?.send(new WiredUpdateRoomComposer(false));
 
         dialog.dispose();
     };
