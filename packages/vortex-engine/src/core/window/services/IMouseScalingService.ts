@@ -7,9 +7,14 @@ import type {IWindow} from '../IWindow';
  */
 export interface IMouseScalingService
 {
+    // AS3: .../src/com/sulake/core/window/services/IMouseScalingService.as::dispose()
+    dispose(): void;
+
     // AS3: .../src/com/sulake/core/window/services/IMouseScalingService.as::begin()
-    begin(window: IWindow, scalingFlags: number): void;
+    // The one call site that passes flags: WindowController hands it the window's
+    // MOUSE_SCALING_TRIGGER bits, which decide which edges may be dragged.
+    begin(window: IWindow, scalingFlags?: number): IWindow | null;
 
     // AS3: .../src/com/sulake/core/window/services/IMouseScalingService.as::end()
-    end(window: IWindow): void;
+    end(window: IWindow): IWindow | null;
 }

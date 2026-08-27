@@ -4,14 +4,11 @@ import type {SkinContainer} from '@core/window/graphics/SkinContainer';
 import {PropertyMap} from '@core/window/theme/PropertyMap';
 import {Theme} from './Theme';
 
-/**
- * Result of resolving a style to its theme and intent.
- */
-export interface IThemeAndIntent
-{
-    theme: string;
-    intent: string | null;
-}
+// Moved to core/window/theme so `IThemeManager` — a core interface — can name its own return type
+// without core importing from habbo. Re-exported here for the callers already importing it.
+import type {IThemeAndIntent} from '@core/window/theme/IThemeAndIntent';
+
+export type {IThemeAndIntent};
 
 /**
  * Manages window themes, style resolution, and property defaults.
@@ -313,12 +310,6 @@ export class ThemeManager implements IThemeManager
         }
 
         return new PropertyMap();
-    }
-
-    // TS-only: setPropertyDefaults is declared in IThemeManager but not implemented in AS3 ThemeManager
-    public setPropertyDefaults(_style: number, _properties: IPropertyMap): void
-    {
-        // Not used in the Habbo ThemeManager; property defaults are set per-theme in the constructor.
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::getThemes()

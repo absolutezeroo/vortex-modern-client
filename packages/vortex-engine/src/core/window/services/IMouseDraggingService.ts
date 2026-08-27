@@ -7,9 +7,13 @@ import type {IWindow} from '../IWindow';
  */
 export interface IMouseDraggingService
 {
+    // AS3: .../src/com/sulake/core/window/services/IMouseDraggingService.as::dispose()
+    dispose(): void;
+
     // AS3: .../src/com/sulake/core/window/services/IMouseDraggingService.as::begin()
-    begin(window: IWindow): void;
+    // Flags and return value as on IMouseListenerService — same WindowMouseOperator contract.
+    begin(window: IWindow, flags?: number): IWindow | null;
 
     // AS3: .../src/com/sulake/core/window/services/IMouseDraggingService.as::end()
-    end(window: IWindow): void;
+    end(window: IWindow): IWindow | null;
 }
