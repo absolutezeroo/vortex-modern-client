@@ -122,32 +122,41 @@ export class InteractiveController extends WindowController implements IInteract
     // AS3: .../src/com/sulake/core/window/components/InteractiveController.as::processInteractiveWindowEvents()
     public static processInteractiveWindowEvents(window: IInteractiveWindow, event: WindowEvent): void
     {
+        // Wired 2026-08-27. These five branches were empty comments, so `WindowToolTipAgent` — 262
+        // lines, constructed by every `ServiceManager` — was never called once and no tooltip in
+        // this client had ever appeared.
+        const toolTips = window.context?.getWindowServices()?.getToolTipAgentService() ?? null;
+
+        if(toolTips === null) return;
+
         if(window.toolTipIsDynamic)
         {
             if(event.type === 'WME_OVER')
             {
-                // tooltip begin
+                toolTips.begin(window);
             }
             else if(event.type === 'WME_MOVE')
             {
-                // tooltip update
+                toolTips.updateCaption(window);
             }
             else if(event.type === 'WME_OUT')
             {
-                // tooltip end
+                toolTips.end(window);
             }
         }
         else
         {
+            // A static tooltip with no caption has nothing to show, so AS3 does not even start the
+            // timer for it — the `else` is guarded, not the branches inside.
             if(window.toolTipCaption != null && window.toolTipCaption.length > 0)
             {
                 if(event.type === 'WME_OVER')
                 {
-                    // tooltip begin
+                    toolTips.begin(window);
                 }
                 else if(event.type === 'WME_OUT')
                 {
-                    // tooltip end
+                    toolTips.end(window);
                 }
             }
         }
