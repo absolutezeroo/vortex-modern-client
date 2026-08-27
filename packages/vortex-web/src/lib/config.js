@@ -17,11 +17,10 @@ export const IMAGES = `${ASSET_BASE}/c_images`;
 // The client itself. /hotel drops it in an iframe with the SSO ticket on the query string, which is
 // how habbo.com mounts the Flash/Nitro client too (`.client__frame`).
 //
-// Defaulted to whatever host the site is being VIEWED from, on the client's port — `localhost` on
-// this machine, the LAN address from a phone. A hard-coded `localhost:5173` sends the phone's
-// browser to its own localhost, where nothing is listening.
-export const CLIENT_URL = import.meta.env.VITE_CLIENT_URL
-    ?? `${window.location.protocol}//${window.location.hostname}:5173`;
+// Same origin as this site, under /client — the dev server proxies it (see vite.config.js), so the
+// hotel needs ONE port open, not two. A second absolute host would also have to be a name the
+// VIEWER can resolve, which `localhost:5173` is not from a phone.
+export const CLIENT_URL = import.meta.env.VITE_CLIENT_URL ?? '/client';
 
 // packages/vortex-imager answers the same routes a real hotel points at, so an avatar URL built
 // here is the same string the client builds.

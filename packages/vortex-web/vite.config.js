@@ -10,6 +10,7 @@ import {svelte} from '@sveltejs/vite-plugin-svelte';
 //   /api            -> Vortex.WebApi          (packages/vortex-client proxies the same host as /webapi)
 //   /habbo-imaging  -> packages/vortex-imager (avatar heads, group badges, appart renders)
 //   /c_images       -> the asset host         (promo art, badge icons, appart shots)
+//   /client         -> packages/vortex-client (what /hotel puts in its iframe)
 //
 // c_images is proxied for a reason that only shows up off this machine: addressed absolutely as
 // `http://vortex-assets.local`, it is resolved by the VIEWER's browser, so every image 404s on a
@@ -27,6 +28,10 @@ export default defineConfig({
             '/api': {target: 'http://localhost:8080', changeOrigin: true},
             '/habbo-imaging': {target: 'http://localhost:8081', changeOrigin: true},
             '/c_images': {target: 'http://vortex-assets.local', changeOrigin: true},
+
+            // `ws: true` is not optional here: the client's dev server pushes HMR over a websocket,
+            // and a proxy that forwards only HTTP leaves it retrying a connection that never opens.
+            '/client': {target: 'http://localhost:5173', changeOrigin: true, ws: true},
         },
     },
 });

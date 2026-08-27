@@ -19,6 +19,16 @@ const engineAliases = (enabled: boolean) => enabled
     : {};
 
 export default defineConfig(({command}) => ({
+    // Serve-only, and only so packages/vortex-web can PROXY this dev server instead of the site
+    // pointing a phone at a second open port. A proxied Vite server needs a base: its HTML asks for
+    // `/src/index.ts`, `/@vite/client`, `/node_modules/.vite/…` at the ROOT, and under a proxy those
+    // resolve against the proxying origin — where another Vite answers with its own modules. With a
+    // base they are all asked for under `/client/`, which is the only path vortex-web forwards.
+    //
+    // The cost is local: running this package directly is `http://localhost:5173/client/`, not `/`.
+    // `pnpm build` is untouched — production serves the client at its own root.
+    base: command === 'serve' ? '/client/' : '/',
+
     plugins: [
         // serve-only; `pnpm build` keeps the plain alias-driven resolution below
         engineBundle({
