@@ -20,11 +20,34 @@
 
     let {body = []} = $props();
 
-    // `#/…` is an in-site route and goes through the router; everything else is a plain link, which
-    // is the same split the server validates hrefs against.
+    // `#/…` is an in-site route and goes through the router; everything else is a plain link.
     function internal(href)
     {
         return typeof href === 'string' && href.startsWith('#/');
+    }
+
+    // The same allowlist `WebArticleBody.IsAllowedHref` enforces on the way IN, applied again on the
+    // way OUT. Not redundant: an href is the one field an editor controls that the browser will
+    // EXECUTE, so `javascript:` reaching a rendered <a> is script on the public site. Validating it
+    // in one place only makes the whole site's safety depend on that one place never being bypassed
+    // — a direct DB write, a second writer, a relaxed rule — and this component cannot see any of
+    // those. A block whose href fails renders as plain text rather than as a link.
+    function safe(href)
+    {
+        if(typeof href !== 'string' || !href || href.length > 2048)
+        {
+            return false;
+        }
+
+        // `//host` is protocol-relative, not a path — the server refuses it and so does this.
+        if(href.startsWith('//'))
+        {
+            return false;
+        }
+
+        return href.startsWith('#/')
+            || href[0] === '/'
+            || /^https?:\/\//i.test(href);
     }
 </script>
 
@@ -42,17 +65,15 @@
             {/if}
         </figure>
     {:else if block.type === 'btn'}
+        {@const style = 'inline-block rounded-[5px] border-2 border-btn-line bg-btn px-6 py-3 text-center font-condensed text-base leading-[1.2] uppercase text-white shadow-btn hover:border-b-2 hover:border-btn-line-hover hover:bg-btn-hover active:translate-y-[2px] active:shadow-btn-active'}
         <p>
             {#if internal(block.href)}
-                <a href={block.href.slice(1)} use:link
-                   class="inline-block rounded-[5px] border-2 border-btn-line bg-btn px-6 py-3 text-center font-condensed text-base leading-[1.2] uppercase text-white shadow-btn hover:border-b-2 hover:border-btn-line-hover hover:bg-btn-hover active:translate-y-[2px] active:shadow-btn-active">
-                    {block.label}
-                </a>
+                <a href={block.href.slice(1)} use:link class={style}>{block.label}</a>
+            {:else if safe(block.href)}
+                <a href={block.href} rel="noopener noreferrer" class={style}>{block.label}</a>
             {:else}
-                <a href={block.href} rel="noopener noreferrer"
-                   class="inline-block rounded-[5px] border-2 border-btn-line bg-btn px-6 py-3 text-center font-condensed text-base leading-[1.2] uppercase text-white shadow-btn hover:border-b-2 hover:border-btn-line-hover hover:bg-btn-hover active:translate-y-[2px] active:shadow-btn-active">
-                    {block.label}
-                </a>
+                <!-- Refused by the allowlist: the label survives, the link does not. -->
+                <span class="{style} opacity-60">{block.label}</span>
             {/if}
         </p>
     {:else if block.type === 'hr'}

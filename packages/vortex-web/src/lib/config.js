@@ -3,13 +3,25 @@
 // so the only absolute host here is the asset host, which serves habbo.com's c_images tree
 // (promo art, badge icons, room thumbnails) and has no session to keep same-origin.
 
-export const ASSET_BASE = import.meta.env.VITE_ASSET_BASE ?? 'http://vortex-assets.local';
+// c_images is PROXIED like /api and /habbo-imaging, not addressed absolutely. It used to point
+// straight at `http://vortex-assets.local`, which only works on the machine whose hosts file knows
+// that name: open the site from a phone on the same network and every promo image, badge and room
+// shot 404s, because the phone resolves the URL, not the dev server. Going through the proxy makes
+// the page work from any device, and in production a reverse proxy answers the same path.
+//
+// VITE_ASSET_BASE still overrides it, for a deployment that serves c_images from a CDN.
+export const ASSET_BASE = import.meta.env.VITE_ASSET_BASE ?? '';
 
 export const IMAGES = `${ASSET_BASE}/c_images`;
 
 // The client itself. /hotel drops it in an iframe with the SSO ticket on the query string, which is
 // how habbo.com mounts the Flash/Nitro client too (`.client__frame`).
-export const CLIENT_URL = import.meta.env.VITE_CLIENT_URL ?? 'http://localhost:5173';
+//
+// Defaulted to whatever host the site is being VIEWED from, on the client's port — `localhost` on
+// this machine, the LAN address from a phone. A hard-coded `localhost:5173` sends the phone's
+// browser to its own localhost, where nothing is listening.
+export const CLIENT_URL = import.meta.env.VITE_CLIENT_URL
+    ?? `${window.location.protocol}//${window.location.hostname}:5173`;
 
 // packages/vortex-imager answers the same routes a real hotel points at, so an avatar URL built
 // here is the same string the client builds.
