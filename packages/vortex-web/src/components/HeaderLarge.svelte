@@ -21,6 +21,12 @@
     import {t} from '../lib/i18n.js';
 
     const HOTEL = new URL('../assets/hotel.png', import.meta.url).href;
+
+    // Declared, and that matters more than it looks: an undeclared `open` in the markup resolves to
+    // `window.open` — a function, so permanently truthy. The drawer then rendered as already-open at
+    // every width and its "Se connecter" button, guarded by `{#if !open}`, never appeared at all.
+    // Nothing warns: it compiles, it runs, and the only symptom is a phone with no way to sign in.
+    let open = $state(false);
 </script>
 
 <!-- `.header__top`: solid below 767, translucent black and 100px tall from 767. -->
@@ -45,9 +51,25 @@
         <div class="pointer-events-none absolute -top-[100px] -left-[100px] hidden h-[512px] w-[849px] bg-no-repeat [image-rendering:pixelated] md:block"
              style="background-image:url({HOTEL});background-position-y:center"></div>
 
-        <!-- `.register-banner__register`: the sign-in column, over the art. -->
-        <div class="relative z-10 w-full bg-topbar/90 p-3 md:my-6 md:mr-3 md:w-[540px] md:rounded-[3px]">
-            <LoginForm banner />
+        <!-- `.register-banner__register`: the sign-in column, over the art.
+             It starts as a BUTTON and reveals the form on click —
+             `<button ng-click="toggle = true" ng-hide="toggle" class="header__top__toggle">` over
+             `<habbo-login-form ng-show="toggle">` — and the stylesheet then hides that toggle from
+             767px and forces the form open (`.header__top__toggle { display: none }`,
+             `.header__login-form.ng-hide { display: block !important; max-height: none }`).
+             A phone gets a button, a laptop gets the open form. Showing the bare form at every width
+             left a phone with no "Se connecter" to press at all. -->
+        <div class="relative z-10 w-full bg-topbar/90 p-3 text-center md:my-6 md:mr-3 md:w-[540px] md:rounded-[3px] md:text-left">
+            {#if !open}
+                <button type="button" onclick={() => (open = true)}
+                        class="rounded-[3px] border-2 border-pill-line bg-pill px-3 py-[5px] font-condensed text-base uppercase text-white shadow-pill md:hidden">
+                    {t('LOGIN')}
+                </button>
+            {/if}
+
+            <div class="{open ? 'block' : 'hidden'} md:block">
+                <LoginForm banner />
+            </div>
         </div>
     </div>
 </div>

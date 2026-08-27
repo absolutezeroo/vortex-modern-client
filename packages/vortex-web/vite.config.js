@@ -24,6 +24,13 @@ export default defineConfig({
         host: true,
         port: 5174,
         strictPort: true,
+
+        // Vite refuses a request whose Host header it does not recognise — a DNS-rebinding guard —
+        // and a tunnel arrives with a hostname it has never seen (`*.trycloudflare.com`), so without
+        // this the tunnelled site answers "Blocked request. This host is not allowed." and nothing
+        // else. Listed rather than `true`: `true` accepts any Host at all, which is the guard turned
+        // off; these two are the hosts a tunnel actually presents.
+        allowedHosts: ['.trycloudflare.com', '.ngrok-free.app'],
         proxy: {
             '/api': {target: 'http://localhost:8080', changeOrigin: true},
             '/habbo-imaging': {target: 'http://localhost:8081', changeOrigin: true},
@@ -32,6 +39,11 @@ export default defineConfig({
             // `ws: true` is not optional here: the client's dev server pushes HMR over a websocket,
             // and a proxy that forwards only HTTP leaves it retrying a connection that never opens.
             '/client': {target: 'http://localhost:5173', changeOrigin: true, ws: true},
+
+            // The game socket itself, so a phone reaches the hotel through the ONE origin this
+            // server already is. Without it the client dials 40001 directly, which off this machine
+            // is the phone's own loopback — and through a tunnel there is no second port to open.
+            '/ws': {target: 'ws://localhost:40001', ws: true},
         },
     },
 });

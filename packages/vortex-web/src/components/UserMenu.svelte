@@ -11,7 +11,14 @@
     let open = $state(false);
 
     // `user-menu.html`: profile, settings, help, logout — in that order, with those keys.
+    //
+    // The hotel entry is an ADDITION, not a port: habbo.com's menu has no such item because its way
+    // in is the green button in the navigation — and that button is `display: none` below 767px
+    // (`.navigation__item--hotel`), which leaves a phone with no way into the hotel at all. So this
+    // menu carries one. The label is still habbo.com's own word for the action
+    // (`NAVIGATION_NATIVE_HOTEL`), and the icon the same sprite cut its green button uses.
     const ITEMS = [
+        {href: '/hotel', icon: 'habbo', label: t('NAVIGATION_NATIVE_HOTEL'), added: true},
         {href: '/profile', icon: 'profile', label: t('NAVIGATION_PROFILE')},
         {href: '/settings', icon: 'settings', label: t('NAVIGATION_SETTINGS')},
         {href: '/help', icon: 'help', label: t('NAVIGATION_HELP')},
@@ -34,9 +41,13 @@
 }} />
 
 <div class="relative w-[190px]" data-user-menu>
-    <!-- The list is a sibling of the toggle and sits under it: z-200 against the header's z-500. -->
+    <!-- The list is a sibling of the toggle and sits under it: z-200 against the header's z-500.
+
+         habbo.com's `.user-menu__list` caps at 240px, which fits ITS four rows under the 70px of top
+         padding that clears the header. The hotel entry makes five, so the cap follows — left at 240
+         it silently clipped "Se déconnecter" off the bottom. -->
     <div class="absolute top-0 left-0 z-[200] w-full overflow-hidden rounded-[10px] bg-black/90 transition-[max-height,opacity] duration-200 ease-out"
-         style="max-height:{open ? '240px' : '0'};opacity:{open ? 1 : 0}">
+         style="max-height:{open ? '280px' : '0'};opacity:{open ? 1 : 0}">
         <ul class="pb-3">
             {#each ITEMS as item (item.href)}
                 <li class="px-3 pt-[1px] first:pt-[70px]">
