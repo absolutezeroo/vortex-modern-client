@@ -2671,10 +2671,45 @@ distinct shapes of false positive, each worth recognising because they will recu
 Only the third was a defect. **A worklist entry is a claim** — the first two cost nothing to port
 because there was nothing to port.
 
-The next number to attack is the one that grew: **976 files cited at file level only, 9,162 members
-out of measure.** Their TS traces name the AS3 file but never a member, so the tool cannot say
-whether the class is ported or merely referenced. That is now the largest blind spot in this
-document.
+### The "unmeasurable" 9,164 — measured, same day
+
+That blind spot lasted about an hour. The tool skipped those files on the grounds that they could
+not be analysed, which was wrong: `entry.cited` is empty for them, but `entry.citedBy` still names
+the citing TS files, and the presence check runs off `citedBy`. **Trace coverage** is genuinely
+unknowable there; **"is this member in the TS at all?"** was answerable the whole time, and that is
+the question the worklist asks.
+
+| 977 files, 9,164 readable members | |
+|---|---|
+| present in the TS | **8,681 (94.7%)** |
+| absent — public/protected | **187** |
+| absent — private | 296 |
+
+They stay out of the coverage denominator: a 0% meaning "the rule was not applied here" would
+drown the one meaning "this is unported".
+
+**The 187 sit in 49 files, and two of them carry 76.** Both are deliberate, stated subsets, which
+is the fourth false-positive shape after the three above:
+
+- **`Tween` (41).** `onBoardingHcUi/display/TweenUtils.ts` ports Tween + Juggler + Transitions and
+  its header says "this is the subset those two calls need" — the login flow's fade. What is out:
+  the whole callback surface (`onStart`/`onUpdate`/`onRepeat`/`onComplete` and their `*Args`), the
+  convenience setters (`scaleTo`/`moveTo`/`fadeTo`/`rotateTo`), `repeatCount`/`repeatDelay`/
+  `reverse`/`roundToInt`/`nextTween`, and the object pool. Per rule 30 a stated-in-prose omission
+  should be a `TODO(AS3)` naming the members; it is not one yet.
+- **`FakeContext` (35).** Not FakeContext's problem — **`core/runtime/IContext.ts` is a 2016-shaped
+  interface**. It traces to `PRODUCTION-201601012205-226667486`, which declares 24 members; the
+  2026 build's context surface adds `propertyExists`/`getProperty`/`setProperty`/`getBoolean`/
+  `getInteger`/`interpolate`/`updateUrlProtocol`, `purge`/`hibernate`/`resume`,
+  `injectDependencies`, `prepareComponent`/`prepareAssetLibrary`, the file-proxy pair and the
+  loader counters. FakeContext implements exactly what the port's interface declares, so the
+  absence is inherited. This is `project_production_traced_parsers_drift` applied to a core DI
+  interface — **widening it ripples through every Component, so it wants its own pass**, not a
+  tail-end edit.
+
+The remaining 111 are a long tail of 1–8 per file. Rank them with
+`node scripts/as3-member-coverage.mjs --top 60`, and list one with
+`--list <TypeName>`.
 
 **A false positive was removed before this number was trusted.** The presence check searched only
 the TS files that *cite* the AS3 file, which assumes the port lives where the traces are.
