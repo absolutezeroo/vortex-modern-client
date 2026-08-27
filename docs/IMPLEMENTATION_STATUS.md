@@ -2544,8 +2544,15 @@ Re-ranked **2026-08-03**, biggest product gap first.
    `_SafeCls_2046.as` to its **id** first, then ask whether that id's event class is constructed in
    the port's handler — obfuscation-proof, and it also tells you whether the message is unported
    rather than merely unwired. **`friendlist`, `quest`, `notifications` and `groups` were swept that
-   way on 2026-08-14** — see "The transverse-debt pass". Candidates not yet swept: `habbo/toolbar`,
-   `habbo/navigator`'s remaining handlers, `habbo/session`.
+   way on 2026-08-14** — see "The transverse-debt pass".
+
+   **Every module was swept on 2026-08-28, and this priority is now closed as a *wiring* question**
+   — 26 hits down to 11, and all 11 that remain are unported messages, unported modules, or
+   deviations already documented at their call site. See the top entry under "Recent Work Recorded"
+   for the six live findings (avatars not animating when they talk being the loudest) and for the
+   tool's own bug: it walked only `vortex-engine`, so three `vortex-client`-side subscriptions read
+   as missing. Re-run it — `node scripts/sweep-unwired.mjs habbo/<mod> …` — before quoting any
+   figure here.
 
    **`habbo/help` and `habbo/moderation` were swept 2026-08-09** — findings under Recent Work.
    Help had the module's whole CFH capture layer unwired (three registries fed by nobody);
@@ -2575,9 +2582,12 @@ Re-ranked **2026-08-03**, biggest product gap first.
    faithful equivalent, so the player is a real `<iframe>` (YouTube/Vimeo standard embeds, driven
    through YouTube's documented `postMessage` protocol) tracking the `video_wrapper` window's
    on-screen rectangle — the same technique `TextFieldController`'s DOM input bridge already uses.
-   **Not yet wired**: `RWE_YOUTUBE`/`RWE_VIMEO` still fall through to the stub log in
-   `RoomWidgetFactory.createWidget()` and `RoomDesktop.createWidget()`, and the 6 messages are not
-   registered in `HabboMessages.ts` — left for a central wiring pass, same as `RWE_CRAFTING` above.
+   **Wired since** (verified 2026-08-28): `RWE_YOUTUBE`, `RWE_VIMEO` and `RWE_CRAFTING` all have a
+   factory case, a `RoomDesktop` handler case and a `RoomUI.createWidget()` call, and the messages
+   are registered (`_composers` 273/1672/1727, `_events` 1227/807/2958). The whole `RWE_*` table
+   measures clean — 47 ids created by `RoomUI`, 47 handler cases in `RoomDesktop`, all 42 handler
+   `get type()` values covered, and the factory's 45 (`RWE_LOCATION_WIDGET` and `RWE_INTERNAL_LINK`
+   have no window in AS3 either).
    The other 4 unported `ui/handler` files are whole unported clusters, not furniture:
    `CameraWidgetHandler`, `RoomThumbnailCameraWidgetHandler`, `CraftingWidgetHandler`,
    `PlayListEditorWidgetHandler` (`widget/camera/` 0/9, `crafting/` 0/13, `playlisteditor/` 0/9).
@@ -3858,6 +3868,170 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The priority-0 sweep run over every module, 2026-08-28 — `sweep-unwired.mjs` from 26 hits to
+  11, and the 11 left are all porting work rather than wiring.** The whole point of that measure is
+  that a subscription AS3 makes and this port does not is invisible: nothing throws, nothing logs,
+  the feature is simply inert. Six such subscriptions were live findings — and verifying the first
+  of them turned up a seventh fault one layer down, in `RoomEngine` itself.
+  - 🐛 **Avatars did not move their mouths when they talked.** `RoomMessageHandler` (AS3
+    `habbo/room/_SafeCls_1984.as`) subscribes `Chat`/`Whisper`/`Shout` on three adjacent lines —
+    278-280, immediately above the `onTypingStatus` this port *did* have — and its `onChat()` is
+    the room-engine half of chat: `updateObjectUserGesture()` plus
+    `updateObjectUserAction('figure_talk', ceil(text.length / 10))`. Only the session half was
+    ported (`session/handler/RoomChatHandler`, which dispatches the bubble), and AS3 subscribes
+    **both** on purpose. Everything underneath already worked — `AvatarLogic` reads `figure_talk`,
+    `AvatarVisualization` animates it — so this was one missing subscriber, not a missing feature.
+    Ported with AS3's two oddities intact: `styleIsNotification()` (style 34, and 200-299) skips
+    server-voice styles, and the whisper branch returns early for your *own* whisper.
+  - 🐛 **Ignoring someone left their avatar looking exactly the same.** Same file's
+    `onIgnoreResult()` sets `figure_is_muted` on the ignored user's room object, gated on
+    `avatar.ignored.bubble.enabled`. `IgnoredUsersManager` kept the list — that half was ported —
+    and nothing told the room. `AvatarVisualization` already reads
+    `RoomObjectVariableEnum.AVATAR_IS_MUTED`.
+  - 🐛 **And the chat fix did not work until the method under it was fixed too —
+    `RoomEngine.updateObjectUserAction()` was one `model.setNumber(action, value)`.** AS3's is a
+    14-case switch that builds a typed `RoomObject*UpdateMessage` and hands it to
+    `getEventHandler().processUpdateMessage()`, so the object's *logic* runs. Writing the variable
+    directly reaches the same model field for the simple cases and skips everything the logic does
+    around it: `figure_talk` was set and `AvatarLogic._talkEndTime` — the only thing that ever sets
+    it back to 0 — was not, so the mouth would have flapped for the rest of the session; the
+    carry-object branch never armed `_carryObjectEndTime`/`_allowUseCarryObject`; and AS3's
+    `userIsBlocked()` guard, which is what stops a blocked user's dance, sign and effects from
+    reaching their room object at all, was absent. All 13 messages the switch needs were ported and
+    all 13 have a branch in `AvatarLogic` or `PetLogic` (`Experience` is pet-only, `Chat`/`Sleep`
+    are in both) — measured before changing it, because a message with no branch would be *worse*
+    than the flat write. The 14th, `figure_habbicon`, is a `TODO(AS3)`: its message, AvatarLogic's
+    habbicon branch and `AvatarVisualization`'s habbicon bubble are all unported, and its live
+    caller (`RoomUI.onRoomUseHabbicon()`) was already writing a model variable nothing reads — that
+    path now warns instead of failing silently.
+    **This is the mandate's "a faithful change to one member can break because a *different* member
+    is unfaithful" verbatim**: the chat port was correct AS3 sitting on a flattened engine method,
+    and reverting it would have been the wrong conclusion. Every other caller was checked first —
+    12 in `RoomMessageHandler`, 2 through `RoomPreviewer` — and every action string they pass has a
+    case. `flatctrl` does not go through here at all (it has its own `updateObjectUserFlatControl()`,
+    fixed earlier for the same reason), and the fifth `parameter` argument stays deliberately absent:
+    `RoomPreviewer` already documents that nothing in the primary tree reads the `itemName` it feeds.
+  - **Both needed `IRoomCreator` widened**, and both by one member AS3 declares on the same
+    interface: `updateObjectUserGesture()` (on `_SafeCls_86`) and `get configuration()` (on
+    `_SafeCls_89`). `RoomEngine` implemented both the whole time. This is the
+    narrower-interface-than-implementation shape again — the port's copy of an AS3 interface is
+    where dead code hides, and a missing member reads as "the engine cannot do this".
+  - 🐛 **`HabboFreeFlowChat.clear()` emitted an event nobody listened for.** AS3's body is
+    `if(_chatFlowStage) _chatFlowStage.clear()`, and `ChatFlowStage.clear()` was ported and
+    reachable; the port instead emitted `'cleared'` on its TS-only bus, which had zero subscribers
+    anywhere in either package. On top of that, `onRoomEnter` — the only caller — was not
+    subscribed at all, so entering a room kept the previous room's bubbles. Both halves fixed; the
+    `'cleared'` entry is gone from the event map. (AS3 also resets a "room-change divider inserted"
+    flag there; that divider belongs to the unported history panel and stays deferred with it.)
+  - **`HabboEpicPopupView` ported** (`friendbar/popup/`, the last of `HabboFriendBar`'s six
+    sub-components, and `IHabboEpicPopupView` — a derived name, the interface is `_SafeCls_2268`).
+    `EpicPopupMessageEvent` was registered at 3547 and parsed, `IIDHabboEpicPopupView` existed,
+    `epic_popup_frame_xml` shipped, and `HabboFriendBar`'s constructor carried the attach as a
+    commented-out line: every piece but the 80-line view, so every `EpicPopup` the server sent was
+    decoded and dropped.
+  - **`HabboTracking` did not report achievements.** Four other modules subscribe header 639 and
+    none of them is the one whose job it is; AS3 registers it in `HabboTracking`'s own constructor,
+    beside `onAuthOK`/`onRoomEnter`, for one `legacyTrackGoogle('achievement', …)` call.
+  - **The wired-transaction toast.** AS3's notification handler subscribes
+    `WiredTransactionSuccess` (2677) *as well as* `RewardNotificationController` does; the port had
+    only the popup, so a transaction that opened no window left no trace in the notification list.
+  - 🐛 **`sweep-unwired.mjs` scanned only `vortex-engine`, and reported three false gaps because of
+    it.** `friendbar/onBoardingHc*` is ported into `vortex-client` (it is a canvas-2D display list,
+    not engine code), so `NameChangeDialog` and `RoomPicker` — which subscribe all three of the
+    messages the tool called missing — were outside the walk. It now walks both packages, and
+    accepts a constructing file whose path ends with the AS3 site's own `<dir>/<Class>.ts` as
+    in-module. `habbo/friendbar` went 40/44 to 44/44 without a line of client code changing.
+  - **`habbo/notifications` closed to 37/37** by writing the last three messages it subscribes and
+    this port never had: **352 `WiredTransactionFail`**, **655 `WiredTradeTransactionNotification`**
+    and **431 `ClaimProductResult`** — six files (event + parser each), three registry entries and
+    three handlers. All three names are **derived**, and each says so at the declaration: no
+    unobfuscated tree carries them, and the emulator has no constant for any of the three
+    (`win63_version` does list a `WiredFurniActionEvent` at 655, but that is an older revision whose
+    ids have moved — the kind of match that turns a derived name into a confidently wrong one).
+    Two are the same two-lookup shape as the success toast — the id keys
+    `wired_transactions.notification.{fail,trade_error}.<id>`, whose result becomes the `reason` /
+    `error` parameter of the sentence around it — and `ClaimProductResult` falls back to the raw
+    `claimId` when the hotel has no name for the product, which is AS3 passing it as
+    `getLocalization()`'s second argument. **Faithful but inert against this server**: the emulator
+    has no composer for 352, 431 or 655, so nothing sends them today. They are ported because the
+    client is the port, not because the hotel exercises them.
+  - **Citation repair, and a live demonstration of the trap the rules warn about.**
+    `audit-as3-traces.mjs` reported 46 citations resolving in no tree; 6 are fixed and the method is
+    worth recording because the first attempt at one of them was wrong.
+    - Four cited **`sources/win63_2021_version/`**, a tree this checkout does not have. Identified
+      by members against the primary tree instead: `IApiListener` → `_SafeCls_1761`
+      (`apiResponse`/`apiRawResponse`/`apiError`), `IHabboWebApiListener` → `_SafeCls_83` (the
+      `habboWebApi*`-prefixed trio), `IHabboWebApiSession` → `_SafeCls_1762` (the `addListener` +
+      route set the TS mirrors verbatim). Two more resolved the same way:
+      `AvatarAction` → `avatar/enum/_SafeCls_2652`, `FurnitureCategory` → `inventory/enum/_SafeCls_1894`.
+    - 🐛 **`RoomDesktopLayoutManager`'s six traces cited `win63_2023_version`, also absent — and
+      repointing them at PRODUCTION's `DesktopLayoutManager.as` was wrong.** The file exists there,
+      which is exactly why it looked right; its members are `_Str_22537`, `_Str_20326`, `_Str_24018`
+      — the 2016 tree obfuscates this class too, so the citation would have named four members that
+      file does not declare. `audit-as3-traces.mjs` caught it immediately (its "derived names, NOT
+      annotated" count jumped 5 → 10). The real answer was already written in the file's own header:
+      `habbo/ui/_SafeCls_2850.as`, where `setLayout`, `trimContainer`, `getWidgetContainer` and
+      `addWidgetWindow` are all declared and readable. **Verify the member, not the filename** — the
+      rule is in CLAUDE.md and it took one commit-sized detour to re-learn it.
+    - 38 broken paths remain, each needing the same per-citation identification. Do not bulk-repoint
+      them: a citation that cannot be resolved is better than one that is confidently wrong.
+  - ✅ **The in-client name change works — `help/namechange/` ported (3 files + `INameChangeUI`).**
+    The sweep's help hit was `NameChangeController.as` subscribing `UserObject`, and chasing it
+    found the whole feature dead at the last step: own-avatar menu → `RWUAM_START_NAME_CHANGE` →
+    `AvatarInfoWidgetHandler` → `HabboHelp.startNameChange()` → `NameChangeController.showView()` →
+    **`log.debug('Show name change view')`**. Everything else was already there — all four layouts
+    ship (`welcome_name_change` / `_selection` / `_confirmation` / `_suggestion_item`), the four
+    messages and both composers are ported and registered, `ChangeUserNameResultMessageEvent`
+    carries all eight result codes under real names, and the emulator's `CheckUserName` /
+    `ChangeUserName` handlers are real (95 + 80 lines, not stubs). What was missing was the view.
+    - **`NameChangeView`** is one frame holding three sibling pages, built on demand and swapped by
+      *visibility* rather than rebuilt, with the frame's content resized to whichever is showing —
+      that resize is what makes one window look like three.
+    - **`NameSuggestionListRenderer`** packs the alternatives as chips, wrapping the row and
+      disposing anything that will not fit inside AS3's literal 150px band. Its `fit()` is
+      recursive on purpose: an overflowing chip rewinds to x=0, drops a line and asks again.
+    - **The controller's shell was replaced, not extended.** It had held a communication manager and
+      four handler methods taking *parsed arguments*, which meant nothing could call them without a
+      forwarder — and no forwarder existed. It now takes `HabboHelp` and subscribes its own four
+      events, as AS3 does.
+    - 🐛 **And three of those four were subscribed a second time in `HelpMessageHandler`, on
+      handlers whose whole body was a `log.trace`.** AS3 subscribes them in `NameChangeController`
+      and nowhere else; the port's copies were the "ported as a passive object" shape this document
+      already warns about, and they were removed rather than left to shadow the real ones.
+    - Two AS3 oddities kept rather than tidied: `nameCheckWaitBegin()` writes `caption` on the info
+      text where every sibling writes `text`, and `onCheckUserNameResult()` compares against
+      `ChangeUserNameResult`'s success constant rather than its own — both messages share the code
+      space. `ExternalInterface.call("FlashExternalInterface.updateName", …)` became the same dotted
+      lookup on `window` that `MallOfferExternalInterfaceHelper` already uses: the contract is the
+      host page's, so the string stays exactly as it was, and a page that defines nothing is inert.
+  - **`habbo/discord` (9 files, 1,448 l.) is a deliberate non-port, and this is the reasoning so it
+    is not re-opened.** Its 3 sweep hits are `HabboActivityDetection` subscribing `WiredSaveSuccess`,
+    `WiredValidationError` and `GetGuestRoomResult` — purely to work out which `HabboActivityState`
+    (chilling / gaming / trading / dancing / building / creating_wired …) to publish. What it
+    publishes to is `com.sulake.discord.DiscordRichPresence`, and that is
+    **`ExtensionContext.createExtensionContext("com.sulake.discord.richpresence")` — an AIR native
+    extension** talking to the local Discord IPC socket. There is no browser equivalent: Rich
+    Presence is not reachable from a web page at all. In the Flash *browser* build the same code was
+    already inert — `createExtensionContext()` returns null there and `HabboDiscordManager`'s `rpc`
+    const is null for the life of the session — so porting it would be porting a no-op.
+    The settings half (`DiscordSettingsController` + `DiscordSettingsView`, ~500 l.) is server-backed
+    rather than ANE-backed — event 2767 `DiscordPreferences`, plus a get and a save composer — so it
+    is *technically* portable. It is still not worth porting today: **the emulator has no Discord
+    header, handler or table at all**, so the window would open, send a request nothing answers and
+    sit on null preferences. Two things make this safe to leave: `SettingsExtension` only adds its
+    Discord button when the hotel sets `discord.enabled`, and this hotel's `external_variables.json`
+    has no `discord.*` key at all — so the one live path into the unported code (the
+    `discord/settings/open` link, which has no tracker) is unreachable, not latent. Noted at that
+    call site too.
+  - **What the 11 remaining hits are, so the next run is not re-triaged from scratch**: 3 in
+    `habbo/catalog` and 2 in `habbo/groups` are documented deliberate deviations at the call site
+    (an empty AS3 body, an unported NFT image widget, `VideoOfferManager`, the relationship-status
+    feature cut); 1 in `habbo/freeflowchat` (`onPerkAllowances`) and 1 in `habbo/session`
+    (`onRoomVisualizationSettings`) likewise; 1 in `habbo/help` is an unported message (3295, which
+    belongs to the unported `habbo/game`); and the 3 in
+    `habbo/discord` are the whole unported `habbo/discord` module (9 files — Discord activity
+    detection and its settings view). None of them is a wiring gap any more.
+
 - 🆕 **Trax playlist editor ported (widget + handler), 2026-08-27**: `ui/widget/playlisteditor`
   0 → **9/9**, plus `PlayListEditorWidgetHandler` under `ui/handler`. Reuses the already-complete
   `habbo/sound` module (`IHabboSoundManager`/`IHabboMusicController`/`IPlayListController`/
@@ -3867,9 +4041,10 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   `FurniListAddOrUpdateMessageEvent` 3151, `FurniListRemoveMessageEvent` 1156) — no new wire types
   were needed. Five `RoomWidgetPlayList*` event/message classes were added alongside it
   (`ui/widget/events`, `ui/widget/messages`), matching AS3 classes that had no TS counterpart yet.
-  **Not yet wired**: `RoomWidgetFactory.ts`'s `RWE_PLAYLIST_EDITOR_WIDGET` case and
-  `RoomDesktop.ts`'s `RETWE_REQUEST_PLAYLIST_EDITOR` case are both still the pre-existing stubs —
-  the widget and handler exist and typecheck, but nothing constructs them yet.
+  **Wired since** (verified 2026-08-28): `RoomWidgetFactory.ts:344` builds it (returning null with
+  a warning when the sound manager has not resolved, since the editor reads its playlist from
+  nothing else), `RoomDesktop.ts:1165` builds the handler, and `RoomUI.ts:1335` creates it at room
+  entry.
 - 🆕 **The member-coverage worklist is closed — 749 → 18**, 2026-08-26/27. What remains is two
   clusters left on purpose: `HabboAir`'s AIR crash reporter (11) and `FloorDrawingPreset`'s
   `[Embed]` asset classes (7).
@@ -8235,6 +8410,160 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - **The DOM's `deltaY` was fed in as if it were Flash's `MouseEvent.delta`.** Flash reports the wheel in *lines* (3 per notch on Windows) and every consumer here is built on that unit — `SmoothScroller` multiplies a line by `DEFAULT_SCROLL_STEP` (25px), `ScrollBarController` maps one to 0.06 of its 0..1 offset. The DOM reports pixels (~100 per notch, `deltaMode` 0), so `App.ts::_onWheel()`/`CanvasSurface.ts::_onWheel()` passing `-e.deltaY` made one notch worth 100 lines = 2500px of scroll intent; on a 500px-of-travel list that overshoots `maxScrollV` 5× and clamps to 0 or 1. Measured against the compiled `SmoothScroller`: one notch moved the full 500px before, 75px after. Added `core/window/utils/NativeWheelDelta.ts` (no AS3 counterpart — AS3 never needed one) converting pixel/line/page deltas to Flash lines at 3 per notch, so the ported chain reproduces the original client's feel rather than an invented one, and both entry points now use it. Trackpads, which emit many small pixel deltas instead of notches, come out proportionally small and scroll smoothly.
   - **`ScrollBarController`'s own wheel handling was still the pre-2026 fixed-step jump.** The port traced to `win63_version`, where both wheel branches (`update()` and `scrollButtonEventProc()`) test `delta > 0` and add/subtract a flat `_scrollStep` (0.1 = 10% of the range) with no animation — so with the cursor over the scrollbar itself, every wheel event was a 10% teleport regardless of magnitude. The primary tree replaced this with a `SmoothScroller` (`new SmoothScroller(getScrollOffset, setSmoothScrollOffset, getSmoothScrollAxisSize, 200, 60, true, null, 15)`), both branches calling `scrollWithWheel(delta)`, plus `setScrollPosition()`'s third `fromSmoothScroller` parameter feeding external position changes into `adjustStartPosition()`. Ported all of it. Kept AS3's oddity verbatim: `getSmoothScrollAxisSize()` is a bare `25 / _scrollStep` even though the scroller is constructed with a step of 15, so one wheel line moves 0.06 of the offset, not `_scrollStep` — documented at the declaration rather than "corrected". Also ported the `scrollable` setter's missing `setScrollPosition(scrollH/scrollV, false)` (without it `_offset` stays 0 while the target is scrolled, and `_offset` is where the smooth scroller starts from).
   - **Known remaining divergence, deliberately not changed**: the primary tree's increment/decrement buttons and track paging use a literal `SCROLL_STEP_SIZE` (15) where this port (following `win63_version`) uses the target's own `scrollStepH`/`scrollStepV`. Unrelated to the wheel and affects a different interaction, so it's flagged rather than folded into this fix.
+- ✅ **`vortex-imager` gained furniture and whole-room rendering**, 2026-08-27. Two new routes —
+  `GET /habbo-imaging/furniture` (`?class=` / `?id=`, plus `direction`, `size`, `state`, `frame`,
+  `color`, `extra`, `bg`, `zoom`) and `GET /habbo-imaging/room/<roomId>.png` (`walls`, `furni`,
+  `floor`/`wall`/`landscape`, `size`, `zoom`, `bg`) — both driving the engine's own room pipeline
+  headlessly. See `packages/vortex-imager/README.md` for the parameters; what is worth recording
+  here is what the port had to be taught.
+  - **`RoomEngine` is not booted, and must not be.** It is a DI `Component` with hard
+    dependencies on the window manager, toolbar, catalog and session manager, and a hard
+    dependency on an IID nothing provides locks a component forever with nothing logged. The
+    four collaborators it would have wired — `RoomContentLoader`, `RoomObjectFactory`,
+    `RoomObjectVisualizationFactory`, `RoomManager` — are wired directly in
+    `src/room/RoomStack.ts` instead, which is all `getFurnitureImage()` actually uses them for.
+  - **The rasterizer had to be rebuilt, and only the rasterizer.**
+    `RoomObjectSpriteVisualization.getImage()` and `RoomRenderingCanvas` both end at
+    `Vortex.instance.application.renderer.extract.canvas()`; there is no PixiJS renderer in Node.
+    What they consume is plain data (`getSprite(i)` → texture, offset, relative depth, tint, blend
+    mode), so `src/render/composeSprites.ts` composites it on `@napi-rs/canvas` — which is what
+    AS3's own `BitmapData.draw()` loop did. Placement and depth are copied from
+    `RoomRenderingCanvas.renderObject()`, including the `1.2e-7 * |x|` and `3.7e-11 * index`
+    tie-breakers.
+  - **`RoomManager.update()` is the client's ticker, and nothing was calling it.**
+    `onContentLoaded()` only *queues* a downloaded bundle; `processLoadedContentTypes()` — reached
+    only from `update()` — is what turns it into a graphic asset collection and re-initializes the
+    objects waiting on it. With no ticker, boot hung for the full 120s timeout with six
+    `RCLE_SUCCESS` events already delivered and nothing to show for them. `RoomStack.pump()` /
+    `pumpUntil()` run frames by hand at the two moments that need one, with
+    `limitContentProcessing = false` since a one-frame render has no budget to protect.
+  - **The room's floor and wall materials come from `RoomEngine`, not from `RoomManager`.**
+    `onRoomContentReady()` reads `roomVisualization` out of `HabboRoomContent.nitro`, converts
+    every texture in the bundle to a canvas, and injects the resulting `RoomVisualizationData`
+    over the one the visualization factory built. Skip it and the room still renders — `RoomPlane`
+    falls back to a flat fill when its rasterizer has no material — so the floor came out solid
+    white and the walls solid grey, with nothing logged, and it looked plausible enough to ship.
+    `RoomStack.loadRoomVisualizationData()` does the same thing, minus the GPU readback (the
+    shim's `TextureSource.resource` *is* the canvas). The tell was that `?floor=101` and
+    `?floor=401` produced byte-identical images.
+  - **Shim surface grew from three symbols to sixteen.** The room graph imports `Container`,
+    `Graphics`, `Sprite`, `Text`, `Filter`, `ColorMatrixFilter`, `Rectangle`, `Renderer`,
+    `Ticker`, `Color`, `GlProgram` and `defaultFilterVert` alongside `Texture`/`Spritesheet`/
+    `Assets`. All inert — nothing on the imager's path uses them — but they must exist or esbuild
+    fails, which is the intended failure mode. Three additions were *not* inert:
+    `TextureSource.update()` (a no-op `RoomPlane.render()` calls on every repaint — without it,
+    every room render threw), a `document.createElement('canvas')` global (eighteen call sites
+    across the plane rasterizers plus `GraphicAssetCollection.colorizePalette()`), and a stub for
+    the engine's `Vortex` singleton (three room-graph files import it, always for
+    `renderer.extract`; unaliased it drags `VortexMain` and the whole client bootstrap into the
+    bundle).
+  - **`FurnitureDataParser` logs an error per item when it has no localization manager** — a
+    deliberate client diagnostic, and 55,836 error lines on every imager boot. It gets a sink now,
+    not `null`.
+  - **The doorway needs the door's *half-tile* position, and the server does not send one.**
+    `RoomMessageHandler.onFloorHeightMap()` works the door out from the shape of the map — an open
+    tile with three blocked neighbours — and the pattern that matches decides both the wall it is
+    cut into and the offset: `x + 0.5` for the left wall, `y + 0.5` for the back one. That offset
+    is where the wall plane is; the integer tile centre sits half a tile inside the room, matches
+    no plane, and the mask is dropped without a word. The first cut of this route used
+    `room_models.door_x`/`door_y` directly and looked almost right: the wall stayed solid and the
+    door tile's floor plane painted a floor-coloured square onto it. `room_models` now only
+    narrows the search — the same role `RoomEntryTileMessageParser` plays in the client — because
+    the *direction* is not in the database and is what the whole thing turns on. The last step,
+    `geometry.setDisplacement(pos, ±2000)`, is what sorts the door tile behind the wall instead of
+    over it.
+  - 🐛 **The shim's `Spritesheet` threw away the packer's trim, and furniture bundles use it.**
+    A `.nitro` frame can carry `trimmed: true` with `spriteSourceSize` (where the surviving
+    rectangle sat inside the original) and `sourceSize` (the original size) — and **every
+    registration point in the same bundle is relative to that original**. The shim's `parse()`
+    read only `frame`, on a written assumption that these bundles never trim. They do:
+    `es_box_64_a_0_0` is `frame 62x45` trimmed at `(2,16)` out of a `66x65` original, so the
+    Freeze ice block drew exactly 16 px too high and 2 px too far left in every room, while an
+    untrimmed furni beside it looked perfect. The shim now carries `trim`/`orig` on `Texture`,
+    and `composeSprites.ts` draws the frame at its trim offset (mirroring the offset *inside*
+    the flipped frame, which is what `scale.x = -1` does to a trimmed sprite);
+    `RoomStack.frameToCanvas()` cuts room materials at the original size for the same reason.
+  - **Found by pixel diff against the running client**, after reading the code had ruled out
+    everything else and pointed the wrong way. A screenshot of room 8 aligned to the imager's
+    render on the floor's bounding box: **15.37% of pixels differed before, 0.30% after**, and
+    what is left is the client's tile cursor, two waving flags, one scoreboard digit and an
+    avatar standing in the doorway — nothing positional. The measured residual on the ice block
+    was `(+2, +16)`; the trim is `(2, 16)`. The `+2` had been dismissed as filter noise for an
+    hour, and it was the other half of the answer.
+  - **`Texture.width`/`height` deliberately still report the *frame* size, not `orig`.** Real
+    PixiJS reports `orig`, and returning it here is tempting — but the avatar pipeline sizes its
+    composite canvas from those and then draws `frame`, so `orig` grows the canvas without moving
+    the pixels: a plain avatar went from 64x110 to 90x130 with the figure in the corner. Whether
+    that pipeline should be reading `orig` and honouring `trim` is a real engine question — the
+    client gets `orig` from real PixiJS and draws `frame` just the same — but it is not the
+    imager's to answer. **Open, and worth checking against a trimmed avatar part.**
+  - **The object logics are ticked once before the sprites are read.** `RoomInstance.update()`
+    only ticks the categories registered with `addObjectUpdateCategory()`, which `RoomEngine`
+    does at bootstrap and nothing here did — so a one-shot render never ran a logic at all. The
+    room render now creates every object first, runs one frame, and reads the sprites afterwards.
+    It changed no pixel in the diff above; it is kept because a renderer that never ticks a logic
+    is a latent gap for any furni whose state settles there, not because it fixed something.
+  - **`rooms.paint_floor = "0"` means "not decorated"**, not floor 0: it is the emulator's column
+    default, and the room-properties message that would carry a real paint is not ported, so the
+    client draws every room in this hotel from `RoomEngine`'s `111`/`201`/`1` defaults.
+    `Database.findRoom()` falls back on `"0"` for that reason.
+  - **Items render in the state they are actually in.** `furniture.extra_data` is JSON on this
+    server — `{"stuff":{"Data":"1",…}}` for a normal item, `{"wired":{…}}` for a wired box, `{}`
+    for one with nothing to say — and `stuff.Data` is the legacy string the wire carries.
+    `FurnitureDataParser.parseObjectData()` reads the state back out of exactly that string,
+    defaulting to 0. The route now decodes it the same way and hands it to the item's own *logic*
+    as a `RoomObjectDataUpdateMessage` with a real `LegacyStuffData`, rather than calling
+    `setState()` on the object: the logic is what calls `setState()`, what runs
+    `writeRoomObjectModel()` to put the state into `furniture_data`, and what stamps
+    `furniture_state_update_time` (which `AnimatedFurnitureVisualization` reads to decide whether
+    to restart an animation). Skipping it left every lamp off and every gate shut. A poster's
+    variant number is that legacy string too, so `getWallItemType()` gets it instead of the raw
+    JSON.
+  - **`frame=N` advances animations, and it has to be a time step, not another call.**
+    `FurnitureVisualization.update()` returns early while `time < _lastUpdateTime + 41`, so
+    calling it repeatedly with the same `time` — which is what
+    `RoomEngine.getGenericRoomObjectImage()`'s `frameCount` loop does, and what this route copied
+    — stops advancing after the first few calls catch `_lastUpdateTime` up. Both routes now step
+    the clock by 41 ms per frame. Verified on `fireplace_polyfon` at state 1: the flame changes
+    shape frame to frame, where before every frame was byte-identical.
+  - ✅ **`/habbo-imaging/effect/<id>.png` and `/handitem/<id>.png` — the two things an avatar
+    render cannot show: what an effect or a carried item looks like *on its own*.** Both still
+    run the whole avatar pipeline (an effect's sprites are resolved against the figure's actions;
+    a hand item is a *body part* of it) and only change what is composited at the end.
+    - **The effect route** drops the body layer from `composeAvatarWithSprites()` — but only
+      after the `avatar` sprite entry has been read, because that entry nudges the *other*
+      sprites into place and dropping it early moves them. Most effects add no sprites at all,
+      and those answer 400 saying so rather than returning a blank image.
+    - 🐛 **Additive glows rendered as dark blobs, on this route and on `?effect=` before it.**
+      A glow is authored as light on black and drawn additively, which needs something to add to;
+      composited onto a transparent canvas, canvas 2D's `lighter` adds alpha along with colour
+      and the black stays. The engine has the same problem and the same answer, which the imager
+      had explicitly declined to port on the grounds that it would only be "approximate" — it was
+      not approximate, it was a black cone. `render/extractDarknessToAlpha.ts` is that pass,
+      using the engine's own `ColorConverter` so the two cannot drift.
+    - **The hand item goes through `AvatarImageCache.getImageContainer('rightitem', …)`, not a
+      hand-built asset name.** Both resolve; the shortcut is wrong. The carry animation's layer
+      data remaps the item's direction, so `h_crr_ri_2_2_0` comes back a real sprite that is not
+      the one the avatar is holding — an orange torch where the figure shows a blue can, verified
+      by cropping the same item off a full render. `forceUpdate` must be `false`: `true` resets
+      the direction cache and the container comes back null. The cache is `protected` with no
+      public equivalent, so it is reached through one narrow cast.
+  - **A disk tier under the memory cache, for the immutable routes only** (`cache/DiskCache.ts`).
+    A figure string, a badge code and a furni's parameters fully describe their pixels, so the
+    same key can only ever produce the same bytes and there is no reason a restart should
+    re-render the hotel: measured at 17 ms for an avatar and 2 ms for a furni off disk, against
+    160 ms+ fresh, and byte-identical. Rooms are deliberately excluded — `room/8.png` names a
+    room, not its contents. The path carries the hotel's asset build (`flash.client.url`'s last
+    segment), because the one thing that *can* change an otherwise-immutable image is the client
+    being rebuilt; a new build writes into a new directory and deleting the old one is the whole
+    of invalidation. Writes go through a temp file and a `rename`, so a crash cannot leave a
+    half-written PNG to be served as a broken image forever.
+  - **Not drawn, deliberately**: avatars, pets and bots — session state, not room contents. Also
+    approximate: `getImage()`'s `extractDarknessToAlpha()` pass over `add`-blended sprites on a
+    transparent background is not reproduced (canvas 2D's `lighter` adds alpha, so glow furni
+    render, just not identically), and the richer stuff-data formats (a sticky's text, a guild
+    badge) are not decoded past their legacy string, so those items render with their state but
+    without their content.
 - 🐛 **`HabboMessages.ts` had `GetBonusRareInfoMessageComposer` registered at wire header 957** (found via a real emulator log: `GiveSupplementToPetMessageParser` repeatedly throwing `"Not enough data: need 4, remaining 0"` for packet 957). Ground truth (`vortex-client/HabboMessages.as`, `sources/win63_version/habbo/communication/class_1881.as`, and the emulator's `Turbo.Revisions/Revision20260112/Headers.cs`) all agree 957 is `GiveSupplementToPetMessageComposer`'s header and `GetBonusRareInfoMessageComposer`'s real header is 75. Since `GetBonusRareInfoMessageComposer` sends an empty body and fires automatically from `BonusRarePromoWidget.ts` on every landing-view load, every such load sent an empty packet tagged 957, which the server routed to the pet-supplement parser expecting two ints. Fixed the header (957 → 75) and ported the previously entirely-missing `GiveSupplementToPetMessageComposer.ts` (`petId`, `supplementType` — AS3 only exists in `sources/win63_version/habbo/communication/messages/outgoing/room/engine/`, not the primary tree), registered at 957. No UI calls it yet — giving pets supplements isn't wired up anywhere in the client (no `PetSupplementEnum` port, no pet-care UI action) — this was a protocol-registry-only fix, not a new feature.
 
 ---
