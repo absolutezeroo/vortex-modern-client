@@ -952,6 +952,10 @@ import {
     IsBadgeRequestFulfilledEvent
 } from './messages/incoming/inventory/badges/IsBadgeRequestFulfilledEvent';
 import {BanInfoMessageEvent} from './messages/incoming/moderation/BanInfoMessageEvent';
+import {
+    MyCfhReportStatusMessageEvent
+} from './messages/incoming/callforhelp/MyCfhReportStatusMessageEvent';
+import {AppealCfhMessageComposer} from './messages/outgoing/help/AppealCfhMessageComposer';
 import {ModeratorInitMessageEvent} from './messages/incoming/moderation/ModeratorInitMessageEvent';
 import {ModeratorToolPreferencesMessageEvent} from './messages/incoming/moderation/ModeratorToolPreferencesMessageEvent';
 import {ModeratorUserInfoMessageEvent} from './messages/incoming/moderation/ModeratorUserInfoMessageEvent';
@@ -2350,6 +2354,10 @@ export class HabboMessages implements IMessageConfiguration
         // registry entry for the class that handler registers, with the readable name from
         // win63_version, which spells the same handler identically.
         this._events.set(2557, BanInfoMessageEvent);
+        // The reply to GetMyCfhReportStatus (1834), which the client already sent and then had
+        // nothing registered to read. WIN63 registry: _SafeStr_4546[3809] = _SafeCls_1752, the
+        // class HabboHelp.as:485 subscribes to.
+        this._events.set(3809, MyCfhReportStatusMessageEvent);
         this._events.set(757, ModeratorInitMessageEvent);
         this._events.set(1898, ModeratorToolPreferencesMessageEvent);
         this._events.set(2589, ModeratorUserInfoMessageEvent);
@@ -3536,6 +3544,8 @@ export class HabboMessages implements IMessageConfiguration
         // The player's own report history. `vortex-emulator` had the reply composer and no
         // header for the request until 2026-08-11.
         this._composers.set(1834, GetMyCfhReportStatusMessageComposer);
+        // WIN63 registry: _composers[3028] = _SafeCls_3470, sent by MyReportStatus::onClickAppeal().
+        this._composers.set(3028, AppealCfhMessageComposer);
         this._composers.set(3336, GuideSessionInviteRequesterMessageComposer);
         this._composers.set(2545, ChatReviewGuideDecidesOnOfferMessageComposer);
         this._composers.set(349, ChatReviewGuideDetachedMessageComposer);

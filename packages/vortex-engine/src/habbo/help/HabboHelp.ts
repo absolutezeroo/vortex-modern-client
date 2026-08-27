@@ -55,6 +55,13 @@ import type {IHabboTracking} from '@habbo/tracking/IHabboTracking';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IMessageComposer} from '@core';
 import {GetMyCfhReportStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetMyCfhReportStatusMessageComposer';
+import {
+    MyCfhReportStatusMessageEvent
+} from '@habbo/communication/messages/incoming/callforhelp/MyCfhReportStatusMessageEvent';
+import type {
+    MyCfhReportStatusMessageEventParser
+} from '@habbo/communication/messages/parser/callforhelp/MyCfhReportStatusMessageEventParser';
+import {MyReportStatus} from './MyReportStatus';
 import type {SanctionRecord} from '@habbo/communication/messages/parser/help/SanctionRecord';
 import {GetCfhStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetCfhStatusMessageComposer';
 import {GetGuideReportingStatusMessageComposer} from '@habbo/communication/messages/outgoing/help/GetGuideReportingStatusMessageComposer';
@@ -130,6 +137,9 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     private _nameChangeController: NameChangeController | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_sanctionInfo
     private _sanctionInfo: SanctionInfo | null = null;
+
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_reportStatus
+    private _reportStatus: MyReportStatus | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_topicsFlowHelpController
     private _topicsFlow: TopicsFlowHelpController | null = null;
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::_habboWayController
@@ -932,6 +942,22 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
     }
 
     /**
+     * Opens the report list on the server's answer.
+     *
+     * AS3 calls straight through to `openWindow()`, which disposes and rebuilds the controller's
+     * window every time — so unlike `openSanctionInfo()` above there is no disposed-check here.
+     */
+    // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::onMyCfhReportStatusMessageEvent()
+    private onMyCfhReportStatusMessageEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as MyCfhReportStatusMessageEventParser;
+
+        if(parser == null) return;
+
+        this._reportStatus?.openWindow(parser);
+    }
+
+    /**
 	 * Request the user's own sanction status
 	 */
     // AS3: .../src/com/sulake/habbo/help/HabboHelp.as::requestSanctionInfo()
@@ -1449,6 +1475,8 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         this.addMessageEvent(new RoomReadyMessageEvent(this.onRoomReady.bind(this)));
         this.addMessageEvent(new GetGuestRoomResultMessageEvent(this.onGuestRoomResult.bind(this)));
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
+        // AS3: HabboHelp.as:485 — answers requestReportsStatus() and opens the report list.
+        this.addMessageEvent(new MyCfhReportStatusMessageEvent(this.onMyCfhReportStatusMessageEvent.bind(this)));
 
         // Create sub-managers
         // AS3 passes itself: the manager sends every report through `HabboHelp.sendMessage()` and
@@ -1457,6 +1485,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         this._guideManager = new GuideHelpManager(this);
         this._nameChangeController = new NameChangeController(this._communication);
         this._sanctionInfo = new SanctionInfo(this);
+        this._reportStatus = new MyReportStatus(this);
         this._topicsFlow = new TopicsFlowHelpController(this);
 
         // Create registry handlers — both take the component, as AS3 does: they subscribe
