@@ -13,6 +13,17 @@ import type {IDisposable} from "../../runtime/IDisposable";
  */
 export interface IGraphicContext extends IDisposable
 {
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/IGraphicContext.as
+    // declares five display-list members this interface deliberately does not: `get parent` /
+    // `set parent` (a `DisplayObjectContainer`), `getDisplayObject` / `setDisplayObject`, and
+    // `getAbsoluteMousePosition` / `getRelativeMousePosition`. Their implementations read
+    // `getChildAt(0)`, `stage.mouseX` and `DisplayObjectContainer.addChild()`. The port has no
+    // Flash display list — `WindowComposite` composites the window tree onto one canvas and
+    // `MouseEventProcessor` owns the pointer position — so there is no object to hand back and no
+    // stage to read. `IWindow` carries the two mouse-position methods, which is where the port's
+    // callers ask for them. `GraphicContext.ts` says the same beside its own implementation; it is
+    // repeated here because the members are declared on *this* file's AS3 counterpart, and a note
+    // on the implementation does not account for an interface's members.
     // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::get filters()
     filters: unknown[];
     // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::get visible()
@@ -25,6 +36,9 @@ export interface IGraphicContext extends IDisposable
     // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::get numChildContexts()
     readonly numChildContexts: number;
 
+    // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::offSet()
+    // Spelled `offset` here, and takes the two coordinates rather than AS3's `Point` — the port has
+    // no `flash.geom.Point`, and every caller passes a pair.
     offset(x: number, y: number): void;
 
     // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::getDrawRegion()

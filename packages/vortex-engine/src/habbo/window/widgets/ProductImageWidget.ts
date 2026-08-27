@@ -28,7 +28,16 @@ const log = Logger.getLogger('habbo.window.widgets.ProductImageWidget');
  * `productInfo.productTypeId` selects. Larger, angled sibling of
  * ProductIconWidget's flat icon previews.
  *
+ * AS3 has it implement the obfuscated `_SafeCls_2029` — the product-previewer interface, whose
+ * name is unrecoverable in every tree — on top of the widget base. That interface is what declares
+ * `productInfo`, `clearPreviewer()`, `setPlaceholder()`, `pivot`, `blend`, `setUnknownImage()` and
+ * `unknownImageUri`, all implemented below and traced to this class. Named here because a member
+ * declared on an interface is accounted for by whatever implements it, and `ItemPopupCtrl.ts` —
+ * the only other file citing `_SafeCls_2029.as` — deliberately declares just the two members it
+ * consumes.
+ *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductImageWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/_SafeCls_2029.as
  */
 export class ProductImageWidget implements IWidget, IGetImageListener
 {

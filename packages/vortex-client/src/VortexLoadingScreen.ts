@@ -108,6 +108,11 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
     private _percentLabel: HTMLDivElement;
     private _versionLabel: HTMLDivElement;
 
+    // AS3 creates its `errorTextField` lazily inside showError() and keeps it only as a display
+    // child; held in a field here because there is no display list to look it up in.
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::showError() — the local `errorTextField`.
+    private _errorLabel: HTMLDivElement | null = null;
+
     /** AS3 _barProgression — fake bar progress 0..100. */
     private _barProgression: number = 0;
 
@@ -205,6 +210,58 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
         if(this._disposed) return;
 
         this._percentLabel.textContent = Math.round(ratio * 100) + '%';
+    }
+
+    /**
+     * Turns the screen into a failure screen.
+     *
+     * AS3 stops the bar timer, replaces the rotating status line with
+     * `${client.loading.failed}` — falling back to the literal "Loading failed" when the key does
+     * not resolve, which it never can this early — blanks the percentage, and adds a wrapped,
+     * centred error line under everything else. The width clamp is AS3's:
+     * `max(320, min(stageWidth - 80, 760))`.
+     *
+     * The seven `getChildByName()` key constants AS3 declares alongside this (CONTAINER,
+     * FILE_LOADING_BAR, FILE_BAR_SPRITE, PHOTO_SPLASH_SCREEN, BACKGROUND, VERSION_TEXT_FIELD,
+     * ERROR_TEXT_FIELD) address children of a Flash display list. This screen is DOM and holds
+     * each element in a field, so they have nothing to name and are deliberately not ported.
+     */
+    // AS3: .../src/binaryData/HabboLoadingScreen.as::showError()
+    public showError(message: string): void
+    {
+        if(this._disposed) return;
+
+        if(this._timerId)
+        {
+            clearInterval(this._timerId);
+            this._timerId = 0;
+        }
+
+        this._textLabel.textContent = 'Loading failed';
+        this._percentLabel.textContent = '';
+
+        if(this._errorLabel === null)
+        {
+            this._errorLabel = document.createElement('div');
+
+            Object.assign(this._errorLabel.style, {
+                position: 'absolute',
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                fontSize: '16px',
+                // AS3 `LoaderUI.createTextField("", 16, 8309486, ...)` — 8309486 is 0x7ECDAE.
+                color: '#7ECDAE',
+                textAlign: 'center',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+            } as Partial<CSSStyleDeclaration>);
+
+            this._root.appendChild(this._errorLabel);
+        }
+
+        this._errorLabel.style.width = Math.max(320, Math.min(window.innerWidth - 80, 760)) + 'px';
+        this._errorLabel.textContent = message;
+
+        this.positionElements();
     }
 
     /**
@@ -503,6 +560,16 @@ export class VortexLoadingScreen implements IVortexLoadingScreen
         // Version label — top-right corner (AS3 lines 308-313)
         this._versionLabel.style.left = (stageW - versionW) + 'px';
         this._versionLabel.style.top = '0px';
+
+        // Error line — under the percentage, centred, only once showError() has created it.
+        // AS3 positions it in the same pass; it just runs after `addChild()`.
+        if(this._errorLabel !== null)
+        {
+            const errorW = this._errorLabel.offsetWidth || 320;
+
+            this._errorLabel.style.left = Math.floor((stageW - errorW) / 2) + 'px';
+            this._errorLabel.style.top = (local1 + VortexLoadingScreen.ELEMENT_SPACING * 2) + 'px';
+        }
     }
 
     /**

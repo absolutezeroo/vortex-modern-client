@@ -20,4 +20,16 @@ export interface IVortexLoadingScreen extends IDisposable
 	 */
     // AS3: .../src/binaryData/IHabboLoadingScreen.as::updateLoadingBar()
     updateLoadingBar(progress: number): void;
+
+    /**
+	 * Turns the loading screen into a failure screen: the bar animation stops, the rotating status
+	 * line becomes "Loading failed", and `message` is shown underneath.
+	 *
+	 * Without it a boot failure leaves the fake progress bar cycling forever, which is
+	 * indistinguishable from a slow load.
+	 *
+	 * @param message - what went wrong, shown verbatim
+	 */
+    // AS3: .../src/binaryData/IHabboLoadingScreen.as::showError()
+    showError(message: string): void;
 }
