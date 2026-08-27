@@ -2697,10 +2697,16 @@ is the fourth false-positive shape after the three above:
   convenience setters (`scaleTo`/`moveTo`/`fadeTo`/`rotateTo`), `repeatCount`/`repeatDelay`/
   `reverse`/`roundToInt`/`nextTween`, and the object pool. Per rule 30 a stated-in-prose omission
   should be a `TODO(AS3)` naming the members; it is not one yet.
-- **`FakeContext` (35).** Not FakeContext's problem — the port's `core/runtime/IContext.ts` traces
-  to `PRODUCTION-201601012205-226667486` and is narrower than the 2026 `IContext`
-  (`core/runtime/_SafeCls_57.as`). FakeContext implements exactly what the port's interface
-  declares, so the absence is inherited.
+- **`FakeContext` (35).** Not FakeContext's problem — it implements exactly what the port's
+  `IContext` declares, so the absence is inherited from there.
+
+  **Corrected 2026-08-27, same day**: the first version of this entry said `IContext.ts` was
+  "2016-shaped and narrower than the 2026 interface". Half right. It *was* traced to
+  PRODUCTION's `IContext.as` (all 14 traces — now repointed), but its **shape is current**: the
+  2026 interface is `_SafeCls_57 extends _SafeCls_54, _SafeCls_49`, and `_SafeCls_54` is what this
+  port mirrors, member for member bar the eight AIR/display-list ones. Only one member was
+  genuinely missing, `get linkEventTrackers`, and it is added. The conclusion below did not change;
+  the reason for it did.
 
   **Checked 2026-08-27, and the answer is: do not widen it.** The 17 members `_SafeCls_57` adds are
   AIR plumbing with no consumer — a `fileProxy` and its six XML/dictionary/string persistence
