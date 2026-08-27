@@ -490,16 +490,20 @@ function formatKb(bytes)
 // The two malformed shapes are not typos on this side: the dump really contains
 // `https:http://vortex-assets.local/...` and `/http://vortex-assets.local/...`, left by a
 // find/replace over the original `https://images.habbo.com`. Both leading forms are absorbed, and
-// the stray `/` in particular has to be - `badge.image.path` would otherwise come out as
-// `//c_images/album1584`, which is protocol-relative and asks a host literally named `c_images`.
+// the stray `/` in particular has to be - `badge.image.path` would otherwise keep a slash the
+// placeholder already supplies.
 const ASSET_HOST = /\/?(?:https?:)?https?:\/\/vortex-assets\.local/g;
 
-// Makes those values relative, for exactly the reason `url.prefix` is relative in
-// src/assets/configurations/common_configuration_txt.txt: the client then asks whichever origin
-// served it, and both dev servers proxy the host's four roots (/c_images, /gamedata, /gordon,
-// /dcr) onwards. This is what `flash.client.url` and `dynamic.download.url` need to be reachable
-// off this machine at all - with the absolute host the client stops at "Failed to download
-// required client libraries".
+// Replaces that host with `${url.prefix}`, which is what the rest of the configuration already
+// uses and what every consumer resolves for itself: the browser client fills it with the origin
+// it was served from (App.ts::fillOriginPrefixes, so /client, a bare root and a tunnel each get
+// the right one), and vortex-imager sets it to its own `assetsBaseUrl` before downloading
+// (AvatarRenderService::bootConfiguration). This is what `flash.client.url` and
+// `dynamic.download.url` need to be reachable off this machine at all - with the absolute host
+// the client stops at "Failed to download required client libraries".
+//
+// A bare path would only serve the browser: `fetch('/c_images/…')` has no base in Node and throws,
+// which is exactly how the imager reads `image.library.badgepart.url`.
 //
 // Only the variables are rewritten. The texts bundle is prose, and a URL inside a sentence is
 // content, not a fetch this client performs.
@@ -511,11 +515,11 @@ function relativiseAssetHost(vars)
     {
         if(typeof value !== 'string') continue;
 
-        const relative = value.replace(ASSET_HOST, '');
+        const rewritten = value.replace(ASSET_HOST, '${url.prefix}');
 
-        if(relative === value) continue;
+        if(rewritten === value) continue;
 
-        vars.set(key, relative);
+        vars.set(key, rewritten);
         count++;
     }
 
