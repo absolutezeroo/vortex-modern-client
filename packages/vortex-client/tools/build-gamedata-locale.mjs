@@ -482,6 +482,46 @@ function formatKb(bytes)
     return `${(bytes / 1024).toFixed(0)} KB`;
 }
 
+// The asset host as it is written in the dump. `vortex-assets.local` is `127.0.0.1` in this
+// machine's hosts file, so a value carrying it resolves to whoever is READING it - on a phone or
+// through a tunnel, the visitor's own loopback, where nothing is listening. Over HTTPS it is also
+// blocked outright as mixed content.
+//
+// The two malformed shapes are not typos on this side: the dump really contains
+// `https:http://vortex-assets.local/...` and `/http://vortex-assets.local/...`, left by a
+// find/replace over the original `https://images.habbo.com`. Both leading forms are absorbed, and
+// the stray `/` in particular has to be - `badge.image.path` would otherwise come out as
+// `//c_images/album1584`, which is protocol-relative and asks a host literally named `c_images`.
+const ASSET_HOST = /\/?(?:https?:)?https?:\/\/vortex-assets\.local/g;
+
+// Makes those values relative, for exactly the reason `url.prefix` is relative in
+// src/assets/configurations/common_configuration_txt.txt: the client then asks whichever origin
+// served it, and both dev servers proxy the host's four roots (/c_images, /gamedata, /gordon,
+// /dcr) onwards. This is what `flash.client.url` and `dynamic.download.url` need to be reachable
+// off this machine at all - with the absolute host the client stops at "Failed to download
+// required client libraries".
+//
+// Only the variables are rewritten. The texts bundle is prose, and a URL inside a sentence is
+// content, not a fetch this client performs.
+function relativiseAssetHost(vars)
+{
+    let count = 0;
+
+    for(const [key, value] of vars)
+    {
+        if(typeof value !== 'string') continue;
+
+        const relative = value.replace(ASSET_HOST, '');
+
+        if(relative === value) continue;
+
+        vars.set(key, relative);
+        count++;
+    }
+
+    return count;
+}
+
 // Applies the override files to an existing gamedata JSON and leaves every other key untouched.
 // A backup is written next to the target the first time, so a bad merge is always undoable.
 function mergeIntoJson(args)
@@ -633,8 +673,12 @@ function main()
         }
     }
 
+    const relativised = relativiseAssetHost(keptVars);
+
     const textsJson = JSON.stringify(Object.fromEntries(keptTexts), null, args.pretty ? 2 : 0);
     const varsJson = JSON.stringify(Object.fromEntries(keptVars), null, args.pretty ? 2 : 0);
+
+    console.log(`\nasset host made relative in ${relativised} value(s)`);
 
     console.log(`\ntexts out: ${keptTexts.size} keys, ${formatKb(Buffer.byteLength(textsJson))}`);
     console.log(`vars  out: ${keptVars.size} keys, ${formatKb(Buffer.byteLength(varsJson))}`);

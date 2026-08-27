@@ -813,13 +813,19 @@ export class VortexApp
             this._loadingScreen?.updateLoadingBar(ratio * CORE_RATIO);
         };
 
+        // BASE_URL, not a leading `/`: these two live in `public/`, so they are served under
+        // whatever base the client is mounted at. Addressed from the ORIGIN root they were fetched
+        // from the proxying site instead when vortex-web serves the client at /client — and a Vite
+        // dev server answers an unknown path with its own index.html, 200. The bundle then parsed
+        // `<!DO` as its header and died on "Unsupported bundle version: 1008821359", which is that
+        // text read as a big-endian int. BASE_URL is `/client/` in dev and `/` in a build.
         const [imageBundle, xmlBundle] = await Promise.all([
-            AssetBundle.load('/assets-images.bundle', (ratio: number) => 
+            AssetBundle.load(`${import.meta.env.BASE_URL}assets-images.bundle`, (ratio: number) =>
             {
                 bundleProgress.images = ratio;
                 updateBundleProgress();
             }),
-            AssetBundle.load('/assets-xml.bundle', (ratio: number) => 
+            AssetBundle.load(`${import.meta.env.BASE_URL}assets-xml.bundle`, (ratio: number) =>
             {
                 bundleProgress.xml = ratio;
                 updateBundleProgress();

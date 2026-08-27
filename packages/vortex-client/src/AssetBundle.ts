@@ -40,7 +40,7 @@ interface IBundleManifest
  *
  * Usage:
  * ```typescript
- * const bundle = await AssetBundle.load('/assets-images.bundle', ratio => { ... });
+ * const bundle = await AssetBundle.load(`${import.meta.env.BASE_URL}assets-images.bundle`, ratio => { ... });
  * const bitmap = await bundle.getImageBitmap('images/habbo_blue_skin.png');
  * const xml = bundle.getText('window-layouts/main_window.xml');
  * const url = bundle.getUrl('images/icon_name.png');

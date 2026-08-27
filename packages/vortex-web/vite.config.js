@@ -33,6 +33,17 @@ export default defineConfig({
         allowedHosts: ['.trycloudflare.com', '.ngrok-free.app'],
         proxy: {
             '/api': {target: 'http://localhost:8080', changeOrigin: true},
+
+            // The same web API under the name the CLIENT calls it: its configuration ships
+            // `web.api.en=/webapi`, which is origin-root — so proxied at /client the client asks
+            // THIS server, not its own. Unproxied it would get this site's index.html with a 200,
+            // which is the shape of failure that costs the most time to read.
+            '/webapi': {
+                target: 'http://localhost:8080',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/webapi/, ''),
+            },
+
             '/habbo-imaging': {target: 'http://localhost:8081', changeOrigin: true},
             // The asset host's four roots. `vortex-assets.local` is `127.0.0.1` in this machine's
             // hosts file, so the CLIENT could not fetch a single asset from a phone or through a
