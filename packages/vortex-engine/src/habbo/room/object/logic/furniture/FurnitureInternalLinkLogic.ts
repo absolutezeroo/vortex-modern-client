@@ -74,7 +74,7 @@ export class FurnitureInternalLinkLogic extends FurnitureLogic
 
         if(this._showStateOneOnceRendered && this._updateCount === 20)
         {
-            this.setAutomaticStateIndex(1);
+            this.setAnimationState(1);
         }
     }
 
@@ -87,13 +87,16 @@ export class FurnitureInternalLinkLogic extends FurnitureLogic
 
         if(event.type === 'doubleClick' && this._showStateOneOnceRendered)
         {
-            this.setAutomaticStateIndex(0);
+            this.setAnimationState(0);
         }
 
         super.mouseEvent(event, geometry);
     }
 
-    private setAutomaticStateIndex(index: number): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/_SafeCls_2271.as::setAnimationState()
+    // Real name, and `public` as AS3 declares it — its three sibling link/crafting logics already
+    // spell it this way. It was `private setAutomaticStateIndex` here until 2026-08-27.
+    setAnimationState(index: number): void
     {
         if(this.object === null)
         {

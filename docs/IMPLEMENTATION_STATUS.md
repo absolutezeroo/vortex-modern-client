@@ -2638,18 +2638,43 @@ same day's traceability pass (see "Trace hygiene" below); the measurable populat
 repointed citations began resolving into the primary tree, so more of the port became visible — and
 with it, more gaps. That is the expected direction, not a regression.
 
-| | first run | after the trace pass | after `habbo/window` |
-|---|---|---|---|
-| AS3 files with >=1 `::member` trace | 877 | 879 | **888** |
-| readable members declared in them | 15,884 | 15,955 | **16,035** |
-| carrying a trace | 6,623 (41.7%) | 6,653 (41.7%) | **6,847 (42.7%)** |
-| **absent from the TS — public/protected** | 819 | 787 | **693** <- the worklist |
-| absent from the TS — private | 1,526 | 1,526 | 1,504 |
-| present in the TS but untraced — public/protected | 4,445 | 4,495 | 4,493 |
-| present in the TS but untraced — private | 2,471 | 2,494 | 2,498 |
-| files cited at file level only (unmeasurable) | 1,877 | 1,907 | 1,909 |
-| members whose AS3 name is obfuscated | 3,517 | 3,555 | 3,555 |
-| citations to a file that does not exist | 80 | **7** | 7 |
+| | first run | after the trace pass | after `habbo/window` | **2026-08-27** |
+|---|---|---|---|---|
+| AS3 files with >=1 `::member` trace | 877 | 879 | 888 | **1,975** |
+| readable members declared in them | 15,884 | 15,955 | 16,035 | **27,984** |
+| carrying a trace | 6,623 (41.7%) | 6,653 (41.7%) | 6,847 (42.7%) | **18,762 (67%)** |
+| **absent from the TS — public/protected** | 819 | 787 | 693 | **0** <- closed |
+| absent from the TS — private | 1,526 | 1,526 | 1,504 | 1,584 |
+| present in the TS but untraced — public/protected | 4,445 | 4,495 | 4,493 | 5,037 |
+| present in the TS but untraced — private | 2,471 | 2,494 | 2,498 | 2,601 |
+| files cited at file level only (unmeasurable) | 1,877 | 1,907 | 1,909 | **976** |
+| members whose AS3 name is obfuscated | 3,517 | 3,555 | 3,555 | 6,465 |
+| citations to a file that does not exist | 80 | **7** | 7 | 11 |
+
+**The worklist reached 0 on 2026-08-27.** The last three entries were not ports — they were three
+distinct shapes of false positive, each worth recognising because they will recur:
+
+- **`[Embed]` asset classes** (`FloorDrawingPreset`, 7). Its `TODO(AS3)` already explained that the
+  eight border embeds have no TypeScript counterpart, but abbreviated them
+  `floor_editor_border_N/NE/E/...`. The measure matches member names as whole words, so only the
+  first of the eight was seen. **Spell every member out in a `TODO(AS3)`** or it reads as a gap.
+- **A flattened SWF root** (`HabboAir`, 11). It re-declares constants that have their own home in
+  the source — `ERROR_VARIABLE_*` in `HabboErrorVariableEnum.as`, `ERROR_UNCAUGHT_ERROR` in
+  `core/_SafeCls_48.as` — and this port keeps them where they belong, so they read as absent from
+  the file that cites `HabboAir.as`. The note in `Vortex.ts` now says where each one went; it also
+  used to claim they were unported, which was wrong.
+- **An invented name** (`_SafeCls_2048::setAnimationState`, 1). Ported as `setAutomaticStateIndex`,
+  after the model variable it writes. The real name is readable in the obfuscated class, and its
+  three sibling logics already used it. `FurnitureInternalLinkLogic` had the same rename, plus
+  `private` where AS3 says `public`.
+
+Only the third was a defect. **A worklist entry is a claim** — the first two cost nothing to port
+because there was nothing to port.
+
+The next number to attack is the one that grew: **976 files cited at file level only, 9,162 members
+out of measure.** Their TS traces name the AS3 file but never a member, so the tool cannot say
+whether the class is ported or merely referenced. That is now the largest blind spot in this
+document.
 
 **A false positive was removed before this number was trusted.** The presence check searched only
 the TS files that *cite* the AS3 file, which assumes the port lives where the traces are.

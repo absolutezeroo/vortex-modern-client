@@ -176,14 +176,25 @@ export interface ICrashReport
 export class Vortex implements IVortex
 {
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::reportCrashStack(),
-    // logError(), set errorLogger(), HabboCoreErrorReporter and the nine ERROR_VARIABLE_* keys they
-    // fill are one subsystem: AS3 POSTs a crash payload (throttled to one per 15s) to an external
-    // error logger, with Capabilities.version and the AIR process log attached. This build has no
-    // such endpoint, and the two halves that would survive the move — the payload keys and the
-    // categories — would be nine dead constants without it. ErrorReportStorage already collects
-    // the debug data such a report would carry, so the collection half is not what is missing.
-    // ERROR_CATEGORY_FINALIZE_PRELOADING (9) and ERROR_CATEGORY_DOWNLOAD_FONT (11) belong beside
-    // Core.ts's other categories if a reporter is ever built.
+    // logError(), set errorLogger() and HabboCoreErrorReporter are one subsystem: AS3 POSTs a crash
+    // payload (throttled to one per 15s) to an external error logger, with Capabilities.version and
+    // the AIR process log attached. This build has no such endpoint. ErrorReportStorage already
+    // collects the debug data such a report would carry, so the collection half is not what is
+    // missing. ERROR_CATEGORY_FINALIZE_PRELOADING (9) and ERROR_CATEGORY_DOWNLOAD_FONT (11) belong
+    // beside Core.ts's other categories if a reporter is ever built.
+    //
+    // The payload **keys are not missing**, contrary to what this note used to claim. HabboAir.as
+    // is the SWF root and re-declares constants that have their own home elsewhere in the source;
+    // this port keeps them where they belong, so the measure sees them as absent from *this* file:
+    //   ERROR_VARIABLE_IS_FATAL, ERROR_VARIABLE_CLIENT_CRASH_TIME, ERROR_VARIABLE_CONTEXT,
+    //   ERROR_VARIABLE_FLASH_VERSION, ERROR_VARIABLE_AVERAGE_UPDATE_INTERVAL, ERROR_VARIABLE_DEBUG
+    //     → habbo/tracking/HabboErrorVariableEnum.ts, under these exact names.
+    //   ERROR_VARIABLE_DESCRIPTION, ERROR_VARIABLE_CATEGORY, ERROR_VARIABLE_DATA
+    //     → same file, under HabboErrorVariableEnum.as's own ERROR_PARAM_KEY_DESCRIPTION /
+    //       _CATEGORY / _DATA. Both names are real AS3, in different classes, same values.
+    //   ERROR_UNCAUGHT_ERROR → core/Core.ts (it is core/_SafeCls_48.as:59 as well).
+    //   PROCESSLOG_ENABLED → the flag itself is not kept; HabboTracking reads
+    //     `processlog.enabled` live, and HabboProperty.PROCESSLOG_ENABLED_KEY names it.
 
     // Engine orchestrator (= HabboAirMain)
     private _habboMain: VortexMain | null = null;

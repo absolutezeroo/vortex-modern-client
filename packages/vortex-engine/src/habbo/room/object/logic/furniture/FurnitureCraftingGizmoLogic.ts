@@ -16,12 +16,16 @@ export class FurnitureCraftingGizmoLogic extends FurnitureLogic
         return 'RWE_CRAFTING';
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/_SafeCls_2048.as::useObject()
     override useObject(): void
     {
         super.useObject();
     }
 
-    setAutomaticStateIndex(index: number): void
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/_SafeCls_2048.as::setAnimationState()
+    // The name is real and readable in the obfuscated class — it was `setAutomaticStateIndex` here
+    // until 2026-08-27, invented after the model variable it writes.
+    setAnimationState(index: number): void
     {
         if(this.object === null)
         {
