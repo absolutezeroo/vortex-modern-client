@@ -89,8 +89,19 @@ export class FakeContext implements IContext
         // No-op
     }
 
+    /**
+	 * AS3 returns `null` here, not an empty vector — a caller iterating it would throw. Returning
+	 * `[]` instead, since AS3's own `for each (… in null)` is a silent no-op and this port's is
+	 * not; the one caller, `HTMLTextController`, walks it directly.
+	 */
+    // AS3: .../src/binaryData/FakeContext.as::get linkEventTrackers()
+    get linkEventTrackers(): readonly ILinkEventTracker[]
+    {
+        return [];
+    }
+
     // AS3: .../src/binaryData/FakeContext.as::addLinkEventTracker()
-    addLinkEventTracker(_tracker: ILinkEventTracker): void 
+    addLinkEventTracker(_tracker: ILinkEventTracker): void
     {
         // No-op
     }
