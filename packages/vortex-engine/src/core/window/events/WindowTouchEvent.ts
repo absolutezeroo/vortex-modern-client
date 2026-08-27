@@ -12,13 +12,27 @@ import {WindowEvent} from './WindowEvent';
  */
 export class WindowTouchEvent extends WindowEvent 
 {
+    // The eight event types, shortened from AS3's `WINDOW_EVENT_TOUCH_*` — deliberately, and as a
+    // set: only four of AS3's eight identifiers survived obfuscation, so the other four had to be
+    // named here anyway, and `WINDOW_EVENT_TOUCH_BEGIN` beside a derived `TOUCH_END` would be
+    // worse than eight consistent names. Every *value* is verbatim, which is what the wire and the
+    // event dispatch actually match on.
+
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::WINDOW_EVENT_TOUCH_BEGIN
     public static readonly TOUCH_BEGIN: string = 'WTE_BEGIN';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::_SafeStr_11246 (name derived from the value)
     public static readonly TOUCH_END: string = 'WTE_END';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::WINDOW_EVENT_TOUCH_MOVE
     public static readonly TOUCH_MOVE: string = 'WTE_MOVE';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::_SafeStr_10751 (name derived from the value)
     public static readonly TOUCH_OUT: string = 'WTE_OUT';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::WINDOW_EVENT_TOUCH_OVER
     public static readonly TOUCH_OVER: string = 'WTE_OVER';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::_SafeStr_11670 (name derived from the value)
     public static readonly TOUCH_ROLL_OUT: string = 'WTE_ROLL_OUT';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::WINDOW_EVENT_TOUCH_ROLL_OVER
     public static readonly TOUCH_ROLL_OVER: string = 'WTE_ROLL_OVER';
+    // AS3: .../src/com/sulake/core/window/events/WindowTouchEvent.as::_SafeStr_10679 (name derived from the value)
     public static readonly TOUCH_TAP: string = 'WTE_TAP';
 
     private static readonly _touchPool: WindowTouchEvent[] = [];
