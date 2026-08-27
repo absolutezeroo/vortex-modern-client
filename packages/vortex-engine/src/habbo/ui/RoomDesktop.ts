@@ -63,6 +63,8 @@ import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import type {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 import {CustomUserNotificationWidgetHandler} from './handler/CustomUserNotificationWidgetHandler';
 import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
+import {YoutubeDisplayWidgetHandler} from './handler/YoutubeDisplayWidgetHandler';
+import {VimeoDisplayWidgetHandler} from './handler/VimeoDisplayWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
 import {CameraWidgetHandler} from './handler/CameraWidgetHandler';
 import {RoomThumbnailCameraWidgetHandler} from './handler/RoomThumbnailCameraWidgetHandler';
@@ -1158,9 +1160,17 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:870
                 handler = new CustomUserNotificationWidgetHandler();
                 break;
+            case 'RWE_YOUTUBE':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:897-898
+                handler = new YoutubeDisplayWidgetHandler();
+                break;
             case 'RWE_RENTABLESPACE':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:900
                 handler = new RentableSpaceWidgetHandler();
+                break;
+            case 'RWE_VIMEO':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:903-904
+                handler = new VimeoDisplayWidgetHandler();
                 break;
             // AS3: RoomDesktop.as::createWidgetHandler() "RWE_ROOM_QUEUE"
             case 'RWE_ROOM_QUEUE':

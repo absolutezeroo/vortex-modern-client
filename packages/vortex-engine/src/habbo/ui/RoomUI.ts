@@ -160,6 +160,13 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     private _landingView: IHabboLandingView | null = null;
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_habboTracking
     private _habboTracking: IHabboTracking | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get habboTracking()
+    public get habboTracking(): IHabboTracking | null
+    {
+        return this._habboTracking;
+    }
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_habboGroupsManager
     private _habboGroupsManager: IHabboGroupsManager | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::friendList
@@ -1295,14 +1302,22 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_MANNEQUIN');
                     // AS3: RoomUI.as:956 — the refusal dialogs (VIP/costume gates, failed respect).
                     desktop.createWidget('RWE_CUSTOM_USER_NOTIFICATION');
+                    // AS3: RoomUI.as:969 — the YouTube TV furni's player window.
+                    desktop.createWidget('RWE_YOUTUBE');
                     // AS3: RoomUI.as:975 — the rentable-space rent dialog.
                     desktop.createWidget('RWE_RENTABLESPACE');
+                    // AS3: RoomUI.as:971 — the Vimeo TV furni's player window.
+                    desktop.createWidget('RWE_VIMEO');
                     desktop.createWidget('RWE_FRIEND_FURNI_ENGRAVING');
                     // AS3: RoomUI.as:964
                     desktop.createWidget('RWE_FRIEND_FURNI_CONFIRM');
                     // AS3: RoomUI.as:968
                     desktop.createWidget('RWE_CUSTOM_STACK_HEIGHT');
+                    // AS3: RoomUI.as:976 — the "set this shot as the room thumbnail" camera.
+                    desktop.createWidget('RWE_ROOM_THUMBNAIL_CAMERA');
                     desktop.createWidget('RWE_ROOM_LINK');
+                    // AS3: RoomUI.as:978 — the crafting table.
+                    desktop.createWidget('RWE_CRAFTING');
                     desktop.createWidget('RWE_CLOTHING_CHANGE');
                     // AS3: RoomUI.as:966 — the scoreboard bubble over a high-score furni.
                     desktop.createWidget('RWE_HIGH_SCORE_DISPLAY');
@@ -1316,6 +1331,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     // AS3: RoomUI.as:957 — "what furniture is in this room".
                     desktop.createWidget('RWE_FURNI_CHOOSER');
                     desktop.createWidget('RWE_USER_CHOOSER');
+                    // AS3: RoomUI.as:959 — the Trax playlist editor.
+                    desktop.createWidget('RWE_PLAYLIST_EDITOR_WIDGET');
+                    // AS3: RoomUI.as:962 — the in-room photo camera.
+                    desktop.createWidget('RWE_CAMERA');
                     // AS3: RoomUI.as:967 — no window of its own; the handler follows the link the
                     // clicked furni carries.
                     desktop.createWidget('RWE_INTERNAL_LINK');

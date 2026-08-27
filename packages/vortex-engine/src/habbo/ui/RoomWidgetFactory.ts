@@ -63,6 +63,10 @@ import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 import {CraftingWidget} from './widget/crafting/CraftingWidget';
+import {CameraWidget} from './widget/camera/CameraWidget';
+import {RoomThumbnailCameraWidget} from './widget/camera/RoomThumbnailCameraWidget';
+import {YoutubeDisplayWidget} from './widget/furniture/video/YoutubeDisplayWidget';
+import {VimeoDisplayWidget} from './widget/furniture/video/VimeoDisplayWidget';
 import {PlayListEditorWidget} from './widget/playlisteditor/PlayListEditorWidget';
 
 const log = Logger.getLogger('habbo.ui.RoomWidgetFactory');
@@ -315,6 +319,25 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 return new FurnitureContextMenuWidget(
                     handler, this._roomUI.windowManager, this._roomUI.assets,
                     this._roomUI.localization, this._roomUI.habboGroupsManager, this._roomUI.catalog
+                );
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as:133-134
+            case 'RWE_CAMERA':
+                return new CameraWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization, this._roomUI
+                );
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as:163-164
+            case 'RWE_ROOM_THUMBNAIL_CAMERA':
+                return new RoomThumbnailCameraWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization, this._roomUI
+                );
+            case 'RWE_YOUTUBE':
+                return new YoutubeDisplayWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets,
+                    this._roomUI.localization, this._roomUI.habboTracking
+                );
+            case 'RWE_VIMEO':
+                return new VimeoDisplayWidget(
+                    handler, this._roomUI.windowManager, this._roomUI.assets, this._roomUI.localization
                 );
             case 'RWE_CRAFTING':
                 return new CraftingWidget(handler, this._roomUI.windowManager, this._roomUI);

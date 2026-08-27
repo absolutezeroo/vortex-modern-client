@@ -2423,11 +2423,26 @@ small and self-contained:
 The distinction is not academic: 117 of 515 handlers are empty stubs, and reading the filename
 instead of the body is what made camera and crafting look ready (see the camera section above).
 
+**A furni widget needs four things wired, and a port routinely has three.** Found 2026-08-27 while
+wiring video, and it had silently deadened five features:
+
+1. `RoomUI` must call `desktop.createWidget('RWE_X')` at room entry (AS3 `RoomUI.as:924-978`) —
+   six were missing here: playlist editor, camera, room-thumbnail camera, youtube, vimeo, crafting.
+2. `RoomWidgetFactory.createWidget()` needs the `case` that builds the window.
+3. `RoomDesktop.createWidget()` needs the `case` that builds the handler.
+4. **The furni's logic class must return the `RWE_`-prefixed string from `get widget()`.**
+   `RoomDesktop.processEvent()` delivers an open/close-widget event only to the handler whose
+   `type` equals that string, so `return 'YOUTUBE'` routes to nobody and throws nothing. Five
+   logic classes had the bare name (youtube, vimeo, crafting, custom stack height, rentable
+   space); AS3 is genuinely inconsistent here, but only for `get contextMenu()` — every
+   `get widget()` in the primary tree is prefixed. Re-check with:
+   `grep -rn "get widget()" -A4 packages/vortex-engine/src/habbo/room/object/logic/ | grep "return '"`
+
 | Family                    | Send | Recv | Server | Client-side state                                        |
 |---------------------------|------|------|--------|-----------------------------------------------------------|
-| Crafting                  | 5    | 4    | **none — all 5 stubs** | **client-side ported 2026-08-26** (messages 5/5+4/4+6/6 parsers, `ui/widget/crafting` 13/13, `CraftingWidgetHandler`); `RWE_CRAFTING` wiring in `RoomDesktop`/`HabboMessages` pending a central pass; blocked on a stub server otherwise |
-| Camera / photos           | ~~5~~ 0 | ~~4~~ 0 | **none — all 5 stubs** | **client-side complete 2026-08-13** (messages + `ui/widget/camera` 9/9 + both handlers + both RWE cases); blocked on the engine gaps above, and on a mute server |
-| YouTube / Vimeo furni     | 3    | 3    | **none — stubs**   | the **only 2 files missing** from `ui/widget/furniture` (51/54) |
+| Crafting                  | 5    | 4    | **none — all 5 stubs** | **client-side ported 2026-08-26** (messages 5/5+4/4+6/6 parsers, `ui/widget/crafting` 13/13, `CraftingWidgetHandler`); **wired 2026-08-27** (`RWE_CRAFTING` in `RoomUI`/`RoomWidgetFactory`/`RoomDesktop` + the 9 message registrations); blocked on a stub server otherwise |
+| Camera / photos           | ~~5~~ 0 | ~~4~~ 0 | **none — all 5 stubs** | **client-side complete 2026-08-13** (messages + `ui/widget/camera` 9/9 + both handlers + both RWE cases); **finished wiring 2026-08-27** — the "both RWE cases" above were the `RoomDesktop` *handler* cases only: `RoomWidgetFactory` had no `RWE_CAMERA`/`RWE_ROOM_THUMBNAIL_CAMERA` case and `RoomUI` never created either widget, so both windows were unreachable; blocked on the engine gaps above, and on a mute server |
+| YouTube / Vimeo furni     | 3    | 3    | **none — stubs**   | **client-side ported 2026-08-27** (composers 3/3 + events 3/3 + parsers 3/3, `ui/widget/furniture/video` — `YoutubeDisplayWidget`, `VimeoDisplayWidget`, `YoutubePlayerStateEnum`, plus TS-only `VideoIframeOverlay` — and both handlers); **wired 2026-08-27** in `RoomUI`/`RoomWidgetFactory`/`RoomDesktop`/`HabboMessages`; blocked on a stub server otherwise |
 | Talent track              | 3    | 3    | 0 of 3 real  | `friendbar/talent` 0/6                               |
 | Room state / interaction  | 8    | 2    | **4 real**   | scattered singles (entry tile, occupied tiles, click-character, furni inventory out of room) |
 | Targeted offers / shop    | 3    | —    | **2 real**   | `habbo/catalog` finishing                            |
@@ -2522,17 +2537,24 @@ Re-ranked **2026-08-03**, biggest product gap first.
    separate handler class (`_SafeCls_1951.as`, obfuscated in every tree), so grepping only the
    manager finds nothing and reads as "no messages". Find the registrations with
    `grep -rln "IMessageEvent" <module>/` first.
-1. **`habbo/ui/widget/furniture` — 51/54, and `habbo/ui/handler` — 42/47**, re-measured
-   2026-08-09 (the 2026-08-05 figures below were badly stale — 46/54 and 25/47 — because they
-   counted obfuscated AS3 filenames as unported when the port carries them under recovered
-   names; match handlers by the `RWE_*` id they declare, not by filename).
-   **What is actually left in `widget/furniture` is one feature: video.**
-   `YoutubeDisplayWidget` (448), `VimeoDisplayWidget` (150) and `_SafeCls_3218` (32, the
-   player-state enum), plus their handlers `_SafeCls_3849` (207, `RWE_YOUTUBE`) and
-   `_SafeCls_3484` (123, `RWE_VIMEO`) — ~960 lines. **It needs a deliberate deviation, not a
-   port**: AS3 loads an embedded Flash player SWF through `flash.display.Loader`, which has no
-   faithful equivalent; the web answer is a YouTube/Vimeo iframe, so decide the substitution
-   before starting.
+1. **`habbo/ui/widget/furniture` — 54/54 (was 51/54, closed 2026-08-27 below), and
+   `habbo/ui/handler` — 42/47 as of 2026-08-09** (the 2026-08-05 figures below were badly stale —
+   46/54 and 25/47 — because they counted obfuscated AS3 filenames as unported when the port
+   carries them under recovered names; match handlers by the `RWE_*` id they declare, not by
+   filename; re-measure both before quoting — the handler count has moved since with
+   `YoutubeDisplayWidgetHandler`/`VimeoDisplayWidgetHandler` landing).
+   **The video feature was ported 2026-08-27**: `YoutubeDisplayWidget`, `VimeoDisplayWidget` and
+   `YoutubePlayerStateEnum` (`_SafeCls_3218` — the player-state enum, name derived), plus their
+   handlers `YoutubeDisplayWidgetHandler` (`_SafeCls_3849`, `RWE_YOUTUBE`) and
+   `VimeoDisplayWidgetHandler` (`_SafeCls_3484`, `RWE_VIMEO`), the 3 composers + 3 events + 3
+   parsers they need, and a new TS-only `VideoIframeOverlay` helper. The deliberate deviation this
+   entry called for: AS3 embeds a Flash player SWF through `flash.display.Loader`, which has no
+   faithful equivalent, so the player is a real `<iframe>` (YouTube/Vimeo standard embeds, driven
+   through YouTube's documented `postMessage` protocol) tracking the `video_wrapper` window's
+   on-screen rectangle — the same technique `TextFieldController`'s DOM input bridge already uses.
+   **Not yet wired**: `RWE_YOUTUBE`/`RWE_VIMEO` still fall through to the stub log in
+   `RoomWidgetFactory.createWidget()` and `RoomDesktop.createWidget()`, and the 6 messages are not
+   registered in `HabboMessages.ts` — left for a central wiring pass, same as `RWE_CRAFTING` above.
    The other 4 unported `ui/handler` files are whole unported clusters, not furniture:
    `CameraWidgetHandler`, `RoomThumbnailCameraWidgetHandler`, `CraftingWidgetHandler`,
    `PlayListEditorWidgetHandler` (`widget/camera/` 0/9, `crafting/` 0/13, `playlisteditor/` 0/9).

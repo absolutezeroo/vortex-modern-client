@@ -19,10 +19,12 @@
  */
 export class YoutubePlayerStateEnum
 {
-    // Name DERIVED — see class header. AS3: .../video/_SafeCls_3218.as::_SafeStr_11186
+    // Name DERIVED — see class header.
+    // AS3: .../video/_SafeCls_3218.as::_SafeStr_11186
     public static readonly UNSTARTED: number = -1;
 
-    // Name DERIVED — see class header. AS3: .../video/_SafeCls_3218.as::_SafeStr_11051
+    // Name DERIVED — see class header.
+    // AS3: .../video/_SafeCls_3218.as::_SafeStr_11051
     public static readonly ENDED: number = 0;
 
     // AS3: .../video/_SafeCls_3218.as::PLAYING

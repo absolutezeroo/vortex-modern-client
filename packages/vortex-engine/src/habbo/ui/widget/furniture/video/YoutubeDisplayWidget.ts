@@ -207,6 +207,7 @@ export class YoutubeDisplayWidget extends RoomWidgetBase
     /**
      * AS3: .../video/YoutubeDisplayWidget.as::hide()
      */
+    // AS3: .../video/YoutubeDisplayWidget.as::hide()
     hide(roomObject: IRoomObject | null): void
     {
         if(this._roomObject !== roomObject) return;
@@ -406,6 +407,7 @@ export class YoutubeDisplayWidget extends RoomWidgetBase
      * synchronously in `createWindow()`, which always runs before `showVideo()` can be reached (it
      * only arrives after `show()`), so there is nothing to queue behind.
      */
+    // AS3: .../video/YoutubeDisplayWidget.as::showVideo()
     showVideo(furniId: number, videoId: string, startAtSeconds: number, endAtSeconds: number, state: number): void
     {
         if(this._roomObject === null || this._roomObject.getId() !== furniId) return;
@@ -421,6 +423,7 @@ export class YoutubeDisplayWidget extends RoomWidgetBase
      * (`YoutubeDisplayWidgetHandler.CONTROL_COMMAND_*`) — ported exactly as read rather than
      * "corrected" to match, per this project's AS3-fidelity rule.
      */
+    // AS3: .../video/YoutubeDisplayWidget.as::controlVideo()
     controlVideo(furniId: number, commandId: number): void
     {
         if(this._roomObject === null || this._roomObject.getId() !== furniId) return;
@@ -586,6 +589,7 @@ export class YoutubeDisplayWidget extends RoomWidgetBase
     /**
      * AS3: .../video/YoutubeDisplayWidget.as::populatePlaylists()
      */
+    // AS3: .../video/YoutubeDisplayWidget.as::populatePlaylists()
     populatePlaylists(furniId: number, playlists: IYoutubePlaylist[], selectedPlaylistId: string): void
     {
         if(

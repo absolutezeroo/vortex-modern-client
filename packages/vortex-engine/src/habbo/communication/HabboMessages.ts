@@ -566,6 +566,28 @@ import {
     TriggerHabbiconMessageComposer
 } from './messages/outgoing/habbicons/TriggerHabbiconMessageComposer';
 
+// Outgoing Composers - Youtube display furni
+import {
+    GetYoutubeDisplayStatusMessageComposer
+} from './messages/outgoing/room/furniture/GetYoutubeDisplayStatusMessageComposer';
+import {
+    SetYoutubeDisplayPlaylistMessageComposer
+} from './messages/outgoing/room/furniture/SetYoutubeDisplayPlaylistMessageComposer';
+import {
+    ControlYoutubeDisplayPlaybackMessageComposer
+} from './messages/outgoing/room/furniture/ControlYoutubeDisplayPlaybackMessageComposer';
+
+// Incoming Events - Youtube display furni
+import {
+    YoutubeDisplayVideoMessageEvent
+} from './messages/incoming/room/furniture/YoutubeDisplayVideoMessageEvent';
+import {
+    YoutubeDisplayPlaylistsMessageEvent
+} from './messages/incoming/room/furniture/YoutubeDisplayPlaylistsMessageEvent';
+import {
+    YoutubeControlVideoMessageEvent
+} from './messages/incoming/room/furniture/YoutubeControlVideoMessageEvent';
+
 // Outgoing Composers - Crafting
 import {GetCraftableProductsComposer} from './messages/outgoing/crafting/GetCraftableProductsComposer';
 import {GetCraftingRecipeComposer} from './messages/outgoing/crafting/GetCraftingRecipeComposer';
@@ -2437,6 +2459,11 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2503, BadgeLeaderboardMessageEvent);
         this._events.set(1641, SeasonalCalendarDailyOfferMessageEvent);
 
+        // === YOUTUBE DISPLAY FURNI (incoming) ===
+        this._events.set(1227, YoutubeDisplayVideoMessageEvent);
+        this._events.set(807, YoutubeDisplayPlaylistsMessageEvent);
+        this._events.set(2958, YoutubeControlVideoMessageEvent);
+
         // === CRAFTING (incoming) ===
         // Four ids from WIN63's registry, corroborated by the emulator's Headers.cs. The
         // emulator's crafting handlers are empty stubs today, so nothing answers yet.
@@ -3672,6 +3699,14 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(701, DeleteRoomMessageComposer);
         this._composers.set(159, RemoveAllRightsMessageComposer);
         this._composers.set(2804, UnbanUserFromRoomMessageComposer);
+
+        // === YOUTUBE / VIMEO DISPLAY FURNI ===
+        // Ids from WIN63's registry; names recovered from win63_version's readable filenames.
+        // Vimeo reuses SetObjectDataMessageComposer (246) rather than a composer of its own,
+        // which is what AS3's Vimeo handler does too.
+        this._composers.set(273, GetYoutubeDisplayStatusMessageComposer);
+        this._composers.set(1672, SetYoutubeDisplayPlaylistMessageComposer);
+        this._composers.set(1727, ControlYoutubeDisplayPlaybackMessageComposer);
 
         // === CRAFTING ===
         // All five ids from WIN63's own registry and corroborated by the emulator's

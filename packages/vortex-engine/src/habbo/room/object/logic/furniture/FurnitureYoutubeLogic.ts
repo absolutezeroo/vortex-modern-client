@@ -11,9 +11,13 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureYoutubeLogic extends FurnitureLogic
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/_SafeCls_2249.as::get widget()
+    // The `RWE_` prefix is not decorative: RoomDesktop.processEvent() delivers an open/close-widget
+    // event only to the handler whose `type` equals this string, and every handler's type is the
+    // prefixed form. Returning the bare name silently routed the event to nobody.
     override get widget(): string | null
     {
-        return 'YOUTUBE';
+        return 'RWE_YOUTUBE';
     }
 
     override getEventTypes(): string[]

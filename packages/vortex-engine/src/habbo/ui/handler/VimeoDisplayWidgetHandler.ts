@@ -72,6 +72,7 @@ export class VimeoDisplayWidgetHandler implements IRoomWidgetHandler
      * Playback control (the editable video-id field) is granted only to staff with security
      * level 5.
      */
+    // AS3: .../handler/_SafeCls_3484.as::processEvent()
     processEvent(event: unknown): void
     {
         if(this._container?.roomEngine == null) return;

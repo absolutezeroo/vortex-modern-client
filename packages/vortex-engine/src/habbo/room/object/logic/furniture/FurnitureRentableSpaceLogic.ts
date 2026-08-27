@@ -11,9 +11,10 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 
 export class FurnitureRentableSpaceLogic extends FurnitureLogic
 {
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/logic/furniture/_SafeCls_2164.as::get widget()
     override get widget(): string | null
     {
-        return 'RENTABLESPACE';
+        return 'RWE_RENTABLESPACE';
     }
 
     override getEventTypes(): string[]

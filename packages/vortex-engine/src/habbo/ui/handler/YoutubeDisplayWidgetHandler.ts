@@ -139,6 +139,7 @@ export class YoutubeDisplayWidgetHandler implements IRoomWidgetHandler
      *
      * Playback control is granted to the furni's owner or to staff with security level 4.
      */
+    // AS3: .../handler/_SafeCls_3849.as::processEvent()
     processEvent(event: unknown): void
     {
         if(this._container?.roomEngine == null) return;

@@ -18,14 +18,20 @@ import type {IWindow} from '@core/window/IWindow';
  */
 export class VideoIframeOverlay
 {
+    // TS-only: no AS3 counterpart — see the class header.
     private _iframe: HTMLIFrameElement | null = null;
+
+    // TS-only: no AS3 counterpart — see the class header.
     private _target: IWindow | null = null;
+
+    // TS-only: no AS3 counterpart — see the class header.
     private _rafHandle: number | null = null;
 
     /**
      * Creates the iframe and starts tracking `target`'s on-screen rectangle. Replaces any
      * previously mounted iframe.
      */
+    // TS-only: no AS3 counterpart — see the class header.
     mount(target: IWindow, src: string, allow: string): void
     {
         this.destroy();
@@ -50,28 +56,33 @@ export class VideoIframeOverlay
         this.startTracking();
     }
 
+    // TS-only: no AS3 counterpart — see the class header.
     get contentWindow(): Window | null
     {
         return this._iframe?.contentWindow ?? null;
     }
 
+    // TS-only: no AS3 counterpart — see the class header.
     get mounted(): boolean
     {
         return this._iframe !== null;
     }
 
     /** Replaces the loaded document without moving or resizing the overlay. */
+    // TS-only: no AS3 counterpart — see the class header.
     setSrc(src: string): void
     {
         if(this._iframe && this._iframe.src !== src) this._iframe.src = src;
     }
 
     /** Sends one command through the provider's postMessage protocol (YouTube/Vimeo both use it). */
+    // TS-only: no AS3 counterpart — see the class header.
     postCommand(message: unknown): void
     {
         this.contentWindow?.postMessage(JSON.stringify(message), '*');
     }
 
+    // TS-only: no AS3 counterpart — see the class header.
     private startTracking(): void
     {
         if(typeof requestAnimationFrame === 'undefined') return;
@@ -96,6 +107,7 @@ export class VideoIframeOverlay
      *
      * Returns false once the target is gone, so the RAF loop can stop itself.
      */
+    // TS-only: no AS3 counterpart — see the class header.
     sync(): boolean
     {
         const iframe = this._iframe;
@@ -126,6 +138,8 @@ export class VideoIframeOverlay
         return true;
     }
 
+    // TS-only: no AS3 counterpart — same technique as
+    // `TextFieldController.isEffectivelyVisible()`.
     private isEffectivelyVisible(window: IWindow): boolean
     {
         let current: IWindow | null = window;
@@ -141,6 +155,7 @@ export class VideoIframeOverlay
     }
 
     /** Stops tracking and removes the iframe from the page. Safe to call more than once. */
+    // TS-only: no AS3 counterpart — see the class header.
     destroy(): void
     {
         if(this._rafHandle !== null && typeof cancelAnimationFrame !== 'undefined')
