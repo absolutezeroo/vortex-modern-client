@@ -951,6 +951,7 @@ import {SecondsUntilMessageEvent} from './messages/incoming/competition/SecondsU
 import {
     IsBadgeRequestFulfilledEvent
 } from './messages/incoming/inventory/badges/IsBadgeRequestFulfilledEvent';
+import {BanInfoMessageEvent} from './messages/incoming/moderation/BanInfoMessageEvent';
 import {ModeratorInitMessageEvent} from './messages/incoming/moderation/ModeratorInitMessageEvent';
 import {ModeratorToolPreferencesMessageEvent} from './messages/incoming/moderation/ModeratorToolPreferencesMessageEvent';
 import {ModeratorUserInfoMessageEvent} from './messages/incoming/moderation/ModeratorUserInfoMessageEvent';
@@ -1066,13 +1067,20 @@ import {PerkAllowancesMessageEvent} from './messages/incoming/perk';
 
 // Incoming Events - NFT
 import {
+    NftEmeraldConvertResultMessageEvent,
     UserNftChatStylesMessageEvent,
     UserPurchasableChatStyleChangedMessageEvent,
     UserPurchasableChatStylesMessageEvent,
 } from './messages/incoming/nft';
 
 // Incoming Events - Campaign
-import {CampaignCalendarDataMessageEvent, CampaignCalendarDoorOpenedMessageEvent,} from './messages/incoming/campaign';
+import {
+    CampaignCalendarDataMessageEvent,
+    CampaignCalendarDoorOpenedMessageEvent,
+    TreasureHuntFailMessageEvent,
+    TreasureHuntFirstWinnerMessageEvent,
+    TreasureHuntUpdateMessageEvent,
+} from './messages/incoming/campaign';
 
 // Incoming Events - Advertisement
 import {InterstitialMessageEvent, RoomAdErrorMessageEvent} from './messages/incoming/advertisement';
@@ -2341,6 +2349,7 @@ export class HabboMessages implements IMessageConfiguration
         // no header table, so the mod tools received nothing at all. Each id is the WIN63
         // registry entry for the class that handler registers, with the readable name from
         // win63_version, which spells the same handler identically.
+        this._events.set(2557, BanInfoMessageEvent);
         this._events.set(757, ModeratorInitMessageEvent);
         this._events.set(1898, ModeratorToolPreferencesMessageEvent);
         this._events.set(2589, ModeratorUserInfoMessageEvent);
@@ -2453,10 +2462,17 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2996, UserNftChatStylesMessageEvent);
         this._events.set(3774, UserPurchasableChatStylesMessageEvent);
         this._events.set(3971, UserPurchasableChatStyleChangedMessageEvent);
+        this._events.set(3159, NftEmeraldConvertResultMessageEvent);
 
         // === CAMPAIGN ===
         this._events.set(2503, BadgeLeaderboardMessageEvent);
         this._events.set(1641, SeasonalCalendarDailyOfferMessageEvent);
+
+        // Treasure hunt. Ids from the WIN63 registry, joined to the class each one maps to via
+        // the notification manager's own subscriptions (_SafeCls_1951.as:118, 132, 147).
+        this._events.set(377, TreasureHuntUpdateMessageEvent);
+        this._events.set(3790, TreasureHuntFailMessageEvent);
+        this._events.set(3257, TreasureHuntFirstWinnerMessageEvent);
 
         // === YOUTUBE DISPLAY FURNI (incoming) ===
         this._events.set(1227, YoutubeDisplayVideoMessageEvent);

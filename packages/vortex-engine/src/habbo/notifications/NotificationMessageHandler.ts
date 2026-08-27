@@ -124,6 +124,39 @@ import type {
     UserObjectMessageParser
 } from '@habbo/communication/messages/parser/handshake/UserObjectMessageParser';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
+import {HabboFaceFocuser} from '@habbo/utils/HabboFaceFocuser';
+import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
+import {BanInfoMessageEvent} from '@habbo/communication/messages/incoming/moderation/BanInfoMessageEvent';
+import type {
+    BanInfoMessageEventParser
+} from '@habbo/communication/messages/parser/moderation/BanInfoMessageEventParser';
+import {
+    NftEmeraldConvertResultMessageEvent
+} from '@habbo/communication/messages/incoming/nft/NftEmeraldConvertResultMessageEvent';
+import {
+    NftEmeraldConvertResultMessageEventParser
+} from '@habbo/communication/messages/parser/nft/NftEmeraldConvertResultMessageEventParser';
+import {
+    TreasureHuntUpdateMessageEvent
+} from '@habbo/communication/messages/incoming/campaign/treasurehunt/TreasureHuntUpdateMessageEvent';
+import {
+    TreasureHuntFailMessageEvent
+} from '@habbo/communication/messages/incoming/campaign/treasurehunt/TreasureHuntFailMessageEvent';
+import {
+    TreasureHuntFirstWinnerMessageEvent
+} from '@habbo/communication/messages/incoming/campaign/treasurehunt/TreasureHuntFirstWinnerMessageEvent';
+import type {
+    TreasureHuntUpdateMessageEventParser
+} from '@habbo/communication/messages/parser/campaign/treasurehunt/TreasureHuntUpdateMessageEventParser';
+import type {
+    TreasureHuntFailMessageEventParser
+} from '@habbo/communication/messages/parser/campaign/treasurehunt/TreasureHuntFailMessageEventParser';
+import type {
+    TreasureHuntFirstWinnerMessageEventParser
+} from '@habbo/communication/messages/parser/campaign/treasurehunt/TreasureHuntFirstWinnerMessageEventParser';
+import type {
+    TreasureHuntWinnerInfo
+} from '@habbo/communication/messages/parser/campaign/treasurehunt/TreasureHuntWinnerInfo';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 
@@ -139,13 +172,7 @@ const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
  *
  * @see source_as_win63/habbo/notifications/class_3353.as
  */
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::avatarImageReady()
-// Part of the entirely-unported treasure-hunt notification chain: onTreasureHuntProgress(),
-// onTreasureHuntFail(), onTreasureHuntFirstWinner(), showTreasureHuntWinner(), getHuntName(), and
-// this `_SafeCls_67` (IAvatarImageListener) callback, which re-renders the winner's face once its
-// async avatar image resolves. None of the three message events/parsers this chain needs exist in
-// this port either, so this is a chain gap, not a single missing method.
-export class NotificationMessageHandler
+export class NotificationMessageHandler implements IAvatarImageListener
 {
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::CALL_FOR_HELP_NOTIFICATION_TYPE
     private static readonly CALL_FOR_HELP_NOTIFICATION_TYPE: string = 'cfh.created';
@@ -161,6 +188,9 @@ export class NotificationMessageHandler
     private _communication: IHabboCommunicationManager | null;
     // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_messageEvents
     private _messageEvents: IMessageEvent[] = [];
+
+    // AS3: .../src/com/sulake/habbo/notifications/_SafeCls_1951.as::_bufferedTreasureHuntWinnerInfo
+    private _bufferedTreasureHuntWinnerInfo: TreasureHuntWinnerInfo | null = null;
 
     constructor(notifications: HabboNotifications, communication: IHabboCommunicationManager)
     {
@@ -291,6 +321,14 @@ export class NotificationMessageHandler
         this.addMessageEvent(new BadgeReceivedEvent(this.onBadgeReceived.bind(this)));
         this.addMessageEvent(new RecyclerFinishedMessageEvent(this.onRecyclerFinished.bind(this)));
         this.addMessageEvent(new UserPurchasableChatStyleChangedMessageEvent(this.onChatStyleNotification.bind(this)));
+        // AS3: _SafeCls_1951.as:130
+        this.addMessageEvent(new BanInfoMessageEvent(this.onBanInfoMessageEvent.bind(this)));
+        // AS3: _SafeCls_1951.as:143
+        this.addMessageEvent(new NftEmeraldConvertResultMessageEvent(this.onNftEmeraldConvertResult.bind(this)));
+        // AS3: _SafeCls_1951.as:118, 132, 147 — the treasure-hunt chain.
+        this.addMessageEvent(new TreasureHuntUpdateMessageEvent(this.onTreasureHuntUpdate.bind(this)));
+        this.addMessageEvent(new TreasureHuntFailMessageEvent(this.onTreasureHuntFail.bind(this)));
+        this.addMessageEvent(new TreasureHuntFirstWinnerMessageEvent(this.onTreasureHuntFirstWinner.bind(this)));
 
         log.debug('Notification message handlers registered');
     }
@@ -882,5 +920,158 @@ export class NotificationMessageHandler
         const preview = this._notifications.freeFlowChat?.chatStyleLibrary?.getStyle(parser.styleId)?.selectorPreview ?? null;
 
         this._notifications.addItemWithBitmap(message, 'info', preview);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onBanInfoMessageEvent()
+    private onBanInfoMessageEvent(event: IMessageEvent): void
+    {
+        const parser = event.parser as BanInfoMessageEventParser;
+
+        if(parser == null || this._notifications?.singularController?.alertDialogManager == null)
+        {
+            return;
+        }
+
+        this._notifications.singularController.alertDialogManager.handleBanInfoMessage(
+            parser.reason,
+            parser.banExpirySeconds,
+            parser.localizedReason
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onNftEmeraldConvertResult()
+    private onNftEmeraldConvertResult(event: IMessageEvent): void
+    {
+        const parser = event.parser as NftEmeraldConvertResultMessageEventParser;
+
+        if(parser == null || this._notifications == null) return;
+
+        // Success is silent — the converted furni simply appears.
+        if(parser.result === NftEmeraldConvertResultMessageEventParser.RESULT_OK) return;
+
+        if(parser.result === NftEmeraldConvertResultMessageEventParser.RESULT_NOT_IN_COLLECTOR)
+        {
+            this._notifications.addItem(
+                this._notifications.localizationManager?.getLocalization(
+                    'notification.nft.emerald_convert.not_in_collector',
+                    'To convert this Emerald furni, it needs to be in your Collector Wallet'
+                ) ?? '',
+                'info'
+            );
+
+            return;
+        }
+
+        this._notifications.addItem(
+            this._notifications.localizationManager?.getLocalization('notification.nft.emerald_convert_failed') ?? '',
+            'info'
+        );
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::getHuntName()
+    private getHuntName(huntId: string): string
+    {
+        return this._notifications?.localizationManager?.getLocalization(`treasure_hunt.${huntId}.name`, huntId) ?? huntId;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onTreasureHuntUpdate()
+    private onTreasureHuntUpdate(event: IMessageEvent): void
+    {
+        const parser = event.parser as TreasureHuntUpdateMessageEventParser;
+
+        if(parser == null || this._notifications == null) return;
+
+        const huntName = this.getHuntName(parser.huntId ?? '');
+
+        const message = parser.isCompleted
+            ? this._notifications.localizationManager?.getLocalizationWithParams(
+                'treasure_hunt.won.desc', '', 'hunt_name', huntName
+            )
+            : this._notifications.localizationManager?.getLocalizationWithParams(
+                'treasure_hunt.progress.desc', '',
+                'current', String(parser.stepsCompleted),
+                'total', String(parser.totalSteps),
+                'hunt_name', huntName
+            );
+
+        this._notifications.addItem(message ?? '', 'treasure_hunt');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onTreasureHuntFail()
+    private onTreasureHuntFail(event: IMessageEvent): void
+    {
+        const parser = event.parser as TreasureHuntFailMessageEventParser;
+
+        if(parser == null || this._notifications == null) return;
+
+        const message = this._notifications.localizationManager?.getLocalizationWithParams(
+            'treasure_hunt.level_fail.desc', '',
+            'level', String(parser.requiredLevel),
+            'level_paying', String(parser.requiredLevelPaying)
+        ) ?? '';
+
+        this._notifications.addItem(message, 'treasure_hunt');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onTreasureHuntFirstWinner()
+    private onTreasureHuntFirstWinner(event: IMessageEvent): void
+    {
+        const parser = event.parser as TreasureHuntFirstWinnerMessageEventParser;
+
+        if(parser == null) return;
+
+        this._bufferedTreasureHuntWinnerInfo = parser.winnerInfo;
+
+        this.showTreasureHuntWinner();
+    }
+
+    /**
+     * Renders the winner's face into a bubble.
+     *
+     * The two-pass shape is AS3's: the first call passes `this` as the avatar-image listener, so a
+     * figure whose assets are still downloading comes back as a placeholder and produces a bubble
+     * with no picture; `avatarImageReady()` then calls back with `retry = true`, which passes a
+     * null listener (no second callback) and lets the bubble go out with the real face. AS3 posts
+     * both, so the player sees the text immediately and the portrait a moment later.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::showTreasureHuntWinner()
+    private showTreasureHuntWinner(retry: boolean = false): void
+    {
+        const winner = this._bufferedTreasureHuntWinnerInfo;
+
+        if(winner == null || this._notifications == null) return;
+
+        const message = this._notifications.localizationManager?.getLocalizationWithParams(
+            'treasure_hunt.winner.desc', '',
+            'user_name', winner.userName,
+            'hunt_name', this.getHuntName(winner.huntId)
+        ) ?? '';
+
+        const avatarImage = this._notifications.avatarRenderManager?.createAvatarImage(
+            winner.userFigure, 'h', winner.userGender, retry ? null : this, null
+        ) ?? null;
+
+        let face: ImageBitmap | null = null;
+
+        if(avatarImage != null && !avatarImage.isPlaceholder())
+        {
+            face = HabboFaceFocuser.focusUserFace(avatarImage, 'head', 3, 1);
+            avatarImage.dispose();
+        }
+
+        if(avatarImage != null || retry)
+        {
+            this._notifications.addItemWithBitmap(message, 'treasure_hunt', face);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::avatarImageReady()
+    avatarImageReady(figureString: string): void
+    {
+        if(this._bufferedTreasureHuntWinnerInfo != null
+            && this._bufferedTreasureHuntWinnerInfo.userFigure === figureString)
+        {
+            this.showTreasureHuntWinner(true);
+        }
     }
 }
