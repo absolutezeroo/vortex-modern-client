@@ -13,7 +13,7 @@ export class RecyclerFinishedMessageEventParser implements IMessageParser
 
     private _recyclerFinishedStatus: number = -1;
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerFinishedMessageEventParser.as::get recyclerFinishedStatus()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2166/_SafeCls_2299.as::get recyclerFinishedStatus()
     get recyclerFinishedStatus(): number
     {
         return this._recyclerFinishedStatus;
@@ -21,13 +21,13 @@ export class RecyclerFinishedMessageEventParser implements IMessageParser
 
     private _prizeId: number = 0;
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerFinishedMessageEventParser.as::get prizeId()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2166/_SafeCls_2299.as::get prizeId()
     get prizeId(): number
     {
         return this._prizeId;
     }
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerFinishedMessageEventParser.as::flush()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2166/_SafeCls_2299.as::flush()
     flush(): boolean
     {
         this._recyclerFinishedStatus = -1;
@@ -35,7 +35,7 @@ export class RecyclerFinishedMessageEventParser implements IMessageParser
         return true;
     }
 
-    // AS3: sources/win63_version/habbo/communication/messages/parser/catalog/RecyclerFinishedMessageEventParser.as::parse()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2166/_SafeCls_2299.as::parse()
     parse(wrapper: IMessageDataWrapper): boolean
     {
         if(!wrapper) return false;

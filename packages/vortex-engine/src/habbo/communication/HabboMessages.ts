@@ -1200,7 +1200,6 @@ import {
 import {
     ClickFurniMessageComposer,
     GetFurnitureAliasesMessageComposer,
-    GetHeightMapMessageComposer,
     MoveAvatarMessageComposer,
     MoveObjectMessageComposer,
     MoveWallItemMessageComposer,
@@ -3313,13 +3312,12 @@ export class HabboMessages implements IMessageConfiguration
 
         // === ROOM ENGINE ===
         this._composers.set(1901, GetFurnitureAliasesMessageComposer);
-        // TODO(AS3): header 1935 does not exist anywhere in the authoritative
-        // composer registry (sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/_SafeCls_2046.as
-        // has exactly 581 _composers[N] entries; 1935 is not one of them), and no
-        // zero-arg "get height map" request composer construction site could be
-        // found via call-site tracing (this feature also has zero call sites in
-        // the current TS port). Left unresolved rather than guessing a header.
-        this._composers.set(1935, GetHeightMapMessageComposer);
+        // GetHeightMapMessageComposer removed 2026-08-27. The earlier TODO here was right that
+        // 1935 is in no registry table and that nothing constructs it — but it stopped one step
+        // short: the class is in **no AS3 tree at all**. It came from
+        // `sources/NITRO/packages/nitro-shared/src/packets/outgoing/Room/Engine/GetHeightMapComposer.ts`,
+        // which is not one of this project's three sources. In the 2026 protocol the server sends
+        // the heightmap unprompted; there is nothing to request.
         this._composers.set(2364, MoveAvatarMessageComposer);
         // Header from sources/WIN63-202607011411-782849652 (_SafeCls_2135 via HabboCatalog.as's
         // placement send). The constructor now carries AS3's full six arguments — id, category,
@@ -3552,9 +3550,15 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(1369, GetInterstitialMessageComposer);
         this._composers.set(3074, FriendRequestQuestCompleteMessageComposer);
 
-        this._composers.set(1246, GetRecyclerStatusMessageComposer);
-        this._composers.set(2516, GetRecyclerPrizesMessageComposer);
-        this._composers.set(2956, RecycleItemsMessageComposer);
+        // All three ids corrected 2026-08-27 against the WIN63 registry
+        // (habbo/communication/_SafeCls_2046.as) joined to their sender in HabboCatalog.as:
+        // _composers[1730] = _SafeCls_2061 (getRecyclerStatus), [3669] = _SafeCls_1777
+        // (getRecyclerPrizes), [1796] = _SafeCls_2312 (sendRecycleItems). The previous 1246 /
+        // 2516 / 2956 appear in no registry table at all — the recycler could not talk to the
+        // server, which is why the emulator corrected the same three on its side 2026-08-22.
+        this._composers.set(1730, GetRecyclerStatusMessageComposer);
+        this._composers.set(3669, GetRecyclerPrizesMessageComposer);
+        this._composers.set(1796, RecycleItemsMessageComposer);
 
         // === QUEST ===
         this._composers.set(2252, GetCommunityGoalHallOfFameMessageComposer);
