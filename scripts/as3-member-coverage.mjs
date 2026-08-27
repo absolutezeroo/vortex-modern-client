@@ -61,6 +61,10 @@ const argv = process.argv.slice(2);
 const LIST = argv.includes('--list');
 const WITH_PRIVATE = argv.includes('--private');
 const ALL_TREES = argv.includes('--all-trees');
+// Ranks the "unmeasurable" files — those whose TS cites the AS3 path but never a member — biggest
+// first. The blind spot is not evenly spread, and a large class hiding behind one file-level
+// citation is where a whole unported subsystem would sit unnoticed.
+const UNMEASURED = argv.includes('--unmeasured');
 const TOP = (() =>
 {
     const at = argv.indexOf('--top');
@@ -370,8 +374,13 @@ function main()
         unreadable: 0,
         otherTrees: 0,
         fileLevelOnly: 0,
-        fileLevelMembers: 0
+        fileLevelMembers: 0,
+        fileLevelPresent: 0,
+        fileLevelMissingPublic: 0,
+        fileLevelMissingPrivate: 0
     };
+
+    const unmeasured = [];
 
     for(const [path, entry] of index)
     {
@@ -393,14 +402,32 @@ function main()
         // useless: it says nothing about whether the class is ported, only that
         // .claude/rules/30-as3-traceability.md was not applied at member level there. That is a
         // real finding, but a different one, so it gets its own line rather than the denominator.
-        if(entry.cited.size === 0)
-        {
-            totals.fileLevelOnly++;
-            totals.fileLevelMembers += members.filter((member) => !member.isConstructor && !OBFUSCATED_RE.test(member.name)).length;
-            continue;
-        }
+        // A file whose TS cites it only at file level was skipped outright until 2026-08-27, on the
+        // grounds that it could not be analysed. That was wrong, and it hid 9,162 members: `cited`
+        // is empty, but `citedBy` still names the TS files, and the presence check below runs off
+        // `citedBy`, not off the per-member citations. So trace *coverage* is genuinely unknowable
+        // for these — but "is this member in the TS at all?" is not, and that is the question the
+        // worklist actually asks.
+        //
+        // They stay out of the coverage denominator (a 0% that means "the rule was not applied
+        // here" would drown the one that means "this is unported"), and get their own counters.
+        const fileLevelOnly = entry.cited.size === 0;
 
-        totals.files++;
+        if(fileLevelOnly)
+        {
+            const readable = members.filter((member) => !member.isConstructor && !OBFUSCATED_RE.test(member.name));
+
+            totals.fileLevelOnly++;
+            totals.fileLevelMembers += readable.length;
+
+            // Ranked by `--unmeasured`. The blind spot is not evenly spread: a handful of large
+            // classes carry most of those members.
+            unmeasured.push({ path, typeName, count: readable.length, citedBy: [...entry.citedBy] });
+        }
+        else
+        {
+            totals.files++;
+        }
 
         for(const member of members)
         {
@@ -408,7 +435,7 @@ function main()
 
             if(OBFUSCATED_RE.test(member.name)) { totals.obfuscated++; continue; }
 
-            totals.declared++;
+            if(!fileLevelOnly) totals.declared++;
 
             if(entry.cited.has(member.name)) { totals.covered++; continue; }
 
@@ -418,7 +445,13 @@ function main()
 
             member.inTypeScript = inTypeScript;
 
-            if(inTypeScript)
+            if(fileLevelOnly)
+            {
+                if(inTypeScript) totals.fileLevelPresent++;
+                else if(isPrivate) totals.fileLevelMissingPrivate++;
+                else totals.fileLevelMissingPublic++;
+            }
+            else if(inTypeScript)
             {
                 if(isPrivate) totals.traceOnlyPrivate++;
                 else totals.traceOnlyPublic++;
@@ -457,7 +490,23 @@ function main()
     console.log(`  fichiers AS3                    : ${totals.fileLevelOnly}`);
     console.log(`  membres hors mesure             : ${totals.fileLevelMembers}`);
     console.log('  → leur TS ne trace aucun membre : règle 30-as3-traceability non appliquée là,');
-    console.log('    donc on ne peut pas dire si la classe est portée ou seulement référencée.');
+    console.log('    donc leur COUVERTURE est inconnaissable. Leur PRÉSENCE, elle, se mesure :');
+    console.log(`      présents dans le TS           : ${totals.fileLevelPresent}  (${pct(totals.fileLevelPresent, totals.fileLevelMembers)})`);
+    console.log(`      ABSENTS — public/protected    : ${totals.fileLevelMissingPublic}   <- la vraie worklist cachée ici`);
+    console.log(`      ABSENTS — private             : ${totals.fileLevelMissingPrivate}`);
+
+    if(UNMEASURED)
+    {
+        const ranked = unmeasured.sort((a, b) => b.count - a.count).slice(0, TOP);
+
+        console.log(`\n  --- ${ranked.length} plus gros, sur ${unmeasured.length} ---`);
+
+        for(const item of ranked)
+        {
+            console.log(`\n  ${String(item.count).padStart(4)} membres hors mesure  ${item.path}  (${item.typeName ?? ''})`);
+            console.log(`      cité par : ${item.citedBy.join(', ')}`);
+        }
+    }
     console.log('');
     console.log(`membres au nom obfusqué          : ${totals.obfuscated}  (non citables par nom, jamais comptés comme manques)`);
     console.log(`constructeurs                     : ${totals.constructors}  (ignorés)`);
