@@ -34,7 +34,13 @@ const ROOT = resolve(import.meta.dirname, '..');
 const AS3 = join(ROOT, 'sources/WIN63-202607011411-782849652/src/com/sulake');
 const REGISTRY_AS3 = join(AS3, 'habbo/communication/_SafeCls_2046.as');
 const REGISTRY_TS = join(ROOT, 'packages/vortex-engine/src/habbo/communication/HabboMessages.ts');
-const ENGINE_SRC = join(ROOT, 'packages/vortex-engine/src');
+// Both packages, not just the engine. `friendbar/onBoardingHc*` is ported into `vortex-client`
+// (it is a canvas-2D display list, not engine code), so an engine-only scan reported its three
+// subscriptions as missing when the client subscribes all three.
+const TS_SRC = [
+    join(ROOT, 'packages/vortex-engine/src'),
+    join(ROOT, 'packages/vortex-client/src'),
+];
 
 function walk(dir, filter, out = [])
 {
@@ -77,7 +83,7 @@ const idToTsClass = new Map();
 // or registered but never constructed is subscribed by nobody.
 const constructedIn = new Map();
 
-for(const file of walk(ENGINE_SRC, (e) => e.endsWith('.ts')))
+for(const file of TS_SRC.flatMap((src) => [...walk(src, (e) => e.endsWith('.ts'))]))
 {
     // Strip comments first. A commented-out registration reads as a construction and hides a real
     // gap — `RespectNotificationMessageEvent` sits behind `// TODO: Register additional message
@@ -158,7 +164,14 @@ for(const mod of modules)
         // "constructed somewhere" would have reported it clean (2026-08-14).
         const inModule = [...sites].filter((s) => s.includes(`/${mod}/`));
 
-        if(inModule.length === 0)
+        // …or the port put the class outside the module tree. `vortex-client` holds the ported
+        // `friendbar/onBoardingHc*` classes as `src/onBoardingHc/NameChangeDialog.ts`, which no
+        // `/habbo/friendbar/` test can match, so the AS3 file's own `<dir>/<Class>` tail is the
+        // second way in. Same class, same subpackage — just another package.
+        const tails = info.sites.map((s) => s.replace(/\(.*$/, '').replace(/^.*?([^/]+\/[^/]+)\.as$/, '$1'));
+        const asSameClass = [...sites].filter((s) => tails.some((t) => s.endsWith(`${t}.ts`)));
+
+        if(inModule.length === 0 && asSameClass.length === 0)
         {
             missing.push({
                 cls, id, ts,

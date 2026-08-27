@@ -3,13 +3,11 @@
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/RoomWidgetFactory.as
  *
- * TODO(AS3): 39 of the AS3 factory's 45 `RWE_*` cases are constructed here. The six that are
- * not each need a whole subsystem this port has no module for, so they fall through to the
- * default stub log rather than being listed as cases:
- *   - "RWE_CAMERA" / "RWE_ROOM_THUMBNAIL_CAMERA" — CameraWidget / RoomThumbnailCameraWidget
- *   - "RWE_CRAFTING" — CraftingWidget
- *   - "RWE_PLAYLIST_EDITOR_WIDGET" — PlayListEditorWidget (takes `_roomUI.soundManager`)
- *   - "RWE_YOUTUBE" / "RWE_VIMEO" — YoutubeDisplayWidget / VimeoDisplayWidget
+ * All 45 of the AS3 factory's `RWE_*` cases are constructed here as of 2026-08-27 — the six that
+ * used to fall through to the default stub log (camera, room-thumbnail camera, crafting, the
+ * playlist editor, YouTube and Vimeo) each needed a whole subsystem, and each of those landed.
+ * The two ids `RoomUI` creates that have no case are the two AS3 has no case for either:
+ * "RWE_LOCATION_WIDGET" and "RWE_INTERNAL_LINK" are handler-only, with no window.
  * "RWE_CHAT_WIDGET" used to be handled here and is gone. The 2026 client replaced the
  * widget-based chat bubbles with `habbo/freeflowchat` outright — the primary tree has no
  * `ui/widget/roomchat/` package and `RoomWidgetEnum` no longer declares the constant — so the
