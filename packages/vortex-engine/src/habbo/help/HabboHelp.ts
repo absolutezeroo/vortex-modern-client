@@ -15,7 +15,7 @@ import {InstantMessageEventHandler} from './cfh/registry/instantmessage/InstantM
 import {UserRegistry} from './cfh/registry/user/UserRegistry';
 import {CallForHelpManager} from './CallForHelpManager';
 import {GuideHelpManager} from './GuideHelpManager';
-import {NameChangeController} from './NameChangeController';
+import {NameChangeController} from './namechange/NameChangeController';
 import {HabboWayController} from './HabboWayController';
 import {SafetyBookletController} from './SafetyBookletController';
 import {HabboWayQuizController} from './HabboWayQuizController';
@@ -1483,7 +1483,7 @@ export class HabboHelp extends Component implements IHabboHelp, ILinkEventTracke
         // reads `guardiansEnabled` off it.
         this._cfhManager = new CallForHelpManager(this);
         this._guideManager = new GuideHelpManager(this);
-        this._nameChangeController = new NameChangeController(this._communication);
+        this._nameChangeController = new NameChangeController(this);
         this._sanctionInfo = new SanctionInfo(this);
         this._reportStatus = new MyReportStatus(this);
         this._topicsFlow = new TopicsFlowHelpController(this);

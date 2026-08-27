@@ -9,8 +9,6 @@ import {
     CallForHelpReplyMessageEvent,
     CallForHelpResultMessageEvent,
     CfhTopicsInitMessageEvent,
-    ChangeUserNameResultMessageEvent,
-    CheckUserNameResultMessageEvent,
     GuideOnDutyStatusMessageEvent,
     GuideReportingStatusMessageEvent,
     GuideSessionAttachedMessageEvent,
@@ -25,7 +23,6 @@ import {
     IssueCloseNotificationMessageEvent,
     QuizDataMessageEvent,
     QuizResultsMessageEvent,
-    UserNameChangedMessageEvent,
 } from '@habbo/communication/messages/incoming/help';
 
 import type {CallForHelpDisabledNotifyMessageParser} from '@habbo/communication/messages/parser/help/CallForHelpDisabledNotifyMessageParser';
@@ -158,10 +155,10 @@ export class HelpMessageHandler
         this.addMessageEvent(new GuideTicketCreationResultMessageEvent(this.onGuideTicketCreationResult.bind(this)));
         this.addMessageEvent(new GuideTicketResolutionMessageEvent(this.onGuideTicketResolution.bind(this)));
 
-        // Name change events
-        this.addMessageEvent(new CheckUserNameResultMessageEvent(this.onCheckUserNameResult.bind(this)));
-        this.addMessageEvent(new ChangeUserNameResultMessageEvent(this.onChangeUserNameResult.bind(this)));
-        this.addMessageEvent(new UserNameChangedMessageEvent(this.onUserNameChanged.bind(this)));
+        // The three name-change replies used to be subscribed here as well, on handlers whose whole
+        // body was a `log.trace`. AS3 subscribes them in `NameChangeController` and nowhere else —
+        // that controller now does too, and it acts on them — so these were a second subscription
+        // that could only ever drop the message on the floor.
     }
     
     /**
@@ -383,20 +380,5 @@ export class HelpMessageHandler
         if(!parser) return;
 
         this._help.guideHelpManager?.reporterFeedbackCtrl?.show(parser.localizationCode);
-    }
-
-    private onCheckUserNameResult(_event: IMessageEvent): void
-    {
-        log.trace('CheckUserNameResult received');
-    }
-
-    private onChangeUserNameResult(_event: IMessageEvent): void
-    {
-        log.trace('ChangeUserNameResult received');
-    }
-
-    private onUserNameChanged(_event: IMessageEvent): void
-    {
-        log.trace('UserNameChanged received');
     }
 }
