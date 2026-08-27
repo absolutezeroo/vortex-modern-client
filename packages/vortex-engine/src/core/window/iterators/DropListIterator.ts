@@ -50,8 +50,17 @@ export class DropListIterator implements IIterator
         this._index = 0;
     }
 
-    public count(): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/DropListIterator.as::get length()
+    public get length(): number
     {
         return this._dropList.numMenuItems;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/DropListIterator.as::indexOf()
+    public indexOf(window: IWindow | null): number
+    {
+        if(window === null) return -1;
+
+        return this._dropList.getMenuItemIndex(window);
     }
 }

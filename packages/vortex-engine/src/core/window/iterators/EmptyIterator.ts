@@ -13,17 +13,26 @@ export class EmptyIterator implements IIterator
     // AS3: .../src/com/sulake/core/window/iterators/EmptyIterator.as::INSTANCE
     public static readonly INSTANCE: EmptyIterator = new EmptyIterator();
 
+    // TS-only: renders AS3's `flash_proxy nextValue` — see IIterator.
     public next(): IWindow | null
     {
         return null;
     }
 
+    // TS-only: renders AS3's `flash_proxy nextNameIndex` — see IIterator.
     public reset(): void
     {
     }
 
-    public count(): number
+    // AS3: .../src/com/sulake/core/window/iterators/EmptyIterator.as::get length()
+    public get length(): number
     {
         return 0;
+    }
+
+    // AS3: .../src/com/sulake/core/window/iterators/EmptyIterator.as::indexOf()
+    public indexOf(): number
+    {
+        return -1;
     }
 }

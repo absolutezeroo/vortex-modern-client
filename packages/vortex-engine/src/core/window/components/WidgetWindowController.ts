@@ -2,6 +2,7 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWidgetFactory} from '../IWidgetFactory';
 import type {IIterator} from '../utils/IIterator';
+import {EmptyIterator} from '../iterators/EmptyIterator';
 import type {IWidgetWindow} from './IWidgetWindow';
 import {WindowController} from '../WindowController';
 import type {WindowEvent} from '../events/WindowEvent';
@@ -188,13 +189,7 @@ export class WidgetWindowController extends WindowController implements IWidgetW
             return (this._widget as any).iterator();
         }
 
-        return {
-            next: () => null,
-            reset: () =>
-            {
-            },
-            count: () => 0
-        };
+        return EmptyIterator.INSTANCE;
     }
 
     public override dispose(): void

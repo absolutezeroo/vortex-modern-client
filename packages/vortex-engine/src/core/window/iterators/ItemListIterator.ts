@@ -50,8 +50,17 @@ export class ItemListIterator implements IIterator
         this._index = 0;
     }
 
-    public count(): number
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemListIterator.as::get length()
+    public get length(): number
     {
         return this._list.numListItems;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/iterators/ItemListIterator.as::indexOf()
+    public indexOf(window: IWindow | null): number
+    {
+        if(window === null) return -1;
+
+        return this._list.getListItemIndex(window);
     }
 }
