@@ -3,6 +3,7 @@ import type {FriendRequestData} from '@habbo/communication/messages/parser/frien
 import type {HabboSearchResultData} from '@habbo/communication/messages/parser/friendlist/HabboSearchResultData';
 import type {EventEmitter} from 'eventemitter3';
 import type {IFriend} from './IFriend';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
 
 /**
  * Events emitted by the friend list manager.
@@ -59,6 +60,17 @@ export interface IHabboFriendList
 
     // AS3: .../HabboFriendList.as::getFriend()
     getFriendById(id: number): IFriend | null;
+
+    /**
+	 * Opens a Habbo web page in the `habboMain` window, resolving `linkFormat` against
+	 * `parameters` first. Both are implemented on `HabboFriendList` and were simply missing from
+	 * this interface.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendlist/_SafeCls_66.as::openHabboWebPage()
+    openHabboWebPage(linkFormat: string, parameters: Map<string, string>, x: number, y: number): void;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendlist/_SafeCls_66.as::get mainWindow()
+    readonly mainWindow: IWindowContainer | null;
 
     // AS3: .../HabboFriendList.as::getFriendNames()
     getFriendNames(): string[];

@@ -4,6 +4,8 @@ import type {IWindowContext} from '../IWindowContext';
 import type {WindowController} from '../WindowController';
 import {InteractiveController} from './InteractiveController';
 import type {WindowEvent} from '../events/WindowEvent';
+import type {ILabelWindow} from './ILabelWindow';
+import type {TextStyle} from '../utils/TextStyle';
 
 /**
  * Controller for button windows.
@@ -43,6 +45,31 @@ export class ButtonController extends InteractiveController implements ITouchAwa
     public override get caption(): string
     {
         return super.caption;
+    }
+
+    /**
+	 * The text style of the button's `_BTN_TEXT` child, read and written through the button itself.
+	 *
+	 * AS3 reaches the child through a private `textWindow` getter; the port already resolves the
+	 * same child by name in the caption setter below, so it does the same here rather than adding
+	 * a second accessor for it. The setter is a no-op on null, as AS3's is.
+	 */
+    // AS3: .../src/com/sulake/core/window/components/ButtonController.as::get textStyle()
+    public get textStyle(): TextStyle | null
+    {
+        const textChild = this.getChildByName(ButtonController.TEXT_FIELD_NAME) as ILabelWindow | null;
+
+        return textChild?.textStyle ?? null;
+    }
+
+    // AS3: .../src/com/sulake/core/window/components/ButtonController.as::set textStyle()
+    public set textStyle(value: TextStyle | null)
+    {
+        if(value === null) return;
+
+        const textChild = this.getChildByName(ButtonController.TEXT_FIELD_NAME) as ILabelWindow | null;
+
+        if(textChild !== null) textChild.textStyle = value;
     }
 
     /**

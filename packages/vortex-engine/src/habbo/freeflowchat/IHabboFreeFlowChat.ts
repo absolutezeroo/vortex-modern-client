@@ -228,16 +228,18 @@ export interface IHabboFreeFlowChat
     selectAvatar(roomId: number, userId: number): void;
 
     /**
-	 * Per-frame tick registration (Component's own, inherited in AS3 via the
-	 * same `_SafeCls_47`/IUpdateOwner-equivalent interface HabboFreeFlowChat
-	 * implements there) - ChatFlowViewer/ChatFlowStage register themselves
-	 * through the chatFlow reference they're constructed with rather than
-	 * needing their own direct Component/context access.
+	 * Per-frame tick registration, inherited in AS3 from the component interface HabboFreeFlowChat
+	 * implements — ChatFlowViewer/ChatFlowStage register themselves through the chatFlow reference
+	 * they are constructed with rather than needing their own Component/context access.
 	 *
-	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_47.as (IUpdateOwner-equivalent)
+	 * The citation here used to read `_SafeCls_47.as (IUpdateOwner-equivalent)`. That class is
+	 * `IDisposable` — it declares `dispose()` and `get disposed()`, nothing else. The two methods
+	 * below come from `_SafeCls_54`, which is where AS3 declares them.
 	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::registerUpdateReceiver()
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::removeUpdateReceiver()
     removeUpdateReceiver(receiver: IUpdateReceiver): void;
 
     /**
