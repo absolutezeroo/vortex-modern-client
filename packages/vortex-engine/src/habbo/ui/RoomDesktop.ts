@@ -63,6 +63,8 @@ import {AvatarInfoWidgetHandler} from './handler/AvatarInfoWidgetHandler';
 import type {AvatarInfoWidget} from './widget/avatarinfo/AvatarInfoWidget';
 import {CustomUserNotificationWidgetHandler} from './handler/CustomUserNotificationWidgetHandler';
 import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
+import {PlayListEditorWidgetHandler} from './handler/PlayListEditorWidgetHandler';
+import {CraftingWidgetHandler} from './handler/CraftingWidgetHandler';
 import {YoutubeDisplayWidgetHandler} from './handler/YoutubeDisplayWidgetHandler';
 import {VimeoDisplayWidgetHandler} from './handler/VimeoDisplayWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
@@ -1159,6 +1161,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case 'RWE_CUSTOM_USER_NOTIFICATION':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:870
                 handler = new CustomUserNotificationWidgetHandler();
+                break;
+            case 'RWE_PLAYLIST_EDITOR_WIDGET': {
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:837-841
+                const playListHandler = new PlayListEditorWidgetHandler();
+
+                playListHandler.connection = this._connection;
+                handler = playListHandler;
+
+                break;
+            }
+            case 'RWE_CRAFTING':
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:921-922
+                handler = new CraftingWidgetHandler(this);
                 break;
             case 'RWE_YOUTUBE':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:897-898
