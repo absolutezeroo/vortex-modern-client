@@ -108,6 +108,14 @@ import {
 
 // Message Events - Room Chat
 import {UserTypingMessageEvent} from '../communication/messages/incoming/room/chat/UserTypingMessageEvent';
+import {ChatMessageEvent} from '../communication/messages/incoming/room/chat/ChatMessageEvent';
+import {ShoutMessageEvent} from '../communication/messages/incoming/room/chat/ShoutMessageEvent';
+import {WhisperMessageEvent} from '../communication/messages/incoming/room/chat/WhisperMessageEvent';
+import type {
+    ChatMessageEventParser
+} from '../communication/messages/parser/room/chat/ChatMessageEventParser';
+import {IgnoreResultMessageEvent} from '../communication/messages/incoming/users/IgnoreResultMessageEvent';
+import {IgnoreResult} from '../session/IIgnoredUsersManager';
 
 // Message Events - Room Action
 import {ExpressionMessageEvent} from '../communication/messages/incoming/room/action/ExpressionMessageEvent';
@@ -280,6 +288,13 @@ export class RoomMessageHandler implements IRoomMessageHandler
             connection.addMessageEvent(new ItemDataUpdateMessageEvent(this.onItemDataUpdate.bind(this)));
             connection.addMessageEvent(new AreaHideMessageEvent(this.onAreaHide.bind(this)));
             connection.addMessageEvent(new WiredMovementsMessageEvent(this.onWiredMovements.bind(this)));
+            // AS3 registers all three on one handler here (_SafeCls_1984.as:278-280), next to the
+            // typing status below. This is the room-engine half of chat — the session's
+            // RoomChatHandler dispatches the bubble, this one moves the avatar.
+            connection.addMessageEvent(new ChatMessageEvent(this.onChat.bind(this)));
+            connection.addMessageEvent(new WhisperMessageEvent(this.onChat.bind(this)));
+            connection.addMessageEvent(new ShoutMessageEvent(this.onChat.bind(this)));
+            connection.addMessageEvent(new IgnoreResultMessageEvent(this.onIgnoreResult.bind(this)));
             connection.addMessageEvent(new ObjectRemoveConfirmMessageEvent(this.onObjectRemoveConfirm.bind(this)));
             connection.addMessageEvent(new BCPlacementWarningMessageEvent(this.onBCPlacementWarning.bind(this)));
             connection.addMessageEvent(new SpecialRoomEffectMessageEvent(this.onSpecialRoomEvent.bind(this)));
@@ -2437,6 +2452,92 @@ export class RoomMessageHandler implements IRoomMessageHandler
             data.subType,
             data.isRiding
         );
+    }
+
+    /**
+     * `34` and the whole 200-299 block are the notification styles — the server talking, not a
+     * user — so no avatar animates for them.
+     */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::styleIsNotification()
+    private styleIsNotification(styleId: number): boolean
+    {
+        return styleId === 34 || (styleId >= 200 && styleId < 300);
+    }
+
+    /**
+     * Chat, whisper and shout, from the room engine's side: the speaker's gesture and the
+     * mouth-flap that lasts as long as the sentence.
+     *
+     * This is not the chat bubble — `session/handler/RoomChatHandler` does that, and AS3 subscribes
+     * both to the same three messages. Only the bubble half was ported, so avatars stood still
+     * while they talked. `figure_talk` is `ceil(text.length / 10)`, AS3's own estimate of how long
+     * the sentence takes to say.
+     *
+     * The whisper branch skips your own whisper: you already know you said it, and AS3 returns
+     * before touching the object.
+     */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onChat()
+    onChat(event: IMessageEvent): void
+    {
+        if(this._roomCreator === null) return;
+
+        const parser = event.parser as ChatMessageEventParser | null;
+
+        if(parser === null) return;
+
+        if(event instanceof WhisperMessageEvent)
+        {
+            const session = this._roomCreator.roomSessionManager?.getSession(this._currentRoomId) ?? null;
+
+            if(session !== null && parser.userId === session.ownUserRoomId) return;
+        }
+
+        if(this.styleIsNotification(parser.styleId)) return;
+
+        this._roomCreator.updateObjectUserGesture(this._currentRoomId, parser.userId, parser.gesture);
+        this._roomCreator.updateObjectUserAction(
+            this._currentRoomId,
+            parser.userId,
+            RoomObjectVariableEnum.AVATAR_TALK,
+            Math.ceil(parser.text.length / 10)
+        );
+    }
+
+    /**
+     * Ignoring someone puts the muted marker on their avatar; un-ignoring takes it off.
+     *
+     * `IgnoredUsersManager` keeps the list — that half was ported — but nothing told the room
+     * object, so the avatar looked exactly the same either way. Results 1 and 2 (`OK` and
+     * `ALREADY_IGNORED`, after AS3's `result - 1` rebase) mute, 3 unmutes, and anything else is
+     * left alone.
+     */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_1984.as::onIgnoreResult()
+    onIgnoreResult(event: IMessageEvent): void
+    {
+        if(this._roomCreator === null) return;
+
+        if(!this._roomCreator.configuration?.getBoolean('avatar.ignored.bubble.enabled')) return;
+
+        const ignoreEvent = event as IgnoreResultMessageEvent;
+        const session = this._roomCreator.roomSessionManager?.getSession(this._currentRoomId) ?? null;
+        const userData = session?.userDataManager?.getUserData(ignoreEvent.userId) ?? null;
+
+        if(userData === null) return;
+
+        switch(ignoreEvent.result)
+        {
+            case IgnoreResult.IGNORED:
+            case IgnoreResult.IGNORED_LIST_FULL:
+                this._roomCreator.updateObjectUserAction(
+                    this._currentRoomId, userData.roomObjectId, RoomObjectVariableEnum.AVATAR_IS_MUTED, 1
+                );
+                break;
+            case IgnoreResult.UNIGNORED:
+                this._roomCreator.updateObjectUserAction(
+                    this._currentRoomId, userData.roomObjectId, RoomObjectVariableEnum.AVATAR_IS_MUTED, 0
+                );
+                break;
+        }
     }
 
     /**

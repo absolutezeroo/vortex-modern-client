@@ -82,6 +82,13 @@ import {RoomObjectAvatarChatUpdateMessage} from './messages/RoomObjectAvatarChat
 import {RoomObjectAvatarTypingUpdateMessage} from './messages/RoomObjectAvatarTypingUpdateMessage';
 import {RoomObjectAvatarDanceUpdateMessage} from './messages/RoomObjectAvatarDanceUpdateMessage';
 import {RoomObjectAvatarSleepUpdateMessage} from './messages/RoomObjectAvatarSleepUpdateMessage';
+import {RoomObjectAvatarMutedUpdateMessage} from './messages/RoomObjectAvatarMutedUpdateMessage';
+import {RoomObjectAvatarUseObjectUpdateMessage} from './messages/RoomObjectAvatarUseObjectUpdateMessage';
+import {RoomObjectAvatarExperienceUpdateMessage} from './messages/RoomObjectAvatarExperienceUpdateMessage';
+import {RoomObjectAvatarPlayerValueUpdateMessage} from './messages/RoomObjectAvatarPlayerValueUpdateMessage';
+import {RoomObjectAvatarExpressionUpdateMessage} from './messages/RoomObjectAvatarExpressionUpdateMessage';
+import {RoomObjectAvatarPlayingGameMessage} from './messages/RoomObjectAvatarPlayingGameMessage';
+import {RoomObjectAvatarGuideStatusUpdateMessage} from './messages/RoomObjectAvatarGuideStatusUpdateMessage';
 import {RoomObjectAvatarCarryObjectUpdateMessage} from './messages/RoomObjectAvatarCarryObjectUpdateMessage';
 import {RoomObjectAvatarSignUpdateMessage} from './messages/RoomObjectAvatarSignUpdateMessage';
 import {RoomObjectAvatarOwnMessage} from './messages/RoomObjectAvatarOwnMessage';
@@ -4731,38 +4738,121 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
+	 * True while the user at this room index is on your blocked list.
+	 *
+	 * AS3 checks it before every user action, so a blocked user's dance, chat, sign and effects
+	 * never reach their room object at all — blocking hides what they do, not just what they say.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::userIsBlocked()
+    private userIsBlocked(roomId: number, roomIndex: number): boolean
+    {
+        const session = this._roomSessionManager?.getSession(roomId) ?? null;
+        const userData = session?.userDataManager?.getUserDataByIndex(roomIndex) ?? null;
+
+        if(userData === null) return false;
+
+        return this._sessionDataManager?.isBlocked(userData.webID) ?? false;
+    }
+
+    /**
      * Update user action (expression, dance, sleep, typing, carry, use object).
-     * Based on AS3: RoomEngine.updateObjectUserAction
+     *
+     * **This dispatches a typed update message through the object's logic; it does not write the
+     * model.** It used to be one `model.setNumber(action, value)`, which reaches the same variable
+     * for the simple cases and skips everything the logic does around it — so `figure_talk` was set
+     * and `AvatarLogic._talkEndTime` never was, and the mouth would have flapped forever; the
+     * carry-object branch never armed its own timers; and `userIsBlocked()` was not consulted at
+     * all. The 13 messages below are all ported and all handled by `AvatarLogic.processUpdateMessage()`.
      */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserAction()
     updateObjectUserAction(
         roomId: number,
         roomIndex: number,
         action: string,
         value: number
-    ): boolean 
+    ): boolean
     {
-        const roomInstance = this.getRoomInstance(roomId);
+        const roomObject = this.getRoomObject(
+            roomId, roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+        ) as IRoomObjectController | null;
 
-        if(roomInstance === null) 
+        if(roomObject === null || roomObject.getEventHandler() === null)
         {
             return false;
         }
 
-        const roomObject = roomInstance.getObject(roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER);
-
-        if(roomObject === null) 
+        if(this.userIsBlocked(roomId, roomIndex))
         {
             return false;
         }
 
-        const model = (roomObject as IRoomObjectController).getModelController();
+        let message: RoomObjectUpdateMessage | null = null;
 
-        if(model === null) 
+        switch(action)
         {
-            return false;
+            case RoomObjectVariableEnum.AVATAR_TALK:
+                message = new RoomObjectAvatarChatUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_SLEEP:
+                message = new RoomObjectAvatarSleepUpdateMessage(value !== 0);
+                break;
+            case RoomObjectVariableEnum.AVATAR_IS_TYPING:
+                message = new RoomObjectAvatarTypingUpdateMessage(value !== 0);
+                break;
+            case RoomObjectVariableEnum.AVATAR_IS_MUTED:
+                message = new RoomObjectAvatarMutedUpdateMessage(value !== 0);
+                break;
+            case RoomObjectVariableEnum.AVATAR_CARRY_OBJECT:
+                // AS3 passes its fifth `parameter` argument here as the message's `itemName`. This
+                // port's signature stops at four on purpose — see RoomPreviewer.updateObjectUserAction().
+                message = new RoomObjectAvatarCarryObjectUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_USE_OBJECT:
+                message = new RoomObjectAvatarUseObjectUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_DANCE:
+                message = new RoomObjectAvatarDanceUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_GAINED_EXPERIENCE:
+                message = new RoomObjectAvatarExperienceUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_NUMBER_VALUE:
+                message = new RoomObjectAvatarPlayerValueUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_SIGN:
+                message = new RoomObjectAvatarSignUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_EXPRESSION:
+                message = new RoomObjectAvatarExpressionUpdateMessage(value);
+                break;
+            case RoomObjectVariableEnum.AVATAR_IS_PLAYING_GAME:
+                message = new RoomObjectAvatarPlayingGameMessage(value !== 0);
+                break;
+            case RoomObjectVariableEnum.AVATAR_GUIDE_STATUS:
+                message = new RoomObjectAvatarGuideStatusUpdateMessage(value);
+                break;
+            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserAction()
+            // "figure_habbicon" builds a RoomObjectAvatarHabbiconUpdateMessage, which this port
+            // does not have. Porting the message alone would be inert, and so would porting the
+            // case: the room-side half of habbicons is one slice of about 900 lines —
+            // `AvatarLogic`'s habbicon branch plus its four spin helpers, `AvatarVisualization`'s
+            // `habbiconFacingDirection` and ADDITION_ID_HABBICON_BUBBLE block, and the 769-line
+            // `HabbiconBubble` addition (the only one of AS3's eleven that is missing).
+            // `HabbiconAssetManager` and the catalog-side album are already ported.
+            // **Sized and deliberately not started**: the one caller, `RoomUI.onRoomUseHabbicon()`,
+            // is gated on `habbicons.enabled`, which this hotel's external variables do not set,
+            // and the emulator declares no habbicon header at all — so none of it could run today.
+            // It reached this method before and wrote `figure_habbicon` onto a model nothing reads,
+            // which is why this warns where it used to be silent.
+            default:
+                log.warn(`updateObjectUserAction: no update message for "${action}"`);
+                break;
         }
 
-        model.setNumber(action, value);
+        // AS3 calls processUpdateMessage() unconditionally and returns true even when the switch
+        // matched nothing — every `param1 is X` test in the logic then fails and it is a no-op.
+        // Skipping the call is the same result without the null argument.
+        if(message !== null) roomObject.getEventHandler()?.processUpdateMessage(message);
 
         return true;
     }

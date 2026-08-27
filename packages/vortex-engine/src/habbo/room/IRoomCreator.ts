@@ -13,6 +13,7 @@ import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 import type {IRoomSessionManager} from '../session/IRoomSessionManager';
 import type {ISessionDataManager} from '../session/ISessionDataManager';
 import type {IHabboWindowManager} from '../window/IHabboWindowManager';
+import type {IHabboConfigurationManager} from '../configuration/IHabboConfigurationManager';
 import type {IStuffData} from './object/data/IStuffData';
 import type {RoomPlaneParser} from './object/RoomPlaneParser';
 import type {FurniStackingHeightMap} from './utils/FurniStackingHeightMap';
@@ -288,6 +289,14 @@ export interface IRoomCreator
     readonly roomSessionManager: IRoomSessionManager | null;
 
     /**
+	 * The hotel's own switches, as the message handler reads them — `onIgnoreResult()` gates the
+	 * muted indicator on `avatar.ignored.bubble.enabled`. Declared on the AS3 interface; left out
+	 * of this one until something needed it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get configuration()
+    readonly configuration: IHabboConfigurationManager | null;
+
+    /**
 	 * The session data manager, for handlers that need the logged-in user's own id.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_89.as::get sessionDataManager()
@@ -424,6 +433,13 @@ export interface IRoomCreator
         action: string,
         value: number
     ): boolean;
+
+    /**
+	 * The speaker's gesture — declared here in AS3 (`_SafeCls_86`), not only on `IRoomEngine`, and
+	 * left out of this interface until `RoomMessageHandler.onChat()` needed it.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_86.as::updateObjectUserGesture()
+    updateObjectUserGesture(roomId: number, roomIndex: number, gesture: number): boolean;
 
     /**
 	 * Update user effect.
