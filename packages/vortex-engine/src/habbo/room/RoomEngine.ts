@@ -3618,6 +3618,21 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
+     * AS3 overrides the Component-level `purge()` to drop the room content on top of whatever the
+     * base frees. `ComponentContext.purge()` walks every component and calls this, so without the
+     * override a context-wide purge left the room's content loader — the largest cache the client
+     * holds — untouched. `purgeRoomContent()` is a separate public method AS3 also declares, and
+     * was already ported; this is the override beside it, not a rename of it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::purge()
+    override purge(): void
+    {
+        super.purge();
+
+        this._contentLoader?.purge();
+    }
+
+    /**
 	 * Records what kind of room this is, for `getWorldType()` to read back
 	 *
 	 * AS3 stores the string on the room's own instance data and nowhere else. The port used to

@@ -2697,15 +2697,25 @@ is the fourth false-positive shape after the three above:
   convenience setters (`scaleTo`/`moveTo`/`fadeTo`/`rotateTo`), `repeatCount`/`repeatDelay`/
   `reverse`/`roundToInt`/`nextTween`, and the object pool. Per rule 30 a stated-in-prose omission
   should be a `TODO(AS3)` naming the members; it is not one yet.
-- **`FakeContext` (35).** Not FakeContext's problem — **`core/runtime/IContext.ts` is a 2016-shaped
-  interface**. It traces to `PRODUCTION-201601012205-226667486`, which declares 24 members; the
-  2026 build's context surface adds `propertyExists`/`getProperty`/`setProperty`/`getBoolean`/
-  `getInteger`/`interpolate`/`updateUrlProtocol`, `purge`/`hibernate`/`resume`,
-  `injectDependencies`, `prepareComponent`/`prepareAssetLibrary`, the file-proxy pair and the
-  loader counters. FakeContext implements exactly what the port's interface declares, so the
-  absence is inherited. This is `project_production_traced_parsers_drift` applied to a core DI
-  interface — **widening it ripples through every Component, so it wants its own pass**, not a
-  tail-end edit.
+- **`FakeContext` (35).** Not FakeContext's problem — the port's `core/runtime/IContext.ts` traces
+  to `PRODUCTION-201601012205-226667486` and is narrower than the 2026 `IContext`
+  (`core/runtime/_SafeCls_57.as`). FakeContext implements exactly what the port's interface
+  declares, so the absence is inherited.
+
+  **Checked 2026-08-27, and the answer is: do not widen it.** The 17 members `_SafeCls_57` adds are
+  AIR plumbing with no consumer — a `fileProxy` and its six XML/dictionary/string persistence
+  methods, `readConfigDocument`, `setProfilerMode`, the two loader counters, `arguments`/
+  `clearArguments`, `initialize`, and `purge`/`hibernate`/`resume`. Grepping the whole primary tree
+  outside `core/runtime` for callers returns **zero** for eleven of them and one or two for the
+  rest, and a browser client has no file proxy at all. Porting them would be 17 dead members on
+  every context implementation. The 35 stay on the board as a deliberate non-port.
+
+  One thing *did* come out of that check, and it is fixed: **`purge` is a Component member, not a
+  context one**, and AS3's `RoomEngine` overrides it to drop the room content on top of the base
+  behaviour. The port had `purgeRoomContent()` — a separate public method AS3 also declares — but no
+  override, so `ComponentContext.purge()` walking every component left the client's largest cache
+  untouched. `HabboWindowManager` already had its equivalent override; `RoomEngine` was the only
+  one missing.
 
 The remaining 111 are a long tail of 1–8 per file. Rank them with
 `node scripts/as3-member-coverage.mjs --top 60`, and list one with
