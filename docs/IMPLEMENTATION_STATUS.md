@@ -2717,8 +2717,34 @@ is the fourth false-positive shape after the three above:
   untouched. `HabboWindowManager` already had its equivalent override; `RoomEngine` was the only
   one missing.
 
-The remaining 111 are a long tail of 1–8 per file. Rank them with
-`node scripts/as3-member-coverage.mjs --top 60`, and list one with
+### Working the tail: an interface narrower than its own implementation
+
+**187 → 131 on 2026-08-27**, and almost every entry was the same shape: the class implements the
+AS3 member, the **interface** does not declare it, so a caller holding the interface cannot reach
+what is already there. Six clusters, in the order they were worked:
+
+| | |
+|---|---|
+| `IIterator` | AS3 declares exactly `length` and `indexOf`; the port had neither. `count()` was `length` renamed, `indexOf` was gone from the interface *and* all six implementations — though every host already exposed the `get*Index()` it needed. |
+| **`IToolTipAgentService`** | declared invented `show`/`hide` instead of AS3's `dispose`/`begin`/`end`/`updateCaption` — **and that is how a dead subsystem stayed hidden** (below). |
+| the three mouse services | all omit `dispose()`, and typed `begin`/`end` as `void` where they return the previously-tracked window; `IMouseDraggingService` also dropped `begin()`'s flags, which the scaler's interface kept — so the three disagreed with each other as well as with AS3. |
+| `IThemeManager` | declared 1 of AS3's 5. `getStyle`, `getThemeAndIntent`, `getIntents`, `getThemes` were all implemented and unreachable. Its extra `setPropertyDefaults` was invented on both sides and had no caller — removed. |
+| `IRectLimiter` | declared 4 of 11. `isEmpty`, `setEmpty()`, `limit()` — the part that enforces the bounds — implemented and unreachable. |
+| `WindowTouchEvent` | names only; all eight values verbatim. Traced rather than renamed, because only four of AS3's identifiers survived obfuscation. |
+
+**The tooltip one was not cosmetic.** `InteractiveController.processInteractiveWindowEvents()` had
+five empty `// tooltip begin` comments where AS3 calls the agent, so `WindowToolTipAgent` — 262
+lines, constructed by every `ServiceManager` — **had never run once, and no tooltip in this client
+had ever appeared.** Everything else was in place: 54 shipped layouts carry `tool_tip_caption`,
+`readInteractiveWindowProperties()` parses it, and the same three controllers AS3 has call the
+function. Only the last hop was missing, and the wrong interface is what made the gap invisible —
+nothing could call `begin()` through a type that did not declare it.
+
+**So a narrow interface is worth checking even when it looks cosmetic**: it is the one shape that
+can hide a fully-ported subsystem nothing calls, which
+`scripts/sweep-unwired.mjs` does not catch (it looks at message registrations, not method calls).
+
+Rank the rest with `node scripts/as3-member-coverage.mjs --top 60`, list one with
 `--list <TypeName>`.
 
 **A false positive was removed before this number was trusted.** The presence check searched only
