@@ -224,7 +224,11 @@
         max-width: 100%;
     }
 
-    .static-content hr {
+    /* Shared with the `hr` block of an article body (components/ArticleBody.svelte): the separator
+       is the same repeating dotted SVG in both places, and it is a border-image rather than a line,
+       so it cannot be expressed as a utility. */
+    .static-content hr,
+    .article-rule {
         border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 1"><circle fill="hsla(0, 0%, 0%, 0.3)" cx="1" cy="0.3" r="0.3"/></svg>') 0 0 100% repeat;
         border-width: 0 0 8px;
         clear: both;

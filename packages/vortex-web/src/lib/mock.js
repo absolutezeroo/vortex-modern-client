@@ -1,9 +1,13 @@
 // Placeholder content for the parts of the site the emulator has no endpoint for yet.
 //
 // Everything the API DOES serve — sign-in, registration, the avatar list, the SSO ticket, the name
-// check — goes through lib/api.js and is real. What is mocked is the editorial and social surface:
-// articles, badges, groups, apparts, friends, the shop's price list. The shapes below are the ones a
+// check, AND the articles — goes through lib/api.js and is real. What is left mocked is the social
+// surface: badges, groups, apparts, friends, the shop's price list. The shapes below are the ones a
 // habbo.com response has, so wiring a real endpoint later is a swap in one page, not a rewrite of it.
+//
+// The articles used to live here. They are now `/api/public/articles`, and the emulator's DTOs were
+// written against these very field names — id/category/title/summary/image/thumbnail/date/author —
+// so the swap was a change of source, not of shape.
 //
 // The images are NOT placeholders: every path points into the hotel's own c_images tree (see
 // lib/config.js), so the promo art, the badges and the room shots are the real ones.
@@ -13,71 +17,6 @@
 // from here.
 
 export const MOCKED = true;
-
-export const ARTICLES = [
-    {
-        id: 'abobbados',
-        category: 'campagnes',
-        title: 'Abobbados débarque en ville',
-        summary: 'La famille la plus redoutée de l\'hôtel ouvre ses portes. Rejoins le clan, gagne les meubles exclusifs et prends le contrôle du quartier.',
-        image: '/web_promo/Abobbados_largepromo.png',
-        thumbnail: '/web_promo/Abobbados_promo.png',
-        date: '2026-08-24',
-        author: 'Vortex',
-        body: [
-            'Les Abobbados ont posé leurs valises dans l\'hôtel, et ils comptent bien y rester. Toute la semaine, une nouvelle pièce du quartier ouvre.',
-            'Chaque jour, un meuble différent rejoint le catalogue. Connecte-toi tous les jours pour compléter la collection avant la fin de la campagne.',
-            'Et pour les plus rapides : le badge du clan revient à ceux qui terminent les sept étapes avant dimanche minuit.',
-        ],
-    },
-    {
-        id: 'habboween',
-        category: 'evenements',
-        title: '10 ans de Habboween',
-        summary: 'Dix années de frissons, de manoirs hantés et de meubles maudits. On ressort les classiques.',
-        image: '/web_promo/10yrsofhabboween_l_promo.png',
-        thumbnail: '/web_promo/10yrsofhabboween_l_promo.png',
-        date: '2026-08-19',
-        author: 'Vortex',
-        body: [
-            'Le manoir rouvre ses portes, et cette année toutes les raretés des éditions précédentes reviennent au catalogue pour une semaine.',
-            'Les chasses au trésor reprennent dans les apparts publics : dix indices, dix badges, un seul gagnant par serveur.',
-        ],
-    },
-    {
-        id: 'nouvelle-annee',
-        category: 'evenements',
-        title: 'Le compte à rebours a commencé',
-        summary: 'Feux d\'artifice, tenues de gala et la piste de danse la plus grande jamais construite dans l\'hôtel.',
-        image: '/web_promo/2015ny_l_promo.png',
-        thumbnail: '/web_promo/2015ny_l_promo.png',
-        date: '2026-08-11',
-        author: 'Vortex',
-        body: [
-            'La salle de bal officielle ouvre à 22h. Prévois ta tenue : les portes se ferment pour ceux qui arrivent après minuit.',
-        ],
-    },
-    {
-        id: 'jeux',
-        category: 'jeux',
-        title: 'La saison des jeux est ouverte',
-        summary: 'Nouveaux terrains, nouveaux classements, et un trophée qui ne se donne qu\'une fois par saison.',
-        image: '/articles/Large-promo-game-1.png',
-        thumbnail: '/articles/Large-promo-game-1_thumb.png',
-        date: '2026-08-04',
-        author: 'Vortex',
-        body: [
-            'Le classement est remis à zéro. Les cent premiers joueurs de la saison reçoivent le badge, le premier reçoit le trophée.',
-        ],
-    },
-];
-
-export const CATEGORIES = [
-    {id: 'tout', label: 'Tout'},
-    {id: 'campagnes', label: 'Campagnes'},
-    {id: 'evenements', label: 'Événements'},
-    {id: 'jeux', label: 'Jeux'},
-];
 
 export const BADGES = [
     {code: 'ACH_BasicClub1', name: 'Membre du club'},
@@ -170,8 +109,3 @@ export const SHOP_SECTIONS = [
         ],
     },
 ];
-
-export function articleById(id)
-{
-    return ARTICLES.find((article) => article.id === id) ?? null;
-}

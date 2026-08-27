@@ -19,8 +19,26 @@
     import Sprite from '../components/Sprite.svelte';
     import {HOME_TABS} from '../lib/tabs.js';
     import {t} from '../lib/i18n.js';
-    import {ARTICLES, CATEGORIES} from '../lib/mock.js';
+    import * as api from '../lib/api.js';
     import {signedIn} from '../lib/session.js';
+
+    // The same feed the community tab reads — `news.html` fills this column from the CMS on
+    // habbo.com, and the emulator's /api/public/articles is that CMS here. Anonymous, so the front
+    // page renders with no session.
+    let feed = $state(null);
+
+    $effect(() =>
+    {
+        let cancelled = false;
+
+        api.getArticles({pageSize: 5})
+            .then((answer) => !cancelled && (feed = answer))
+            // A feed that will not load must not take the home page down with it: the rest of the
+            // page — the hotel, the safety box — has nothing to do with the articles.
+            .catch(() => !cancelled && (feed = null));
+
+        return () => (cancelled = true);
+    });
 </script>
 
 <Tabs tabs={$signedIn ? HOME_TABS : []} />
@@ -33,7 +51,7 @@
             <!-- The home leads with a 300px hero and runs the rest two-up; /community/category is
                  the flat one-column list. Two shapes of the same feed, and habbo.fr uses both. -->
             <div class="mt-6">
-                <NewsList articles={ARTICLES} categories={CATEGORIES} lead columns={2} />
+                <NewsList articles={feed?.items ?? []} categories={feed?.categories ?? []} lead columns={2} />
             </div>
 
             <!-- `.news__navigation` > `.news__more`: 20px condensed, floated right, with the double

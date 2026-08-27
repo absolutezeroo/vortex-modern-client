@@ -1,66 +1,164 @@
 <script>
-    // `/article/:id/:title` — `community/article/article.html`, which is the same
-    // `main--fixed` + 304px safety aside as the home and the category feed. habbo.com keeps the
-    // community tab bar lit here (the news tab matches /community/article too).
+    // `/article/:id/:title` — `community/article/article.html`, the standard `main--fixed` + 304px
+    // safety aside, and the community tab bar stays lit on it.
+    //
+    // The page's own shape, from the rendered site:
+    //
+    //   the HERO       the same `.news-header--single` plate the feed leads with — the article's
+    //                  image full width, its title, the italic "date | catégorie" line and the
+    //                  summary laid over the left third of it
+    //   the article    the title again, then the body
+    //   two panels     "Voir aussi" (the server's `related` list) beside "Nouveautés" (the newest
+    //                  articles), each entry a title with its date dimmed after it
+    //
+    // Real now: GET /api/public/articles/{slug} answers `{ lang, article, body, related }`, and the
+    // body is the closed block vocabulary — see components/ArticleBody.svelte. The newest list is a
+    // second, small feed read, which is what habbo.com's own page does too.
     import {link} from 'svelte-spa-router';
     import CommunityShell from './CommunityShell.svelte';
     import ContentAside from '../../components/ContentAside.svelte';
-    import Sprite from '../../components/Sprite.svelte';
-    import {articleById, ARTICLES} from '../../lib/mock.js';
+    import ArticleBody from '../../components/ArticleBody.svelte';
+    import Panel from '../../components/Panel.svelte';
+    import * as api from '../../lib/api.js';
     import {IMAGES} from '../../lib/config.js';
+    import {t} from '../../lib/i18n.js';
 
     let {params = {}} = $props();
 
-    const article = $derived(articleById(params.id));
-    const others = $derived(ARTICLES.filter((item) => item.id !== params.id).slice(0, 3));
+    let detail = $state(null);
+    let newest = $state([]);
+    let categories = $state([]);
+    let error = $state('');
+    let loading = $state(true);
 
-    let liked = $state(false);
+    const article = $derived(detail?.article ?? null);
+
+    // The date and the category read together as one italic line, so they are resolved together.
+    function label(id)
+    {
+        return categories.find((category) => category.id === id)?.label ?? id;
+    }
+
+    function when(date)
+    {
+        return new Date(date).toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric'});
+    }
+
+    function href(entry)
+    {
+        return `/article/${entry.id}/${entry.id}`;
+    }
+
+    $effect(() =>
+    {
+        const slug = params.id;
+        let cancelled = false;
+
+        loading = true;
+        error = '';
+
+        (async () =>
+        {
+            try
+            {
+                // Both reads at once: the article is the page, the feed only fills the "Nouveautés"
+                // panel and its categories, so neither should wait on the other.
+                const [one, feed] = await Promise.all([
+                    api.getArticle(slug),
+                    api.getArticles({pageSize: 5}),
+                ]);
+
+                if(!cancelled)
+                {
+                    detail = one;
+                    newest = feed?.items ?? [];
+                    categories = feed?.categories ?? [];
+                }
+            }
+            catch(failure)
+            {
+                if(!cancelled)
+                {
+                    error = failure.message;
+                    detail = null;
+                }
+            }
+            finally
+            {
+                if(!cancelled)
+                {
+                    loading = false;
+                }
+            }
+        })();
+
+        return () => (cancelled = true);
+    });
 </script>
 
 <CommunityShell>
 <main>
     <ContentAside>
         <div>
-            {#if !article}
-                <h1>Cet article n'existe pas</h1>
-                <p><a href="/community" use:link>Retour a la communaute</a></p>
+            {#if loading}
+                <p class="py-12 text-center">...</p>
+            {:else if !article}
+                <h1>{error || t('EMPTY_RESULTS_TEXT')}</h1>
+                <p><a href="/community" use:link>{t('NEWS_TITLE')}</a></p>
             {:else}
-                <!-- `.news-article` -->
-                <article>
-                    <h1>{article.title}</h1>
-                    <p class="text-sm">
-                        {new Date(article.date).toLocaleDateString('fr-FR')} — par {article.author}
-                    </p>
+                <!-- The hero: `.news-header--single`, the story over the left third of a 300px plate
+                     from 767px; below that the two stack and the plate drops to 200px. -->
+                <article class="relative mb-6 md:h-[300px]">
+                    <div class="overflow-hidden shadow-[3px_3px_rgba(0,0,0,0.3)] md:absolute md:inset-0 md:max-w-[759px] md:shadow-none">
+                        <img src="{IMAGES}{article.image}" alt=""
+                             class="h-[200px] w-full object-cover [image-rendering:auto] md:h-[300px]" />
+                    </div>
 
-                    <img src="{IMAGES}{article.image}" alt="" class="my-6 w-full shadow-[3px_3px_rgba(0,0,0,0.3)] [image-rendering:auto]" />
-
-                    {#each article.body as paragraph}
-                        <p>{paragraph}</p>
-                    {/each}
-
-                    <!-- `.news-footer`: habbo.com's rule here is a repeated dotted SVG, which is why
-                         this is a dotted border and not a 1px line. -->
-                    <div class="mt-6 flex items-center gap-6 border-t border-dotted border-black/30 pt-3">
-                        <button type="button" onclick={() => (liked = !liked)}
-                                class="flex items-center gap-1.5 font-condensed uppercase {liked ? 'text-white' : 'text-ink hover:text-white'}">
-                            <Sprite name={liked ? 'heart' : 'like'} />
-                            {liked ? 'Aime' : 'J\'aime'}
-                        </button>
-                        <button type="button" class="flex items-center gap-1.5 font-condensed uppercase text-ink hover:text-white">
-                            <Sprite name="report" />
-                            Signaler
-                        </button>
+                    <div class="relative p-3 md:h-full md:max-w-[330px] md:bg-black/45">
+                        <h2 class="mt-0 mb-1.5">{article.title}</h2>
+                        <p class="m-0 text-sm text-[#ccc] italic">{when(article.date)} | {label(article.category)}</p>
+                        <p class="mt-3 text-sm text-white">{article.summary}</p>
                     </div>
                 </article>
 
-                <h3 class="mt-12">A lire aussi</h3>
-                <ul>
-                    {#each others as other (other.id)}
-                        <li class="py-1.5">
-                            <a href="/article/{other.id}/{other.id}" use:link>{other.title}</a>
-                        </li>
-                    {/each}
-                </ul>
+                <!-- `.news-article` -->
+                <article>
+                    <h1>{article.title}</h1>
+
+                    <ArticleBody body={detail.body ?? []} />
+
+                    {#if article.author}
+                        <p class="mt-6 text-sm italic">{article.author}</p>
+                    {/if}
+                </article>
+
+                <!-- The two lists habbo.com puts under an article, side by side. -->
+                <div class="mt-12 grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+                    {#if detail.related?.length}
+                        <Panel title={t('NEWS_RELATED')}>
+                            <ul>
+                                {#each detail.related as entry (entry.id)}
+                                    <li class="py-1.5">
+                                        <a href={href(entry)} use:link>{entry.title}</a>
+                                    </li>
+                                {/each}
+                            </ul>
+                        </Panel>
+                    {/if}
+
+                    {#if newest.length}
+                        <Panel title={t('NEWS_NEWEST')}>
+                            <ul>
+                                {#each newest as entry (entry.id)}
+                                    <li class="py-1.5">
+                                        <a href={href(entry)} use:link>{entry.title}</a>
+                                        <span class="text-ink"> ({when(entry.date)})</span>
+                                    </li>
+                                {/each}
+                            </ul>
+                        </Panel>
+                    {/if}
+                </div>
             {/if}
         </div>
     </ContentAside>

@@ -20,6 +20,7 @@ const ERRORS = {
     'email_taken': 'Cette adresse e-mail est deja utilisee.',
     'avatar_not_owned': 'Cet avatar n\'appartient pas a ce compte.',
     'invalid_request': 'Requete invalide.',
+    'article_not_found': 'Cet article n\'existe pas.',
     'hotel_unreachable': 'L\'hotel ne repond pas.',
 };
 
@@ -93,6 +94,49 @@ async function request(path, options = {})
 export function hello()
 {
     return request('/api/public/info/hello');
+}
+
+// -> { default, items: [{ code, label }] }. The languages the hotel publishes in.
+export function getLanguages()
+{
+    return request('/api/public/languages');
+}
+
+// -> { lang, page, pageSize, total, categories: [{ id, label }], items: [ArticleSummary] }
+//
+// Anonymous by design — the front page has to render with no session at all — and the server does
+// the ordering: pinned first, then newest. `lang` in the answer is the language actually served,
+// which may not be the one asked for; a summary then carries `fallback: true`.
+export function getArticles(options = {})
+{
+    const query = new URLSearchParams();
+
+    if(options.category && options.category !== 'tout')
+    {
+        query.set('category', options.category);
+    }
+
+    if(options.page)
+    {
+        query.set('page', String(options.page));
+    }
+
+    if(options.pageSize)
+    {
+        query.set('pageSize', String(options.pageSize));
+    }
+
+    const suffix = query.size ? `?${query}` : '';
+
+    return request(`/api/public/articles${suffix}`);
+}
+
+// -> { lang, article, body, related: [{ id, title }] }, or 404 `article_not_found`.
+//
+// `body` is the stored block array — never HTML. See components/ArticleBody.svelte.
+export function getArticle(slug)
+{
+    return request(`/api/public/articles/${encodeURIComponent(slug)}`);
 }
 
 // -> { requiresOnboarding: boolean }. A 401 carrying `pocket.auth.mfa_required` is not a refusal,
