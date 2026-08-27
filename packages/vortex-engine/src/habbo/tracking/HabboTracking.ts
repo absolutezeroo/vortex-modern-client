@@ -9,6 +9,12 @@ import {
     AuthenticationOKMessageEvent
 } from '@habbo/communication/messages/incoming/handshake/AuthenticationOKMessageEvent';
 import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import {
+    HabboAchievementNotificationMessageEvent
+} from '@habbo/communication/messages/incoming/notifications/HabboAchievementNotificationMessageEvent';
+import type {
+    HabboAchievementNotificationMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser';
 import type {
     RoomEntryInfoMessageParser
 } from '@habbo/communication/messages/parser/room/engine/RoomEntryInfoMessageParser';
@@ -367,6 +373,9 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
         // Register message events
         this.addMessageEvent(new AuthenticationOKMessageEvent(this.onAuthOK.bind(this)));
         this.addMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
+        this.addMessageEvent(
+            new HabboAchievementNotificationMessageEvent(this.onAchievementNotification.bind(this))
+        );
         this.addMessageEvent(new LatencyPingResponseMessageEvent(this.onPingResponse.bind(this)));
 
         // Initialize latency tracker once configuration is available
@@ -440,5 +449,20 @@ export class HabboTracking extends Component implements IHabboTracking, IUpdateR
 
         const parser = (event as RoomEntryInfoMessageEvent).parser as RoomEntryInfoMessageParser;
         this.legacyTrackGoogle('navigator', 'private', [parser.guestRoomId]);
+    }
+
+    /**
+	 * The badge the server just awarded, reported to analytics.
+	 *
+	 * Four other modules subscribe to this message and none of them is this one — the notification
+	 * bubble, the inventory's badge tab and the quest handler all read it for what to show, which
+	 * is why the gap was invisible: nothing looked broken, the hotel simply logged no achievement.
+	 */
+    // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::onAchievementNotification()
+    private onAchievementNotification(event: IMessageEvent): void
+    {
+        const parser = event.parser as HabboAchievementNotificationMessageEventParser;
+
+        this.legacyTrackGoogle('achievement', 'achievement', [parser.data?.badgeCode]);
     }
 }

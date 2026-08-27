@@ -22,6 +22,9 @@ import {GetGuestRoomResultMessageEvent} from '@habbo/communication/messages/inco
 import type {GetGuestRoomResultMessageParser} from '@habbo/communication/messages/parser/navigator/GetGuestRoomResultMessageParser';
 import type {RoomChatSettingsMessageParser} from '@habbo/communication/messages/parser/roomsettings/RoomChatSettingsMessageParser';
 import {AccountPreferencesEvent} from '@habbo/communication/messages/incoming/preferences/AccountPreferencesEvent';
+import {
+    RoomEntryInfoMessageEvent
+} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
 import type {AccountPreferencesParser} from '@habbo/communication/messages/parser/preferences/AccountPreferencesParser';
 import {SetChatStylePreferenceComposer} from '@habbo/communication/messages/outgoing/preferences/SetChatStylePreferenceComposer';
 import {
@@ -63,7 +66,6 @@ export interface IHabboFreeFlowChatEvents
     'chatInserted': (item: ChatItem) => void;
     'roomEntered': () => void;
     'roomLeft': () => void;
-    'cleared': () => void;
     'visibilityToggled': () => void;
 }
 
@@ -269,6 +271,19 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         }
 
         this._chatFlowStage?.refreshSettings();
+    }
+
+    /**
+	 * Entering a room throws the previous room's bubbles away.
+	 *
+	 * AS3 also resets the "room-change divider already inserted" flag here; that divider belongs to
+	 * the unported history panel and is deferred with it (see `onGuestRoomData()` above), so only
+	 * the `clear()` half is ported.
+	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onRoomEnter()
+    private onRoomEnter(): void
+    {
+        this.clear();
     }
 
     /**
@@ -930,12 +945,16 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     /**
-	 * Clear the current chat flow.
+	 * Clear the current chat flow — AS3 is `if(_chatFlowStage) _chatFlowStage.clear()`.
+	 *
+	 * This used to emit a `cleared` event on the TS-only bus instead, and nothing anywhere listened
+	 * for it, so clearing the chat did nothing at all. The stage's own `clear()` was ported and
+	 * reachable the whole time.
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::clear()
     clear(): void
     {
-        this._chatEvents.emit('cleared');
+        this._chatFlowStage?.clear();
     }
 
     /**
@@ -1012,6 +1031,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         this._isInitialized = true;
 
         this._communication?.addHabboConnectionMessageEvent(new AccountPreferencesEvent(this.onAccountPreferences.bind(this)));
+        this._communication?.addHabboConnectionMessageEvent(new RoomEntryInfoMessageEvent(this.onRoomEnter.bind(this)));
         this._communication?.addHabboConnectionMessageEvent(new RoomChatSettingsMessageEvent(this.onRoomChatSettings.bind(this)));
         this._communication?.addHabboConnectionMessageEvent(new GetGuestRoomResultMessageEvent(this.onGuestRoomData.bind(this)));
 
