@@ -1,0 +1,49 @@
+// The tab bars, in habbo.com's own order and membership — read off `community/community.html`,
+// `shop/shop.html`, `settings/settings.html` and `home/home.html` — with each label resolved
+// through the translate key those templates name. "Apparts", "Offres prépayées", "Protection du
+// compte" are habbo.com's words, not a translation of mine.
+//
+// They live here rather than in each page because several pages share a bar: every /community/*
+// screen renders the same four tabs, and a bar that differs between two of its own tabs is the bug
+// this avoids.
+import {t} from './i18n.js';
+
+export const HOME_TABS = [
+    {path: '/', label: t('HOME_NEWS_TAB'), strict: true},
+    {path: '/messaging', label: t('HOME_MESSAGING_TAB')},
+];
+
+export const COMMUNITY_TABS = [
+    {path: '/community/photos', label: t('COMMUNITY_PHOTOS_TAB')},
+    {path: '/community/rooms', label: t('COMMUNITY_ROOMS_TAB')},
+    {path: '/community/fansites', label: t('COMMUNITY_FANSITES_TAB')},
+    // habbo.com's news tab matches /community/category AND /community/article — the article page
+    // keeps the tab lit.
+    {path: '/community', label: t('COMMUNITY_NEWS_TAB')},
+];
+
+export const SHOP_TABS = [
+    {path: '/shop', label: t('SHOP_BUY_TAB'), strict: true},
+    {path: '/shop/prepaid', label: t('SHOP_PREPAID_TAB')},
+    {path: '/shop/history', label: t('SHOP_HISTORY_TAB')},
+];
+
+export const SETTINGS_TABS = [
+    {path: '/settings/privacy', label: t('SETTINGS_PRIVACY_TAB')},
+    {path: '/settings/security', label: t('SETTINGS_ACCOUNT_SECURITY_TAB')},
+    {path: '/settings/2fa', label: t('SETTINGS_TWO_FACTOR_AUTH_TAB')},
+    {path: '/settings/password', label: t('SETTINGS_PASSWORD_TAB')},
+    {path: '/settings/email', label: t('SETTINGS_EMAIL_TAB')},
+    {path: '/settings/avatars', label: t('SETTINGS_AVATAR_TAB')},
+    // habbo.com has an eighth tab here, `/settings/wallet` — "Connecter le porte-monnaie Metamask".
+    // Deliberately dropped: this hotel has no wallet to connect, and a tab whose only content is
+    // "nothing is connected" is worse than no tab.
+];
+
+export const PLAYING_HABBO_TABS = [
+    {path: '/playing-habbo', label: t('PLAYING_HABBO_WHAT_IS_HABBO_TAB'), strict: true},
+    {path: '/playing-habbo/how-to-play', label: t('PLAYING_HABBO_HOW_TO_PLAY_TAB')},
+    {path: '/playing-habbo/habbo-way', label: t('PLAYING_HABBO_HABBO_WAY_TAB')},
+    {path: '/playing-habbo/safety', label: t('PLAYING_HABBO_SAFETY_TAB')},
+    {path: '/playing-habbo/help', label: t('PLAYING_HABBO_HELP_TAB')},
+];
