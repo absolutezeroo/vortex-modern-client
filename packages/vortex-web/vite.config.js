@@ -34,7 +34,14 @@ export default defineConfig({
         proxy: {
             '/api': {target: 'http://localhost:8080', changeOrigin: true},
             '/habbo-imaging': {target: 'http://localhost:8081', changeOrigin: true},
+            // The asset host's four roots. `vortex-assets.local` is `127.0.0.1` in this machine's
+            // hosts file, so the CLIENT could not fetch a single asset from a phone or through a
+            // tunnel — the name resolved to the visitor's own loopback. Proxied, they are same-origin
+            // and reachable from anywhere the site is.
             '/c_images': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/gamedata': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/gordon': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/dcr': {target: 'http://vortex-assets.local', changeOrigin: true},
 
             // `ws: true` is not optional here: the client's dev server pushes HMR over a websocket,
             // and a proxy that forwards only HTTP leaves it retrying a connection that never opens.
@@ -43,7 +50,13 @@ export default defineConfig({
             // The game socket itself, so a phone reaches the hotel through the ONE origin this
             // server already is. Without it the client dials 40001 directly, which off this machine
             // is the phone's own loopback — and through a tunnel there is no second port to open.
-            '/ws': {target: 'ws://localhost:40001', ws: true},
+            // `127.0.0.1`, NOT `localhost`, and the difference is the whole bug: the game socket
+            // binds IPv4 only, while `localhost` resolves to `::1` first — so the proxy dialled an
+            // address nothing listens on and the client's WebSocket never opened. The API gets away
+            // with `localhost` because it binds BOTH families; the client's dev server must keep it
+            // because it binds `::1` only. Each target has to name the family its service actually
+            // listens on.
+            '/ws': {target: 'ws://127.0.0.1:40001', ws: true},
         },
     },
 });

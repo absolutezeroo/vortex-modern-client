@@ -56,6 +56,18 @@ export default defineConfig(({command}) => ({
                 secure: false,
                 rewrite: (path) => path.replace(/^\/webapi/, ''),
             },
+
+            // The asset host's four roots, so `url.prefix` in the shipped configuration can be
+            // RELATIVE. It used to be `http://vortex-assets.local`, which is `127.0.0.1` in this
+            // machine's hosts file: served to anything but this machine — a phone, a tunnel — that
+            // name resolved to the visitor's own loopback and every asset failed to load. Relative,
+            // the client asks whichever origin served it, and that origin proxies here.
+            // packages/vortex-web forwards the same four for when it proxies the client at /client.
+            '/c_images': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/gamedata': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/gordon': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/dcr': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/habbo-imaging': {target: 'http://localhost:8081', changeOrigin: true},
         },
     },
     build: {
