@@ -11,6 +11,8 @@
  */
 export interface IThemeAndIntent
 {
+    // TS-only: a field of AS3's anonymous return Object, which names no type to trace to.
     theme: string;
+    // TS-only: a field of AS3's anonymous return Object, which names no type to trace to.
     intent: string | null;
 }
