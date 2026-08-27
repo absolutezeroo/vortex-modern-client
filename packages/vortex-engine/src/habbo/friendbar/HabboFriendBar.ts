@@ -7,6 +7,8 @@ import {HabboFriendBarData} from './data/HabboFriendBarData';
 import {HabboFriendBarView} from './view/HabboFriendBarView';
 import {GroupForumController} from './groupforums/GroupForumController';
 import {HabboTalent} from './talent/HabboTalent';
+import {HabboEpicPopupView} from './popup/HabboEpicPopupView';
+import {IID_HabboEpicPopupView} from '@iid/IIDHabboEpicPopupView';
 import {IID_HabboGroupForumController} from '@iid/IIDHabboGroupForumController';
 import {IID_HabboTalent} from '@iid/IIDHabboTalent';
 import {IID_HabboLandingView} from '@iid/IIDHabboLandingView';
@@ -24,13 +26,9 @@ import type {IHabboFriendBarView} from './view/IHabboFriendBarView';
  * `data/` and `view/` are ported in full (30 files, 2026-07-29): the bar, its slots,
  * the request tabs and the notification tokens. `groupforums/` followed (17 files, 2026-08-10).
  *
- * TODO(AS3): still unported —
- *   - HabboTalent — sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/talent/
- *     (citizenship/talent track).
- *   - HabboEpicPopupView — sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/popup/.
- *     The old note filed both of these, and GroupForumController, under `groupforums/`; only the
- *     last one was ever there.
- * See docs/IMPLEMENTATION_STATUS.md.
+ * `talent/` and `popup/` followed. All six of AS3's sub-components are attached below; the note
+ * that used to stand here filed HabboTalent, HabboEpicPopupView and GroupForumController under
+ * `groupforums/`, and only the last one was ever there.
  *
  * @see sources/win63_version/habbo/friendbar/HabboFriendBar.as
  */
@@ -71,8 +69,12 @@ export class HabboFriendBar extends Component implements IHabboFriendBar
             [IID_HabboTalent]
         );
 
-        // Future sub-components (not yet implemented):
-        // context.attachComponent(new HabboEpicPopupView(context, 0, assetLibrary), [IID_HabboEpicPopupView]);
+        // AS3 attaches this last but one (HabboFriendBar.as:30). It builds no window until an
+        // `EpicPopup` message arrives, so attaching it costs a message subscription and nothing else.
+        context.attachComponent(
+            new HabboEpicPopupView(context, 0, assetLibrary),
+            [IID_HabboEpicPopupView]
+        );
     }
 
     /**
