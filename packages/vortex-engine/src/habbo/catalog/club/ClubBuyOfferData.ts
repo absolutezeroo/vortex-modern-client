@@ -262,6 +262,27 @@ export class ClubBuyOfferData implements IPurchasableOffer, IDisposable
         return 0;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyOfferData.as::_SafeStr_6097 (extraParameter's storage)
+    private _extraParameter: string = '';
+
+    /**
+	 * Written by its own setter and read by nothing — in AS3 too, where the whole catalog module
+	 * touches it only through these two accessors. Ported anyway rather than silently dropped:
+	 * `PlacedObjectPurchaseData` has a same-named field that *is* live (HabboCatalog compares it to
+	 * the room's wall/floor/landscape type), so an absence here reads as the live one missing.
+	 */
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyOfferData.as::get extraParameter()
+    get extraParameter(): string
+    {
+        return this._extraParameter;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyOfferData.as::set extraParameter()
+    set extraParameter(value: string)
+    {
+        this._extraParameter = value;
+    }
+
     // AS3: .../src/com/sulake/habbo/catalog/club/ClubBuyOfferData.as::get badgeCode()
     get badgeCode(): string
     {

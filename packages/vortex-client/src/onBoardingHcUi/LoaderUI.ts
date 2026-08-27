@@ -18,6 +18,13 @@ import {LocalizedTextField} from './LocalizedTextField';
 import {LoginAssets} from './LoginAssets';
 import {NineSplitSprite} from './NineSplitSprite';
 
+// TODO(AS3): sources/WIN63-202607011411-782849652/src/onBoardingHcUi/LoaderUI.as declares four
+// `[Embed]` font classes — ubuntu_regular, ubuntu_bold, ubuntu_italic, ubuntu_bold_italic. They are
+// the SWF's copy of a font the player's machine may not have; LoginFlow.as, OnBoardingHcFlow.as and
+// HabboWindowManagerCom.as each declare the same four, and the manifest lists them as
+// `application/x-font-truetype` assets. Embedded classes have no TypeScript counterpart, and the
+// browser resolves `font: 'Ubuntu'` from the page's own @font-face, so all four are deliberately
+// not reproduced here or in the three other classes that declare them.
 export class LoaderUI
 {
     // AS3: STYLE_ILLUMINA
