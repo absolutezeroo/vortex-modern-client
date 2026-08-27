@@ -254,6 +254,38 @@ function hasPrecedingAs3Trace(lines, declLineIndex)
     return false;
 }
 
+/**
+ * `private _huntId: string` is the storage behind `get huntId()`. It is not a second AS3 member:
+ * the AS3 side is an obfuscated `_SafeStr_7659` that rule 30 forbids naming in a trace anyway, and
+ * the getter directly above or below it already carries the honest citation. Asking for a trace
+ * here asks for one that cannot be written, which is how every message parser in the port ends up
+ * flagged — the whole file is new, so every backing field is an "added line".
+ *
+ * Only exempt the field when the matching accessor exists AND is itself traced; an untraced getter
+ * still gets reported, which is the finding that actually matters.
+ */
+function isBackingFieldOfTracedAccessor(lines, trimmed)
+{
+    const match = /^(?:private|protected)\s+(?:readonly\s+)?_([A-Za-z_$][\w$]*)\s*[:=;]/.exec(trimmed);
+
+    if(!match)
+    {
+        return false;
+    }
+
+    const accessorRe = new RegExp(`^\\s*(?:public\\s+|private\\s+|protected\\s+)?(?:get|set)\\s+${match[1]}\\s*\\(`);
+
+    for(let i = 0; i < lines.length; i++)
+    {
+        if(accessorRe.test(lines[i]) && hasPrecedingAs3Trace(lines, i))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function checkFile(file, addedLines)
 {
     if(!addedLines || addedLines.size === 0)
@@ -286,6 +318,11 @@ function checkFile(file, addedLines)
         const kind = classifyMemberDeclaration(trimmed);
 
         if(kind === null)
+        {
+            continue;
+        }
+
+        if(kind === 'property' && isBackingFieldOfTracedAccessor(lines, trimmed))
         {
             continue;
         }
