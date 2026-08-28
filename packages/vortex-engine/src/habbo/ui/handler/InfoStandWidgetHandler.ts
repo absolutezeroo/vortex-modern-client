@@ -37,6 +37,12 @@ import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetR
 import {RoomWidgetChangeMottoMessage} from '@habbo/ui/widget/messages/RoomWidgetChangeMottoMessage';
 import {RoomWidgetFurniActionMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniActionMessage';
 import {RoomWidgetGetBadgeDetailsMessage} from '@habbo/ui/widget/messages/RoomWidgetGetBadgeDetailsMessage';
+import {RoomWidgetGetBadgeImageMessage} from '@habbo/ui/widget/messages/RoomWidgetGetBadgeImageMessage';
+import {RoomWidgetRoomTagSearchMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomTagSearchMessage';
+import {RoomWidgetPresentOpenMessage} from '@habbo/ui/widget/messages/RoomWidgetPresentOpenMessage';
+import {RoomWidgetChatInputContentUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetChatInputContentUpdateEvent';
+import type {IDisposable} from '@core/runtime/IDisposable';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {RoomWidgetOpenProfileMessage} from '@habbo/ui/widget/messages/RoomWidgetOpenProfileMessage';
 import {RoomWidgetUserActionMessage} from '@habbo/ui/widget/messages/RoomWidgetUserActionMessage';
 import {RoomWidgetPetCommandMessage} from '@habbo/ui/widget/messages/RoomWidgetPetCommandMessage';
@@ -101,28 +107,19 @@ const log = Logger.getLogger('habbo.ui.handler.InfoStandWidgetHandler');
 
 export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageListener 
 {
-    // Every message type from getWidgetMessages() that processWidgetMessage() doesn't
-    // yet implement — kept as one list so the switch's default branch can log which
-    // unimplemented AS3 case fired, instead of a silent no-op.
+    /**
+     * The one message type `getWidgetMessages()` advertises that nothing acts on — **and AS3 does
+     * not act on it either**: `RWUAM_TRAIN_PET` is declared there and has no case in AS3's switch,
+     * so it is a no-op in the Flash client too. Kept as a set rather than a bare comparison so a
+     * future addition has somewhere to go, and so the log line names what fired.
+     *
+     * This list used to hold 44 entries covering the whole social and moderation half of the avatar
+     * menu; those are implemented now (`processUserScopedAction()`), and the rest were never
+     * missing at all — they are dispatched by `instanceof`, not by string, so they never reached
+     * the tail of `processWidgetMessage()`.
+     */
     private static readonly UNIMPLEMENTED_WIDGET_MESSAGES = new Set<string>([
-        'RWUAM_SEND_FRIEND_REQUEST', 'RWUAM_RESPECT_USER', 'RWUAM_REPLENISH_RESPECT_USER',
-        // The leading space on RESPECT_PET is not a typo here: AS3 carries it in all four places the
-        // string appears — the declaration, the pet-target test, the switch case and both menu views
-        // that send it. Trimming it on this side alone would stop the message matching.
-        'RWUAM_OPEN_PROFILE', ' RWUAM_RESPECT_PET', 'RWUAM_WHISPER_USER', 'RWUAM_IGNORE_USER',
-        'RWUAM_UNIGNORE_USER', 'RWUAM_KICK_USER', 'RWUAM_BAN_USER_DAY', 'RWUAM_BAN_USER_HOUR',
-        'RWUAM_BAN_USER_PERM', 'RWUAM_MUTE_USER_2MIN', 'RWUAM_MUTE_USER_5MIN', 'RWUAM_MUTE_USER_10MIN',
-        'RWUAM_GIVE_RIGHTS', 'RWUAM_TAKE_RIGHTS', 'RWUAM_START_TRADING', 'RWUAM_OPEN_HOME_PAGE',
-        'RWUAM_PASS_CARRY_ITEM', 'RWUAM_DROP_CARRY_ITEM',
-        'RWRTSM_ROOM_TAG_SEARCH',
-        'RWGOI_MESSAGE_GET_BADGE_IMAGE', 'RWUAM_REPORT', 'RWUAM_PICKUP_PET', 'RWUAM_MOUNT_PET',
-        'RWUAM_TOGGLE_PET_RIDING_PERMISSION', 'RWUAM_TOGGLE_PET_BREEDING_PERMISSION', 'RWUAM_DISMOUNT_PET',
-        'RWUAM_SADDLE_OFF', 'RWUAM_TRAIN_PET', 'RWUAM_REQUEST_PET_UPDATE', 'RWVM_CHANGE_MOTTO_MESSAGE',
-        'RWPOM_OPEN_PRESENT',
-        'RWUAM_REPORT_CFH_OTHER', 'RWUAM_AMBASSADOR_ALERT_USER', 'RWUAM_AMBASSADOR_KICK_USER',
-        'RWUAM_AMBASSADOR_MUTE_2MIN', 'RWUAM_AMBASSADOR_MUTE_10MIN', 'RWUAM_AMBASSADOR_MUTE_15MIN',
-        'RWUAM_AMBASSADOR_MUTE_60MIN', 'RWUAM_AMBASSADOR_MUTE_18HOUR', 'RWUAM_AMBASSADOR_MUTE_36HOUR',
-        'RWUAM_AMBASSADOR_MUTE_72HOUR', 'RWUAM_AMBASSADOR_UNMUTE',
+        'RWUAM_TRAIN_PET',
     ]);
 
     private _groupDetailsEvent: IMessageEvent | null = null;
@@ -455,12 +452,44 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(message instanceof RoomWidgetUserActionMessage)
         {
-            // Handled before processUserActionMessage(), which is pet-only and drops anything
-            // whose id is not a pet in the room — the user and bot variants would never survive
-            // that guard.
+            // Both are handled before processUserActionMessage(), which is pet-only and drops
+            // anything whose id is not a pet in the room — the user, bot and moderation variants
+            // would never survive that guard.
             if(this.processWiredInspect(message)) return null;
+            if(this.processUserScopedAction(message)) return null;
 
             this.processUserActionMessage(message);
+
+            return null;
+        }
+
+        // AS3: .../InfoStandWidgetHandler.as::processWidgetMessage() ("RWRTSM_ROOM_TAG_SEARCH")
+        if(message instanceof RoomWidgetRoomTagSearchMessage)
+        {
+            this._container.navigator?.performTagSearch(message.tag);
+
+            return null;
+        }
+
+        // AS3: .../InfoStandWidgetHandler.as::processWidgetMessage() ("RWGOI_MESSAGE_GET_BADGE_IMAGE")
+        if(message instanceof RoomWidgetGetBadgeImageMessage)
+        {
+            this._widget?.refreshBadge(message.badgeId);
+
+            return null;
+        }
+
+        // AS3: .../InfoStandWidgetHandler.as::processWidgetMessage() ("RWPOM_OPEN_PRESENT")
+        // Opening a present closes the furni view that was showing it, and only that one — the
+        // id test is what keeps a second present's view open.
+        if(message instanceof RoomWidgetPresentOpenMessage)
+        {
+            const furniData = this._widget?.furniData ?? null;
+
+            if(furniData != null && furniData.id === message.objectId && this._widget?.isFurniViewVisible())
+            {
+                this._widget.close();
+            }
 
             return null;
         }
@@ -502,10 +531,8 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
     //
     // The AS3 resolves the addressed entity up front — for every pet-scoped action it looks the
     // target up via userDataManager.getPetUserData(userId) and bails when that returns null (the
-    // pet left the room mid-click). The user-scoped RWUAM cases (whisper/ignore/kick/ban/mute/
-    // rights/trading/friend-request/respect-user/open-profile) live in the InfoStandUserView path
-    // and are not emitted by the pet view; they stay in UNIMPLEMENTED_WIDGET_MESSAGES until that
-    // view is wired.
+    // pet left the room mid-click). The user-scoped RWUAM cases take the same shape one method up,
+    // in processUserScopedAction(), against getUserData() instead.
     /**
      * "Inspect in the wired menu" for a user, a bot or a pet.
      *
@@ -530,6 +557,179 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         return true;
     }
+
+    /**
+     * Every RWUAM arm whose target is a *user*, not a pet: the social half of the avatar menu
+     * (friend request, respect, whisper, ignore, trade, profile, home page) and the moderation half
+     * (kick, ban, mute, rights, report) including the nine ambassador variants.
+     *
+     * Returns whether the message was one of them, so the caller can fall through to the pet-only
+     * switch — AS3 has these in the same switch and picks the lookup by type up front, which is the
+     * same split, written the other way round.
+     *
+     * The ambassador arms are not a separate mechanism: AS3 sends the *same* kick/mute/unmute
+     * calls, and only the menu that offers them differs. `AMBASSADOR_MUTE_USER_15MIN` is the one
+     * duration the ordinary mute menu does not have.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::processWidgetMessage()
+    private processUserScopedAction(message: RoomWidgetUserActionMessage): boolean
+    {
+        const container = this._container;
+        const session = container?.roomSession ?? null;
+
+        if(container == null || session == null) return false;
+
+        // AS3 resolves the target before the switch and drops the message when it is gone — a
+        // click on someone who has just left must not send a moderation packet for them.
+        const userData = session.userDataManager.getUserData(message.userId);
+
+        switch(message.type)
+        {
+            case RoomWidgetUserActionMessage.SEND_FRIEND_REQUEST:
+                if(userData != null) container.friendList?.askForAFriend(message.userId, userData.name);
+                break;
+            case RoomWidgetUserActionMessage.RESPECT_USER:
+                container.sessionDataManager?.giveRespect(message.userId);
+                break;
+            case RoomWidgetUserActionMessage.REPLENISH_RESPECT:
+                this.confirmRespectReplenish();
+                break;
+            case RoomWidgetUserActionMessage.OPEN_PROFILE:
+                if(userData != null) container.connection?.send(new GetExtendedProfileMessageComposer(userData.webID));
+                break;
+            // AS3 puts the name straight into the chat input rather than sending anything.
+            case RoomWidgetUserActionMessage.WHISPER_USER:
+                if(userData != null)
+                {
+                    container.desktopEvents.emit(
+                        RoomWidgetChatInputContentUpdateEvent.CHAT_INPUT_CONTENT,
+                        new RoomWidgetChatInputContentUpdateEvent('whisper', userData.name)
+                    );
+                }
+                break;
+            case RoomWidgetUserActionMessage.IGNORE_USER:
+                if(userData != null) container.sessionDataManager?.ignoreUser(userData.webID);
+                break;
+            case RoomWidgetUserActionMessage.UNIGNORE_USER:
+                if(userData != null) container.sessionDataManager?.unignoreUser(userData.webID);
+                break;
+            case RoomWidgetUserActionMessage.KICK_USER:
+            case RoomWidgetUserActionMessage.AMBASSADOR_KICK_USER:
+                if(userData != null) session.kickUser(userData.webID);
+                break;
+            // The message type *is* the duration — AS3 hands the raw string to the composer.
+            case RoomWidgetUserActionMessage.BAN_USER_DAY:
+            case RoomWidgetUserActionMessage.BAN_USER_HOUR:
+            case RoomWidgetUserActionMessage.BAN_USER_PERM:
+                if(userData != null) session.banUserWithDuration(userData.webID, message.type);
+                break;
+            case RoomWidgetUserActionMessage.MUTE_USER_2MIN:
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_2MIN:
+                if(userData != null) session.muteUser(userData.webID, 2);
+                break;
+            case RoomWidgetUserActionMessage.MUTE_USER_5MIN:
+                if(userData != null) session.muteUser(userData.webID, 5);
+                break;
+            case RoomWidgetUserActionMessage.MUTE_USER_10MIN:
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_10MIN:
+                if(userData != null) session.muteUser(userData.webID, 10);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_15MIN:
+                if(userData != null) session.muteUser(userData.webID, 15);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_60MIN:
+                if(userData != null) session.muteUser(userData.webID, 60);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_18HOUR:
+                if(userData != null) session.muteUser(userData.webID, 1080);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_36HOUR:
+                if(userData != null) session.muteUser(userData.webID, 2160);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_MUTE_USER_72HOUR:
+                if(userData != null) session.muteUser(userData.webID, 4320);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_UNMUTE_USER:
+                if(userData != null) session.unmuteUser(userData.webID);
+                break;
+            case RoomWidgetUserActionMessage.AMBASSADOR_ALERT_USER:
+                if(userData != null) session.ambassadorAlert(userData.webID);
+                break;
+            case RoomWidgetUserActionMessage.GIVE_RIGHTS:
+                if(userData != null) session.assignRights(userData.webID);
+                break;
+            case RoomWidgetUserActionMessage.TAKE_RIGHTS:
+                if(userData != null) session.removeRights(userData.webID);
+                break;
+            // Trading takes the *room* id, not the web id: the trade is with the avatar in front
+            // of you, and the server matches it against who is actually in the room.
+            case RoomWidgetUserActionMessage.START_TRADING:
+                if(userData != null) container.inventory?.setupTrading(userData.roomObjectId);
+                break;
+            case RoomWidgetUserActionMessage.OPEN_HOME_PAGE:
+                if(userData != null) container.sessionDataManager?.openHabboHomePage(userData.webID, userData.name);
+                break;
+            // AS3 passes `-1` for the room and null for the name: the report dialog looks both up.
+            case RoomWidgetUserActionMessage.REPORT:
+                if(userData != null) container.habboHelp?.reportUser(message.userId, -1, '');
+                break;
+            // 124 is the CFH topic id for "other", inline in AS3.
+            case RoomWidgetUserActionMessage.REPORT_CFH_OTHER:
+                container.habboHelp?.reportUser(message.userId, 124, '');
+                break;
+            default:
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * The duckets-for-respects purchase: refuse it outright when the purse cannot cover it, and
+     * otherwise ask before spending. AS3 uses the *not_enough* title as the alert's body too —
+     * transcribed as written, and it is why the dialog reads oddly.
+     */
+    // AS3: .../InfoStandWidgetHandler.as::processWidgetMessage() ("RWUAM_REPLENISH_RESPECT_USER")
+    private confirmRespectReplenish(): void
+    {
+        const container = this._container;
+
+        if(container == null) return;
+
+        const duckets = container.catalog?.getPurse().getActivityPointsForType(0) ?? 0;
+        const cost = container.config?.getInteger('respect.replenish_cost_duckets', 50) ?? 50;
+
+        if(duckets < cost)
+        {
+            container.windowManager?.alert(
+                '${respect.replenish.not_enough_duckets.title}',
+                container.localization?.getLocalizationWithParams(
+                    'respect.replenish.not_enough_duckets.title', '', 'amount', String(cost)
+                ) ?? '',
+                0,
+                null
+            );
+
+            return;
+        }
+
+        container.windowManager?.confirm(
+            '${respect.replenish.title}',
+            container.localization?.getLocalizationWithParams(
+                'respect.replenish.desc', '', 'amount', String(cost)
+            ) ?? '',
+            0,
+            this.onRespectReplenishClicked
+        );
+    }
+
+    // AS3: .../src/com/sulake/habbo/ui/handler/InfoStandWidgetHandler.as::onRespectReplenishClicked()
+    private onRespectReplenishClicked = (dialog: IDisposable, event: WindowEvent): void =>
+    {
+        dialog.dispose();
+
+        if(event.type === 'WE_OK') this._container?.sessionDataManager?.replenishRespect();
+    };
 
     private processUserActionMessage(message: RoomWidgetUserActionMessage): void
     {
@@ -565,6 +765,9 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 break;
             case RoomWidgetUserActionMessage.RESPECT_PET:
                 container.sessionDataManager?.givePetRespect(petId);
+                break;
+            case RoomWidgetUserActionMessage.REQUEST_PET_UPDATE:
+                container.roomSession.userDataManager.requestPetInfo(petId);
                 break;
             // AS3 sends the care composers straight down the connection here, not through
             // sessionDataManager — so TREAT_PET reuses RespectPetMessageComposer without touching
