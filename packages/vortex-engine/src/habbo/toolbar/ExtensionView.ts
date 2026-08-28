@@ -29,6 +29,17 @@ export class ExtensionView implements IExtensionView
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_toolbar
     private _toolbar: HabboToolbar | null;
     private _var104: IItemListWindow | null = null;
+
+    // TS-only: the handle for queueResizeEvent()'s coalescing timer, so dispose() can cancel it.
+    private _resizeTimer: ReturnType<typeof setTimeout> | null = null;
+
+    /**
+     * TS-only: set for the length of `dispose()`, so the `detachExtension()` loop it runs still
+     * does its bookkeeping and its dimmer removal but skips the two things that only exist to
+     * update a strip about to be thrown away — see `dispose()`.
+     */
+    // TS-only: no AS3 counterpart; AS3 can rebuild a dying strip harmlessly, this port cannot.
+    private _disposing: boolean = false;
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::_items
     private _items: Map<string, IWindow> = new Map();
     private _orderedItems: IWindow[] = [];
@@ -249,12 +260,14 @@ export class ExtensionView implements IExtensionView
             if(this._var104)
             {
                 this._toolbar?.removeDimmer(window);
-                this.refreshItemWindow();
+
+                if(!this._disposing) this.refreshItemWindow();
             }
         }
 
         this._items.delete(id);
-        this.queueResizeEvent();
+
+        if(!this._disposing) this.queueResizeEvent();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::getIconLocation()
@@ -306,14 +319,36 @@ export class ExtensionView implements IExtensionView
         return result;
     }
 
+    /**
+     * AS3: ExtensionView.as::dispose()
+     *
+     * Structurally AS3's — detach every extension, then drop the item list — with one TS deviation
+     * that the port needs and Flash did not. `_disposing` suppresses the `refreshItemWindow()` and
+     * `queueResizeEvent()` that each `detachExtension()` would otherwise run: both only exist to
+     * update a strip that is about to be destroyed, and both reach into windows that other
+     * components may already have disposed. A disposed window in this port has a **null
+     * `context`** (`WindowModel.dispose()` clears it), so a rebuild during teardown throws where
+     * Flash would have shrugged — which is what `ItemListController.invalidate()` was doing at the
+     * bottom of `Vortex.dispose()`.
+     *
+     * The pending resize timer is cancelled for the same reason; see `queueResizeEvent()`.
+     */
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::dispose()
-    public dispose(): void 
+    public dispose(): void
     {
         if(this._disposed) return;
 
+        this._disposing = true;
+
+        if(this._resizeTimer !== null)
+        {
+            clearTimeout(this._resizeTimer);
+            this._resizeTimer = null;
+        }
+
         const keys = Array.from(this._items.keys());
 
-        for(const key of keys) 
+        for(const key of keys)
         {
             this.detachExtension(key);
         }
@@ -355,16 +390,35 @@ export class ExtensionView implements IExtensionView
         return -1;
     }
 
+    /**
+     * AS3: ExtensionView.as::queueResizeEvent()
+     *
+     * TS deviation, and a necessary one: AS3 coalesces with a Flash `Timer` it can leave running,
+     * because a disposed Flash object is still safe to touch. This port nulls internals on dispose,
+     * so a 25ms callback that outlives its own view lands in a half-torn-down graph — during a
+     * teardown that is exactly what happened, and the resize reached
+     * `HabboNotificationItemView.reposition()` after the notification's window had been disposed
+     * and its `context` nulled.
+     *
+     * So the handle is kept and cancelled in `dispose()`, and the callback re-checks `_disposed`
+     * for the case where the timer already fired and is sitting in the task queue.
+     */
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::queueResizeEvent()
-    private queueResizeEvent(): void 
+    private queueResizeEvent(): void
     {
-        setTimeout(() => 
+        if(this._disposed) return;
+
+        if(this._resizeTimer !== null) clearTimeout(this._resizeTimer);
+
+        this._resizeTimer = setTimeout(() =>
         {
-            if(this._toolbar) 
-            {
-                const event = new ExtensionViewEvent(ExtensionViewEvent.EXTENSION_VIEW_RESIZED);
-                this._toolbar.toolbarEvents.emit(ExtensionViewEvent.EXTENSION_VIEW_RESIZED, event);
-            }
+            this._resizeTimer = null;
+
+            if(this._disposed || !this._toolbar) return;
+
+            const event = new ExtensionViewEvent(ExtensionViewEvent.EXTENSION_VIEW_RESIZED);
+
+            this._toolbar.toolbarEvents.emit(ExtensionViewEvent.EXTENSION_VIEW_RESIZED, event);
         }, 25);
     }
 }

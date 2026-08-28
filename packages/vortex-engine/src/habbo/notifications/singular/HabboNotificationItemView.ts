@@ -419,7 +419,10 @@ export class HabboNotificationItemView implements IUpdateReceiver
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/singular/HabboNotificationItemView.as::reposition()
     reposition(verticalPosition: number = -1): void
     {
-        if(this._window === null) return;
+        // A disposed window is not a null one, and its `context` **is** null — `WindowModel.dispose()`
+        // clears it. The `WE_RESIZED` listener lives on the desktop window, so a resize can still
+        // arrive here after this bubble has been taken down (a queued one does, during teardown).
+        if(this._window === null || this._window.disposed) return;
 
         const desktop = this._window.context.getDesktopWindow();
 

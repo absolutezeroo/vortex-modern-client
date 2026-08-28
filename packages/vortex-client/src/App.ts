@@ -1753,6 +1753,12 @@ export class VortexApp
     /** Canvas mousedown handler. */
     private _onMouseDown = (e: MouseEvent): void =>
     {
+        // A DOM listener on the canvas can fire at any time, including after the engine has been
+        // torn down — an HMR reload disposes Vortex while this canvas and its listeners are still
+        // live, and `Vortex.instance` lazily builds a *fresh* empty instance whose `_habboMain` is
+        // null. Bail rather than dereference it.
+        if(Vortex.instance.disposed) return;
+
         // <canvas> isn't natively focusable, so the browser's default mousedown
         // action blurs whatever currently has DOM focus (moving it to <body>)
         // once every listener on this event has run. That happens *after* the
@@ -1874,6 +1880,12 @@ export class VortexApp
     /** Canvas mousemove handler. */
     private _onMouseMove = (e: MouseEvent): void =>
     {
+        // A DOM listener on the canvas can fire at any time, including after the engine has been
+        // torn down — an HMR reload disposes Vortex while this canvas and its listeners are still
+        // live, and `Vortex.instance` lazily builds a *fresh* empty instance whose `_habboMain` is
+        // null. Bail rather than dereference it.
+        if(Vortex.instance.disposed) return;
+
         const {x, y} = this.getCanvasCoords(e);
         const vortex = Vortex.instance;
         const hit = vortex.windowManager.findWindowAtPoint(x, y);
@@ -2002,6 +2014,12 @@ export class VortexApp
     /** Canvas mouseup handler (fallback for non-drag scenarios). */
     private _onMouseUp = (e: MouseEvent): void =>
     {
+        // A DOM listener on the canvas can fire at any time, including after the engine has been
+        // torn down — an HMR reload disposes Vortex while this canvas and its listeners are still
+        // live, and `Vortex.instance` lazily builds a *fresh* empty instance whose `_habboMain` is
+        // null. Bail rather than dereference it.
+        if(Vortex.instance.disposed) return;
+
         // If doc-level handlers are active, they handle the UP
         if(this._docUpHandler) return;
 

@@ -15,6 +15,7 @@ import type {AccountPreferencesParser} from '@habbo/communication/messages/parse
 import {GetSoundSettingsComposer} from '@habbo/communication/messages/outgoing/sound/GetSoundSettingsComposer';
 import {SetSoundSettingsComposer} from '@habbo/communication/messages/outgoing/sound/SetSoundSettingsComposer';
 
+import type {IID} from '@core/runtime/IID';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
@@ -33,6 +34,23 @@ import {HabboSoundBase} from './HabboSoundBase';
 import {HabboSoundWithPitch} from './HabboSoundWithPitch';
 
 const log = Logger.getLogger('habbo.sound.HabboSoundManagerFlash10');
+
+/**
+ * Gives one interface reference back to the component that provides it.
+ *
+ * AS3's shape exactly (`instance.release(new IID…())`): the reference count `queueInterface()`
+ * bumped lives on the **provider**, not on whoever asked for it. Written as a free function
+ * because the three interfaces below do not declare `IUnknown` in this port, even though every
+ * implementation of them is a `Component` — anything that is not simply does not get released.
+ */
+// TS-only: AS3 calls `IUnknown.release()` on the instance directly; the port's interfaces do not
+// declare it, so the shape is preserved here rather than at each call site.
+function releaseProvider(provider: unknown, iid: IID): void
+{
+    const releasable = provider as {release?: (iid: IID) => number} | null;
+
+    if(releasable !== null && typeof releasable.release === 'function') releasable.release(iid);
+}
 
 /**
  * HabboSoundManagerFlash10
@@ -756,12 +774,24 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         this._genericSamples.clear();
         this._lastPlayedAt.clear();
 
-        // AS3 releases through the instance (`_communication.release(new IID...())`), which
-        // is `IUnknown.release()`. This port keeps the reference count on the *holder*, so
-        // the release goes through `this` — the same shape `HabboFriendBar.dispose()` uses.
+        // 🐛 These three used to read `this.release(IID_…)`, under a comment claiming this port
+        // "keeps the reference count on the *holder*". It does not: `Component.queueInterface()`
+        // only bumps a count on `this` when **this component provides that interface itself**,
+        // and otherwise delegates to the context, which bumps it on the *provider*. The sound
+        // manager provides none of these three, so `this.release()` looked for a struct that was
+        // never there and threw "Attempting to release unknown interface" on every teardown.
+        //
+        // AS3 has it right and is followed here — it releases through the instance
+        // (`_communication.release(new IIDHabboCommunicationManager())`). The cast is because the
+        // three interfaces do not declare `IUnknown` in this port even though their implementations
+        // are Components; releasing is a no-op on anything that is not one.
+        //
+        // The `HabboFriendBar.dispose()` the old comment cited as precedent is *correct*, and does
+        // not generalise: that component lists `IID_HabboFriendBarView` in its own provided
+        // interfaces, so `this.release()` there really does find its own struct.
         if(this._communication !== null)
         {
-            this.release(IID_HabboCommunicationManager);
+            releaseProvider(this._communication, IID_HabboCommunicationManager);
             this._communication = null;
         }
 
@@ -769,13 +799,13 @@ export class HabboSoundManagerFlash10 extends Component implements IHabboSoundMa
         {
             this._roomEngine.events.off(RoomEngineObjectPlaySoundEvent.PLAY_SOUND, this._onRoomEngineObjectPlaySound);
             this._roomEngine.events.off(RoomEngineObjectPlaySoundEvent.PLAY_SOUND_AT_PITCH, this._onRoomEngineObjectPlaySound);
-            this.release(IID_RoomEngine);
+            releaseProvider(this._roomEngine, IID_RoomEngine);
             this._roomEngine = null;
         }
 
         if(this._notifications !== null)
         {
-            this.release(IID_HabboNotifications);
+            releaseProvider(this._notifications, IID_HabboNotifications);
             this._notifications = null;
         }
 

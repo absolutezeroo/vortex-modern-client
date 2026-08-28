@@ -538,6 +538,13 @@ export class Vortex implements IVortex
             this._unloadHandler = null;
         }
 
+        // Stop the render loop BEFORE anything is torn down. Disposing the component graph
+        // destroys textures and window buffers, and the ticker is still calling `render()` on the
+        // same stage between each step — Pixi then reads a destroyed texture's style and throws
+        // ("Cannot read properties of null (reading 'addressModeU')"), once per frame, until the
+        // application itself is destroyed three steps later. Nothing below needs a frame to run.
+        this._application?.ticker?.stop();
+
         // 1. Dispose engine orchestrator
         this._habboMain?.dispose();
         this._habboMain = null;
