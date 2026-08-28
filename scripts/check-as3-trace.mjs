@@ -219,8 +219,15 @@ function findClassMemberLines(content)
     return memberLines;
 }
 
-function hasPrecedingAs3Trace(lines, declLineIndex)
+/**
+ * The contiguous comment lines above a declaration, nearest first. A blank line does not end the
+ * block — a member's JSDoc is routinely separated from its trace by one — but any code line does,
+ * which is what keeps a member from inheriting the marker of the one declared above it.
+ */
+function precedingCommentBlock(lines, declLineIndex)
 {
+    const block = [];
+
     for(let i = declLineIndex - 1; i >= 0; i--)
     {
         const trimmed = lines[i].trim();
@@ -230,28 +237,59 @@ function hasPrecedingAs3Trace(lines, declLineIndex)
             continue;
         }
 
-        // `// TS-only:` marks a member with no AS3 counterpart at all — a port-specific
-        // event bus, a convenience accessor kept for ported callers. The rule covers members
-        // *ported from* AS3, and this check cannot tell those apart from ones that were never
-        // in the source, so it asked for a trace that cannot honestly be written. The marker
-        // makes the exemption explicit and greppable rather than silent.
-        //
-        // It is not a way to quiet the check on a member that does come from AS3. If the
-        // member exists in any tree, it needs the trace.
-        if(trimmed.startsWith('// AS3:') || trimmed.startsWith('// TODO(AS3)') || trimmed.startsWith('// TS-only:'))
-        {
-            return true;
-        }
-
         if(trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/**') || trimmed.startsWith('@'))
         {
+            block.push(trimmed);
+
             continue;
         }
 
-        return false;
+        break;
     }
 
-    return false;
+    return block;
+}
+
+/**
+ * `ok` | `deviation-without-trace` | `missing`.
+ *
+ * `// TS-only:` marks a member with no AS3 counterpart at all — a port-specific event bus, a
+ * convenience accessor kept for ported callers. The rule covers members *ported from* AS3, and
+ * this check cannot tell those apart from ones that were never in the source, so it asked for a
+ * trace that cannot honestly be written. The marker makes the exemption explicit and greppable
+ * rather than silent.
+ *
+ * It is not a way to quiet the check on a member that does come from AS3. If the member exists in
+ * any tree, it needs the trace.
+ *
+ * `// DEVIATION:` is the opposite case — the AS3 member exists and the port deliberately does
+ * something else. It therefore still has a citation to write, and this check requires it: the
+ * cited member is the one being deviated *from*. That requirement is the whole point of the
+ * marker. `audit-as3-traces.mjs` and `as3-member-coverage.mjs` both read `AS3:` lines and neither
+ * knows deviations exist; keeping the line means they go on working across a modernisation pass,
+ * and "deliberately replaced" never collapses into "never ported" in the coverage numbers.
+ */
+function traceStatus(lines, declLineIndex)
+{
+    const block = precedingCommentBlock(lines, declLineIndex);
+    const has = (prefix) => block.some((line) => line.startsWith(prefix));
+
+    if(has('// DEVIATION:'))
+    {
+        return has('// AS3:') ? 'ok' : 'deviation-without-trace';
+    }
+
+    if(has('// AS3:') || has('// TODO(AS3)') || has('// TS-only:'))
+    {
+        return 'ok';
+    }
+
+    return 'missing';
+}
+
+function hasPrecedingAs3Trace(lines, declLineIndex)
+{
+    return traceStatus(lines, declLineIndex) !== 'missing';
 }
 
 /**
@@ -327,17 +365,69 @@ function checkFile(file, addedLines)
             continue;
         }
 
-        if(!hasPrecedingAs3Trace(lines, lineNo - 1))
+        const status = traceStatus(lines, lineNo - 1);
+
+        if(status === 'ok')
         {
-            findings.push(`  ${file}:${lineNo} — ${kind} \`${trimmed.slice(0, 80)}\` has no AS3: trace comment, TODO(AS3) or TS-only: marker`);
+            continue;
         }
+
+        const why = status === 'deviation-without-trace'
+            ? 'carries a DEVIATION: marker but no AS3: line naming the member it deviates from'
+            : 'has no AS3: trace comment, TODO(AS3), TS-only: or DEVIATION: marker';
+
+        findings.push(`  ${file}:${lineNo} — ${kind} \`${trimmed.slice(0, 80)}\` ${why}`);
     }
 
     return findings;
 }
 
+/**
+ * `node scripts/check-as3-trace.mjs --self-test` — the marker table in
+ * `.claude/rules/30-as3-traceability.md`, one case per row. The check reads the git index, so this
+ * is the only way to exercise `traceStatus()` without staging a fixture.
+ */
+function selfTest()
+{
+    const cases =
+    [
+        ['// AS3: .../Foo.as::bar()', 'ok'],
+        ['// TODO(AS3): .../Foo.as::bar() — rest still owed', 'ok'],
+        ['// TS-only: no AS3 counterpart.', 'ok'],
+        ['// DEVIATION: pushes instead of polling.\n// AS3: .../Foo.as::bar()', 'ok'],
+        ['/**\n * Some JSDoc.\n */\n// DEVIATION: pushes instead of polling.\n// AS3: .../Foo.as::bar()', 'ok'],
+        ['// DEVIATION: pushes instead of polling.', 'deviation-without-trace'],
+        ['// Just an ordinary comment.', 'missing'],
+        ['', 'missing'],
+        // The marker belongs to the member above; a code line between the two must break the block.
+        ['// AS3: .../Foo.as::other()\nother(): void {}', 'missing']
+    ];
+
+    let failed = 0;
+
+    for(const [header, expected] of cases)
+    {
+        const lines = `${header}\nbar(): void`.split('\n');
+        const actual = traceStatus(lines, lines.length - 1);
+
+        if(actual !== expected)
+        {
+            failed++;
+            console.error(`  FAIL expected ${expected}, got ${actual} for:\n${header.replace(/^/gm, '    ')}`);
+        }
+    }
+
+    console.log(failed === 0 ? `check-as3-trace self-test: ${cases.length} cases OK` : `check-as3-trace self-test: ${failed} FAILED`);
+    process.exit(failed === 0 ? 0 : 1);
+}
+
 function main()
 {
+    if(process.argv.includes('--self-test'))
+    {
+        selfTest();
+    }
+
     const files = getStagedFiles().filter(isAs3PortedFile);
 
     if(files.length === 0)

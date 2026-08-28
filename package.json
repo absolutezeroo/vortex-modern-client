@@ -15,6 +15,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "sync:agents": "node scripts/sync-agent-docs.mjs --write",
+    "test:trace": "node scripts/check-as3-trace.mjs --self-test",
     "prepare": "husky"
   },
   "author": "Clayton",
