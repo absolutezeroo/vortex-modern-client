@@ -23,7 +23,15 @@
     window.VortexConfig = {
         ...existingConfig,
         connection: {
-            host: '127.0.0.1',
+            // Served from this machine, dial it directly. Served from anywhere else — a phone on the
+            // LAN, a Cloudflare tunnel — dial the socket back through the SAME origin the page came
+            // from, which vortex-web proxies at /ws. A hardcoded 127.0.0.1 is the visitor's own
+            // loopback, and a tunnel has no second port to hand out anyway.
+            //
+            // SocketConnection accepts a full ws://|wss:// URL as `host` and ignores `ports` then.
+            host: ['localhost', '127.0.0.1'].includes(window.location.hostname)
+                ? '127.0.0.1'
+                : `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws`,
             ports: [40001],
             ...existingConnection,
             // Last, so the ticket for THIS visit wins over anything a host page hardcoded.

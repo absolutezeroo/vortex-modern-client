@@ -9,6 +9,7 @@ import {TYPE_CODE_TO_NAME, WindowType} from '@core/window/enum/WindowType';
 import type {ILogRecord} from '@core/utils/Logger';
 import {Logger, LogLevel} from '@core/utils/Logger';
 import type {IElementDescriptor} from '@habbo/window/IElementDescriptor';
+import type {ILinkEventTracker} from '@core/runtime/events';
 
 const log = Logger.getLogger('client.debugger.WindowDebuggerOverlay');
 
@@ -43,6 +44,33 @@ interface IOpenWindowEntry {
 
 let nextOpenId = 1;
 let stylesInjected = false;
+
+const LINK_COMMAND_PATTERN = /['"]([a-zA-Z][\w.-]{1,30})['"]/g;
+
+// ponytail: the sub-commands are read out of `linkReceived`'s own source with
+// Function.prototype.toString(), because nothing exposes them at runtime — a `switch(parts[1])`
+// is invisible to reflection, and a hand-kept list of every link in the client would be stale
+// within a week. Best-effort by construction: it lists candidates, some of which are not links,
+// and a tracker that delegates or dispatches from a table lists none. The free-text box is the
+// fallback for both cases. Upgrade path if it ever matters: have each tracker declare its own
+// commands. Dev-only — a minified build would defeat it.
+function extractLinkCommands(tracker: ILinkEventTracker): string[]
+{
+    const source = String(tracker.linkReceived);
+    const seen = new Set<string>();
+
+    for(const match of source.matchAll(LINK_COMMAND_PATTERN))
+    {
+        const command = match[1];
+
+        // The prefix itself and the separator show up in every split()/startsWith() call.
+        if(command === tracker.linkPattern || command === tracker.linkPattern.replace('/', '')) continue;
+
+        seen.add(command);
+    }
+
+    return [...seen].sort();
+}
 
 export function installWindowDebugger(canvas: HTMLCanvasElement): () => void 
 {
@@ -197,10 +225,10 @@ class WindowDebuggerPanel
     private readonly _treeEl: HTMLDivElement;
     private readonly _selectedHighlight: HTMLDivElement;
     private readonly _hoverHighlight: HTMLDivElement;
-    private readonly _tabButtons: Record<'layouts' | 'skins', HTMLButtonElement>;
+    private readonly _tabButtons: Record<'layouts' | 'skins' | 'links', HTMLButtonElement>;
     private readonly _pickBtn: HTMLButtonElement;
 
-    private _activeTab: 'layouts' | 'skins' = 'layouts';
+    private _activeTab: 'layouts' | 'skins' | 'links' = 'layouts';
     private _openWindows: IOpenWindowEntry[] = [];
     private _selectedWindow: IWindow | null = null;
     private _selectedNodeWindow: IWindow | null = null;
@@ -267,10 +295,16 @@ class WindowDebuggerPanel
         skinsTabBtn.textContent = 'Skins';
         skinsTabBtn.addEventListener('click', () => this.setTab('skins'));
 
+        const linksTabBtn = document.createElement('button');
+
+        linksTabBtn.textContent = 'Links';
+        linksTabBtn.addEventListener('click', () => this.setTab('links'));
+
         tabs.appendChild(layoutsTabBtn);
         tabs.appendChild(skinsTabBtn);
+        tabs.appendChild(linksTabBtn);
 
-        this._tabButtons = {layouts: layoutsTabBtn, skins: skinsTabBtn};
+        this._tabButtons = {layouts: layoutsTabBtn, skins: skinsTabBtn, links: linksTabBtn};
 
         const body = document.createElement('div');
 
@@ -373,29 +407,114 @@ class WindowDebuggerPanel
         document.addEventListener('mouseup', onUp);
     }
 
-    private setTab(tab: 'layouts' | 'skins'): void 
+    private setTab(tab: 'layouts' | 'skins' | 'links'): void
     {
         this._activeTab = tab;
 
-        for(const [name, btn] of Object.entries(this._tabButtons)) 
+        for(const [name, btn] of Object.entries(this._tabButtons))
         {
             btn.classList.toggle('hwd-tab-active', name === tab);
         }
 
-        if(tab === 'layouts') 
+        if(tab === 'layouts')
         {
             this.renderLayoutsList('');
             this.renderOpenList();
 
-            if(this._selectedWindow) 
+            if(this._selectedWindow)
             {
                 this.refreshTree();
             }
         }
-        else 
+        else if(tab === 'links')
+        {
+            this.renderLinksList('');
+        }
+        else
         {
             this.renderSkinsList('');
         }
+    }
+
+    /**
+     * Every feature that can be opened from outside itself registers an ILinkEventTracker and is
+     * reachable by an internal link — `questengine/calendar`, `catalog/open/{page}`,
+     * `navigator/goto/{room}`. This tab is a dispatcher for them: the prefixes come live off the
+     * context's tracker list, so nothing here needs maintaining as trackers come and go.
+     */
+    private renderLinksList(filter: string): void
+    {
+        const trackers = Vortex.instance.context.linkEventTrackers;
+
+        this._listEl.innerHTML = '';
+
+        const search = document.createElement('input');
+
+        search.type = 'text';
+        search.placeholder = 'Type a link, e.g. questengine/calendar - Enter to fire';
+        search.className = 'hwd-search';
+        search.value = filter;
+        search.addEventListener('input', () =>
+        {
+            const box = this._listEl.querySelector('.hwd-scroll');
+
+            if(box) this.fillLinkRows(box as HTMLDivElement, search.value);
+        });
+        search.addEventListener('keydown', (event) =>
+        {
+            if(event.key !== 'Enter' || search.value.length === 0) return;
+
+            this.fireLink(search.value);
+        });
+
+        const scroll = document.createElement('div');
+
+        scroll.className = 'hwd-scroll';
+
+        this._listEl.appendChild(search);
+        this._listEl.appendChild(scroll);
+        this.fillLinkRows(scroll, filter);
+
+        log.debug(`Link debugger: ${trackers.length} trackers registered`);
+    }
+
+    private fillLinkRows(scroll: HTMLDivElement, filter: string): void
+    {
+        const lower = filter.toLowerCase();
+
+        scroll.innerHTML = '';
+
+        for(const tracker of Vortex.instance.context.linkEventTrackers)
+        {
+            const prefix = tracker.linkPattern;
+            const commands = extractLinkCommands(tracker);
+            const matching = commands.filter(command => !lower || `${prefix}${command}`.toLowerCase().includes(lower));
+
+            if(lower && matching.length === 0 && !prefix.toLowerCase().includes(lower)) continue;
+
+            const heading = document.createElement('div');
+
+            heading.className = 'hwd-heading';
+            heading.textContent = prefix.length > 0 ? prefix : '(catch-all)';
+            scroll.appendChild(heading);
+
+            for(const command of matching)
+            {
+                const link = `${prefix}${command}`;
+                const row = document.createElement('div');
+
+                row.className = 'hwd-row';
+                row.textContent = link;
+                row.addEventListener('click', () => this.fireLink(link));
+                scroll.appendChild(row);
+            }
+        }
+    }
+
+    private fireLink(link: string): void
+    {
+        log.info(`Link debugger: firing "${link}"`);
+        Vortex.instance.context.createLinkEvent(link);
     }
 
     private renderLayoutsList(filter: string): void 
