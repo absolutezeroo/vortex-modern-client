@@ -36,3 +36,5 @@ export {GetSeasonalCalendarDailyComposer} from './GetSeasonalCalendarDailyCompos
 export {MarkCatalogNewAdditionsPageOpenedComposer} from './MarkCatalogNewAdditionsPageOpenedComposer';
 export * from './GetSnowWarGameTokensOfferComposer';
 export * from './PurchaseSnowWarGameTokensOfferComposer';
+export * from './ClaimProductComposer';
+export * from './HasClaimedProductComposer';

@@ -241,6 +241,8 @@ import {FurnitureOffer} from './viewer/FurnitureOffer';
 import type {IOfferCenter} from './offers/IOfferCenter';
 import type {IOfferExtension} from './offers/IOfferExtension';
 import {OfferCenter} from './offers/OfferCenter';
+import {SpecialItemsController} from './special_items_display/SpecialItemsController';
+import {IID_SpecialItemsController} from '@iid/IIDSpecialItemsController';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
@@ -427,7 +429,15 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         this._habbiconController = new HabbiconController(context, 0, assetLibrary);
         context.attachComponent(this._habbiconController, [IID_HabbiconController]);
+
+        // AS3 attaches this from the same constructor (HabboCatalog.as:455). It registers a link
+        // tracker for `special_items_display/<set>` and builds nothing until one arrives.
+        this._specialItemsController = new SpecialItemsController(context, 0, assetLibrary);
+        context.attachComponent(this._specialItemsController, [IID_SpecialItemsController]);
     }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_8506
+    private _specialItemsController: SpecialItemsController | null = null;
 
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_habbiconController
     private _habbiconController: HabbiconController | null = null;

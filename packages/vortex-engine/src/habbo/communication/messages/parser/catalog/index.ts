@@ -33,3 +33,4 @@ export {SeasonalCalendarDailyOfferMessageEventParser} from './SeasonalCalendarDa
 export * from './SnowWarGameTokenOffer';
 export * from './SnowWarGameTokensMessageParser';
 export * from './OfferRewardDeliveredMessageParser';
+export * from './HasClaimedProductResponseMessageParser';

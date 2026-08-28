@@ -367,6 +367,11 @@ import {
     OfferRewardDeliveredMessageEvent
 } from './messages/incoming/catalog/OfferRewardDeliveredMessageEvent';
 import {
+    HasClaimedProductResponseMessageEvent
+} from './messages/incoming/catalog/HasClaimedProductResponseMessageEvent';
+import {HasClaimedProductComposer} from './messages/outgoing/catalog/HasClaimedProductComposer';
+import {ClaimProductComposer} from './messages/outgoing/catalog/ClaimProductComposer';
+import {
     GetOccupiedTilesMessageComposer
 } from './messages/outgoing/room/layout/GetOccupiedTilesMessageComposer';
 import {
@@ -1974,6 +1979,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2792, RoomEntryTileMessageEvent);
         this._events.set(1235, RoomOccupiedTilesMessageEvent);
         this._events.set(2621, OfferRewardDeliveredMessageEvent);
+        this._events.set(787, HasClaimedProductResponseMessageEvent);
         this._events.set(2914, RoomEntryInfoMessageEvent);
         this._events.set(2104, ObjectsMessageEvent);
         this._events.set(368, ObjectAddMessageEvent);
@@ -3114,6 +3120,10 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3426, GetOccupiedTilesMessageComposer);
         this._composers.set(880, GetRoomEntryTileMessageComposer);
         this._composers.set(2937, UpdateFloorPropertiesMessageComposer);
+
+        // The special-items display's pair: ask, then claim. Its result is 431, already registered.
+        this._composers.set(2668, HasClaimedProductComposer);
+        this._composers.set(145, ClaimProductComposer);
         // AS3: MysteryTrophyOpenDialogView.as::onMouseClick() "ok"
         this._composers.set(2242, OpenMysteryTrophyMessageComposer);
 
