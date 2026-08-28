@@ -2067,8 +2067,10 @@ export class VortexApp
 
         if(!hit)
         {
-            // Forward wheel to room desktop for zoom if in a room and Ctrl held
-            if(this._isInRoom && e.ctrlKey)
+            // AS3: RoomDesktop.as::mouseWheelHandler() — `ctrlKey && !altKey && !shiftKey`. Ctrl
+            // alone: the other two are what the room's own alt-drag and shift-rotate gestures use,
+            // and holding one of them with ctrl must not zoom underneath them.
+            if(this._isInRoom && e.ctrlKey && !e.altKey && !e.shiftKey)
             {
                 try
                 {
