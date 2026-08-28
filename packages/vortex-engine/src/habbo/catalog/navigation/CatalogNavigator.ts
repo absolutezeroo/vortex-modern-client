@@ -85,52 +85,6 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/CatalogNavigator.as::searchNodesWith()
-    private static searchNodesWith(query: string, extraTerms: string[], node: ICatalogNode, result: ICatalogNode[]): void
-    {
-        try
-        {
-            if(node.visible && node.pageId > 0)
-            {
-                let matched = false;
-                let haystack = [node.pageName, node.localization].join(' ').toLowerCase();
-
-                // Strip every separator, not just spaces: page names are underscore- and
-                // hyphen-joined (`wf_storage_furni_bd`), so leaving those in means a search
-                // for "wf storage" — which collapses to "wfstorage" — never matches.
-                // AS3: `_loc5_.replace(/[\s_\-]+/gi, "")`.
-                haystack = haystack.replace(/[\s_-]+/gi, '');
-
-                if(haystack.indexOf(query) > -1)
-                {
-                    result.push(node);
-                    matched = true;
-                }
-
-                if(!matched)
-                {
-                    for(const term of extraTerms)
-                    {
-                        if(haystack.indexOf(term) >= 0)
-                        {
-                            result.push(node);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            for(const child of node.children)
-            {
-                CatalogNavigator.searchNodesWith(query, extraTerms, child, result);
-            }
-        }
-        catch (e)
-        {
-            log.error(`Error when loading nodes by name ${query}:`, e);
-        }
-    }
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::get initialized()
     get initialized(): boolean
     {
@@ -458,6 +412,139 @@ export class CatalogNavigator implements ICatalogNavigator
         }
     }
 
+    /**
+     * Narrows the navigator tree to what a search matched.
+     *
+     * Three inputs, because a page can qualify three different ways: `needle` is the normalised
+     * query, `furniLines` the Builders Club furni lines the results belong to, and `pageIds` the
+     * pages that actually contain a matching offer — the last is what `HabboCatalog` fills in as it
+     * walks the results, and it is why a page whose *name* says nothing still shows up.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::filter()
+    filter(needle: string, furniLines: string[], pageIds: Set<number> | null = null): void
+    {
+        if(this._index === null) return;
+
+        const included = new Set<ICatalogNode>();
+
+        CatalogNavigator.markSearchNodes(needle, furniLines, pageIds, this._index, included);
+        this.deactivateCurrentNode();
+        this._list.removeListItems();
+        this.addSearchNodesToList(this._index, included, 1);
+    }
+
+    /**
+     * AS3: .../CatalogNavigator.as::markSearchNodes()
+     *
+     * A node that matches pulls in its whole visible subtree; a node that only *contains* a match
+     * is included alone, so the path to a result stays navigable without dragging in its siblings.
+     * Returns whether anything below it matched.
+     *
+     * AS3 wraps the body in a try/catch that logs and returns an uninitialised local — reproduced
+     * as a `false`, since that is what the AS3 local holds.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::markSearchNodes()
+    private static markSearchNodes(
+        needle: string,
+        furniLines: string[],
+        pageIds: Set<number> | null,
+        node: ICatalogNode,
+        included: Set<ICatalogNode>
+    ): boolean
+    {
+        try
+        {
+            if(node.visible && node.pageId > 0
+                && CatalogNavigator.isSearchMatch(needle, furniLines, pageIds, node))
+            {
+                CatalogNavigator.includeVisibleSubtree(node, included);
+
+                return true;
+            }
+
+            let matchedBelow = false;
+
+            for(const child of node.children)
+            {
+                if(CatalogNavigator.markSearchNodes(needle, furniLines, pageIds, child, included))
+                {
+                    matchedBelow = true;
+                }
+            }
+
+            if(node.visible && node.pageId > 0 && matchedBelow) included.add(node);
+
+            return matchedBelow;
+        }
+        catch (error)
+        {
+            log.warn(`Error when loading nodes by name ${needle}:`, error);
+
+            return false;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::includeVisibleSubtree()
+    private static includeVisibleSubtree(node: ICatalogNode, included: Set<ICatalogNode>): void
+    {
+        if(node.visible && node.pageId > 0) included.add(node);
+
+        for(const child of node.children) CatalogNavigator.includeVisibleSubtree(child, included);
+    }
+
+    /**
+     * AS3: .../CatalogNavigator.as::isSearchMatch()
+     *
+     * The page's name and localisation are joined, lower-cased and stripped of spaces, underscores
+     * and hyphens before matching — so "room bundles" finds `room_bundles`. The needle is expected
+     * already normalised by the caller.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::isSearchMatch()
+    private static isSearchMatch(
+        needle: string,
+        furniLines: string[],
+        pageIds: Set<number> | null,
+        node: ICatalogNode
+    ): boolean
+    {
+        if(pageIds !== null && pageIds.has(node.pageId)) return true;
+
+        const haystack = [node.pageName, node.localization].join(' ').toLowerCase()
+            .replace(/[\s_-]+/g, '');
+
+        if(haystack.indexOf(needle) > -1) return true;
+
+        for(const furniLine of furniLines)
+        {
+            if(haystack.indexOf(furniLine) >= 0) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * AS3: .../CatalogNavigator.as::addSearchNodesToList()
+     *
+     * Depth only advances through nodes that were kept, so an excluded parent does not indent its
+     * surviving children.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::addSearchNodesToList()
+    private addSearchNodesToList(node: ICatalogNode, included: Set<ICatalogNode>, depth: number): void
+    {
+        for(const child of node.children)
+        {
+            if(child.visible && included.has(child))
+            {
+                (child as CatalogNodeRenderable).addSearchResultToList(this._list, depth + 1);
+                this.addSearchNodesToList(child, included, depth + 1);
+            }
+            else
+            {
+                this.addSearchNodesToList(child, included, depth);
+            }
+        }
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::deactivateCurrentNode()
     deactivateCurrentNode(): void
     {
@@ -468,25 +555,6 @@ export class CatalogNavigator implements ICatalogNavigator
         }
 
         this._currentNodes = [];
-    }
-
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::filter()
-    filter(query: string, extraTerms: string[]): void
-    {
-        const result: ICatalogNode[] = [];
-
-        CatalogNavigator.searchNodesWith(query, extraTerms, this._index!, result);
-        this._list.removeListItems();
-
-        for(const node of result)
-        {
-            log.debug(`Found node: ${[node.pageId, node.pageName, node.localization]}`);
-
-            if(node.visible)
-            {
-                (node as CatalogNodeRenderable).addToList(this._list);
-            }
-        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::openNavigatorAtNode()
