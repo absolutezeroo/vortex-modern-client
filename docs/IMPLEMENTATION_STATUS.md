@@ -2588,9 +2588,9 @@ Re-ranked **2026-08-03**, biggest product gap first.
    measures clean — 47 ids created by `RoomUI`, 47 handler cases in `RoomDesktop`, all 42 handler
    `get type()` values covered, and the factory's 45 (`RWE_LOCATION_WIDGET` and `RWE_INTERNAL_LINK`
    have no window in AS3 either).
-   The other 4 unported `ui/handler` files are whole unported clusters, not furniture:
-   `CameraWidgetHandler`, `RoomThumbnailCameraWidgetHandler`, `CraftingWidgetHandler`,
-   `PlayListEditorWidgetHandler` (`widget/camera/` 0/9, `crafting/` 0/13, `playlisteditor/` 0/9).
+   **Those four `ui/handler` files are ported too, and this line was stale — re-measured
+   2026-08-28**: `widget/camera/` 9/9, `widget/crafting/` 13/13, `widget/playlisteditor/` 9/9, and
+   all four handlers exist with a factory case, a `RoomDesktop` case and a `RoomUI` call.
    **Track handlers with their widgets** — a widget whose handler is missing receives nothing.
    **Size these by the feature, not the file.** The trophy widget is 150 lines but its only
    dispatcher is that 331-line badge handler — the real slice is ~480 lines plus a badge-info
@@ -2622,8 +2622,11 @@ Re-ranked **2026-08-03**, biggest product gap first.
    (`data/` 8/8, `view/` 22/22), and the chat window's receive path was closed on 2026-08-02 —
    `habbo/messenger` is 9/12, with `habbicons/` (5 files, 1399 l.) and the two MiniMail events the
    only gaps left. `friendbar`'s `groupforums/` is 17/17 as of 2026-08-10, controller and UI both,
-   and attached. Still shells: `habbo/moderation` 8/43, `habbo/groups` 21/31, and `friendbar`'s
-   `talent/` 0/6.
+   and attached. **The "still shells" line here was badly stale — re-measured 2026-08-28**:
+   `habbo/moderation` is 46 TS for 43 AS3, `habbo/groups` 36/31, `friendbar/talent/` is ported
+   (`HabboTalent` is attached from `HabboFriendBar`'s constructor). File counts above an AS3 count
+   still mean only that files exist, not that members match — but "shell" is the wrong word for
+   any of the three now.
 7. **Standing rules, unchanged**: update this file and `docs/MESSAGES_PORT_BACKLOG.md` in the same
    batch as the port, not weeks later; never label a module complete from file count alone — mark it
    only after AS3 member-level API/lifecycle/dispose parity is checked.
