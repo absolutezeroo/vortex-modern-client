@@ -342,8 +342,9 @@ export class AssetLibrary extends Component implements IAssetLibrary
     // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::loadAssetFromFile()
     loadAssetFromFile(name: string, url: string, mimeType?: string, id: number = -1): AssetLoaderStruct 
     {
-        // Check if asset already exists
-        if(this.getAssetByName(name)) 
+        // Check if asset already exists — `hasAsset()`, not `getAssetByName()`: this is a presence
+        // test whose expected answer is "no", and getAssetByName() now warns on a miss.
+        if(this.hasAsset(name))
         {
             throw new Error(`Asset with name ${name} already exists`);
         }
@@ -411,10 +412,52 @@ export class AssetLibrary extends Component implements IAssetLibrary
      * Get an asset by name
      */
     // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getAssetByName()
-    getAssetByName(name: string): IAsset | null 
+    getAssetByName(name: string): IAsset | null
     {
-        return this._assetMap.get(name) ?? null;
+        const asset = this._assetMap.get(name) ?? null;
+
+        if(asset === null)
+        {
+            AssetLibrary.reportMiss(name, this._name);
+        }
+
+        return asset;
     }
+
+    /**
+     * Warns about an asset name that resolved to nothing, but only for the two suffixes where a
+     * miss is *always* a defect rather than a legitimately absent optional asset.
+     *
+     * A missing layout is never optional — a window whose `*_xml` is absent silently constructs
+     * nothing, which is how 16 windows shipped dead. A name ending in `_png` is never correct at
+     * all: an image asset's key is its `*Com.as` field name with the `_png` dropped, so the suffix
+     * itself means the caller guessed. Everything else genuinely does miss on purpose — a chat
+     * style with no emblem asks for `style_N_chat_bubble_emblem` and expects null — and warning on
+     * those would be crying wolf, which is worse than the silence it replaces.
+     */
+    // TS-only: no AS3 counterpart; AS3 resolves these off a Flash embed that cannot be misnamed.
+    // Public because AssetLibraryCollection reports the same miss for a whole collection — see the
+    // `hasAsset()` probe in its getAssetByName().
+    // ponytail: suffix heuristic, not a registry of required names. Swap it for a declared
+    // required-asset list per component if the two suffixes stop covering the real misses.
+    static reportMiss(name: string, library: string): void
+    {
+        if(!name.endsWith('_xml') && !name.endsWith('_png')) return;
+
+        if(AssetLibrary.REPORTED_MISSES.has(name)) return;
+
+        AssetLibrary.REPORTED_MISSES.add(name);
+
+        const hint = name.endsWith('_png')
+            ? ' Image keys drop the `_png` suffix — the asset is probably registered as `' + name.slice(0, -4) + '`.'
+            : '';
+
+        Logger.getLogger('core.assets.AssetLibrary').warn(`No asset named "${name}" in library "${library}" — the caller gets null and renders nothing.${hint}`);
+    }
+
+    /** Names already warned about, so a lookup in a render loop warns once and not per frame. */
+    // TS-only: no AS3 counterpart; see reportMiss().
+    private static readonly REPORTED_MISSES: Set<string> = new Set();
 
     /**
      * Get an asset by its content

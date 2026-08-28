@@ -338,13 +338,16 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
     {
         for(const lib of this._libraries)
         {
-            const asset = lib.getAssetByName(name);
-
-            if(asset)
+            // `hasAsset()` first: searching a collection means every library but one is *expected*
+            // to miss, and AssetLibrary.getAssetByName() warns on a miss. Probing first keeps the
+            // warning for the case that matters — no library has it — instead of one per library.
+            if(lib.hasAsset(name))
             {
-                return asset;
+                return lib.getAssetByName(name);
             }
         }
+
+        AssetLibrary.reportMiss(name, `collection "${this.name}" (${this._libraries.length} libraries)`);
 
         return null;
     }
@@ -359,11 +362,12 @@ export class AssetLibraryCollection extends Component implements IAssetLibrary
 
         for(const lib of this._libraries)
         {
-            const asset = lib.getAssetByName(name);
-
-            if(asset)
+            // Same reason as getAssetByName() above: gathering every copy means most libraries are
+            // expected to miss, and a miss warns. No collection-wide report here — an empty result
+            // is a legitimate answer for this method.
+            if(lib.hasAsset(name))
             {
-                assets.push(asset);
+                assets.push(lib.getAssetByName(name)!);
             }
         }
 

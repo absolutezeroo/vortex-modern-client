@@ -37,6 +37,8 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
     private _pendingMessages: ByteArray[] = [];
     private _pendingComposers: IMessageComposer<unknown[]>[] = [];
     private _pendingReceivedMessages: IMessageDataWrapper[] = [];
+    // TS-only: no AS3 counterpart; dedupes the dropped-packet warnings in handleReceivedMessage().
+    private readonly _unhandledMessageIds: Set<number> = new Set();
 
     private _clientToServerEncryption: IEncryption | null = null;
     private _serverToClientEncryption: IEncryption | null = null;
@@ -589,7 +591,20 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
         if(!events || events.length === 0)
         {
-            log.debug(`No registered handler for incoming message id ${messageId} (${this._messageRegistry.getIncomingMessageName(messageId)})`);
+            // `warn`, not `debug`. `.claude/rules/10-conventions.md` reserves `warn` for exactly
+            // this shape — a code path the client does not handle, which renders nothing and
+            // throws nothing, so `debug` buries it — and "ported but never wired" is this port's
+            // single most common defect: the parser and the handler both exist, nobody registered
+            // them, and the only symptom is a feature that quietly never happens.
+            //
+            // Once per id: a message the server repeats every tick would otherwise drown the
+            // console and make the warning worthless.
+            if(!this._unhandledMessageIds.has(messageId))
+            {
+                this._unhandledMessageIds.add(messageId);
+                log.warn(`No registered handler for incoming message id ${messageId} (${this._messageRegistry.getIncomingMessageName(messageId)}) — dropped. Further occurrences of this id are silent.`);
+            }
+
             return;
         }
 
@@ -597,6 +612,14 @@ export class SocketConnection extends EventEmitter<IConnectionEvents> implements
 
         if(!parser)
         {
+            // Registered but parserless drops the packet whole, and nothing downstream can tell
+            // that apart from a message the server never sent.
+            if(!this._unhandledMessageIds.has(messageId))
+            {
+                this._unhandledMessageIds.add(messageId);
+                log.warn(`Message id ${messageId} (${this._messageRegistry.getIncomingMessageName(messageId)}) is registered but its event carries no parser — dropped. Further occurrences of this id are silent.`);
+            }
+
             return;
         }
 

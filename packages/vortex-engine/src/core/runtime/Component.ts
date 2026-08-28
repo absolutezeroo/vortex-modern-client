@@ -252,6 +252,23 @@ export class Component implements IDisposable
     }
 
     /**
+	 * The required dependency IIDs this component is still waiting on, by name.
+	 *
+	 * A component whose required dependency is never provided stays locked forever and logs
+	 * nothing: `initComponent()` simply never runs, so the feature it owns never appears and there
+	 * is no error to search for. This is the read side of the boot-time report in
+	 * `ComponentContext.describeLockedComponents()`, which turns that silence into a warning.
+	 *
+	 * Not AS3's `requiredDependencyIids`: that getter returns the fixed declared list, this set
+	 * depletes as each dependency resolves — see the TODO(AS3) on `_pendingDependencies`.
+	 */
+    // TS-only: no AS3 counterpart; diagnostic read of `_pendingDependencies`.
+    get pendingDependencyIids(): string[]
+    {
+        return [...this._pendingDependencies];
+    }
+
+    /**
 	 * The context this component belongs to
 	 */
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_50.as::get context()

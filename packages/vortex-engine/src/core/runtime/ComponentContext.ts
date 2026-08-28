@@ -225,6 +225,40 @@ export class ComponentContext extends Component implements IContext
     }
 
     /**
+	 * Every component in this context and its child contexts that is still locked, with the
+	 * required dependency IIDs it is waiting on.
+	 *
+	 * A hard dependency on an IID nothing ever provides is this DI container's worst failure mode
+	 * precisely because it is not a failure: the component is constructed, attached, and then waits
+	 * forever. `initComponent()` never runs, no exception is thrown, nothing is logged, and the
+	 * feature it owns is simply absent — which is how the friend bar went missing with a clean
+	 * console. Listing the survivors after boot is the whole diagnosis.
+	 */
+    // TS-only: no AS3 counterpart; diagnostic, see CoreComponentContext's boot-time report.
+    describeLockedComponents(): {name: string; pending: string[]}[]
+    {
+        const locked: {name: string; pending: string[]}[] = [];
+
+        for(const component of this._attachedComponents)
+        {
+            if(component.locked)
+            {
+                locked.push({ name: component.constructor.name, pending: component.pendingDependencyIids });
+            }
+
+            // A context is itself a component, so a child context's own attached components are
+            // not in `_attachedComponents` here. Without this, everything below the root is
+            // invisible to the report.
+            if(component instanceof ComponentContext)
+            {
+                locked.push(...component.describeLockedComponents());
+            }
+        }
+
+        return locked;
+    }
+
+    /**
 	 * Register an update receiver
 	 */
     registerUpdateReceiver(receiver: IUpdateReceiver, priority: number): void
