@@ -1,0 +1,6 @@
+# Rendered avatars, badges and furniture kept between restarts (IMAGER_CACHE_DIR).
+# Regenerated on demand, and keyed on the hotel's asset build — never worth committing.
+#
+# Anchored: unanchored `cache/` matches at any depth and swallowed `src/cache/`, the source
+# directory `DiskCache.ts` lives in.
+/cache/

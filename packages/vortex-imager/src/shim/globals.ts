@@ -39,6 +39,7 @@ export function installGlobals(options: IGlobalsOptions): void
 
     installCanvas();
     installXml();
+    installDocument();
     installStorage();
 
     if(options.assetsRoot !== null) installFileBackedFetch(options.assetsRoot, options.assetsBaseUrl);
@@ -75,6 +76,41 @@ function installCanvas(): void
             return loadImage(buffer);
         };
     }
+}
+
+/**
+ * A `document` whose only real job is `createElement('canvas')`.
+ *
+ * The room pipeline allocates its working surfaces that way rather than through
+ * `OffscreenCanvas` — eighteen call sites across the plane rasterizers
+ * (`PlaneMaterialCell`, `PlaneVisualizationLayer`, `FloorRasterizer`, …), plus
+ * `GraphicAssetCollection.colorizePalette()`, which is what gives a furni its colour variant.
+ * Without this every one of them throws `document is not defined` and the room renders empty.
+ *
+ * Anything that is not a canvas is delegated to linkedom, so a stray `createElement('div')`
+ * gets a real element instead of `undefined`. Nothing on the imager's path asks for one, but
+ * the failure mode if something did — a property set on `undefined` — is far harder to read
+ * than an inert element.
+ */
+function installDocument(): void
+{
+    const globals = globalThis as Record<string, unknown>;
+
+    if(typeof globals.document !== 'undefined') return;
+
+    const host = new DOMParser().parseFromString('<html><body></body></html>', 'text/html');
+
+    globals.document = {
+        createElement(tagName: string): unknown
+        {
+            if(tagName.toLowerCase() === 'canvas') return createCanvas(1, 1);
+
+            // linkedom types the options bag as required, where the DOM makes it optional.
+            return host.createElement(tagName, undefined);
+        },
+        body: host.body,
+        documentElement: host.documentElement
+    };
 }
 
 /**

@@ -7,18 +7,25 @@
  * renderer has.
  */
 import {LRUCache} from 'lru-cache';
+import type {DiskCache} from './DiskCache';
 
 export class RenderCache
 {
     private _entries: LRUCache<string, Buffer>;
     private _inFlight: Map<string, Promise<Buffer>> = new Map();
+    private _disk: DiskCache | null;
 
-    constructor(maxEntries: number, ttlMs: number)
+    /**
+	 * @param disk Second tier, for images whose key fully describes their pixels — see
+	 *   `DiskCache`. `null` keeps the cache memory-only, which is what a room needs.
+	 */
+    constructor(maxEntries: number, ttlMs: number, disk: DiskCache | null = null)
     {
         this._entries = new LRUCache<string, Buffer>({
             max: Math.max(1, maxEntries),
             ttl: ttlMs > 0 ? ttlMs : undefined
         });
+        this._disk = disk;
     }
 
     get size(): number
@@ -36,6 +43,18 @@ export class RenderCache
 
         if(pending !== undefined) return {buffer: await pending, hit: true};
 
+        if(this._disk !== null)
+        {
+            const stored = await this._disk.read(key);
+
+            if(stored !== null)
+            {
+                this._entries.set(key, stored);
+
+                return {buffer: stored, hit: true};
+            }
+        }
+
         const task = render();
 
         this._inFlight.set(key, task);
@@ -45,6 +64,11 @@ export class RenderCache
             const buffer = await task;
 
             this._entries.set(key, buffer);
+
+            // Awaited rather than fired and forgotten: it costs a millisecond on the one request
+            // that rendered, and a rejected floating promise on a full disk would take the
+            // process down instead of the warning `DiskCache.write()` logs.
+            if(this._disk !== null) await this._disk.write(key, buffer);
 
             return {buffer, hit: false};
         }

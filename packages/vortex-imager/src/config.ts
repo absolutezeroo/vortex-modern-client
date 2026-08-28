@@ -57,6 +57,24 @@ export interface IImagerConfig
     cacheTtlMs: number;
 
     /**
+	 * Where rendered avatars, badges and furniture are kept on disk, so a restart does not
+	 * re-render the hotel. Empty disables it and the service is memory-only.
+	 *
+	 * Rooms are never written there: their URL does not describe their contents.
+	 */
+    cacheDir: string | null;
+
+    /**
+	 * How long a *room* render stays cached, in milliseconds.
+	 *
+	 * Its own setting, and much shorter than the others, because a room render is the one
+	 * thing here that is not immutable for its URL: an avatar figure or a badge code fully
+	 * describes its image, but `?room=7` describes a room whose contents change every time
+	 * someone moves a chair, and nothing tells the imager when that happened.
+	 */
+    roomCacheTtlMs: number;
+
+    /**
 	 * Value for `Access-Control-Allow-Origin`. Required, not optional: the client tags avatar
 	 * and badge images with `crossOrigin = "anonymous"` (`ImageLoader`, `BadgeImageManager`,
 	 * `RoomPicker`), which makes the browser refuse any response without this header. `*` is
@@ -162,6 +180,11 @@ export function loadConfig(): IImagerConfig
             },
         cacheMaxEntries: envNumber('IMAGER_CACHE_ENTRIES', 2000),
         cacheTtlMs: envNumber('IMAGER_CACHE_TTL_MS', 6 * 60 * 60 * 1000),
+
+        // On by default, next to the package: the whole point of it is that it survives a
+        // restart, and a setting nobody turns on never does. `IMAGER_CACHE_DIR=` disables it.
+        cacheDir: process.env.IMAGER_CACHE_DIR === '' ? null : env('IMAGER_CACHE_DIR', resolve(HERE, '../cache')),
+        roomCacheTtlMs: envNumber('IMAGER_ROOM_CACHE_TTL_MS', 60 * 1000),
         corsOrigin: env('IMAGER_CORS_ORIGIN', '*'),
         logLevel: env('IMAGER_LOG_LEVEL', 'info')
     };

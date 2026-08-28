@@ -1,14 +1,23 @@
 # vortex-imager
 
-External avatar and group-badge imager for Vortex. It answers the same `/habbo-imaging/…`
-routes a Habbo hotel already points at, so the client, the CMS and anything else that embeds an
-avatar or a guild badge can use it without changing a URL.
+External avatar, group-badge, furniture and room imager for Vortex. It answers the same
+`/habbo-imaging/…` routes a Habbo hotel already points at, so the client, the CMS and anything
+else that embeds an avatar or a guild badge can use it without changing a URL.
 
 **It does not reimplement the renderer.** `AvatarRenderManager`, `AvatarStructure`,
-`AvatarImage` and the ~130 classes behind them are `vortex-engine`'s own, running unmodified;
-only the browser APIs underneath them are replaced (`src/shim/`). A separate renderer drifts
-from the client the first time either side is touched, and the drift shows up as avatars that
-look subtly wrong on the website and right in the room.
+`AvatarImage`, `RoomContentLoader`, `RoomVisualization`, the forty-odd `Furniture*Visualization`
+classes and the ~130 more behind them are `vortex-engine`'s own, running unmodified; only the
+browser APIs underneath them are replaced (`src/shim/`). A separate renderer drifts from the
+client the first time either side is touched, and the drift shows up as avatars that look subtly
+wrong on the website and right in the room, or a catalog thumbnail that does not match the item
+you just placed.
+
+The one thing the engine cannot lend is the rasterizer:
+`RoomObjectSpriteVisualization.getImage()` and `RoomRenderingCanvas` both end at
+`renderer.extract.canvas()`, and there is no PixiJS renderer in Node. What they consume is plain
+data — `getSprite(i)` gives a texture, an offset, a depth, a tint — so `src/render/composeSprites.ts`
+draws it on a 2D canvas instead, which is what AS3's own `BitmapData.draw()` loop did before
+PixiJS was in the picture.
 
 ## Running
 
@@ -40,7 +49,12 @@ skip HTTP entirely, which matters because a single avatar pulls a dozen `.nitro`
 | `GET /habbo-imaging/avatarimage/<name>.png` | Path form; equivalent to `?user=<name>` |
 | `GET /habbo-imaging/badge/<code>.png` | Guild badge; `.gif` resolves to the same PNG |
 | `GET /habbo-imaging/badge-fill/<code>.png` | `group_logo_url_template`'s route |
-| `GET /health` | Cache size and database reachability |
+| `GET /habbo-imaging/effect/<id>.png` | An effect's own sprites, without the avatar |
+| `GET /habbo-imaging/handitem/<id>.png` | The object in the avatar's hand, without the avatar |
+| `GET /habbo-imaging/furniture` | `?class=` or `?id=`, plus the parameters below |
+| `GET /habbo-imaging/furniture/<class>.png` | Path form; equivalent to `?class=<class>` |
+| `GET /habbo-imaging/room/<roomId>.png` | A whole room, from the database |
+| `GET /health` | Cache sizes, room pipeline, database reachability |
 
 Everything is answered as `image/png`. `.gif` is accepted because every stored
 `group.badge.url` on a Habbo hotel ends in `.gif` — `BadgeImageManager` rewrites the extension
@@ -64,12 +78,119 @@ before requesting it, but CMS templates and old links do not.
 
 `figure` wins over `user`, so a caller that already knows the look never pays for a query.
 
+### Effects and hand items, on their own
+
+Both take `direction`, `frame`, `size`, `zoom` and `bg` like everything else, and both accept an
+optional `figure=` — they still run the whole avatar pipeline, they just do not draw the figure.
+
+**`/effect/<id>.png`** composites only the sprites the effect adds — the spotlight cone, the
+halo, the hoverboard. Most effects add none: they are an animation the avatar performs, and
+those answer 400 saying exactly that rather than handing back a blank image.
+
+**`/handitem/<id>.png`** returns the item alone; `?drk=1` uses the drinking pose instead of the
+carrying one, which some items are only drawn for. It goes through the avatar's own body-part
+cache rather than guessing the asset name, because the carry animation remaps the item's
+direction — building `h_crr_ri_2_2_0` by hand returns a real sprite that is simply the wrong
+one (an orange torch where the avatar is holding a blue can).
+
+Glow effects were dark blobs until `render/extractDarknessToAlpha.ts` existed: they are authored
+as light on black and drawn additively, which needs something to add to, and a transparent PNG
+is nothing. That pass — the engine's own, and AS3's before it — re-encodes the darkness as
+alpha. It fixed `?effect=` on the avatar route too, where the same blob had always been.
+
+### Furniture parameters
+
+There is no Habbo route to match here: the real hotel serves furniture as pre-baked images out
+of `images.habbo.com/dcr/hof_furni/`, which is a build artefact rather than an endpoint. This
+one renders on demand, in the same isometric view — same geometry constants — the catalog
+previews an item in, so a thumbnail matches what gets placed.
+
+| Parameter | Values | Default |
+|---|---|---|
+| `class` | the furni's class name, e.g. `throne` | — |
+| `id` | the furnidata sprite id; `class` wins | — |
+| `wallitem` | `1` to resolve `class`/`id` as a wall item | auto |
+| `direction` | 0–7 | 2 |
+| `size` | `s` (32), `m` (64), `l` (64 @2x), `b` (64 @3x) | `m` |
+| `state` | visualization state; `-1` leaves the default | -1 |
+| `frame` | extra animation frames to advance | 0 |
+| `color` | palette index, overriding furnidata's | the item's own |
+| `extra` | `furniture_extras` — picks a multi-sprite variant | — |
+| `bg` | `RRGGBB` or `AARRGGBB` background | transparent |
+| `zoom` | resize factor, 0–4 | from `size` |
+
+A name furnidata has never heard of answers 404 rather than the placeholder box the room would
+draw for it.
+
+### Room parameters
+
+`GET /habbo-imaging/room/<roomId>.png` renders the room's model — floor, walls, the doorway cut
+out of them — and every item standing on it, floor and wall alike, depth-sorted by the same
+geometry the client sorts with. The image is sized to the room rather than to a viewport, so a
+big room comes back big.
+
+| Parameter | Values | Default |
+|---|---|---|
+| `walls` | `0` to drop the walls | on, unless the room has `hide_walls` |
+| `furni` | `0` to render the bare model | on |
+| `floor`, `wall`, `landscape` | decoration ids, overriding the room's own | the room's |
+| `frame` | animation frames to advance every furni by, 0–600 | 0 |
+| `size`, `zoom`, `bg` | as above | `m` |
+
+Every item is rendered **in the state it is actually in**: `furniture.extra_data` is decoded the
+way the server serializes it (`{"stuff":{"Data":"1"}}` → legacy string `"1"` → state 1) and fed
+to the item's own logic as a data-update message, which is what lights a lamp, opens a gate and
+starts an animation. An item with nothing to say (`{}`, or a wired box's configuration) reads as
+state 0, exactly as it does on the wire.
+
+A still image has to pick one frame of an animation, and `frame=0` — the resting one — is the
+only deterministic choice; `frame=N` advances every animated furni by N frames at the port's own
+~24fps cadence. Furniture that does not animate in its current state is unaffected, so a room
+full of static items renders identically at any `frame`.
+
+A room needs the database. Three things are deliberately **not** drawn: avatars, pets and bots —
+they are session state, not room contents, and there is nobody in a room the imager renders.
+
+Rooms cache separately and briefly (`IMAGER_ROOM_CACHE_TTL_MS`, one minute by default). Every
+other route here is immutable for its URL — a figure string or a badge code fully describes its
+image — but `room/7.png` describes a room that changes whenever someone moves a chair, and
+nothing tells the imager when that happened.
+
 ### Badge codes
 
 Six-character segments, `b{partId:D2}{colorId:D2}{position:D1}` — the shape the emulator's
 `GuildBadgeLibrary` reads and writes. The first segment is the base shape, the rest are symbols
 positioned on a 3x3 grid; `s`-prefixed segments are accepted as symbols too, for codes imported
 from Arcturus hotels. `?zoom=<n>` scales the 39x39 result.
+
+## Caching
+
+Two tiers, and the split is about what a URL promises.
+
+**An avatar, a badge and a furni are immutable for their URL.** A figure string fully describes
+the look; a badge code fully describes the badge; a furni's class and parameters fully describe
+the render. The same key can only ever produce the same bytes, so those are kept **on disk**
+(`IMAGER_CACHE_DIR`, `cache/` next to the package by default) as well as in memory, and a
+restart serves them straight back instead of re-rendering the hotel — measured at 17 ms for an
+avatar and 2 ms for a furni against 160 ms+ for a fresh render.
+
+**A room is not.** `room/8.png` names a room whose contents change whenever someone moves a
+chair, and nothing tells the imager when that happened. Rooms stay memory-only on a short TTL
+(`IMAGER_ROOM_CACHE_TTL_MS`, one minute).
+
+The one thing that *can* change an otherwise-immutable image is the hotel rebuilding its assets,
+so the disk path includes the asset build — `cache/vortex-assets-PRODUCTION-…/` — taken from
+`flash.client.url`. A client update writes into a new directory and the old one stops being
+read; deleting it is the whole of cache invalidation. `IMAGER_CACHE_DIR=` disables the tier
+entirely, and `/health` reports the directory in use.
+
+Concurrent renders of the same key are collapsed into one either way: twenty simultaneous
+requests for the same avatar do one composite and share the result, which on a single-threaded
+renderer matters more than the cache does.
+
+Every response also carries `Cache-Control: public, max-age=21600` and `X-Imager-Cache:
+hit|miss`, so browsers and any CDN in front cache too. That header is currently the same for
+rooms, which is longer than their own TTL — narrow it if you put a shared cache in front.
 
 ## CORS
 

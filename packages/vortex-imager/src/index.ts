@@ -16,8 +16,11 @@ installGlobals({assetsRoot: config.assetsRoot, assetsBaseUrl: config.assetsBaseU
 const {Logger, LogLevel} = await import('@core/utils/Logger');
 const {AvatarRenderService} = await import('./avatar/AvatarRenderService');
 const {BadgeRenderService} = await import('./badge/BadgeRenderService');
+const {RoomStack} = await import('./room/RoomStack');
+const {RoomRenderService} = await import('./room/RoomRenderService');
 const {Database} = await import('./db/Database');
 const {RenderCache} = await import('./cache/RenderCache');
+const {DiskCache} = await import('./cache/DiskCache');
 const {createServer} = await import('./server');
 
 Logger.setLevel(resolveLogLevel(config.logLevel, LogLevel));
@@ -42,8 +45,30 @@ const badgePartUrl = avatars.getProperty('image.library.badgepart.url')
 
 const badges = database === null ? null : new BadgeRenderService(database, badgePartUrl);
 
-const cache = new RenderCache(config.cacheMaxEntries, config.cacheTtlMs);
-const server = createServer({config, avatars, badges, database, cache});
+/**
+ * The room pipeline is booted after the avatar one and on top of the same core, and a failure
+ * to bring it up is not fatal: furnidata may be missing on a hotel that only serves avatars and
+ * badges, and losing those two routes as well would be a worse outcome than losing the furni
+ * and room ones. The routes answer 503 and say so.
+ */
+const rooms = await bootRooms();
+
+/**
+ * The disk tier is keyed on the hotel's asset build, so a client update leaves the old images
+ * behind in a directory nothing reads any more instead of serving them for the rest of time.
+ * `flash.client.url` carries that build's folder name, and it is the same property the avatar
+ * libraries are downloaded from.
+ */
+const disk = config.cacheDir === null
+    ? null
+    : new DiskCache(config.cacheDir, avatars.getProperty('flash.client.url'));
+
+if(disk !== null) log.info(`Disk cache: ${disk.root}`);
+
+// Only the immutable routes get it. A room's URL names a room, not its contents.
+const cache = new RenderCache(config.cacheMaxEntries, config.cacheTtlMs, disk);
+const roomCache = new RenderCache(config.cacheMaxEntries, config.roomCacheTtlMs);
+const server = createServer({config, avatars, badges, rooms, database, cache, roomCache, diskCache: disk});
 
 await server.listen({host: config.host, port: config.port});
 
@@ -58,12 +83,42 @@ for(const signal of ['SIGINT', 'SIGTERM'] as const)
             log.info(`Received ${signal}, shutting down`);
 
             await server.close();
+
+            // Before the avatar service, which ends at `Core.dispose()` and takes the DI
+            // container the room stack's components live in with it.
+            rooms?.dispose();
+
             await avatars.dispose();
             await database?.dispose();
 
             process.exit(0);
         })();
     });
+}
+
+async function bootRooms(): Promise<InstanceType<typeof RoomRenderService> | null>
+{
+    const context = avatars.context;
+    const assetLibrary = avatars.assetLibrary;
+    const configuration = avatars.configuration;
+
+    if(context === null || assetLibrary === null || configuration === null)
+    {
+        log.warn('Avatar core is not available — furniture and room rendering are disabled');
+
+        return null;
+    }
+
+    try
+    {
+        return new RoomRenderService(await RoomStack.boot(context, assetLibrary, configuration));
+    }
+    catch (error)
+    {
+        log.error('Room pipeline failed to boot — /habbo-imaging/furniture and /room will answer 503', error);
+
+        return null;
+    }
 }
 
 function resolveLogLevel(name: string, levels: typeof LogLevel): number

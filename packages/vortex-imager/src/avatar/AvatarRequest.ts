@@ -53,7 +53,21 @@ export interface IAvatarRequest
 	 * wait for the effect's library before it can composite.
 	 */
     effectId: number;
+
+    /**
+	 * Which part of the finished avatar to hand back.
+	 *
+	 * `body` is the avatar itself, effect sprites included — every existing route. The other
+	 * two answer "what does this thing look like on its own", which the avatar cannot: an
+	 * effect's own sprites without the figure wearing them, and the object in the avatar's
+	 * hand without the hand. Both still need the whole pipeline to run — a handitem is a body
+	 * part of the figure, and an effect's sprites are resolved against its actions — so this
+	 * only changes what is composited at the end.
+	 */
+    part: AvatarPart;
 }
+
+export type AvatarPart = 'body' | 'effect' | 'hand';
 
 /**
  * `size=` → which asset scale to composite from, and how the finished image is resized.
@@ -172,7 +186,8 @@ export function parseAvatarRequest(figure: string, query: AvatarQuery): IAvatarR
         frame: Math.max(0, Math.trunc(readNumber(query, 'frame', readNumber(query, 'frame_num', 0)))),
         posture: AvatarAction.POSTURE_STAND,
         actions: [],
-        effectId: 0
+        effectId: 0,
+        part: readPart(query)
     };
 
     applyActionParameter(request, readString(query, 'action'));
@@ -215,8 +230,25 @@ export function avatarCacheKey(request: IAvatarRequest): string
         request.cropped ? 'crop' : 'full',
         request.frame,
         request.posture,
+        request.part,
         actions
     ].join('|');
+}
+
+/**
+ * `part=` is set by the route, not by the caller: `/effect/…` and `/handitem/…` inject it, and
+ * `/avatarimage` never does. It is read from the query rather than passed as an argument so the
+ * two new routes work the way `/avatarimage/<name>.png` already does — by filling in a
+ * parameter and handing the query to the same parser.
+ */
+function readPart(query: AvatarQuery): AvatarPart
+{
+    switch(readString(query, 'part'))
+    {
+        case 'effect': return 'effect';
+        case 'hand': return 'hand';
+        default: return 'body';
+    }
 }
 
 function applyActionParameter(request: IAvatarRequest, value: string | null): void

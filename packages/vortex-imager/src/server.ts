@@ -20,10 +20,21 @@ import type {AvatarRenderService} from './avatar/AvatarRenderService';
 import type {BadgeRenderService} from './badge/BadgeRenderService';
 import type {Database} from './db/Database';
 import type {RenderCache} from './cache/RenderCache';
+import type {DiskCache} from './cache/DiskCache';
 import {AvatarRequestError, avatarCacheKey, parseAvatarRequest} from './avatar/AvatarRequest';
 import type {AvatarQuery} from './avatar/AvatarRequest';
 import {BadgeCodeError} from './badge/BadgeCode';
 import {BadgeRenderError} from './badge/BadgeRenderService';
+import type {RoomRenderService} from './room/RoomRenderService';
+import type {ImagerQuery} from './room/FurnitureRequest';
+import {
+    furnitureCacheKey,
+    parseFurnitureRequest,
+    parseRoomRequest,
+    RoomNotFoundError,
+    RoomRequestError,
+    roomCacheKey
+} from './room/FurnitureRequest';
 
 const log = Logger.getLogger('imager.server');
 
@@ -35,8 +46,18 @@ export interface IServerDependencies
     config: IImagerConfig;
     avatars: AvatarRenderService;
     badges: BadgeRenderService | null;
+
+    /** `null` when the room pipeline failed to boot; its routes then answer 503. */
+    rooms: RoomRenderService | null;
+
     database: Database | null;
     cache: RenderCache;
+
+    /** Rooms cache separately, on a much shorter TTL — see `IImagerConfig.roomCacheTtlMs`. */
+    roomCache: RenderCache;
+
+    /** Reported by `/health` so an operator can find the directory; `null` when disabled. */
+    diskCache: DiskCache | null;
 }
 
 interface IBadgeParams
@@ -48,6 +69,29 @@ interface IAvatarParams
 {
     name: string;
 }
+
+interface IFurnitureParams
+{
+    name: string;
+}
+
+interface IRoomParams
+{
+    roomId: string;
+}
+
+interface IIdParams
+{
+    id: string;
+}
+
+/**
+ * The figure the `/effect/` and `/handitem/` routes hang their part on when the caller gives
+ * none. It is never drawn — both routes composite only the part asked for — but the pipeline
+ * needs a figure to resolve actions and directions against, and one that renders is cheaper to
+ * reason about than a minimal one that might not.
+ */
+const DEFAULT_FIGURE = 'hd-180-1.ch-210-66.lg-270-82.sh-290-80';
 
 export function createServer(deps: IServerDependencies): FastifyInstance
 {
@@ -81,6 +125,9 @@ export function createServer(deps: IServerDependencies): FastifyInstance
         return {
             status: 'ok',
             cachedImages: deps.cache.size,
+            cachedRooms: deps.roomCache.size,
+            diskCache: deps.diskCache === null ? 'disabled' : deps.diskCache.root,
+            rooms: deps.rooms === null ? 'disabled' : 'up',
             database: deps.database === null ? 'disabled' : await deps.database.ping() ? 'up' : 'down'
         };
     });
@@ -100,6 +147,43 @@ export function createServer(deps: IServerDependencies): FastifyInstance
         return renderAvatar(deps, query, reply);
     });
 
+    /**
+	 * An effect's own sprites, without the figure wearing them.
+	 *
+	 * Only some effects have any: most are an animation the avatar performs, and those answer
+	 * 400 saying so rather than a blank image. A figure is still needed — the sprites are
+	 * resolved against the avatar's actions and direction — so one is supplied and then not
+	 * drawn; `?figure=` overrides it if the effect's sprites depend on the look.
+	 */
+    app.get<{ Params: IIdParams }>('/habbo-imaging/effect/:id', async (request, reply) =>
+    {
+        const query = {...request.query as AvatarQuery};
+
+        query.effect = stripImageExtension(request.params.id);
+        query.part = 'effect';
+        query.figure ??= DEFAULT_FIGURE;
+
+        return renderAvatar(deps, query, reply);
+    });
+
+    /**
+	 * The object in the avatar's hand, without the avatar. `?drk=1` uses the drinking pose
+	 * instead of the carrying one, which some items are only drawn for.
+	 */
+    app.get<{ Params: IIdParams }>('/habbo-imaging/handitem/:id', async (request, reply) =>
+    {
+        const query = {...request.query as AvatarQuery};
+        const id = stripImageExtension(request.params.id);
+
+        if(readSingle(query, 'drk') === '1') query.drk = id;
+        else query.crr = id;
+
+        query.part = 'hand';
+        query.figure ??= DEFAULT_FIGURE;
+
+        return renderAvatar(deps, query, reply);
+    });
+
     app.get<{ Params: IBadgeParams }>('/habbo-imaging/badge/:code', async (request, reply) =>
     {
         return renderBadge(deps, stripImageExtension(request.params.code), request.query as AvatarQuery, reply);
@@ -110,7 +194,115 @@ export function createServer(deps: IServerDependencies): FastifyInstance
         return renderBadge(deps, stripImageExtension(request.params.code), request.query as AvatarQuery, reply);
     });
 
+    /**
+	 * Furniture, in the isometric view the catalog previews it in.
+	 *
+	 * `?class=<name>` or `?id=<sprite id>`, plus `direction`, `size`, `state`, `frame`,
+	 * `color`, `extra` and `bg`. There is no Habbo route to match here — the real hotel serves
+	 * furniture as pre-baked images from `images.habbo.com/dcr/hof_furni/`, which is a build
+	 * artefact rather than an endpoint — so the path follows the shape of the ones above.
+	 */
+    app.get('/habbo-imaging/furniture', async (request, reply) =>
+    {
+        return renderFurniture(deps, request.query as ImagerQuery, reply);
+    });
+
+    // `/habbo-imaging/furniture/<class>.png` — the path form, for a CMS template that would
+    // rather interpolate a name than build a query string.
+    app.get<{ Params: IFurnitureParams }>('/habbo-imaging/furniture/:name', async (request, reply) =>
+    {
+        const query = {...request.query as ImagerQuery};
+
+        query.class = stripImageExtension(request.params.name);
+
+        return renderFurniture(deps, query, reply);
+    });
+
+    /**
+	 * A whole room: its model's floor and walls, and every item standing on them.
+	 *
+	 * `?walls=0` drops the walls, `?furni=0` renders the bare model, `size`/`zoom` scale it.
+	 * The image is sized to the room rather than to a viewport, so a big room comes back big.
+	 */
+    app.get<{ Params: IRoomParams }>('/habbo-imaging/room/:roomId', async (request, reply) =>
+    {
+        return renderRoom(deps, Number(stripImageExtension(request.params.roomId)), request.query as ImagerQuery, reply);
+    });
+
     return app;
+}
+
+async function renderFurniture(deps: IServerDependencies, query: ImagerQuery, reply: FastifyReply): Promise<void>
+{
+    const rooms = deps.rooms;
+
+    if(rooms === null)
+    {
+        await reply.code(503).send({error: 'The room pipeline is not available'});
+
+        return;
+    }
+
+    try
+    {
+        const request = parseFurnitureRequest(query, (q) => rooms.resolveFurniture(q));
+
+        const {buffer, hit} = await deps.cache.resolve(
+            `furni:${furnitureCacheKey(request)}`,
+            () => rooms.renderFurniture(request)
+        );
+
+        sendImage(reply, buffer, hit);
+    }
+    catch (error)
+    {
+        await sendError(reply, error, 'furniture');
+    }
+}
+
+async function renderRoom(
+    deps: IServerDependencies,
+    roomId: number,
+    query: ImagerQuery,
+    reply: FastifyReply
+): Promise<void>
+{
+    const rooms = deps.rooms;
+    const database = deps.database;
+
+    if(rooms === null || database === null)
+    {
+        await reply.code(503).send({
+            error: 'Rendering a room needs both the room pipeline and a database — set IMAGER_DB_DATABASE'
+        });
+
+        return;
+    }
+
+    try
+    {
+        const request = parseRoomRequest(roomId, query);
+
+        const {buffer, hit} = await deps.roomCache.resolve(
+            `room:${roomCacheKey(request)}`,
+            async () =>
+            {
+                const room = await database.findRoom(request.roomId);
+
+                if(room === null) throw new RoomNotFoundError(`No room with id ${request.roomId}`);
+
+                const items = request.furniture ? await database.findRoomItems(request.roomId) : [];
+
+                return rooms.renderRoom(request, room, items);
+            }
+        );
+
+        sendImage(reply, buffer, hit);
+    }
+    catch (error)
+    {
+        await sendError(reply, error, 'room');
+    }
 }
 
 async function renderAvatar(deps: IServerDependencies, query: AvatarQuery, reply: FastifyReply): Promise<void>
@@ -215,16 +407,18 @@ async function sendError(reply: FastifyReply, error: unknown, kind: string): Pro
 {
     const message = error instanceof Error ? error.message : String(error);
 
-    if(error instanceof AvatarRequestError || error instanceof BadgeCodeError)
+    // Ordered: `RoomNotFoundError` extends `RoomRequestError`, so the 404 case has to be tested
+    // before the 400 one or every missing room answers 400.
+    if(error instanceof BadgeRenderError || error instanceof RoomNotFoundError)
     {
-        await reply.code(400).send({error: message});
+        await reply.code(404).send({error: message});
 
         return;
     }
 
-    if(error instanceof BadgeRenderError)
+    if(error instanceof AvatarRequestError || error instanceof BadgeCodeError || error instanceof RoomRequestError)
     {
-        await reply.code(404).send({error: message});
+        await reply.code(400).send({error: message});
 
         return;
     }

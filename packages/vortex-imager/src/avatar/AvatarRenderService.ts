@@ -33,6 +33,25 @@ import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IAvatarEffectListener} from '@habbo/avatar/IAvatarEffectListener';
 import type {IImagerConfig} from '../config';
 import type {IAvatarRequest} from './AvatarRequest';
+import {AvatarRequestError} from './AvatarRequest';
+import type {Texture as ShimTexture} from '../shim/pixi';
+
+/**
+ * The one member of `AvatarImageCache` that {@link AvatarRenderService} needs, and the shape of
+ * what it returns. Declared here rather than imported because the cache is `protected` on
+ * `AvatarImage` with no public equivalent, so it is reached through a cast either way — see
+ * `renderHandItem()`.
+ */
+interface IBodyPartCache
+{
+    getImageContainer(
+        bodyPartId: string,
+        frameIndex: number,
+        forceUpdate?: boolean,
+        wantImage?: boolean
+    ): { image: { frame: { width: number; height: number } } | null } | null;
+}
+
 import {canvasToPng, textureToPng} from '../render/encode';
 import {composeAvatarWithSprites} from '../render/composeAvatar';
 
@@ -64,6 +83,8 @@ export class AvatarRenderService
     private _config: IImagerConfig;
     private _renderManager: AvatarRenderManager | null = null;
     private _configuration: HabboConfigurationManager | null = null;
+    private _context: CoreComponentContext | null = null;
+    private _assets: AssetLibrary | null = null;
 
     /** Effect ids whose library has arrived, or whose download has already been waited out. */
     private _settledEffects: Set<number> = new Set();
@@ -153,11 +174,27 @@ export class AvatarRenderService
                 throw new Error(`Nothing rendered for figure "${request.figure}"`);
             }
 
+            // After the full composite, never before: each body part's cache only holds an action
+            // once the avatar has been rendered once, and `getImageContainer()` returns null
+            // without one. Compositing the whole figure to throw it away is the price of getting
+            // one part out of it.
+            if(request.part === 'hand') return await this.renderHandItem(avatarImage, request);
+
             // Effect sprites only make sense around a whole avatar; a head crop has nothing to
             // hang them on, so those requests keep the body composite untouched.
             const composite = request.headOnly || request.cropped
                 ? null
-                : composeAvatarWithSprites(avatarImage, texture);
+                : composeAvatarWithSprites(avatarImage, texture, request.part !== 'effect');
+
+            if(request.part === 'effect' && composite === null)
+            {
+                // Not a failure to render — a statement about the effect. Most effects are an
+                // animation the avatar performs and add no sprites of their own, so there is
+                // genuinely nothing to show without the figure.
+                throw new AvatarRequestError(
+                    `Effect ${request.effectId} has no sprites of its own — it only animates the avatar`
+                );
+            }
 
             return composite === null
                 ? await textureToPng(texture, request.zoom)
@@ -171,6 +208,52 @@ export class AvatarRenderService
     }
 
     /**
+	 * Renders the object in the avatar's hand, without the avatar.
+	 *
+	 * A handitem is not a sprite hung off the figure the way an effect's are — it is a *body
+	 * part* of it, `rightitem` or `leftitem`, composited with the rest by `AvatarImageCache`.
+	 * There is no avatar set that contains only it (the geometry defines exactly three: `full`,
+	 * `head`, `body`), so `getImage()` cannot be asked for it and the part cache has to be read
+	 * directly.
+	 *
+	 * Resolved by asset name through the public `getAsset()`, the same way `composeAvatar.ts`
+	 * reaches for it through a cast. The alternative would be an engine change to expose a
+	 * member the client itself never needs, which is a worse trade than one narrow cast in the
+	 * service that does need it.
+	 */
+    private async renderHandItem(avatarImage: IAvatarImage, request: IAvatarRequest): Promise<Buffer>
+    {
+        const id = request.actions
+            .filter((action) => action.type === AvatarAction.CARRY_OBJECT || action.type === AvatarAction.USE_OBJECT)
+            .map((action) => action.param)
+            .find((param) => param !== null && param !== '0') ?? null;
+
+        if(id === null)
+        {
+            throw new AvatarRequestError('No hand item requested — pass `crr=<id>` or `drk=<id>`');
+        }
+
+        // Through the part cache, not by building the asset name by hand. Both are reachable,
+        // and the shortcut is wrong: the carry animation's layer data remaps the item's
+        // direction and frame, so `h_crr_ri_<id>_<direction>_0` resolves to a real sprite that
+        // is simply not the one the avatar is holding — id 2 at direction 2 came back an orange
+        // torch where the figure shows a blue can. `getImageContainer()` applies that remapping,
+        // which is the whole reason it exists.
+        //
+        // `forceUpdate` must stay false: true resets the direction cache and the container comes
+        // back null.
+        const cache = (avatarImage as unknown as { _cache: IBodyPartCache | null })._cache;
+        const texture = cache?.getImageContainer('rightitem', request.frame, false, true)?.image ?? null;
+
+        if(texture === null || texture.frame.width < 1 || texture.frame.height < 1)
+        {
+            throw new AvatarRequestError(`No art for hand item ${id} at direction ${request.direction}`);
+        }
+
+        return textureToPng(texture as unknown as ShimTexture, request.zoom);
+    }
+
+    /**
 	 * Reads a resolved hotel property. The badge renderer needs
 	 * `image.library.badgepart.url` from the same `external_variables` the avatars come from,
 	 * so it goes through the configuration manager this service already owns rather than
@@ -179,6 +262,30 @@ export class AvatarRenderService
     getProperty(key: string): string
     {
         return this._configuration?.getProperty(key) ?? '';
+    }
+
+    /**
+	 * The booted core, for a second pipeline to hang off.
+	 *
+	 * `RoomStack` takes these three rather than building its own: the DI container, the asset
+	 * library and the configuration manager are the same ones, and a second
+	 * `HabboConfigurationManager` would mean a second `external_variables` download and two
+	 * copies of the hotel config free to disagree with each other. Null until {@link boot}
+	 * resolves.
+	 */
+    get context(): CoreComponentContext | null
+    {
+        return this._context;
+    }
+
+    get assetLibrary(): AssetLibrary | null
+    {
+        return this._assets;
+    }
+
+    get configuration(): HabboConfigurationManager | null
+    {
+        return this._configuration;
     }
 
     async dispose(): Promise<void>
@@ -281,6 +388,9 @@ export class AvatarRenderService
         context.registerInterface(IID_Core, context);
 
         const assets = new AssetLibrary(context);
+
+        this._context = context;
+        this._assets = assets;
 
         context.attachComponent(assets, [IID_AssetLibrary]);
 

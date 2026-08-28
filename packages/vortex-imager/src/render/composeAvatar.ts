@@ -19,6 +19,7 @@
 import {createCanvas} from '@napi-rs/canvas';
 import type {Canvas} from '@napi-rs/canvas';
 import type {IAvatarImage} from '@habbo/avatar/IAvatarImage';
+import {extractDarknessToAlpha} from './extractDarknessToAlpha';
 
 /**
  * The part of a texture this file uses.
@@ -67,7 +68,11 @@ interface ILayer
  * Returns the flattened composite, or `null` when the avatar has no extra sprites and the
  * caller should just encode the body texture as-is.
  */
-export function composeAvatarWithSprites(avatarImage: IAvatarImage, body: IDrawableTexture): Canvas | null
+export function composeAvatarWithSprites(
+    avatarImage: IAvatarImage,
+    body: IDrawableTexture,
+    includeBody: boolean = true
+): Canvas | null
 {
     const sprites = avatarImage.getSprites();
     const extras = sprites.filter((sprite) => sprite.id !== AVATAR_SPRITE_ID);
@@ -93,13 +98,19 @@ export function composeAvatarWithSprites(avatarImage: IAvatarImage, body: IDrawa
         bodyY += sprite.getDirectionOffsetY(direction) + (layerData?.dy ?? 0);
     }
 
-    layers.push({
-        texture: body,
-        x: bodyX,
-        y: bodyY,
-        depth: AVATAR_SPRITE_DEFAULT_DEPTH + (offsets[2] ?? 0),
-        additive: false
-    });
+    // The `/effect/` route wants the sprites an effect adds and nothing else, so the body is
+    // skipped — but only after the loop above has run, because the `avatar` sprite entry nudges
+    // the *other* sprites into place relative to it and dropping it early would move them.
+    if(includeBody)
+    {
+        layers.push({
+            texture: body,
+            x: bodyX,
+            y: bodyY,
+            depth: AVATAR_SPRITE_DEFAULT_DEPTH + (offsets[2] ?? 0),
+            additive: false
+        });
+    }
 
     // `spriteCount` scales the per-sprite depth step in AvatarVisualization; the room counts
     // its own sprite pool, which here is the body plus the extras.
@@ -156,7 +167,9 @@ export function composeAvatarWithSprites(avatarImage: IAvatarImage, body: IDrawa
         });
     }
 
-    if(layers.length === 1) return null;
+    // With the body in, one layer means the extras all resolved to nothing and the caller should
+    // encode the body texture as-is. Without it, one layer is a real sprite and must be drawn.
+    if(layers.length === (includeBody ? 1 : 0)) return null;
 
     return draw(layers);
 }
@@ -199,7 +212,19 @@ function draw(layers: ILayer[]): Canvas
 
         const frame = layer.texture.frame;
 
+        // This canvas is always transparent — there is no room behind an avatar — so every
+        // additive layer needs its darkness dissolved first, or a glow arrives as a dark blob.
+        // See `extractDarknessToAlpha()`; the engine does the same, at the same point.
+        const lit = layer.additive ? extractDarknessToAlpha(layer.texture) : null;
+
         context.globalCompositeOperation = layer.additive ? 'lighter' : 'source-over';
+
+        if(lit !== null)
+        {
+            context.drawImage(lit, Math.round(layer.x - minX), Math.round(layer.y - minY));
+
+            continue;
+        }
 
         context.drawImage(
             source as Parameters<typeof context.drawImage>[0],
