@@ -442,25 +442,40 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * restores it afterward; PixiJS has no per-render quality knob, so that
      * step is dropped as a non-portable Flash-ism.
      *
+     * **The viewport mask has to come off for the capture**, and that is not a shortcut. The
+     * extract treats `_display` as its own root, while `_spriteMask` is parented to `_master` — a
+     * *sibling* of `_display`, put there by `updateMask()`. PixiJS v8 then cannot resolve the mask
+     * against the extraction root and warns "Mask bounds, renderable is not inside the root
+     * container", with the bounds it computes anyway being wrong. The mask exists to clip the live
+     * view to the canvas viewport; an extract of `_display` is already bounded by `_display`, so
+     * there is nothing for it to do here. AS3 draws the display object into a `BitmapData` with no
+     * mask in the picture either.
+     *
+     * It is saved and restored like the scale, the offsets and the visibility flag above it —
+     * `_useMask` is left alone, so `updateMask()` still agrees with the state afterwards.
+     *
      * @see sources/win63_version/room/renderer/class_3523.as::takeScreenShot() line 313
      */
     // AS3: sources/win63_version/room/renderer/class_3523.as::takeScreenShot()
-    takeScreenShot(renderer: Renderer): HTMLCanvasElement 
+    takeScreenShot(renderer: Renderer): HTMLCanvasElement
     {
         this._skipSpriteVisibilityChecking = true;
 
         const savedScale = this._scale;
         const savedOffsetX = this._screenOffsetX;
         const savedOffsetY = this._screenOffsetY;
+        const savedMask = this._display.mask;
 
         this.setScale(1);
         this._screenOffsetX = 0;
         this._screenOffsetY = 0;
+        this._display.mask = null;
 
         this.render(-1, true);
 
         const canvas = renderer.extract.canvas(this._display) as HTMLCanvasElement;
 
+        this._display.mask = savedMask;
         this._skipSpriteVisibilityChecking = false;
         this.setScale(savedScale);
         this._screenOffsetX = savedOffsetX;
