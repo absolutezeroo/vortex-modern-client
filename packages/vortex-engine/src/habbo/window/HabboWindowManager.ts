@@ -75,6 +75,7 @@ import {ConfirmDialog} from './utils/ConfirmDialog';
 import {SimpleAlertDialog} from './utils/SimpleAlertDialog';
 import {HabbletLinkHandler} from './handlers/HabbletLinkHandler';
 import {ElementPointerHandler} from './utils/ElementPointerHandler';
+import {BCFloorPlanEditor} from './utils/floorplaneditor/BCFloorPlanEditor';
 
 const log = Logger.getLogger('habbo.window.HabboWindowManager');
 
@@ -115,6 +116,9 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     private _hintManager: HintManager | null = null;
     private _habbletLinkHandler: HabbletLinkHandler | null = null;
     private _elementPointerHandler: ElementPointerHandler | null = null;
+
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_bcfloorPlanEditor
+    private _bcFloorPlanEditor: BCFloorPlanEditor | null = null;
     private _initialized: boolean = false;
 
     constructor(context: IContext, flags: number = 0, assetLibrary: IAssetLibrary | null = null) 
@@ -1116,15 +1120,19 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         // HabboPagesViewer integration - to be connected
     }
 
+    /**
+     * Opens the Builders Club floor plan editor, building it if the configuration arrived too late
+     * for `onConfigurationComplete()` to have done so.
+     *
+     * Reached from the room-info window's button and from the `:floorplan` chat command, both of
+     * which already called this while it was an empty stub.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::displayFloorPlanEditor()
-    // TODO(AS3): AS3 lazily builds a `BCFloorPlanEditor(this)` and sets it visible. The editor is
-    // unported in full — `window/utils/floorplaneditor/` is 1,879 lines across BCFloorPlanEditor,
-    // FloorPlanCache, FloorPlanPreviewer, HeightMapEditor and ImportExportDialog — and its window
-    // layout does not ship in `src/assets/window-layouts/` either, so the asset side is a
-    // prerequisite. Callers today: the `:floor` / `:bcfloor` chat commands, which reach this and
-    // silently do nothing.
     public displayFloorPlanEditor(): void
     {
+        if(this._bcFloorPlanEditor === null) this._bcFloorPlanEditor = new BCFloorPlanEditor(this);
+
+        this._bcFloorPlanEditor.visible = true;
     }
 
     /**
@@ -1603,9 +1611,17 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::onConfigurationComplete()
     private onConfigurationComplete(): void 
     {
-        if(this._communication && !this._elementPointerHandler) 
+        if(this._communication && !this._elementPointerHandler)
         {
             this._elementPointerHandler = new ElementPointerHandler(this);
+        }
+
+        // AS3 builds the floor plan editor here too, on the same guard: it subscribes six message
+        // events in its constructor and has to be listening before the room's height map arrives,
+        // not when the window is first opened.
+        if(this._communication && this._bcFloorPlanEditor === null)
+        {
+            this._bcFloorPlanEditor = new BCFloorPlanEditor(this);
         }
     }
 

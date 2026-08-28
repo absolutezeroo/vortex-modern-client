@@ -627,10 +627,9 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
 
                 return true;
 
-            // TODO(AS3): reaches `displayFloorPlanEditor()`, which is an empty stub — the editor
-            // itself (window/utils/floorplaneditor/, 1,879 lines across BCFloorPlanEditor,
-            // FloorPlanCache, FloorPlanPreviewer, HeightMapEditor, ImportExportDialog) is unported
-            // and its layout does not ship either. The permission check is real; nothing opens.
+            // Opens the real editor since `window/utils/floorplaneditor/` was ported. Note the
+            // server drops the save (`UpdateFloorProperties` is accept-and-drop on the emulator),
+            // so the plan loads and draws but does not persist.
             case ':floor':
             case ':bcfloor':
                 if(session.roomControllerLevel >= 3) container.windowManager?.displayFloorPlanEditor();
