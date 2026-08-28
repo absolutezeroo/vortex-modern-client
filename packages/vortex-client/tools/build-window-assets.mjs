@@ -173,10 +173,49 @@ function indexFilesByLinkage(dirs, obfuscatedNameMap)
     return index;
 }
 
+// A handful of layouts are embedded on the class that uses them rather than declared in a
+// component manifest, and are instantiated directly - `new floor_plan_editor_layout() as
+// ByteArray` - instead of being fetched from the asset library. They therefore have no
+// getAssetByName() name at all, which is why the *Com.as-only scan never saw them and the
+// floor plan editor's two layouts were missing from the shipped set.
+//
+// They are named by their EMBED LINKAGE instead, minus the $hash: `floor_plan_editor_bc_xml`.
+// That is the only name the dump gives them, it keeps the `_xml` suffix the layout registry
+// expects (a bare name resolves through HabboHelp.resolveLayoutName()'s fallback), and it
+// cannot collide with a field name because assignNames() keys on the same string either way.
+const DIRECT_EMBED_SOURCES = [
+    'com/sulake/habbo/window/utils/floorplaneditor/BCFloorPlanEditor.as',
+];
+
 /** Reads every `<fieldName>:Class = <ref>` declaration across the component manifests. */
-function readDeclarations(binaryDataDir)
+function readDeclarations(binaryDataDir, srcDir, obfuscatedNameMap)
 {
     const declarations = [];
+
+    for (const relative of DIRECT_EMBED_SOURCES)
+    {
+        const file = path.join(srcDir, relative);
+
+        if (!fs.existsSync(file))
+        {
+            console.warn(`  direct-embed source missing: ${relative}`);
+            continue;
+        }
+
+        const component = path.basename(file, '.as');
+        const content = fs.readFileSync(file, 'utf8');
+        let match;
+
+        FIELD_RE.lastIndex = 0;
+
+        while ((match = FIELD_RE.exec(content)) !== null)
+        {
+            const raw = toRawLinkageName(match[2], obfuscatedNameMap);
+
+            // No linkage means no name to ship it under; leave it to the unresolved report.
+            declarations.push({component, fieldName: raw ? raw.split('$')[0] : match[1], ref: match[2]});
+        }
+    }
 
     for (const comFile of findComFiles(binaryDataDir))
     {
@@ -272,7 +311,7 @@ function main()
         obfuscatedNameMap
     );
 
-    const declarations = readDeclarations(binaryDataDir);
+    const declarations = readDeclarations(binaryDataDir, srcDir, obfuscatedNameMap);
     const xmlCache = new Map();
     const layouts = [];
     const skins = [];
