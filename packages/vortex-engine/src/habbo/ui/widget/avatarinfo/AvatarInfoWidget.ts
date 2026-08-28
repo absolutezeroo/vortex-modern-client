@@ -17,14 +17,14 @@ import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
  * `showUserName()`/`showGamePlayerName()` are complete, callable methods (`_avatarNameBubbles`,
  * positioned every frame alongside the other bubbles). What is NOT ported: the room-engine
  * `REOE_ADDED`/`REOE_REMOVED` listeners that would call `showUserName()` automatically for a
- * friend's avatar walking into view (AS3's own onRoomObjectAdded()/onRoomObjectRemoved()), and the
- * `AvatarMenuView`-selection integration that drops a friend's name bubble in favour of the full
- * menu on click. `showGamePlayerName()` itself is also not yet reachable end-to-end — see
+ * friend's avatar walking into view (AS3's own onRoomObjectAdded()/onRoomObjectRemoved()). The
+ * other half of that gap is closed: `updatePeerUserView()` drops a friend's name bubble in favour
+ * of the full menu on click. `showGamePlayerName()` itself is also not yet reachable end-to-end — see
  * RoomDesktop.ts's and IRoomUI.ts's own TODO(AS3) at their (currently absent) `showGamePlayerName()`.
  *
- * TODO(AS3): three AS3 sibling views still have no counterpart here — AvatarMenuView (the
- * click-to-select other-avatar menu, built on AvatarContextInfoButtonView), DecorateModeView, and
- * NewUserHelpView.
+ * TODO(AS3): two AS3 sibling views still have no counterpart here — DecorateModeView and
+ * NewUserHelpView, both of which AS3 substitutes for the *own*-avatar menu under a condition
+ * (`isUserDecorating`, `RoomEnterEffect.isRunning()`).
  *
  * AS3 adaptations: positioning uses roomEngine.getRoomObjectBoundingRectangle
  * directly (no RWGOI message round-trip); the per-frame tick uses the window
@@ -55,6 +55,7 @@ import type {IContextMenuParentWidget} from '../contextmenu/IContextMenuParentWi
 import type {ContextInfoView} from '../contextmenu/ContextInfoView';
 import type {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
 import {AvatarInfoData} from './AvatarInfoData';
+import {AvatarMenuView} from './AvatarMenuView';
 import {OwnAvatarMenuView} from './OwnAvatarMenuView';
 import {PetInfoData} from './PetInfoData';
 import {PetMenuView} from './PetMenuView';
@@ -125,6 +126,10 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // which clears it, and updatePetView(), which tests what it currently is)
     private _activeView: AvatarContextInfoButtonView | null = null;
     private _cachedOwnMenu: OwnAvatarMenuView | null = null;
+
+    /** Derived name — `_SafeStr_5648`: the peer-avatar menu, kept between opens like its siblings. */
+    // AS3: AvatarInfoWidget.as::_SafeStr_5648
+    private _cachedAvatarMenu: AvatarMenuView | null = null;
     private _isDancing: boolean = false;
     private _ownRoomIndex: number = -1;
     private _updateRegistered: boolean = false;
@@ -206,6 +211,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.handler.widget = this;
 
         this.container?.desktopEvents.on(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
+        this.container?.desktopEvents.on(RoomWidgetUserInfoUpdateEvent.PEER, this.onUserInfoUpdate);
         this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
         this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected);
         this.container?.desktopEvents.on(RoomWidgetPetInfoUpdateEvent.PET_INFO, this.onPetInfoUpdate);
@@ -415,6 +421,13 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // AS3: AvatarInfoWidget.as::updateEventHandler (RWUIUE_OWN_USER case) + updateUserView()
     private onUserInfoUpdate = (event: RoomWidgetUserInfoUpdateEvent): void =>
     {
+        if(event.type === RoomWidgetUserInfoUpdateEvent.PEER)
+        {
+            this.updatePeerUserView(event);
+
+            return;
+        }
+
         if(event.type !== RoomWidgetUserInfoUpdateEvent.OWN_USER) return;
 
         this._data.populate(event);
@@ -440,6 +453,83 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         this.checkUpdateNeed();
     };
+
+    /**
+     * AS3: AvatarInfoWidget.as::updateUserView() — the `else` arm, for somebody who is not you.
+     *
+     * Two details that are AS3's and look like oversights:
+     *
+     * - **spectator mode hands `null` data through**, and `showAvatarContextMenu` is exactly
+     *   `data != null` — so a spectator gets no menu at all, not a menu with everything greyed out.
+     * - **the name bubble for this avatar is dropped**, if one is up. Clicking a friend replaces
+     *   their floating name with the full menu rather than stacking the two.
+     *
+     * The build itself is deferred through `_buttonsSetup`, as the pet path already is: a wired
+     * handler gets first refusal on the click, and `maybeSetupMenuView()` runs it if nothing took it.
+     */
+    // AS3: AvatarInfoWidget.as::updateUserView()
+    private updatePeerUserView(event: RoomWidgetUserInfoUpdateEvent): void
+    {
+        this._data.populate(event);
+
+        if(event.isSpectatorMode) return;
+
+        const userId = event.webID;
+        const userName = event.name;
+        const roomIndex = event.userRoomId;
+        const data = this._data;
+
+        // A view that is not one of the five context menus is in the way and goes first.
+        if(this._activeView
+            && !(this._activeView instanceof AvatarMenuView
+                || this._activeView instanceof OwnAvatarMenuView
+                || this._activeView instanceof PetMenuView
+                || this._activeView instanceof OwnPetMenuView
+                || this._activeView instanceof RentableBotMenuView))
+        {
+            this.removeView(this._activeView, false);
+        }
+
+        this.removeUseProductViews();
+
+        // AS3 re-opens on any mismatch, and `allowNameChange` forces it even on a match.
+        if(this._activeView
+            && this._activeView.userId === userId
+            && this._activeView.userName === userName
+            && this._activeView.roomIndex === roomIndex
+            && this._activeView.userType === 1
+            && !data.allowNameChange) return;
+
+        if(this._activeView) this.removeView(this._activeView, false);
+
+        if(this.isGameMode()) return;
+
+        this._pendingMenuRoomIndex = roomIndex;
+
+        if(!this._cachedAvatarMenu) this._cachedAvatarMenu = new AvatarMenuView(this);
+
+        this._buttonsSetup = (): void =>
+        {
+            const view = this._cachedAvatarMenu;
+
+            if(!view) return;
+
+            this._activeView = view;
+            AvatarMenuView.setup(view, userId, userName, roomIndex, event.userType, data);
+        };
+
+        for(const [name, bubble] of this._avatarNameBubbles)
+        {
+            if(bubble.userId !== userId) continue;
+
+            this.removeView(bubble, false);
+            this._avatarNameBubbles.delete(name);
+
+            break;
+        }
+
+        this.maybeSetupMenuView(roomIndex);
+    }
 
     // AS3: AvatarInfoWidget.as::updateEventHandler (RWROUE_OBJECT_DESELECTED case)
     // — the bubble is dismissed when the avatar/selection is deselected, which the
@@ -1519,6 +1609,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.container?.roomEngine?.events.off(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAdded);
         this.container?.roomEngine?.events.off(RoomEngineObjectEvent.REOE_REMOVED, this.onRoomObjectRemoved);
         this.container?.desktopEvents.off(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
+        this.container?.desktopEvents.off(RoomWidgetUserInfoUpdateEvent.PEER, this.onUserInfoUpdate);
         this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
         this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected);
         this.container?.desktopEvents.off(RoomWidgetPetInfoUpdateEvent.PET_INFO, this.onPetInfoUpdate);
@@ -1545,6 +1636,8 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         this._cachedOwnMenu?.dispose();
         this._cachedOwnMenu = null;
+        this._cachedAvatarMenu?.dispose();
+        this._cachedAvatarMenu = null;
         this._cachedOwnPetMenu?.dispose();
         this._cachedOwnPetMenu = null;
         this._cachedPetMenu?.dispose();
