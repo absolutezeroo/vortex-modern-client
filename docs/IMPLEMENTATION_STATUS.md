@@ -2615,9 +2615,12 @@ Re-ranked **2026-08-03**, biggest product gap first.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
    per-category count.
-5. **Retire the parity-audit backlog**: 94 majors + 68 minors from 2026-07-17 remain, each needing
-   its own verification against the AS3 source before action — 3 of the 26 criticals did not survive
-   that check, and acting on one would have broken the client.
+5. ~~**Retire the parity-audit backlog**~~ — **closed.** The 2026-07-17 audit is fully worked:
+   25/26 real criticals fixed (one deliberately not acted on), 94/94 majors (3 of them false
+   positives) and 48/48 open minors. See the audit section's own closing paragraph. The rule it
+   established stands and is the reason it took as long as it did: a finding is a lead, not a
+   verdict — verify each against the AS3 source before acting, because 3 of the 26 criticals did
+   not survive that check and acting on one would have broken the client.
 6. **Social modules**: `habbo/friendlist` is 41/40, `friendbar`'s own bar is done
    (`data/` 8/8, `view/` 22/22), and the chat window's receive path was closed on 2026-08-02 —
    `habbo/messenger` is 9/12, with `habbicons/` (5 files, 1399 l.) and the two MiniMail events the
@@ -3859,7 +3862,7 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 - **The branch is lightly tested.** 35 commits; chat and the window system have been exercised live,
   the rest has not.
-- 94 majors + 68 minors, each needing the same per-finding verification.
+- ~~94 majors + 68 minors, each needing the same per-finding verification~~ — **all worked**; see the audit section's closing paragraph.
 - ~~`WindowComposite` merges AS3's three renderers into one class~~ — **done**, and this document was
   wrong to argue against it (see "The window system" below).
 - ~~`HabboAvatarGeometry.xml` ships an older revision~~ — **fixed 2026-08-14**, and it was three
