@@ -183,6 +183,19 @@ export class RoomThumbnailCameraWidget extends RoomWidgetBase implements ILinkEv
         }
     }
 
+    /**
+     * AS3: RoomThumbnailCameraWidget.as::get viewPort()
+     *
+     * The rectangle the capture is cropped to, in **screen** coordinates — which is what
+     * `snapshotRoomCanvasToBitmap()` offsets by, so it has to be global.
+     *
+     * This used to read `_viewfinder.x`/`.y` directly, under a comment claiming those were "already
+     * screen-relative for a centred top-level window". They are not: the viewfinder is a *child* of
+     * the widget's window, so its own coordinates are a small offset inside it — the crop landed
+     * near the canvas origin instead of on the viewfinder, and the thumbnail came out black.
+     * AS3 calls `getGlobalPosition()` here for exactly this reason; `getGlobalRectangle()` is this
+     * port's spelling of it, and it also stays correct if the window is ever nested deeper.
+     */
     // AS3: .../ui/widget/camera/RoomThumbnailCameraWidget.as::get viewPort()
     get viewPort(): IRoomEngineRectangle
     {
@@ -191,18 +204,17 @@ export class RoomThumbnailCameraWidget extends RoomWidgetBase implements ILinkEv
             return {left: 0, top: 0, right: 0, bottom: 0, width: 0, height: 0};
         }
 
-        // AS3 uses the viewfinder's *global* position; the port's windows expose their own
-        // coordinates, which are already screen-relative for a centred top-level window.
-        const left = this._viewfinder.x;
-        const top = this._viewfinder.y;
+        const global = {x: 0, y: 0, width: 0, height: 0};
+
+        this._viewfinder.getGlobalRectangle(global);
 
         return {
-            left,
-            top,
-            right: left + this._viewfinder.width,
-            bottom: top + this._viewfinder.height,
-            width: this._viewfinder.width,
-            height: this._viewfinder.height
+            left: global.x,
+            top: global.y,
+            right: global.x + global.width,
+            bottom: global.y + global.height,
+            width: global.width,
+            height: global.height
         };
     }
 

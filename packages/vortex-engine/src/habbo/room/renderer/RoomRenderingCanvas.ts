@@ -11,7 +11,7 @@
  *
  * @see sources/win63_version/room/renderer/class_3523.as
  */
-import {Container, type Filter, Graphics, Text, type Renderer, Texture} from 'pixi.js';
+import {Container, type Filter, Graphics, Rectangle, Text, type Renderer, Texture} from 'pixi.js';
 import {
     FRAME_CHANNEL_NET,
     FRAME_CHANNEL_PIXI,
@@ -442,17 +442,24 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * restores it afterward; PixiJS has no per-render quality knob, so that
      * step is dropped as a non-portable Flash-ism.
      *
-     * **The viewport mask has to come off for the capture**, and that is not a shortcut. The
-     * extract treats `_display` as its own root, while `_spriteMask` is parented to `_master` — a
-     * *sibling* of `_display`, put there by `updateMask()`. PixiJS v8 then cannot resolve the mask
-     * against the extraction root and warns "Mask bounds, renderable is not inside the root
-     * container", with the bounds it computes anyway being wrong. The mask exists to clip the live
-     * view to the canvas viewport; an extract of `_display` is already bounded by `_display`, so
-     * there is nothing for it to do here. AS3 draws the display object into a `BitmapData` with no
-     * mask in the picture either.
+     * **The capture is framed on the viewport, not on the content**, and that is the whole
+     * correctness of it. `renderer.extract.canvas(target)` with no frame crops to the target's own
+     * bounding box and normalises it to (0,0) — so the returned canvas starts at whatever corner
+     * the room's *content* happens to reach, which is usually well outside the visible area.
+     * `snapshotRoomCanvasToBitmap()` then offsets it by `region.left`/`region.top`, which are
+     * **screen** coordinates, and the two origins do not agree: the photo comes out shifted, and a
+     * small region (the room thumbnail) lands off the content entirely and reads black.
      *
-     * It is saved and restored like the scale, the offsets and the visibility flag above it —
-     * `_useMask` is left alone, so `updateMask()` still agrees with the state afterwards.
+     * Passing `frame` fixes the origin at the viewport's top-left and the size at the canvas's own,
+     * which is the space the callers are working in. It also settles a PixiJS v8 warning —
+     * "Mask bounds, renderable is not inside the root container" — for the right reason rather than
+     * by deleting something: the extract treats `_display` as its own root, while `updateMask()`
+     * parents `_spriteMask` to `_master`, a *sibling*, so Pixi could not resolve the mask while
+     * computing bounds. With an explicit frame there are no bounds to compute.
+     *
+     * This is AS3's capture, not a deviation. It sizes its `BitmapData` from `_display` and draws
+     * with a `Matrix` translated by `-bounds.x, -bounds.y` — the same "put the interesting corner at
+     * the origin" move, expressed the way Flash expresses it.
      *
      * @see sources/win63_version/room/renderer/class_3523.as::takeScreenShot() line 313
      */
@@ -464,18 +471,18 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         const savedScale = this._scale;
         const savedOffsetX = this._screenOffsetX;
         const savedOffsetY = this._screenOffsetY;
-        const savedMask = this._display.mask;
 
         this.setScale(1);
         this._screenOffsetX = 0;
         this._screenOffsetY = 0;
-        this._display.mask = null;
 
         this.render(-1, true);
 
-        const canvas = renderer.extract.canvas(this._display) as HTMLCanvasElement;
+        const canvas = renderer.extract.canvas({
+            target: this._display,
+            frame: new Rectangle(0, 0, this._width, this._height),
+        }) as HTMLCanvasElement;
 
-        this._display.mask = savedMask;
         this._skipSpriteVisibilityChecking = false;
         this.setScale(savedScale);
         this._screenOffsetX = savedOffsetX;
