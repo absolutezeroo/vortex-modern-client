@@ -2614,7 +2614,9 @@ Re-ranked **2026-08-03**, biggest product gap first.
    furniture samples. Songs play.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
-   per-category count.
+   per-category count. **`game` started 2026-08-28** — 9 of the 13 `parser/game/snowwar/data/` DTOs,
+   alongside the engine-side foundation; see the top entry under "Recent Work Recorded" for the
+   dependency order the rest has to follow.
 5. ~~**Retire the parity-audit backlog**~~ — **closed.** The 2026-07-17 audit is fully worked:
    25/26 real criticals fixed (one deliberately not acted on), 94/94 majors (3 of them false
    positives) and 48/48 open minors. See the audit section's own closing paragraph. The rule it
@@ -3873,6 +3875,54 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- 🆕 **`habbo/game` starts, 2026-08-28 — the deterministic foundation, 12 of 63 files.** Snow War
+  is not "a minigame with some maths in it": it is **lock-step deterministic**. The server sends
+  *inputs*, not positions, and every client advances the same simulation from the same seed. So the
+  bottom layer cannot be modernised at all — `Math.random()` for the xorshift, `Math.atan2` for a
+  heading, `Math.floor` for a division or `Math.sqrt` for a distance would each agree with the
+  server almost always, and almost is a desync that nothing in the client would report.
+
+  What that means concretely, and what is now ported:
+  - `QuickRandom` keeps the 13/17/5 xorshift **and a `| 0` after every step**, because AS3's `int`
+    wraps at 32 bits and JavaScript's numbers do not. A zero seed falls back to -1 (xorshift is
+    absorbing at zero — every later value would be zero, and the game would freeze identically on
+    every client).
+  - `MathUtils.javaDiv()` truncates towards zero, which is Java's `(int)` cast, not `Math.floor`.
+  - `Direction8`/`Direction360` do their trigonometry off three lookup tables — two 360-entry
+    sine/cosine rows scaled by 256, and a 256-entry arctangent — **extracted from the AS3 rather
+    than retyped**.
+  - `FastSqrt` is a 256-entry table with an eleven-branch binary search over the input's magnitude.
+    `Math.sqrt` is *more* accurate, which is exactly why it cannot be used.
+
+  **`scripts/check-snowwar-determinism.mjs` is what keeps this from drifting.** It re-reads the AS3
+  tables at run time and compares them entry for entry, then spot-checks the four things easiest to
+  get wrong: the zero-seed fallback, the 32-bit wrap, `javaDiv`'s sign behaviour, and the `-22`/`+1`
+  pair in `direction360ValueToDirection8()` that centres each 45° sector on its direction instead of
+  starting it there. Run it before touching anything under `snowwar/utils/`.
+
+  Also ported: the A-star node pair, `CollisionUtils` (`_SafeCls_4413`) with its four bounding
+  shapes — the triple circle is three circles laid along the object's facing, which is how a
+  player's footprint turns with them without any rotation maths — and 9 of the 13 wire DTOs under
+  `parser/game/snowwar/data/`.
+
+  Four AS3 oddities transcribed rather than tidied, each stated at its declaration:
+  `Direction8.isDiagonal()` is backwards (an even ordinal is N/E/S/W; nothing reads it);
+  `Direction360.getAngleAtan()` is dead and would be wrong if it were not, its arguments the wrong
+  way round for `atan2`; `AbstractAStarNode._referenceNumber` is never read and pointedly not
+  cleared by a `dispose()` that clears everything else; and
+  **`CollisionUtils.testForObjectToObjectCollision()` is not symmetric** — it switches on the
+  *second* object's shape, and circle-to-box, box-to-box and box-to-triple-circle have no case at
+  all. The arena only ever asks in the order the table covers.
+
+  **What is left, and in what order.** The remaining 51 files (~11,800 l.) are a deep dependency
+  chain, not a flat list: the events need the game objects, the game objects need the arena stage,
+  the stage needs `SynchronizedGameArena`, and the arena needs the last 4 DTOs — which in turn need
+  `SnowWarGameObjectData`/`SnowWarGameEventData` out of the `unknowns/` packages. So the next slice
+  is that DTO tier, then the arena, then game objects, then events, then the leaderboards and UI,
+  then `HabboGameManager` and its `IncomingMessages`. Nothing above the foundation is wired yet and
+  `HabboGameManager` is still absent, so `habbo/friendbar`'s `_gameManager: unknown | null` and
+  `HabboFreeFlowChat`'s `get gameManager()` TODO both stay as they are.
 
 - 🆕 **Closing `habbo/catalog` and the avatar context menu, 2026-08-28.** Six phases, all of them
   the same shape: the code existed and nothing reached it. Nothing in this batch needed a new
