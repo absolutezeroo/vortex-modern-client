@@ -362,7 +362,16 @@ import {
 } from './messages/incoming/room/session';
 
 // Incoming Events - Room Layout
-import {RoomEntryTileMessageEvent,} from './messages/incoming/room/layout';
+import {RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent,} from './messages/incoming/room/layout';
+import {
+    GetOccupiedTilesMessageComposer
+} from './messages/outgoing/room/layout/GetOccupiedTilesMessageComposer';
+import {
+    GetRoomEntryTileMessageComposer
+} from './messages/outgoing/room/layout/GetRoomEntryTileMessageComposer';
+import {
+    UpdateFloorPropertiesMessageComposer
+} from './messages/outgoing/room/layout/UpdateFloorPropertiesMessageComposer';
 
 // Incoming Events - Room Permissions
 import {
@@ -1960,6 +1969,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(2260, HeightMapMessageEvent);
         this._events.set(3279, HeightMapUpdateMessageEvent);
         this._events.set(2792, RoomEntryTileMessageEvent);
+        this._events.set(1235, RoomOccupiedTilesMessageEvent);
         this._events.set(2914, RoomEntryInfoMessageEvent);
         this._events.set(2104, ObjectsMessageEvent);
         this._events.set(368, ObjectAddMessageEvent);
@@ -3094,6 +3104,12 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3590, UseWallItemMessageComposer);
         // AS3: _SafeCls_1821.as::modifyRoomObjectData() "OBJECT_SAVE_STUFF_DATA"
         this._composers.set(246, SetObjectDataMessageComposer);
+
+        // The floor plan editor's three. The two GETs have a real handler waiting on the emulator;
+        // UpdateFloorProperties is accepted and dropped there today, so saving is a no-op server-side.
+        this._composers.set(3426, GetOccupiedTilesMessageComposer);
+        this._composers.set(880, GetRoomEntryTileMessageComposer);
+        this._composers.set(2937, UpdateFloorPropertiesMessageComposer);
         // AS3: MysteryTrophyOpenDialogView.as::onMouseClick() "ok"
         this._composers.set(2242, OpenMysteryTrophyMessageComposer);
 
