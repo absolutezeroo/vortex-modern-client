@@ -5,6 +5,7 @@ import type {ICollectorHub} from './collectibles/ICollectorHub';
 import type {EventEmitter} from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
+import type {IVideoOfferManager} from './IVideoOfferManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalogPurse} from './purse/IHabboCatalogPurse';
@@ -31,6 +32,9 @@ export interface IHabboCatalog
 {
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get assets()
     readonly assets: IAssetLibrary | null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get videoOffers()
+    readonly videoOffers: IVideoOfferManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/IHabboCatalog.as::get navigator()
     readonly navigator: IHabboNavigator | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get windowManager()
@@ -41,8 +45,6 @@ export interface IHabboCatalog
     readonly localization: IHabboLocalizationManager | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get connection()
     readonly connection: IConnection | null;
-    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get videoOffers()
-    readonly videoOffers: { readonly enabled: boolean };
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get privateRoomSessionActive()
     readonly privateRoomSessionActive: boolean;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get tradingActive()

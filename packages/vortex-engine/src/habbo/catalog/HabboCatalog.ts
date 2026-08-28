@@ -247,6 +247,8 @@ import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
 import {OfferController} from './targetedoffers/OfferController';
+import {VideoOfferManager} from './VideoOfferManager';
+import type {IVideoOfferManager} from './IVideoOfferManager';
 import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
 import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
 import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
@@ -535,6 +537,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_7106
     private _offerController: OfferController | null = null;
 
+    /** Derived name — `_SafeStr_6636`, the object `get videoOffers()` returns. */
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6636
+    private _videoOfferManager: VideoOfferManager | null = null;
+
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get videoOffers()
+    get videoOffers(): IVideoOfferManager | null
+    {
+        return this._videoOfferManager;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get currentPage()
     get currentPage(): ICatalogPage | null
     {
@@ -602,14 +614,6 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     get catalogType(): string 
     {
         return this._catalogType;
-    }
-
-    private _videoOffers: { readonly enabled: boolean } = {enabled: false};
-
-    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get videoOffers()
-    get videoOffers(): { readonly enabled: boolean } 
-    {
-        return this._videoOffers;
     }
 
     private _roomPreviewer: RoomPreviewer | null = null;
@@ -3443,6 +3447,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             this._offerController = null;
         }
 
+        if(this._videoOfferManager != null)
+        {
+            this._videoOfferManager.dispose();
+            this._videoOfferManager = null;
+        }
+
         // Drop the flat references before the states that own the objects behind them,
         // then let each state take down its own window, navigator and viewer.
         this._catalogViewer = null;
@@ -3536,6 +3546,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::initComponent()
         this._sessionDataManager?.loadProductData(this);
+
+        // AS3: HabboCatalog.as::initComponent() — immediately before the OfferController below.
+        this._videoOfferManager = new VideoOfferManager(this);
 
         // Must come after loadProductData(): the controller registers itself as a products-ready
         // listener in its own constructor, and that is what triggers its first server request.

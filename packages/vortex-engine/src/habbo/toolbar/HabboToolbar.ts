@@ -1431,7 +1431,7 @@ export class HabboToolbar extends Component implements IHabboToolbar
 
         const identityGate = !this.isNewIdentity() || !this.getBoolean('new.identity.hide.ui');
 
-        if(!this._catalog.videoOffers.enabled) return;
+        if(!this._catalog.videoOffers?.enabled) return;
         if(!this.getBoolean('toolbar.extension.video.promo.enabled')) return;
         if(!identityGate) return;
 
