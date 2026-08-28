@@ -248,6 +248,8 @@ import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
 import {OfferController} from './targetedoffers/OfferController';
 import {VideoOfferManager} from './VideoOfferManager';
+import {NftStorePurchaseMessageEvent} from '@habbo/communication/messages/incoming/collectibles/NftStorePurchaseMessageEvent';
+import {NftStorePurchaseMessageParser} from '@habbo/communication/messages/parser/collectibles/NftStorePurchaseMessageParser';
 import type {IVideoOfferManager} from './IVideoOfferManager';
 import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
 import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
@@ -742,6 +744,48 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
      * refetching immediately - the refetch happens on the next `init()`, so a user who never
      * reopens the catalog never pays for it.
      */
+    /**
+     * The NFT store's answer to a purchase: an alert on failure, a notification naming the item on
+     * success. Either way the confirmation dialog is taken down — AS3 disposes it after the branch,
+     * not inside it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onNftStorePurchase()
+    private onNftStorePurchase = (event: IMessageEvent): void =>
+    {
+        const parser = event.parser as NftStorePurchaseMessageParser | null;
+
+        if(parser == null) return;
+
+        if(parser.result === NftStorePurchaseMessageParser.RESULT_ERROR)
+        {
+            this._windowManager?.alert(
+                '${catalog.alert.purchaseerror.title}',
+                '${notification.nft.purchase.error}',
+                0,
+                null
+            );
+        }
+        else
+        {
+            const productInfo = this._purchaseConfirmationDialog?.getNftImage()?.productInfo ?? null;
+            const productName = this._collectorHub?.getProductName(productInfo) ?? '';
+
+            this._notifications?.addItem(
+                this._localization?.getLocalizationWithParams(
+                    'notifications.text.purchase.ok', '', 'productName', productName
+                ) ?? '',
+                'info',
+                'icon_curator_stamp_large_png'
+            );
+        }
+
+        if(this._purchaseConfirmationDialog != null)
+        {
+            this._purchaseConfirmationDialog.dispose();
+            this._purchaseConfirmationDialog = null;
+        }
+    };
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onCatalogPublished()
     private onCatalogPublished(event: IMessageEvent): void
     {
@@ -3519,14 +3563,11 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new MarketplaceClearOwnHistoryResultEvent(this.onMarketPlaceClearOwnHistoryResult.bind(this)));
         this.addMessageEvent(new MarketplaceMakeOfferResultEvent(this.onMarketplaceMakeOfferResult.bind(this)));
 
-        // Three headers AS3's HabboCatalog/VideoOfferManager subscribe and this port deliberately
-        // does not, so `sweep-unwired` keeps reporting them — each for its own reason (2901
-        // LtdRaffleEntered used to be a fourth; it is registered above):
-        //   3404 CloseConnection    — AS3's `onRoomExit(param1:IMessageEvent)` body is **empty**.
-        //                             Subscribing it would register a no-op.
-        //   448  NftStorePurchase   — needs `PurchaseConfirmationDialog.getNftImage()`, which returns
-        //                             the `_SafeCls_2029` NFT image widget; that widget is unported.
-        //   3599 UserRights         — belongs to `catalog/VideoOfferManager.as` (210 l.), unported.
+        this.addMessageEvent(new NftStorePurchaseMessageEvent(this.onNftStorePurchase));
+
+        // One header AS3 subscribes here and this port does not: 3404 CloseConnection, whose AS3
+        // handler `onRoomExit(param1:IMessageEvent)` has an **empty body**. Subscribing it would
+        // register a no-op, so `sweep-unwired` reports it and always will.
         this.addMessageEvent(new MarketplaceConfigurationEvent(this.onMarketplaceConfiguration.bind(this)));
         this.addMessageEvent(new MarketplaceItemStatsEvent(this.onMarketplaceItemStats.bind(this)));
         this.addMessageEvent(new RecyclerStatusMessageEvent(this.onRecyclerStatus.bind(this)));

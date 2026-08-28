@@ -22,6 +22,9 @@ import {HabboCatalogUtils} from '../HabboCatalogUtils';
 import type {IPurchasableOffer} from '../IPurchasableOffer';
 import {Offer} from '../viewer/Offer';
 import {CatalogProductImages} from '../viewer/CatalogProductImages';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {ProductImageWidget} from '@habbo/window/widgets/ProductImageWidget';
+import {RenderableShopNftItem} from '../collectibles/RenderableShopNftItem';
 import {ClubBuyOfferData} from '../club/ClubBuyOfferData';
 import {RentUtils} from '../viewer/widgets/utils/RentUtils';
 import {CatalogWidgetEvent} from '../viewer/widgets/events/CatalogWidgetEvent';
@@ -38,9 +41,6 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  * - the gift flow (`showGiftDialog()` and everything under it: the `gift_wrapping` layout, receiver
  *   name lookup with suggestions, box/ribbon selectors, `giveGift()`). `isGift` is accepted and
  *   remembered but only ever takes the plain purchase path.
- * - the `nft_image` widget branch, so an NFT shows no preview. Its three sibling offer classes —
- *   GameTokensOffer, MintTokenPurchaseOffer and NftStorePurchaseOffer — are all handled: dark
- *   window, mint-token icon, and their own buy composers.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as
  */
@@ -139,9 +139,17 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         return (this._window?.findChildByName('product_image') as unknown as IBitmapWrapperWindow | null) ?? null;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getNftImage()
-    // Part of the `nft_image` widget branch this class's header documents as unported — would
-    // return the RenderableNftImage widget behind the "nft_image" child so an NFT preview can be set.
+    /**
+     * The NFT preview widget. AS3 dereferences both casts without a null check; this port does not,
+     * because the four sibling `purchase_confirmation` layouts do not all carry an `nft_image`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getNftImage()
+    getNftImage(): ProductImageWidget | null
+    {
+        const holder = this._window?.findChildByName('nft_image') as unknown as IWidgetWindow | null;
+
+        return (holder?.widget as unknown as ProductImageWidget | null) ?? null;
+    }
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getAvatarFaceBitmap()
     // Only called from updateGiftDialogAvatarImage(), part of the gift flow (showGiftDialog() and
@@ -297,11 +305,22 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
             catalog.localization?.registerParameter('shop.bonus.items.count', 'amount', discountItemsCount.toString());
         }
 
-        // The collectibles previewer is not ported; the layout still carries its widget on top of
-        // the bitmap, so it has to be taken out of the way or it covers the product image.
-        const nftImage = this._window.findChildByName('nft_image');
+        // An NFT is shown by the `nft_image` widget itself and by nothing else — AS3 returns here,
+        // so neither the product image below nor the rent buy-caption runs for one. Every other
+        // offer hides the widget, because the layout stacks it on top of the product bitmap.
+        const nftImage = this._window.findChildByName('nft_image') as unknown as IWidgetWindow | null;
+        const nftWidget = (nftImage?.widget as unknown as ProductImageWidget | null) ?? null;
 
-        if(nftImage) nftImage.visible = false;
+        if(offer instanceof NftStorePurchaseOffer)
+        {
+            if(nftWidget !== null) nftWidget.productInfo = new RenderableShopNftItem(offer.productInfo);
+
+            return;
+        }
+
+        if(nftImage) (nftImage as unknown as IWindow).visible = false;
+
+        nftWidget?.clearPreviewer();
 
         this.showProductImage(offer, previewImage);
 
