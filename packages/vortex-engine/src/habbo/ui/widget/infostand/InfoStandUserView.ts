@@ -35,6 +35,8 @@ import {RoomWidgetOpenProfileMessage} from '../messages/RoomWidgetOpenProfileMes
 import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {InfoStandWidget} from './InfoStandWidget';
+import {TagListRenderer} from './TagListRenderer';
+import {RoomWidgetRoomTagSearchMessage} from '../messages/RoomWidgetRoomTagSearchMessage';
 import {Logger} from '@core/utils/Logger';
 import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 import {BadgeRarityEnum} from '@habbo/communication/enum/BadgeRarityEnum';
@@ -66,19 +68,44 @@ export class InfoStandUserView
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::_SafeStr_5253
     protected _profileLink: IWindowContainer | null = null;
 
+    /** Derived name — `_SafeStr_6391`. Built and disposed, never asked to draw; see its own header. */
+    // AS3: InfoStandUserView.as::_SafeStr_6391
+    private _tagListRenderer: TagListRenderer | null = null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::InfoStandUserView()
     constructor(widget: InfoStandWidget, name: string)
     {
         this._widget = widget;
+        this._tagListRenderer = new TagListRenderer(widget, this.onTagSelected);
         this.createWindow(name);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::dispose()
     public dispose(): void
     {
+        this._tagListRenderer?.dispose();
+        this._tagListRenderer = null;
         this._window?.dispose();
         this._window = null;
     }
+
+    /**
+     * AS3: InfoStandUserView.as::onTagSelected()
+     *
+     * Handed to the renderer as its click callback. Neither ever fires in this build: nothing
+     * calls `renderTags()`, so no chip exists to click — see TagListRenderer's own header.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::onTagSelected()
+    private onTagSelected = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        const text = (window as unknown as ITextWindow).text;
+
+        if(!text) return;
+
+        this._widget.messageListener?.processWidgetMessage(new RoomWidgetRoomTagSearchMessage(text));
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::get window()
     public get window(): IWindow | null
