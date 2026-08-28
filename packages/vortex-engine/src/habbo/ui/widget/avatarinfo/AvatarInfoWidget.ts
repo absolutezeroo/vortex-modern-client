@@ -22,9 +22,8 @@ import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
  * full menu on click. `showGamePlayerName()` itself is still not reachable end-to-end — see
  * RoomDesktop.ts's and IRoomUI.ts's own TODO(AS3) at their (currently absent) `showGamePlayerName()`.
  *
- * TODO(AS3): two AS3 sibling views still have no counterpart here — DecorateModeView and
- * NewUserHelpView, both of which AS3 substitutes for the *own*-avatar menu under a condition
- * (`isUserDecorating`, `RoomEnterEffect.isRunning()`).
+ * Every AS3 sibling view is ported now, the two conditional stand-ins for the own-avatar menu
+ * included: DecorateModeView (`isUserDecorating`) and NewUserHelpView (`RoomEnterEffect.isRunning()`).
  *
  * AS3 adaptations: positioning uses roomEngine.getRoomObjectBoundingRectangle
  * directly (no RWGOI message round-trip); the per-frame tick uses the window
@@ -56,6 +55,11 @@ import type {ContextInfoView} from '../contextmenu/ContextInfoView';
 import {AvatarContextInfoButtonView} from './AvatarContextInfoButtonView';
 import {AvatarInfoData} from './AvatarInfoData';
 import {AvatarMenuView} from './AvatarMenuView';
+import {DecorateModeView} from './DecorateModeView';
+import {NewUserHelpView} from './NewUserHelpView';
+import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
+import {RoomWidgetGetObjectLocationMessage} from '../messages/RoomWidgetGetObjectLocationMessage';
+import type {RoomWidgetUserLocationUpdateEvent} from '../events/RoomWidgetUserLocationUpdateEvent';
 import {RoomWidgetAvatarInfoEvent} from '../events/RoomWidgetAvatarInfoEvent';
 import {RoomWidgetUserDataUpdateEvent} from '../events/RoomWidgetUserDataUpdateEvent';
 import {RoomWidgetInventoryUpdatedMessage} from '../messages/RoomWidgetInventoryUpdatedMessage';
@@ -148,6 +152,14 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     /** Derived name — `_SafeStr_5843`: the small name bubble, kept between opens. */
     // AS3: AvatarInfoWidget.as::_SafeStr_5843
     private _contextInfoButtonView: AvatarContextInfoButtonView | null = null;
+
+    /** Derived name — `_SafeStr_6774`: the room-entry hint that stands in for the me-menu. */
+    // AS3: AvatarInfoWidget.as::_SafeStr_6774
+    private _newUserHelpView: NewUserHelpView | null = null;
+
+    /** Derived name — `_SafeStr_4895`: the decorate-mode "done" button, built once per room. */
+    // AS3: AvatarInfoWidget.as::_SafeStr_4895
+    private _decorateModeView: DecorateModeView | null = null;
 
     /** Derived name — `_SafeStr_6159`: the five-second hint timer. */
     // AS3: AvatarInfoWidget.as::_SafeStr_6159
@@ -466,6 +478,25 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         const userData = userId >= 0 ? (container?.roomSession.userDataManager.getUserData(userId) ?? null) : null;
 
         if(userData) this._ownRoomIndex = userData.roomObjectId;
+
+        // AS3: AvatarInfoWidget.as::updateUserView() — the own-user arm's two substitutions, both
+        // *instead of* the me-menu rather than alongside it. Decorate mode has its own floating
+        // "done" button and wants nothing else on screen; the room-entry effect shows the new-user
+        // hint for as long as it runs.
+        if(this.isUserDecorating) return;
+
+        if(RoomEnterEffect.isRunning())
+        {
+            if(!this._newUserHelpView) this._newUserHelpView = new NewUserHelpView(this);
+
+            this._activeView = this._newUserHelpView;
+
+            NewUserHelpView.setup(this._newUserHelpView, event.webID, event.name, this._ownRoomIndex, 1);
+
+            this.checkUpdateNeed();
+
+            return;
+        }
 
         if(!this._cachedOwnMenu)
         {
@@ -1708,10 +1739,60 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         editor.loadOwnAvatarInEditor(AvatarEditorIdEnum.MAIN_EDITOR);
     }
 
-    // AS3: AvatarInfoWidget.as::set isUserDecorating()
-    // TODO(AS3): DecorateModeView deferred in this slice.
-    public set isUserDecorating(_value: boolean)
+    // AS3: AvatarInfoWidget.as::get isUserDecorating()
+    public get isUserDecorating(): boolean
     {
+        return this.handler?.roomSession?.isUserDecorating ?? false;
+    }
+
+    /**
+     * AS3: AvatarInfoWidget.as::set isUserDecorating()
+     *
+     * The room session owns the flag; this only puts the "done decorating" button up or takes it
+     * down. Note it is `hide(false)`, not a dispose: the view is built once and toggled thereafter
+     * — see DecorateModeView's own header for why its `activeView` setter does not reparent.
+     */
+    // AS3: AvatarInfoWidget.as::set isUserDecorating()
+    public set isUserDecorating(value: boolean)
+    {
+        const session = this.handler?.roomSession ?? null;
+
+        if(session === null) return;
+
+        session.isUserDecorating = value;
+
+        if(!value)
+        {
+            this._decorateModeView?.hide(false);
+
+            return;
+        }
+
+        const container = this.container;
+        const userId = container?.sessionDataManager?.userId ?? -1;
+
+        if(!this._decorateModeView)
+        {
+            this._decorateModeView = new DecorateModeView(
+                this,
+                userId,
+                container?.sessionDataManager?.userName ?? '',
+                container?.roomSession?.ownUserRoomId ?? -1
+            );
+        }
+
+        this._decorateModeView.show();
+
+        const location = this.messageListener?.processWidgetMessage(
+            new RoomWidgetGetObjectLocationMessage(RoomWidgetGetObjectLocationMessage.GET_OBJECT_LOCATION, userId, 1)
+        ) as RoomWidgetUserLocationUpdateEvent | null ?? null;
+
+        // AS3 hands `screenLocation` straight through; this port declares it nullable on the event
+        // and non-null on update(), so the pair is only applied when both are there.
+        if(location?.screenLocation != null)
+        {
+            this._decorateModeView.update(location.rectangle, location.screenLocation, 0);
+        }
     }
 
     // --- helpers ---
@@ -1785,6 +1866,10 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.removeAvatarHighlightTimer();
         this._contextInfoButtonView?.dispose();
         this._contextInfoButtonView = null;
+        this._newUserHelpView?.dispose();
+        this._newUserHelpView = null;
+        this._decorateModeView?.dispose();
+        this._decorateModeView = null;
         this._cachedOwnPetMenu?.dispose();
         this._cachedOwnPetMenu = null;
         this._cachedPetMenu?.dispose();
