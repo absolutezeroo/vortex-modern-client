@@ -12,6 +12,13 @@
  */
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
+import {UserNameUpdateEvent} from '@habbo/session/events/UserNameUpdateEvent';
+import {FurniListAddOrUpdateMessageEvent} from '@habbo/communication/messages/incoming/inventory/furni/FurniListAddOrUpdateMessageEvent';
+import {RoomWidgetAvatarInfoEvent} from '@habbo/ui/widget/events/RoomWidgetAvatarInfoEvent';
+import {RoomWidgetUserDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserDataUpdateEvent';
+import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
+import {RoomSessionUserDataUpdateEvent} from '@habbo/session/events/RoomSessionUserDataUpdateEvent';
+import {RoomWidgetInventoryUpdatedMessage} from '@habbo/ui/widget/messages/RoomWidgetInventoryUpdatedMessage';
 import type {RoomWidgetMessage} from '@habbo/ui/widget/messages/RoomWidgetMessage';
 import type {RoomWidgetUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUpdateEvent';
 import {RoomWidgetDanceMessage} from '@habbo/ui/widget/messages/RoomWidgetDanceMessage';
@@ -63,6 +70,10 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
     // AS3: AvatarInfoWidgetHandler.as::_SafeStr_5791
     private _customUserNotificationEvent: IMessageEvent | null = null;
 
+    /** Derived name — `_SafeStr_5885`: the furni-list subscription, kept so it registers once. */
+    // AS3: AvatarInfoWidgetHandler.as::_SafeStr_5885
+    private _furniListEvent: IMessageEvent | null = null;
+
     // AS3: AvatarInfoWidgetHandler.as::set widget()
     public set widget(value: AvatarInfoWidget | null)
     {
@@ -97,6 +108,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
     public set container(value: IRoomWidgetHandlerContainer | null)
     {
         this._container?.toolbar?.toolbarEvents.off(HabboToolbarEvent.TOOLBAR_CLICK, this.onToolbarClicked);
+        this._container?.sessionDataManager?.events.off(UserNameUpdateEvent.NAME_UPDATE, this.onUserNameUpdate);
 
         // AS3 dispatches these on `roomSessionManager.events`; this port routes session events
         // through `sessionEvents` (see .claude/rules/20-architecture.md #4).
@@ -108,6 +120,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             previousSessionEvents.off(RoomSessionPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate);
             previousSessionEvents.off(RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS, this.onNestBreedingSuccessEvent);
             previousSessionEvents.off(RoomSessionDanceEvent.RSDE_DANCE, this.onDanceEvent);
+            previousSessionEvents.off(RoomSessionUserDataUpdateEvent.RSUDUE_USER_DATA_UPDATE, this.onUserDataUpdate);
         }
 
         this._container = value;
@@ -125,7 +138,16 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             value.connection.addMessageEvent(this._customUserNotificationEvent);
         }
 
+        // AS3 guards this one the same way as the notification event above, on the field itself.
+        if(!this._furniListEvent && value.connection)
+        {
+            this._furniListEvent = new FurniListAddOrUpdateMessageEvent(this.onFurniListUpdated);
+
+            value.connection.addMessageEvent(this._furniListEvent);
+        }
+
         value.toolbar?.toolbarEvents.on(HabboToolbarEvent.TOOLBAR_CLICK, this.onToolbarClicked);
+        value.sessionDataManager?.events.on(UserNameUpdateEvent.NAME_UPDATE, this.onUserNameUpdate);
 
         const sessionEvents = value.roomSessionManager?.sessionEvents;
 
@@ -135,6 +157,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             sessionEvents.on(RoomSessionPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate);
             sessionEvents.on(RoomSessionNestBreedingSuccessEvent.NEST_BREEDING_SUCCESS, this.onNestBreedingSuccessEvent);
             sessionEvents.on(RoomSessionDanceEvent.RSDE_DANCE, this.onDanceEvent);
+            sessionEvents.on(RoomSessionUserDataUpdateEvent.RSUDUE_USER_DATA_UPDATE, this.onUserDataUpdate);
         }
     }
 
@@ -166,13 +189,107 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
         }
     }
 
+    /**
+     * Two routes to the same bubble, and the config flag picks. The simple me-menu asks the info
+     * stand for the player's own facts over the widget-message round trip; the full one dispatches
+     * them straight from the session data it already has. The port took the first branch
+     * unconditionally, so a hotel with `simple.memenu.enabled` off got the round trip anyway.
+     */
     // AS3: AvatarInfoWidgetHandler.as::onToolbarClicked()
     private onToolbarClicked = (event: HabboToolbarEvent): void =>
     {
-        if(event.iconId === HabboToolbarIconEnum.MEMENU)
+        if(event.iconId !== HabboToolbarIconEnum.MEMENU) return;
+
+        if(this._container?.config?.getBoolean('simple.memenu.enabled') ?? false)
         {
             this._widget?.selectOwnAvatar();
+
+            return;
         }
+
+        this.dispatchOwnAvatarInfo();
+    };
+
+    /**
+     * The player's own identity, straight off the session data manager. Silently does nothing when
+     * the player is not in the room's user list yet — AS3 guards on the same lookup.
+     */
+    // AS3: AvatarInfoWidgetHandler.as::dispatchOwnAvatarInfo()
+    private dispatchOwnAvatarInfo(): void
+    {
+        const container = this._container;
+        const session = container?.sessionDataManager ?? null;
+
+        if(container == null || session == null) return;
+
+        const userData = container.roomSession?.userDataManager?.getUserData(session.userId) ?? null;
+
+        if(userData == null) return;
+
+        container.desktopEvents.emit(
+            RoomWidgetAvatarInfoEvent.AVATAR_INFO,
+            new RoomWidgetAvatarInfoEvent(
+                session.userId, session.userName, userData.type, userData.roomObjectId, session.nameChangeAllowed
+            )
+        );
+    }
+
+    /**
+     * The room's user list changed. Three things follow, in AS3's order:
+     *
+     * 1. every newly-arrived user the player has blocked is marked as such on their room object —
+     *    the blocked list is per-account and the room object is per-visit, so it has to be applied
+     *    to each arrival rather than once;
+     * 2. the widget is nudged, which is what makes it ask for the player's own identity the first
+     *    time the list settles;
+     * 3. **a friend walking in gets a floating name bubble.** This is the automatic
+     *    `showUserName()` trigger; the widget's header used to record it as missing, and it was —
+     *    the method was complete and callable and nothing called it.
+     */
+    // AS3: AvatarInfoWidgetHandler.as::processEvent() — case "RSUDUE_USER_DATA_UPDATE"
+    private onUserDataUpdate = (event: RoomSessionUserDataUpdateEvent): void =>
+    {
+        const container = this._container;
+        const session = container?.sessionDataManager ?? null;
+        const userDataManager = container?.roomSession?.userDataManager ?? null;
+
+        if(container == null || session == null || userDataManager == null) return;
+
+        for(const user of event.addedUsers)
+        {
+            if(session.isBlocked(user.webID)) userDataManager.markAsBlocked(user.roomObjectId);
+        }
+
+        container.desktopEvents.emit(
+            RoomWidgetUserDataUpdateEvent.USER_DATA_UPDATED, new RoomWidgetUserDataUpdateEvent()
+        );
+
+        const friendNames = this.friendList?.getFriendNames() ?? [];
+
+        for(const user of event.addedUsers)
+        {
+            if(friendNames.indexOf(user.name) > -1) this._widget?.showUserName(user, user.roomObjectId);
+        }
+    };
+
+    /** A rename invalidates whatever the bubble is showing, so AS3 simply closes it. */
+    // AS3: AvatarInfoWidgetHandler.as::onUserNameUpdate()
+    private onUserNameUpdate = (): void =>
+    {
+        this._widget?.close();
+    };
+
+    /**
+     * The furni-list echo (3151). The pet-product menu reads the inventory to decide what it can
+     * offer, so it has to be told when the inventory moves under it.
+     */
+    // AS3: AvatarInfoWidgetHandler.as::onFurniListUpdated()
+    private onFurniListUpdated = (): void =>
+    {
+        this._container?.desktopEvents.emit(
+            RoomWidgetInventoryUpdatedMessage.INVENTORY_UPDATED,
+            new RoomWidgetInventoryUpdatedMessage(RoomWidgetInventoryUpdatedMessage.INVENTORY_UPDATED)
+        );
     };
 
     /**
@@ -256,6 +373,7 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
             RoomWidgetDanceMessage.DANCE,
             RoomWidgetAvatarExpressionMessage.AVATAR_EXPRESSION,
             RoomWidgetChangePostureMessage.CHANGE_POSTURE,
+            RoomWidgetRoomObjectMessage.GET_OWN_CHARACTER_INFO,
             RoomWidgetUserActionMessage.START_NAME_CHANGE,
             RoomWidgetUserActionMessage.REQUEST_PET_UPDATE,
             RoomWidgetUseProductMessage.PET_PRODUCT,
@@ -305,6 +423,9 @@ export class AvatarInfoWidgetHandler implements IRoomWidgetHandler
                 break;
             case RoomWidgetChangePostureMessage.CHANGE_POSTURE:
                 roomSession.sendChangePostureMessage((message as RoomWidgetChangePostureMessage).posture);
+                break;
+            case RoomWidgetRoomObjectMessage.GET_OWN_CHARACTER_INFO:
+                this.dispatchOwnAvatarInfo();
                 break;
             case RoomWidgetUserActionMessage.START_NAME_CHANGE:
                 // AS3: AvatarInfoWidgetHandler.as::processWidgetMessage() → habboHelp.startNameChange()

@@ -22,8 +22,13 @@ export class AvatarContextInfoButtonView extends ButtonMenuView
     protected _roomIndex: number = 0;
     protected _isBlocked: boolean = false;
 
+    /**
+     * AS3 declares this `public static setup()`; the port renamed it so subclasses could keep
+     * their own `setup()` without shadowing, and narrowed it to `protected` — which shut out
+     * AvatarInfoWidget, the one AS3 caller outside the class hierarchy.
+     */
     // AS3: AvatarContextInfoButtonView.as::setup()
-    protected static setupButtonView(
+    public static setupButtonView(
         view: AvatarContextInfoButtonView,
         userId: number,
         userName: string,
