@@ -234,6 +234,8 @@ import {Offer} from './viewer/Offer';
 import {ClubBuyOfferData} from './club/ClubBuyOfferData';
 import {Product} from './viewer/Product';
 import {CatalogWindowState} from './CatalogWindowState';
+import {BuilderFurniPlaceableStatus} from './enum/BuilderFurniPlaceableStatus';
+import {CatalogType} from './enum/CatalogType';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
@@ -643,7 +645,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get multiplePurchaseEnabled()
     get multiplePurchaseEnabled(): boolean 
     {
-        return this.getBoolean('catalog.multiple.purchase.enabled') && this._catalogType !== 'BUILDERS_CLUB';
+        return this.getBoolean('catalog.multiple.purchase.enabled') && this._catalogType !== CatalogType.BUILDER;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
@@ -658,7 +660,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountEnabled()
     get bundleDiscountEnabled(): boolean 
     {
-        return this._catalogType !== 'BUILDERS_CLUB';
+        return this._catalogType !== CatalogType.BUILDER;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get bundleDiscountRuleset()
@@ -1542,7 +1544,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 }
 
                 break;
-            case 'BUILDERS_CLUB':
+            case CatalogType.BUILDER:
             {
                 // A Builders Club placement is a *purchase*: nothing is drawn locally, the server
                 // is asked to place it and the real object arrives from the room engine. That is
@@ -1635,12 +1637,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     {
         if(event == null) return;
 
-        if(this.buildersClubEnabled && (!this._initialized || !this.getCatalogNavigator('BUILDERS_CLUB')?.initialized))
+        if(this.buildersClubEnabled && (!this._initialized || !this.getCatalogNavigator(CatalogType.BUILDER)?.initialized))
         {
             // AS3 calls the no-arg `init()`, whose default resolves to "NORMAL"; this port made the
             // parameter required, so the default is written out.
             this.init('NORMAL');
-            this.refreshCatalogIndex('BUILDERS_CLUB');
+            this.refreshCatalogIndex(CatalogType.BUILDER);
         }
 
         if(event.type !== RoomEngineObjectEvent.REOE_SELECTED || event.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) return;
@@ -2407,7 +2409,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         const allowedHere = this._catalogType === 'NORMAL'
             ? this._roomSession.isRoomOwner || (this._roomSession.isGuildRoom && this._roomSession.roomControllerLevel >= 2)
-            : this._catalogType === 'BUILDERS_CLUB' && this.getBuilderFurniPlaceableStatusForOffer(offer) === 0;
+            : this._catalogType === CatalogType.BUILDER && this.getBuilderFurniPlaceableStatusForOffer(offer) === BuilderFurniPlaceableStatus.PLACEABLE;
 
         if(!allowedHere) return false;
 
@@ -2512,11 +2514,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
     public getBuilderFurniPlaceableStatusForOffer(_offer: IPurchasableOffer | null): number
     {
-        if(_offer == null) return 1;
+        if(_offer == null) return BuilderFurniPlaceableStatus.MISSING_OFFER;
 
-        if(this._builderFurniCount < 0 || this._builderFurniCount >= this._builderFurniLimit) return 2;
+        if(this._builderFurniCount < 0 || this._builderFurniCount >= this._builderFurniLimit)
+        {
+            return BuilderFurniPlaceableStatus.FURNI_LIMIT_REACHED;
+        }
 
-        if(this._roomSession == null) return 3;
+        if(this._roomSession == null) return BuilderFurniPlaceableStatus.NOT_IN_ROOM;
 
         return this.getBuilderFurniPlaceableStatus();
     }
@@ -2529,15 +2534,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatus()
     public getBuilderFurniPlaceableStatus(): number
     {
-        if(this._roomSession == null) return 3;
+        if(this._roomSession == null) return BuilderFurniPlaceableStatus.NOT_IN_ROOM;
 
         if(!this._roomSession.isRoomOwner && this._roomSession.isGuildRoom &&
             !this.getBoolean('builders.club.furniture.placement.group.room.enabled'))
         {
-            return 5;
+            return BuilderFurniPlaceableStatus.GUILD_ROOM;
         }
 
-        if(this._roomSession.roomControllerLevel < 3) return 4;
+        if(this._roomSession.roomControllerLevel < 3)
+        {
+            return BuilderFurniPlaceableStatus.NOT_ROOM_OWNER_OR_GROUP_ADMIN;
+        }
 
         if(this.builderSecondsLeft <= 0 && this._roomEngine != null)
         {
@@ -2975,12 +2983,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             case 'warehouse':
                 if(parts.length > 2)
                 {
-                    this.openCatalogPage(parts[2], 'BUILDERS_CLUB');
+                    this.openCatalogPage(parts[2], CatalogType.BUILDER);
 
                     break;
                 }
 
-                this.toggleCatalog('BUILDERS_CLUB', true);
+                this.toggleCatalog(CatalogType.BUILDER, true);
 
                 break;
 
@@ -3178,7 +3186,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::toggleBuilderCatalog()
     public toggleBuilderCatalog(): void 
     {
-        this.toggleCatalog('BUILDERS_CLUB');
+        this.toggleCatalog(CatalogType.BUILDER);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getCatalogNavigator()
@@ -3201,7 +3209,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::useNonTabbedCatalog()
     public useNonTabbedCatalog(catalogType: string): boolean
     {
-        if(catalogType === 'BUILDERS_CLUB') return true;
+        if(catalogType === CatalogType.BUILDER) return true;
 
         return this.getBoolean('client.desktop.use.non.tabbed.catalog');
     }
@@ -3703,7 +3711,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         const builderHeader = container.findChildByName('builder.mode.header');
 
-        if(builderHeader != null) builderHeader.visible = catalogType === 'BUILDERS_CLUB';
+        if(builderHeader != null) builderHeader.visible = catalogType === CatalogType.BUILDER;
     }
 
     /**
@@ -3854,7 +3862,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._catalogStates = new Map();
         this._catalogNavigators = new Map();
         this.createCatalogWindowState('NORMAL');
-        this.createCatalogWindowState('BUILDERS_CLUB');
+        this.createCatalogWindowState(CatalogType.BUILDER);
     }
 
     /**
@@ -3878,7 +3886,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         state.mainContainer = this.createMainWindow(catalogType);
 
-        if(catalogType === 'BUILDERS_CLUB')
+        if(catalogType === CatalogType.BUILDER)
         {
             state.mainContainer.height += 15;
         }
@@ -4076,7 +4084,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 this.toggleCatalog('NORMAL');
                 break;
             case HabboToolbarIconEnum.BUILDER:
-                this.toggleCatalog('BUILDERS_CLUB');
+                this.toggleCatalog(CatalogType.BUILDER);
                 break;
         }
     };
