@@ -56,6 +56,8 @@ import {ColorTransitioner} from '@room/utils/ColorTransitioner';
 import type {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObjectUpdateEvent';
+import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
+import {RoomWidgetRoomObjectPlaceEvent} from './widget/events/RoomWidgetRoomObjectPlaceEvent';
 import {InfoStandWidgetHandler} from './handler/InfoStandWidgetHandler';
 import {RoomToolsWidgetHandler} from './handler/RoomToolsWidgetHandler';
 import {EffectsWidgetHandler} from './handler/EffectsWidgetHandler';
@@ -1649,6 +1651,24 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineObjectEvent.REOE_DESELECTED:
                 translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
                 break;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() ("REOE_PLACED") — the one arm of this
+            // switch that builds a *subclass* of the update event, because where the thing landed
+            // and who started the drag do not fit the four fields the base carries.
+            case RoomEngineObjectEvent.REOE_PLACED:
+            {
+                const placed = event as RoomEngineObjectPlacedEvent;
+                const placeEvent = new RoomWidgetRoomObjectPlaceEvent(
+                    RoomWidgetRoomObjectPlaceEvent.OBJECT_PLACED,
+                    event.objectId, event.category, event.roomId,
+                    placed.wallLocation, placed.x, placed.y, placed.z, placed.direction,
+                    placed.placedInRoom, placed.placedOnFloor, placed.placedOnWall,
+                    placed.instanceData, placed.placementSource
+                );
+
+                this._desktopEvents.emit(placeEvent.type, placeEvent);
+
+                return;
+            }
             case RoomEngineObjectEvent.REOE_ADDED:
                 translatedType = event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
                     ? RoomWidgetRoomObjectUpdateEvent.USER_ADDED

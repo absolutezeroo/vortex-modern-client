@@ -24,6 +24,9 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import {RoomWidgetRoomObjectUpdateEvent} from '../events/RoomWidgetRoomObjectUpdateEvent';
+import type {RoomWidgetRoomObjectPlaceEvent} from '../events/RoomWidgetRoomObjectPlaceEvent';
+import {PlaceObjectFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceObjectFromCatalogComposer';
+import {PlaceWallItemFromCatalogComposer} from '@habbo/communication/messages/outgoing/catalog/PlaceWallItemFromCatalogComposer';
 import {RoomWidgetFurniInfoUpdateEvent} from '../events/RoomWidgetFurniInfoUpdateEvent';
 import type {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
 import type {RoomWidgetPetInfoUpdateEvent} from '../events/RoomWidgetPetInfoUpdateEvent';
@@ -51,6 +54,7 @@ import {InfoStandPetData} from './InfoStandPetData';
 import {InfoStandRentableBotData} from './InfoStandRentableBotData';
 import type {RoomWidgetRentableBotInfoUpdateEvent} from '../events/RoomWidgetRentableBotInfoUpdateEvent';
 import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 
 export class InfoStandWidget extends RoomWidgetBase
 {
@@ -681,11 +685,42 @@ export class InfoStandWidget extends RoomWidgetBase
         }
     }
 
+    /**
+     * The Builder's Club "place from the info stand" drop.
+     *
+     * `placementSource` is what makes this safe to run on every placement: the same event reaches
+     * every widget, and only a drag this widget started through `requestItemToMover()` carries
+     * `info_stand`. Note the *negative* offer id AS3 sends — `-1` for the page, and the bcOfferId
+     * for the offer — and that the placement is not cancelled when the category does not match,
+     * only skipped: `requestItemToMover()` still runs, re-arming the mover for the next drag.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectPlaced()
-    // TODO(AS3): the Builder's Club "place from infostand" flow (BuildersClubPlaceRoomItemMessageComposer
-    // / BuildersClubPlaceWallItemMessageComposer) isn't ported yet — out of scope for the furni-only port.
-    private onRoomObjectPlaced = (_event: unknown): void =>
+    private onRoomObjectPlaced = (event: RoomWidgetRoomObjectPlaceEvent): void =>
     {
+        if(event.placementSource !== 'info_stand' || !event.placedInRoom) return;
+
+        const connection = this.handler.container?.connection ?? null;
+        const furniData = this._furniData;
+
+        switch(event.category)
+        {
+            case RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE:
+                if(!event.placedOnFloor) return;
+
+                connection?.send(new PlaceObjectFromCatalogComposer(
+                    -1, furniData.bcOfferId, furniData.extraParam, event.x, event.y, event.direction
+                ));
+                break;
+            case RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL:
+                if(!event.placedOnWall) return;
+
+                connection?.send(new PlaceWallItemFromCatalogComposer(
+                    -1, furniData.bcOfferId, furniData.extraParam, event.wallLocation
+                ));
+                break;
+        }
+
+        this.requestItemToMover();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::requestItemToMover()
