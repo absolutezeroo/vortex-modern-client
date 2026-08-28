@@ -7,9 +7,15 @@ const log = Logger.getLogger('core.runtime.DefaultErrorReporter');
 /**
  * Default error reporter implementation.
  *
- * Logs errors via the Logger system. Equivalent to AS3 class_516.
+ * Logs errors via the Logger system.
  *
- * @see sources/win63_version/core/runtime/class_516.as
+ * DEVIATION: AS3 has no reporter layer. `CoreComponentContext` holds an `ICoreErrorLogger`
+ * directly and calls `logError()` on it; `ConsoleCoreErrorReporter` is the only implementation and
+ * it forwards to `Logger.log`. This port inserted `ICoreErrorReporter` between the two so the
+ * context can be handed a reporter that owns its own logger. Same behaviour, one more indirection
+ * — the class this stands in for is the one traced below.
+ *
+ * AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/ConsoleCoreErrorReporter.as
  */
 export class DefaultErrorReporter implements ICoreErrorReporter
 {

@@ -6,7 +6,7 @@ import {TriggerDefinition} from '@habbo/communication/messages/incoming/userdefi
  * Parser for the wired-furni "trigger" configuration push: builds the {@link TriggerDefinition}
  * describing the trigger currently being edited on a wired furni.
  *
- * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/WiredFurniTriggerMessageParser.as
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/userdefinedroomevents/_SafeCls_3804.as
  */
 export class WiredFurniTriggerMessageParser implements IMessageParser
 {

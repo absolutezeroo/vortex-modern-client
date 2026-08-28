@@ -9,9 +9,9 @@
  * Class identity: obfuscated in the primary tree as
  * `sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as`.
  * Recovered as `FurnitureDynamicThumbnailVisualization` from the unobfuscated
- * `sources/PRODUCTION-201601012205-226667486/.../FurnitureDynamicThumbnailVisualization.as`, whose
+ * `sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as`, whose
  * shape matches `_SafeCls_1874` exactly (the `getThumbnailURL()` "must be overridden" contract, the
- * `updateModel()` load-on-change logic); corroborated by `sources/win63_version/.../class_2189.as`.
+ * `updateModel()` load-on-change logic); corroborated by `sources/win63_version/habbo/room/object/visualization/furniture/class_2189.as`.
  * PRODUCTION is 2016 and cited for the name only - the body ported below is WIN63's.
  *
  * AS3 loads with `flash.display.Loader` + `LoaderContext(checkPolicyFile)` (Flash's cross-domain
@@ -31,12 +31,12 @@ const log = Logger.getLogger('habbo.room.object.visualization.furniture.Furnitur
 
 export class FurnitureDynamicThumbnailVisualization extends FurnitureThumbnailVisualization
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as::_SafeStr_7236
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as::_SafeStr_7236
     // Obfuscated field with no recoverable name; holds the URL of the thumbnail currently
     // loaded/loading, so a repeat with the same URL is skipped.
     private _lastThumbnailUrl: string | null = null;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as::updateModel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as::updateModel()
     protected override updateModel(scale: number): boolean
     {
         if(this.object !== null)
@@ -61,13 +61,13 @@ export class FurnitureDynamicThumbnailVisualization extends FurnitureThumbnailVi
         return super.updateModel(scale);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as::getThumbnailURL()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as::getThumbnailURL()
     protected getThumbnailURL(): string | null
     {
         throw new Error('[FurnitureDynamicThumbnailVisualization] getThumbnailURL() must be overridden!');
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as::updateModel() Loader construction
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as::updateModel() Loader construction
     private loadThumbnail(url: string): void
     {
         const image = new Image();
@@ -79,13 +79,13 @@ export class FurnitureDynamicThumbnailVisualization extends FurnitureThumbnailVi
         image.src = url;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as::onThumbnailLoaded()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as::onThumbnailLoaded()
     private onThumbnailLoaded(image: HTMLImageElement): void
     {
         this.setThumbnailImages(Texture.from(image));
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureDynamicThumbnailVisualization.as::onThumbnailError()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1874.as::onThumbnailError()
     private static onThumbnailError(url: string): void
     {
         log.warn(`External Image thumbnail download error: ${url}`);

@@ -40,7 +40,7 @@ export interface IVortexMain extends IDisposable
 	 * @param application - The PixiJS Application (created by Vortex shell)
 	 * @param config - Optional Vortex configuration
 	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as prepareCore()
 	 */
     init(application: Application, config?: IVortexConfig): Promise<void>;
 
@@ -51,7 +51,7 @@ export interface IVortexMain extends IDisposable
 	 * Config → Communication → Demo → Localization → RoomManager → RoomSessionManager
 	 * → SessionDataManager → Navigator → Inventory → RoomEngine → RoomMessageHandler
 	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as prepareCore()
 	 */
     prepareCore(config?: IVortexConfig): Promise<void>;
 

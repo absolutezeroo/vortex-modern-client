@@ -7,7 +7,7 @@
  * In the web version, implementations can use localStorage, IndexedDB,
  * or other persistent storage mechanisms.
  *
- * @see sources/win63_version/core/utils/class_67.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_53.as
  */
 export interface IFileProxy
 {

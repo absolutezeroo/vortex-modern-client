@@ -6,7 +6,7 @@ import type {IWidget} from './IWidget';
  * Renders an avatar figure with configurable direction, scale, cropping,
  * and head-only mode. Supports click-to-profile navigation via userId.
  *
- * @see sources/win63_version/habbo/window/widgets/IAvatarImageWidget.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/_SafeCls_2592.as
  */
 export interface IAvatarImageWidget extends IWidget
 {

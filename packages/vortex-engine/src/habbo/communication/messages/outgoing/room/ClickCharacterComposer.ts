@@ -8,7 +8,7 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  * answers with whatever the avatar's click is worth in the current room (a wired trigger, a
  * game interaction), so nothing here waits on a reply.
  *
- * The name is recovered from `sources/win63_version/.../outgoing/room/class_3165.as`, which is
+ * The name is recovered from `sources/win63_version/habbo/communication/messages/outgoing/room/class_3165.as`, which is
  * unobfuscated; the primary tree carries the same class as `_SafeCls_2770`.
  */
 export class ClickCharacterComposer extends MessageComposer<[number]>

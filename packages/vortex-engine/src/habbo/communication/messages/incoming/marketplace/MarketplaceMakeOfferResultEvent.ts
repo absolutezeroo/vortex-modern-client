@@ -3,7 +3,7 @@ import type {IMessageEvent, MessageEventCallback} from '@core/communication/mess
 import {MarketplaceMakeOfferResultParser} from '../../parser/marketplace/MarketplaceMakeOfferResultParser';
 
 /**
- * @see sources/win63_version/habbo/communication/messages/incoming/marketplace/MarketplaceMakeOfferResultEvent.as
+ * @see sources/win63_version/habbo/communication/messages/incoming/marketplace/MarketplaceMakeOfferResult.as
  */
 export class MarketplaceMakeOfferResultEvent extends MessageEvent implements IMessageEvent
 {

@@ -100,7 +100,7 @@ export class IntArrayStuffData extends StuffDataBase implements IStuffData
         return -1;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/IntArrayStuffData.as::setArray()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/_SafeCls_3629.as::setArray()
     setArray(data: number[]): void
     {
         this._data = data;

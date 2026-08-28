@@ -4,7 +4,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  * One ingredient line of a crafting recipe: how many of a furniture class are needed.
  *
  * Class name (typo included) recovered from
- * `sources/PRODUCTION-201601012205-226667486/.../incoming/crafting/CraftinRecipeIngredientParser.as`
+ * `sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/crafting/CraftinRecipeIngredientParser.as`
  * (2016: field was `itemName`). The 2026 primary tree kept the shape and renamed the field to
  * `furnitureClassName` — this class follows the primary tree's field and read order.
  *

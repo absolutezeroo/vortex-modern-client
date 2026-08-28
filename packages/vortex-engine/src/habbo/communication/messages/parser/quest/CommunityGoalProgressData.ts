@@ -3,7 +3,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 /**
  * Represents community goal progress data.
  *
- * @see sources/win63_version/habbo/communication/messages/incoming/quest/class_1678.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4497.as
  */
 export class CommunityGoalProgressData
 {

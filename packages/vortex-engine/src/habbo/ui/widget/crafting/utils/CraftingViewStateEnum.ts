@@ -2,7 +2,7 @@
  * The state ids `CraftingInfoController.setState()` switches on.
  *
  * Class name recovered from
- * `sources/PRODUCTION-201601012205-226667486/.../ui/widget/crafting/utils/CraftingViewStateEnum.as`
+ * `sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/ui/widget/crafting/utils/CraftingViewStateEnum.as`
  * (same value set, 0-9/999/1000, in both trees). `DEFAULT_VIEW`, `RECIPE_EMPTY`,
  * `RECIPE_INCOMPLETE`, `RECIPE_COMPLETE`, `ITEM_NOT_IN_INVENTORY`, `STATE_CRAFTING_RESULT_OK` and
  * `STATE_WORKING` are readable in the primary tree's own `_SafeCls_3039.as`; the five mixer-state

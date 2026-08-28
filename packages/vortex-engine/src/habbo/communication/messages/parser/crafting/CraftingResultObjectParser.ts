@@ -5,7 +5,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  * class it produces. Shared by `CraftableProductsMessageEventParser` (the craftable-products list)
  * and `CraftingResultMessageEventParser` (the finished item).
  *
- * Class name recovered from `sources/PRODUCTION-201601012205-226667486/.../incoming/crafting/CraftingResultObjectParser.as`
+ * Class name recovered from `sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/incoming/crafting/CraftingResultObjectParser.as`
  * (2016: `recipeName`/`itemName` only). The 2026 primary tree kept the shape but renamed the two
  * fields and added `productCode` — this class follows the primary tree's fields and read order.
  *

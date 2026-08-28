@@ -12,7 +12,10 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  * `BadgesModel.updateBadge()` needs to keep a badge's rarity bracket current.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2010/_SafeCls_3576.as
- * (name recovered from sources/win63_version/.../incoming/notifications/class_1681.as)
+ *
+ * The class name is DERIVED, not recovered: `AchievementNotificationData` appears nowhere in
+ * `win63_version` (the file this header used to cite does not exist there), and the primary tree
+ * has only `_SafeCls_3576`. It is named after what it carries.
  */
 export class AchievementNotificationData
 {

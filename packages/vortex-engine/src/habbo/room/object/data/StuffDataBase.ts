@@ -63,13 +63,13 @@ export abstract class StuffDataBase implements IStuffData
         return -1;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/StuffDataBase.as::get contentsCount()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/_SafeCls_1944.as::get contentsCount()
     get contentsCount(): number
     {
         return 0;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/StuffDataBase.as::get chestName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/_SafeCls_1944.as::get chestName()
     get chestName(): string
     {
         return '';

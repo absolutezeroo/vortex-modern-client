@@ -564,7 +564,7 @@ export class Vortex implements IVortex
 	 * 4. HabboAirMain.addInitializationProgressListeners() — track progress
 	 *
 	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as tryInit(), finalizePreloading()
-	 * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as prepareCore()
 	 */
     async init(config?: IVortexConfig, loadingScreen?: IVortexLoadingScreen): Promise<void>
     {
@@ -697,7 +697,7 @@ export class Vortex implements IVortex
     /**
 	 * Handle browser unload event.
 	 *
-	 * @see sources/win63_2021_version/HabboAirMain.as unloading()
+	 * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as unloading()
 	 */
     // AS3: .../src/binaryData/HabboAir.as::unloading()
     unloading(): void

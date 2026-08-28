@@ -5,7 +5,7 @@ import type {IPalette} from './figure/IPalette';
 /**
  * Interface for figure data providing access to set types, palettes, and part sets.
  *
- * @see sources/win63_version/habbo/avatar/structure/class_3360.as (IFigureData)
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/structure/_SafeCls_2201.as (IFigureData)
  */
 export interface IFigureData
 {

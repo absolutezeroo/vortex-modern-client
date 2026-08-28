@@ -5,7 +5,7 @@ import {CompetitionEntryData} from './CompetitionEntryData';
 /**
  * Parses competition entry prizes from the server.
  *
- * @see sources/win63_version/habbo/communication/messages/parser/quest/class_1139.as
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/quest/_SafeCls_4396.as
  */
 export class CompetitionEntryMessageParser implements IMessageParser
 {

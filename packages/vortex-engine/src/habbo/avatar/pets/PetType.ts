@@ -1,7 +1,7 @@
 /**
  * Pet type identifiers.
  *
- * @see sources/win63_version/habbo/avatar/pets/class_3580.as (PetType)
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/pets/_SafeCls_3584.as (PetType)
  */
 export class PetType
 {

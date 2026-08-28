@@ -10,9 +10,9 @@
  * Class identity: obfuscated in the primary tree as
  * `sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as`.
  * Recovered as `FurnitureThumbnailVisualization` from the unobfuscated
- * `sources/PRODUCTION-201601012205-226667486/.../FurnitureThumbnailVisualization.as`, whose member
+ * `sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as`, whose member
  * set matches `_SafeCls_1873` exactly (down to the `THUMBNAIL_SPRITE_TAG` constant and every method
- * body); corroborated structurally by `sources/win63_version/.../class_1866.as` (same obfuscation
+ * body); corroborated structurally by `sources/win63_version/habbo/room/object/visualization/furniture/class_1866.as` (same obfuscation
  * scheme, same members, different meaningless name). PRODUCTION is 2016 and cited for the name
  * only, never for behavior — the body ported below is WIN63's.
  */
@@ -22,12 +22,12 @@ import {AnimatedFurnitureVisualization} from './AnimatedFurnitureVisualization';
 
 export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualization
 {
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::THUMBNAIL_SPRITE_TAG
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::THUMBNAIL_SPRITE_TAG
     protected static readonly THUMBNAIL_SPRITE_TAG: string = 'THUMBNAIL';
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::_thumbnailAssetNameSmall
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::_thumbnailAssetNameSmall
     private _thumbnailAssetNameSmall: string | null = null;
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::_thumbnailAssetNameNormal
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::_thumbnailAssetNameNormal
     private _thumbnailAssetNameNormal: string | null = null;
     // Obfuscated field with no recoverable name (_SafeStr_8963 in primary, var_4132 in
     // win63_version) - name kept consistent with the identical member already ported in
@@ -42,19 +42,19 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
     private _lastDirection: number = 0;
     private _needsRefresh: boolean = false;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::set hasOutline()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::set hasOutline()
     set hasOutline(value: boolean)
     {
         this._hasOutline = value;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::get hasThumbnailImage()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::get hasThumbnailImage()
     get hasThumbnailImage(): boolean
     {
         return this._thumbnailImageNormal !== null;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::setThumbnailImages()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::setThumbnailImages()
     setThumbnailImages(normal: Texture | null, small: Texture | null = null): void
     {
         this._thumbnailImageNormal = normal;
@@ -62,7 +62,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         this._needsRefresh = true;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::updateModel()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::updateModel()
     protected override updateModel(scale: number): boolean
     {
         const result = super.updateModel(scale);
@@ -82,7 +82,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         return true;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::refreshThumbnail()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::refreshThumbnail()
     private refreshThumbnail(): void
     {
         if(this.assetCollection === null)
@@ -106,7 +106,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         this._lastDirection = this.direction;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::addThumbnailAsset()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::addThumbnailAsset()
     private addThumbnailAsset(texture: Texture, size: number): void
     {
         const collection = this.assetCollection;
@@ -138,7 +138,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         }
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::clearThumbnailSpriteAssets()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::clearThumbnailSpriteAssets()
     private clearThumbnailSpriteAssets(): void
     {
         for(let i = 0; i < this.spriteCount; i++)
@@ -161,7 +161,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
 	 * `source-in` composite, then drawing that silhouette instead of the source at the four
 	 * offset positions.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::generateTransformedThumbnail()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::generateTransformedThumbnail()
     private generateTransformedThumbnail(sourceTexture: Texture, targetAsset: IGraphicAsset): Texture
     {
         const sourceElement = FurnitureThumbnailVisualization.getDrawableSource(sourceTexture);
@@ -263,7 +263,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         return resource;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::getSpriteAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::getSpriteAssetName()
     protected override getSpriteAssetName(scale: number, layerIndex: number): string
     {
         if(this._thumbnailImageNormal === null || this.getSpriteTag(scale, this.direction, layerIndex) !== FurnitureThumbnailVisualization.THUMBNAIL_SPRITE_TAG)
@@ -274,7 +274,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         return this.getThumbnailAssetName(scale);
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::getThumbnailAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::getThumbnailAssetName()
     protected getThumbnailAssetName(size: number): string
     {
         if(this._thumbnailAssetNameSmall === null)
@@ -288,7 +288,7 @@ export class FurnitureThumbnailVisualization extends AnimatedFurnitureVisualizat
         return size === 32 ? this._thumbnailAssetNameSmall : this._thumbnailAssetNameNormal!;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureThumbnailVisualization.as::getFullThumbnailAssetName()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/_SafeCls_1873.as::getFullThumbnailAssetName()
     protected getFullThumbnailAssetName(objectId: number, size: number): string
     {
         return [this.type, objectId, 'thumb', size].join('_');

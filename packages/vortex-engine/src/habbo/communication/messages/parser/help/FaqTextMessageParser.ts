@@ -5,9 +5,11 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  * Parser for the answer text of a single FAQ question, sent in response to
  * GetFaqTextMessageComposer(questionId).
  *
- * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/communication/messages/parser/help/FaqTextMessageParser.as
- *      (name recovered via sources/PRODUCTION-201601012205-226667486/OriginalClassNames.txt; exact field match with
- *      sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as)
+ * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/messages/parser/help/_SafeCls_4068.as
+ *
+ * The name is RECOVERED, but not from a file: `PRODUCTION-201601012205-226667486` has no
+ * `help/FaqTextMessageParser.as` — it is `OriginalClassNames.txt` in that tree's root that carries
+ * the mapping, and the fields of `_SafeCls_4068` match it exactly.
  */
 export class FaqTextMessageParser implements IMessageParser 
 {

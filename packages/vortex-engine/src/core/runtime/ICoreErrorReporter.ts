@@ -5,7 +5,8 @@ import type {ICoreErrorLogger} from './ICoreErrorLogger';
  *
  * Reports errors from the core runtime to an optional external logger.
  *
- * @see sources/win63_version/core/runtime/ICoreErrorReporter.as
+ * TS-only: no AS3 counterpart in any tree. AS3's `CoreComponentContext` holds an `ICoreErrorLogger`
+ * directly — see `DefaultErrorReporter`'s own DEVIATION note for why this interface exists.
  */
 export interface ICoreErrorReporter
 {

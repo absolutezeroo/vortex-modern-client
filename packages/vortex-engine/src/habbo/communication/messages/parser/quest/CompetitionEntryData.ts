@@ -3,7 +3,7 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
 /**
  * Represents a competition entry with user ranking and reward information.
  *
- * @see sources/win63_version/habbo/communication/messages/incoming/quest/class_1760.as
+ * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1976/_SafeCls_4479.as
  */
 export class CompetitionEntryData
 {

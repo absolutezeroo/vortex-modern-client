@@ -113,7 +113,7 @@ const log = Logger.getLogger('VortexMain');
  * Follows the AS3 pattern where HabboAirMain.as orchestrates the engine
  * while HabboAir.as acts as the application shell.
  *
- * @see sources/win63_2021_version/HabboAirMain.as
+ * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as
  */
 export class VortexMain implements IVortexMain 
 {
@@ -121,7 +121,7 @@ export class VortexMain implements IVortexMain
      * Ratio of progress bar dedicated to core/SWF loading (0.0 to CORE_RATIO).
      * The remaining (CORE_RATIO to 1.0) is for initialization steps.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as::CORE_RATIO
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::CORE_RATIO
      */
     // AS3: .../src/binaryData/HabboAir.as::CORE_RATIO
     private static readonly CORE_RATIO: number = 0.6;
@@ -132,7 +132,7 @@ export class VortexMain implements IVortexMain
      * 2. Localization loaded
      * 3. All components ready (core running / COMPONENT_EVENT_RUNNING)
      *
-     * @see sources/win63_2021_version/HabboAirMain.as::INIT_STEPS
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::INIT_STEPS
      */
     // AS3: .../src/binaryData/HabboAir.as::INIT_STEPS
     private static readonly INIT_STEPS: number = 3;
@@ -155,7 +155,7 @@ export class VortexMain implements IVortexMain
      * PixiJS Application reference.
      * Passed in from Vortex shell (which owns the Application).
      *
-     * @see sources/win63_2021_version/HabboAirMain.as (uses stage from HabboAir)
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as (uses stage from HabboAir)
      */
     private _application: Application | null = null;
     private _heartbeatTimer: ReturnType<typeof setInterval> | null = null;
@@ -165,27 +165,27 @@ export class VortexMain implements IVortexMain
      * AS3: HabboAirMain receives _loadingScreen from HabboAir constructor.
      * Calls _loadingScreen.updateLoadingBar(progress) during initialization.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as _loadingScreen
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as _loadingScreen
      */
     // AS3: .../src/binaryData/HabboAir.as::_loadingScreen
     private _loadingScreen: IVortexLoadingScreen | null = null;
     /**
      * Number of completed initialization steps.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as _completedInitSteps
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as _completedInitSteps
      */
     // AS3: .../src/binaryData/HabboAir.as::_completedInitSteps
     private _completedInitSteps: number = 0;
     /**
      * Whether the room engine has finished initialization.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_412
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as _SafeStr_412
      */
     private _roomEngineReady: boolean = false;
     /**
      * Whether all core components are running.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as _SafeStr_413
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as _SafeStr_413
      */
     private _coreRunning: boolean = false;
     /**
@@ -218,7 +218,7 @@ export class VortexMain implements IVortexMain
      *
      * @param loadingScreen - Loading screen to update during initialization
      *
-     * @see sources/win63_2021_version/HabboAirMain.as constructor
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as constructor
      */
     constructor(loadingScreen?: IVortexLoadingScreen | null) 
     {
@@ -228,7 +228,7 @@ export class VortexMain implements IVortexMain
     /**
      * Asset library reference (created in prepareCore).
      *
-     * @see sources/win63_2021_version/HabboAirMain.as (AssetLibrary is a core component)
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as (AssetLibrary is a core component)
      */
     private _assets: AssetLibrary | null = null;
 
@@ -513,7 +513,7 @@ export class VortexMain implements IVortexMain
      * @param application - The PixiJS Application (created by Vortex shell)
      * @param config - Optional Vortex configuration
      *
-     * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as prepareCore()
      */
     async init(application: Application, config?: IVortexConfig): Promise<void>
     {
@@ -530,7 +530,7 @@ export class VortexMain implements IVortexMain
     /**
      * Dispose engine resources.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as dispose()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as dispose()
      */
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::dispose()
     dispose(): void 
@@ -605,7 +605,7 @@ export class VortexMain implements IVortexMain
      * AS3: HabboAirMain.prepareCore() calls Core.instantiate(stage, 1, reporter, dict),
      * then registers all component libraries via _core.prepareComponent().
      *
-     * @see sources/win63_2021_version/HabboAirMain.as prepareCore()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as prepareCore()
      */
     // AS3: .../src/binaryData/HabboAir.as::prepareCore()
     async prepareCore(config?: IVortexConfig): Promise<void> 
@@ -1111,7 +1111,7 @@ export class VortexMain implements IVortexMain
      * Delegates to CoreComponentContext.update() which handles
      * priority-based update receivers, hibernation throttling, and reboot.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as (ticker integration)
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as (ticker integration)
      */
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::update()
     private update(ticker: Ticker): void
@@ -1152,7 +1152,7 @@ export class VortexMain implements IVortexMain
      * here; the rest of AS3's `dispose()` has no TS equivalent to tear down.
      *
      * @see sources/PRODUCTION-201601012205-226667486/src/HabboMain.as::onExitFrame()
-     * @see sources/win63_2023_version/HabboAirMain.as::onExitFrame()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::onExitFrame()
      */
     // AS3: .../src/binaryData/HabboAir.as::onExitFrame()
     private onExitFrame(): void 
@@ -1177,7 +1177,7 @@ export class VortexMain implements IVortexMain
      * - IIDRoomEngine → events "REE_ENGINE_INITIALIZED" → onRoomEngineReady
      * - _core.events "COMPONENT_EVENT_RUNNING" → onCoreRunning
      *
-     * @see sources/win63_2021_version/HabboAirMain.as addInitializationProgressListeners()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as addInitializationProgressListeners()
      */
     // AS3: .../src/binaryData/HabboAir.as::addInitializationProgressListeners()
     private addInitializationProgressListeners(): void 
@@ -1314,7 +1314,7 @@ export class VortexMain implements IVortexMain
      * Progress formula: CORE_RATIO + (completedInitSteps / INIT_STEPS) * (1 - CORE_RATIO)
      * Maps init steps to the [0.6 - 1.0] range.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as updateProgressBar()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as updateProgressBar()
      */
     // AS3: .../src/binaryData/HabboAir.as::updateProgressBar()
     private updateProgressBar(): void 
@@ -1330,7 +1330,7 @@ export class VortexMain implements IVortexMain
     /**
      * Called when the configuration manager has loaded.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as onConfigurationComplete()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as onConfigurationComplete()
      */
     // AS3: .../src/binaryData/HabboAir.as::onConfigurationComplete()
     private onConfigurationComplete(): void 
@@ -1343,7 +1343,7 @@ export class VortexMain implements IVortexMain
     /**
      * Called when the localization manager has finished loading.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as onLocalizationComplete()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as onLocalizationComplete()
      */
     // AS3: .../src/binaryData/HabboAir.as::onLocalizationComplete()
     private onLocalizationComplete(): void 
@@ -1370,7 +1370,7 @@ export class VortexMain implements IVortexMain
      * AS3: Sets _SafeStr_412 = true, starts heartbeat if spaweb=1.
      * When both _roomEngineReady and _coreRunning are true, the init is complete.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as onRoomEngineReady()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as onRoomEngineReady()
      */
     // AS3: .../src/binaryData/HabboAir.as::onRoomEngineReady()
     private onRoomEngineReady(): void 
@@ -1387,7 +1387,7 @@ export class VortexMain implements IVortexMain
      * AS3: Sets _SafeStr_413 = true, increments completedInitSteps.
      * When both _roomEngineReady and _coreRunning are true, the init is complete.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as onCoreRunning()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as onCoreRunning()
      */
     // AS3: .../src/binaryData/HabboAir.as::onCoreRunning()
     private onCoreRunning(): void 
@@ -1404,7 +1404,7 @@ export class VortexMain implements IVortexMain
      * AS3: If config "spaweb=1", sends heartbeat every 10 seconds
      * via HabboWebTools to keep the session alive.
      *
-     * @see sources/win63_2021_version/HabboAirMain.as startSendingHeartBeat()
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as startSendingHeartBeat()
      */
     // AS3: .../src/binaryData/HabboAir.as::startSendingHeartBeat()
     private startSendingHeartBeat(): void 

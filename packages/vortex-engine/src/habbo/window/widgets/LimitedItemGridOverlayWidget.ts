@@ -32,11 +32,13 @@ export class LimitedItemGridOverlayWidget implements ILimitedItemGridOverlayWidg
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::SHINE_LENGTH_MS
     private readonly _shineLengthMs: number = 250;
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_widgetWindow
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_widgetWindow
+    // Derived name: obfuscated in every tree — the widget slot this overlay is attached to. Only
+    // `_disposed`, `_serialNumber` and `_windowManager` survived the obfuscator on this class.
     private _widgetWindow: IWidgetWindow | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_root
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_root
     private _root: IWindowContainer | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/LimitedItemGridOverlayWidget.as::_plaqueBitmap
     // Derived name: obfuscated in every tree — the window the plaque is drawn into.

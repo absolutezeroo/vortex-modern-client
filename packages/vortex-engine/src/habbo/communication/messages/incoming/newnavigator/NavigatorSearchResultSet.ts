@@ -31,7 +31,7 @@ export class NavigatorSearchResultSet
     /**
 	 * AS3 compatibility alias.
 	 *
-	 * @see sources/win63_version/habbo/communication/messages/incoming/newnavigator/class_1652.as
+	 * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1845/_SafeCls_1844.as
 	 */
     get searchCodeOriginal(): string
     {

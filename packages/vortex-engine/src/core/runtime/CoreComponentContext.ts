@@ -66,6 +66,10 @@ export class CoreComponentContext extends ComponentContext implements ICore
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/runtime/CoreComponentContext.as::NUM_UPDATE_RECEIVER_LEVELS
     private static readonly NUM_UPDATE_RECEIVER_LEVELS = 3;
 
+    /** How long boot gets before a still-locked component counts as stuck. See armLockedComponentReport(). */
+    // TS-only: no AS3 counterpart.
+    private static readonly LOCKED_REPORT_DELAY_MS = 15_000;
+
     /** Static file proxy instance (AS3: var_1203) */
     private static _fileProxy: IFileProxy | null = null;
 
@@ -181,6 +185,45 @@ export class CoreComponentContext extends ComponentContext implements ICore
                 log.debug('Core: using simple frame update handler (default)');
                 this._frameUpdateHandler = this.simpleFrameUpdateHandler.bind(this);
         }
+
+        this.armLockedComponentReport();
+    }
+
+    /**
+	 * One-shot: warn about every component still waiting on a required dependency once boot has
+	 * had long enough to finish.
+	 *
+	 * Only *required* dependencies lock a component, so anything still locked here is waiting on an
+	 * IID nothing provides — a component nobody registered, or an interface registered under a
+	 * different IID than the one requested. Neither throws, neither logs, and the symptom is a
+	 * feature that silently never appears.
+	 *
+	 * Armed from the constructor rather than from a call site so it fires for every host that boots
+	 * a core — the client, vortex-glaze, vortex-imager — without any of them opting in.
+	 */
+    // TS-only: no AS3 counterpart; AS3 resolves its dependency graph at compile time.
+    private armLockedComponentReport(): void
+    {
+        // ponytail: a fixed delay, not a "boot finished" signal — there isn't one to hook, and a
+        // dependency that takes longer than this to arrive is the bug being reported anyway.
+        const timer = setTimeout(() =>
+        {
+            if(this.disposed) return;
+
+            const locked = this.describeLockedComponents();
+
+            if(locked.length === 0) return;
+
+            log.warn(`${locked.length} component(s) still locked ${CoreComponentContext.LOCKED_REPORT_DELAY_MS / 1000}s after core start — each is waiting on a required dependency nothing provides, and its initComponent() will never run:`);
+
+            for(const {name, pending} of locked)
+            {
+                log.warn(`  ${name} — waiting on ${pending.length > 0 ? pending.join(', ') : '(no pending IID recorded; locked before its dependencies were queued)'}`);
+            }
+        }, CoreComponentContext.LOCKED_REPORT_DELAY_MS);
+
+        // Node hosts (vortex-imager) would otherwise keep the process alive for the delay.
+        (timer as unknown as {unref?: () => void}).unref?.();
     }
 
     /**
@@ -786,13 +829,13 @@ export class CoreComponentContext extends ComponentContext implements ICore
         return false;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/Core.as::get isCrashOnCriticalError()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_58.as::get isCrashOnCriticalError()
     private get isCrashOnCriticalError(): boolean
     {
         return this.getBoolean('error_handling.crash_on_critical_error');
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/Core.as::isExcludedFromCrash()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_58.as::isExcludedFromCrash()
     private isExcludedFromCrash(code: number): boolean
     {
         const excluded = this.getProperty('error_handling.exclude_crashing');
