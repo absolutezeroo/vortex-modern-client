@@ -8,6 +8,7 @@ import type {ICatalogPage} from './ICatalogPage';
 import type {ICatalogViewer} from './ICatalogViewer';
 import type {IPageLocalization} from './IPageLocalization';
 import {CatalogPage} from './CatalogPage';
+import {PageLocalization} from './PageLocalization';
 
 const log = Logger.getLogger('habbo.catalog.viewer.CatalogViewer');
 
@@ -177,12 +178,59 @@ export class CatalogViewer implements ICatalogViewer
         return this._currentPage;
     }
 
-    // TODO(AS3): sources/win63_version/habbo/catalog/viewer/CatalogViewer.as::showSearchResults()
-    // Builds a synthetic "search results" catalog page out of FurnitureOffer instances (one per
-    // found IFurnitureData) - FurnitureOffer isn't ported yet (it needs catalog.roomEngine +
-    // sendGetProductOffer, deferred alongside FurniProductContainer - see Offer.ts's port notes).
-    showSearchResults(_results: unknown[]): void
+    /**
+     * Replaces whatever the viewer is showing with a synthetic page of search results.
+     *
+     * The page has id -1 and is built by hand rather than fetched: there is no such page on the
+     * server. Its layout is the plain `default_3x3` grid and its header text is
+     * `${catalog.search.results}`, whose `count` and `needle` parameters `HabboCatalog` registers
+     * just before calling this.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::showSearchResults()
+    showSearchResults(results: IPurchasableOffer[]): void
     {
+        // AS3 dereferences `_catalog` unguarded; the viewer cannot exist without one.
+        if(this._catalog === null) return;
+
+        if(this._currentPage !== null)
+        {
+            if(this._currentPage.window !== null) this._container?.removeChild(this._currentPage.window);
+
+            this._currentPage.dispose();
+        }
+
+        const page = new CatalogPage(
+            this,
+            -1,
+            'default_3x3',
+            new PageLocalization(
+                ['catalog_header_roombuilder', 'credits_v3_teaser'],
+                ['${catalog.search.results}']
+            ),
+            results,
+            this._catalog,
+            false,
+            1
+        );
+
+        this._currentPage = page;
+
+        if(page.window !== null)
+        {
+            this._container?.addChild(page.window);
+
+            if(this._container !== null)
+            {
+                page.window.width = this._container.width;
+                page.window.height = this._container.height;
+            }
+        }
+        else
+        {
+            log.warn('[CatalogViewer] No window for page: <SEARCH>');
+        }
+
+        if(this._container !== null) this._container.visible = true;
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogViewer.as::get viewerTags()

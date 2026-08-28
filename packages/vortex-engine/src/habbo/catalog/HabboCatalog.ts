@@ -236,6 +236,8 @@ import {Product} from './viewer/Product';
 import {CatalogWindowState} from './CatalogWindowState';
 import {BuilderFurniPlaceableStatus} from './enum/BuilderFurniPlaceableStatus';
 import {CatalogType} from './enum/CatalogType';
+import {CatalogSearchEntry} from './search/CatalogSearchEntry';
+import {FurnitureOffer} from './viewer/FurnitureOffer';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
@@ -346,6 +348,32 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private _searchTimer: ReturnType<typeof setTimeout> | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_5194 (furniture data cache)
     private _furnitureDataCache: IFurnitureData[] | null = null;
+
+    /**
+     * The search index, rebuilt lazily whenever furni or product data changes.
+     *
+     * Derived name — AS3's `_searchEntries` is readable; the dirty flag beside it (`_SafeStr_6916`)
+     * is not, and is named for what it gates.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_searchEntries
+    /** AS3's literal cap on how many results the grid is handed. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::performSearch() (the literal 400)
+    private static readonly SEARCH_RESULT_LIMIT: number = 400;
+
+    /**
+     * Furni whose product description lives under a code other than their class name.
+     *
+     * AS3 declares it empty and this port keeps it empty: it is a hook the hotel's own build fills,
+     * not a table with contents to recover.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::SEARCH_PRODUCT_CODE_OVERRIDES_BY_FURNI_CLASS_NAME
+    private static readonly SEARCH_PRODUCT_CODE_OVERRIDES_BY_FURNI_CLASS_NAME: Record<string, string> = {};
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_searchEntries
+    private _searchEntries: CatalogSearchEntry[] = [];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6916
+    private _searchEntriesDirty: boolean = true;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6916 (search-index stale flag)
     private _searchIndexStale: boolean = true;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_pagesVisibleInBuilderMode
@@ -3818,6 +3846,19 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     };
 
+    /**
+     * Runs a catalog search: match the furni index, turn the hits into offers, show them, and
+     * narrow the navigator tree to the pages they live on.
+     *
+     * The 400 cap is AS3's own — a two-letter query can match most of the furni table, and the grid
+     * has to render every result it is handed.
+     *
+     * `excludedFromDynamic` and `availableForBuildersClub` do opposite jobs here: the normal catalog
+     * hides furni marked out of the dynamic listing, while the Builders Club catalog shows *only*
+     * what it may place. A Builders Club furni whose offer resolves to nothing still contributes its
+     * furni line to the navigator filter, which is how a whole line stays findable when no single
+     * item of it is purchasable.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::performSearch()
     private performSearch(query: string): void
     {
@@ -3827,10 +3868,200 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             this._searchTimer = null;
         }
 
-        if(query.length === 0) return;
+        if(this._furnitureDataCache === null || query === null || query.length === 0) return;
 
-        // CatalogNavigator.searchNodesWith matches against a lowercased haystack.
-        this.currentCatalogNavigator?.filter(query.trim().toLowerCase(), []);
+        const state = this.getCatalogState(this._catalogType);
+
+        if(state === null || state.catalogNavigator === null || state.catalogViewer === null
+            || state.mainContainer === null)
+        {
+            return;
+        }
+
+        this.ensureSearchEntries();
+
+        const furniLines: string[] = [];
+        const offers: IPurchasableOffer[] = [];
+        const pageIds = new Set<number>();
+        const needle = HabboCatalog.normalizeSearchText(query);
+
+        for(const entry of this._searchEntries)
+        {
+            const furniData = entry.furniData;
+
+            if(this._catalogType === CatalogType.BUILDER && !furniData.availableForBuildersClub) continue;
+
+            if(this._catalogType === CatalogType.NORMAL && furniData.excludedFromDynamic) continue;
+
+            if(!HabboCatalog.matchesSearchEntry(entry, needle)) continue;
+
+            const offer = this.createSearchResultOffer(entry);
+
+            if(offer !== null)
+            {
+                this.addMatchingNodesForOffer(offer.offerId, pageIds);
+
+                if(!HabboCatalog.isExcludedFromFurnitureSearchResults(furniData))
+                {
+                    offers.push(offer);
+
+                    if(offers.length >= HabboCatalog.SEARCH_RESULT_LIMIT) break;
+                }
+            }
+            else if(this._catalogType === CatalogType.BUILDER && furniData.furniLine !== '')
+            {
+                const furniLine = HabboCatalog.normalizeSearchText(furniData.furniLine);
+
+                if(furniLine.length > 0 && furniLines.indexOf(furniLine) < 0) furniLines.push(furniLine);
+            }
+        }
+
+        this.localization?.registerParameter('catalog.search.results', 'count', offers.length.toString());
+        this.localization?.registerParameter('catalog.search.results', 'needle', query);
+
+        const title = state.mainContainer.findChildByName('catalog.header.title');
+
+        if(title !== null) title.caption = '${catalog.search.header}';
+
+        state.catalogNavigator.deactivateCurrentNode();
+        state.catalogViewer.showSearchResults(offers);
+        state.catalogNavigator.filter(needle, furniLines, pageIds);
+    }
+
+    /**
+     * AS3: .../HabboCatalog.as::ensureSearchEntries()
+     *
+     * Rebuilds the index only when something invalidated it. Each entry's terms are normalised and
+     * de-duplicated here so a keystroke costs a substring scan and nothing else. The product name is
+     * only added once product data has arrived — before that, `getProductData()` would answer null
+     * for everything and bake a half-empty index.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::ensureSearchEntries()
+    private ensureSearchEntries(): void
+    {
+        if(!this._searchEntriesDirty) return;
+
+        this._searchEntries = [];
+
+        if(this._furnitureDataCache !== null)
+        {
+            for(const furniData of this._furnitureDataCache)
+            {
+                const productCode = HabboCatalog.resolveSearchProductCode(furniData);
+                let productName = '';
+
+                if(this._productDataReady && productCode !== null && productCode.length > 0)
+                {
+                    const productData = this.getProductData(productCode);
+
+                    if(productData !== null && productData.name !== null) productName = productData.name;
+                }
+
+                const terms: string[] = [];
+
+                HabboCatalog.addSearchTerm(terms, furniData.localizedName);
+                HabboCatalog.addSearchTerm(terms, productName);
+
+                this._searchEntries.push(new CatalogSearchEntry(furniData, terms, productCode));
+            }
+        }
+
+        this._searchEntriesDirty = false;
+    }
+
+    /**
+     * AS3: .../HabboCatalog.as::createSearchResultOffer()
+     *
+     * Returns null when no offer of the furni is reachable from the current navigator — that is the
+     * signal the caller uses to fall back to the furni line instead.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::createSearchResultOffer()
+    private createSearchResultOffer(entry: CatalogSearchEntry): FurnitureOffer | null
+    {
+        const furniData = entry.furniData;
+        const navigator = this.currentCatalogNavigator;
+        let offerId = -1;
+        let isRentOffer = false;
+
+        if(this._catalogType === CatalogType.BUILDER)
+        {
+            if(furniData.bcOfferId !== -1 && navigator?.getNodesByOfferId(furniData.bcOfferId, true) != null)
+            {
+                offerId = furniData.bcOfferId;
+            }
+        }
+        else if(furniData.purchaseOfferId !== -1
+            && navigator?.getNodesByOfferId(furniData.purchaseOfferId, true) != null)
+        {
+            offerId = furniData.purchaseOfferId;
+        }
+        else if(furniData.rentOfferId !== -1
+            && navigator?.getNodesByOfferId(furniData.rentOfferId, true) != null)
+        {
+            offerId = furniData.rentOfferId;
+            isRentOffer = true;
+        }
+
+        if(offerId === -1) return null;
+
+        return new FurnitureOffer(furniData, this, offerId, isRentOffer, entry.productCode);
+    }
+
+    /** Every page that carries this offer, so the navigator keeps it even if its name says nothing. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::addMatchingNodesForOffer()
+    private addMatchingNodesForOffer(offerId: number, pageIds: Set<number>): void
+    {
+        const nodes = this.currentCatalogNavigator?.getNodesByOfferId(offerId, true) ?? null;
+
+        if(nodes === null) return;
+
+        for(const node of nodes) pageIds.add(node.pageId);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::matchesSearchEntry()
+    private static matchesSearchEntry(entry: CatalogSearchEntry, needle: string): boolean
+    {
+        for(const term of entry.searchTerms)
+        {
+            if(term.indexOf(needle) >= 0) return true;
+        }
+
+        return false;
+    }
+
+    /** Normalises and de-duplicates as it goes, so the index never holds a blank or a repeat. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::addSearchTerm()
+    private static addSearchTerm(terms: string[], text: string): void
+    {
+        const normalized = HabboCatalog.normalizeSearchText(text);
+
+        if(normalized.length > 0 && terms.indexOf(normalized) < 0) terms.push(normalized);
+    }
+
+    /**
+     * Builders Club furni (`bc_` prefix) never appears among the *results*, only among the furni
+     * lines fed to the navigator — the placement widget is how they are reached.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::isExcludedFromFurnitureSearchResults()
+    private static isExcludedFromFurnitureSearchResults(furniData: IFurnitureData): boolean
+    {
+        return furniData.className !== null && furniData.className.indexOf('bc_') === 0;
+    }
+
+    /** Lower-casing only — AS3 does not strip separators here, unlike the navigator's own matcher. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::normalizeSearchText()
+    private static normalizeSearchText(text: string | null): string
+    {
+        if(text === null) return '';
+
+        return text.toLocaleLowerCase();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::resolveSearchProductCode()
+    private static resolveSearchProductCode(furniData: IFurnitureData): string
+    {
+        return HabboCatalog.SEARCH_PRODUCT_CODE_OVERRIDES_BY_FURNI_CLASS_NAME[furniData.className]
+            ?? furniData.className;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onClearSearch()

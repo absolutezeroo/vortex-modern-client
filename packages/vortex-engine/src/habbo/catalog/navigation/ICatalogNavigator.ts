@@ -55,8 +55,13 @@ export interface ICatalogNavigator
     // AS3: sources/win63_version/habbo/catalog/navigation/class_1737.as::deactivateCurrentNode()
     deactivateCurrentNode(): void;
 
-    // AS3: sources/win63_version/habbo/catalog/navigation/class_1737.as::filter()
-    filter(query: string, extraTerms: string[]): void;
+    /**
+     * The third argument is the set of page ids that already carry a matching offer — the primary
+     * tree's signature, which `win63_version` (the older revision this line used to cite) does not
+     * have. It defaults to null so a caller that only filters by name is unaffected.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/navigation/CatalogNavigator.as::filter()
+    filter(needle: string, furniLines: string[], pageIds?: Set<number> | null): void;
 
     // AS3: sources/win63_version/habbo/catalog/navigation/class_1737.as::get listTemplate()
     readonly listTemplate: IWindow;
