@@ -21,6 +21,7 @@ import type {HabboCatalog} from '../HabboCatalog';
 import {HabboCatalogUtils} from '../HabboCatalogUtils';
 import type {IPurchasableOffer} from '../IPurchasableOffer';
 import {Offer} from '../viewer/Offer';
+import {CatalogProductImages} from '../viewer/CatalogProductImages';
 import {ClubBuyOfferData} from '../club/ClubBuyOfferData';
 import {RentUtils} from '../viewer/widgets/utils/RentUtils';
 import {CatalogWidgetEvent} from '../viewer/widgets/events/CatalogWidgetEvent';
@@ -40,8 +41,6 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  * - the `nft_image` widget branch, so an NFT shows no preview. Its three sibling offer classes —
  *   GameTokensOffer, MintTokenPurchaseOffer and NftStorePurchaseOffer — are all handled: dark
  *   window, mint-token icon, and their own buy composers.
- * - `CatalogProductImages.hasProductImage()` / `PRODUCT_IMAGES`, the named-asset override that
- *   wins over a rendered preview for a handful of localization ids.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as
  */
@@ -338,6 +337,22 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
             this.setImage(previewImage);
 
             return;
+        }
+
+        // A named picture wins over any rendered preview, for the handful of offers that have one.
+        // AS3 falls through to the render when the asset is missing rather than showing nothing.
+        if(CatalogProductImages.hasProductImage(offer.localizationId))
+        {
+            const named = this._windowManager?.getAsset(
+                CatalogProductImages.PRODUCT_IMAGES[offer.localizationId]
+            ) ?? null;
+
+            if(named !== null)
+            {
+                this.setImage(named);
+
+                return;
+            }
         }
 
         const product = offer instanceof Offer ? offer.product : null;

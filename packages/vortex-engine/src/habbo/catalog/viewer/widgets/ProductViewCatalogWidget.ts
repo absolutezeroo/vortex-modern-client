@@ -8,6 +8,8 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
+import {AssetBitmap} from '@core/assets/AssetBitmap';
+import {CatalogProductImages} from '../CatalogProductImages';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
@@ -1031,9 +1033,22 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
             this._productImageWidgetContainer.visible = false;
         }
 
-        // TODO(AS3): class_3172/ProductImageConfiguration's pre-rendered special-product image
-        // table isn't ported - always falls through to the pricing-model preview below.
-        const {mode, canRotate} = this.renderPreviewForPricingModel(offer);
+        // A named picture replaces the whole pricing-model preview, room canvas included, for the
+        // handful of offers CatalogProductImages knows about. AS3 leaves its two preview-mode
+        // locals at their declared defaults here, so the call below still runs with 0/false.
+        let mode = 0;
+        let canRotate = false;
+
+        if(CatalogProductImages.hasProductImage(offer.localizationId))
+        {
+            this.setPreviewFromAsset(CatalogProductImages.PRODUCT_IMAGES[offer.localizationId]);
+
+            if(this._roomCanvasContainer != null) this._roomCanvasContainer.visible = false;
+        }
+        else
+        {
+            ({mode, canRotate} = this.renderPreviewForPricingModel(offer));
+        }
 
         this.setPreviewMode(mode, canRotate);
 
@@ -1386,6 +1401,34 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::imageFailed()
     imageFailed(_id: number): void
     {
+    }
+
+    /**
+     * Shows a named gallery image as the preview, downloading it first if the library has not got
+     * it yet — AS3's `retrievePreviewAsset()` is the same one-shot fetch `setImageFromAsset()`
+     * already wraps, so the re-entry after the download does the actual drawing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewFromAsset()
+    private setPreviewFromAsset(assetName: string): void
+    {
+        const catalog = this._catalog;
+
+        if(!assetName || catalog == null) return;
+
+        const asset = catalog.assets?.getAssetByName(assetName) ?? null;
+
+        if(asset == null)
+        {
+            // AS3: retrievePreviewAsset() - no target, the callback re-enters once it lands.
+            catalog.setImageFromAsset(null, assetName, () =>
+            {
+                if(!this.disposed) this.setPreviewFromAsset(assetName);
+            });
+
+            return;
+        }
+
+        this.setPreviewImage(AssetBitmap.resolveSync(asset.content));
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::setPreviewImage()
