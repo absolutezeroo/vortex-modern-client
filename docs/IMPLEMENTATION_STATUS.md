@@ -3940,6 +3940,50 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     transcribed as written: AS3 *pops* the input array empty, unshifting highlighted tags to the
     front and pushing the rest to the back, which reverses the non-highlighted ones.
 
+  - 🐛 **The classic me-menu opened the wrong thing.** `AvatarInfoWidgetHandler.onToolbarClicked()`
+    called `selectOwnAvatar()` unconditionally; AS3 branches on `simple.memenu.enabled` and
+    otherwise dispatches the player's own identity as RWAIE_AVATAR_INFO, which leads to
+    `AvatarContextInfoButtonView` — the small bubble that opens the real menu when clicked, with
+    the "avatar" hint and a five-second highlight timer. Three event classes had to be ported
+    first (`RoomWidgetAvatarInfoEvent`, `RoomWidgetUserDataUpdateEvent`,
+    `RoomWidgetInventoryUpdatedMessage`), which is why none of it could be wired.
+  - 🐛 **A friend walking into the room got no name bubble.** `showUserName()` was complete and
+    callable and nothing called it: the trigger is the RSUDUE arm of the same handler's
+    `processEvent()`, which the port did not subscribe at all. That arm also marks newly-arrived
+    blocked users on their room object — the blocked list is per-account and the room object is
+    per-visit, so it has to be applied per arrival, not once.
+  - 🐛 **Decorate mode had no way out.** `AvatarInfoWidget.set isUserDecorating()` was an empty
+    body with a TODO; the me-menu's "decorate" button wrote `true` into it and nothing happened.
+    `DecorateModeView` and `NewUserHelpView` are both ported now — they are AS3's two conditional
+    substitutions *for* the own-avatar menu, not extras alongside it. DecorateModeView is the odd
+    one out among the context views on purpose: its `activeView` setter only assigns, dropping the
+    base's reparenting, so `show()`/`hide()` flip `visible` on a window built once per room.
+  - 🐛 **Wheel zoom ignored the server.** The comment said "AS3 has no wheel zoom at all"; AS3 has
+    it, bound by `checkAndEnableMouseZoomEvent()` and gated on the **MOUSE_ZOOM perk** via the
+    unported `RoomDesktopMouseZoomEnableEvent`. It is also throttled — `|delta| >= 2` always
+    passes, anything smaller once every 400ms — without which a trackpad runs the zoom to the end
+    of the scale table in one gesture. And the modifier test is `ctrl && !alt && !shift`.
+  - **The Builder's Club place-from-infostand drop**, a fourth stale TODO blocker: the marker said
+    its two composers were "not ported yet", and both have been ported *and registered* the whole
+    time (3849/2740), naming that very call site in their own doc comments. What was missing was
+    `RoomWidgetRoomObjectPlaceEvent` — the one arm of `RoomDesktop.processRoomObjectEvent()` that
+    builds a subclass of the update event — and `RoomDesktop` had no `REOE_PLACED` case at all.
+
+  **`ui/widget`'s file-count gap is not a gap list.** 297 TS for AS3's 314, and every one of the 17
+  a filename diff reports was resolved by hand: most are ported under recovered names
+  (`_SafeCls_2578` is `RentableBotInfoData`, `_SafeCls_2698` is `IBotSkillConfigurationView`,
+  `_SafeCls_4235` is `IPollDialog`, `_SafeCls_3596` is `IMeMenuEffect`, `_SafeCls_1870` is
+  `IContextMenuParentWidget`, `_SafeCls_4062` is `SecondsFormatter`), the six `messages/` names
+  left over have zero AS3 consumers apiece, and the enums are unread constant tables —
+  **`RoomWidgetEnum` included**, which settles a standing question: AS3 writes the raw `'RWE_…'`
+  strings at every call site rather than going through its own table, exactly as this port does, so
+  the "magic strings where AS3 has an enum" refactor is wrong and should not be attempted.
+
+  That diff also cuts the other way, and cost a file: `crafting/utils/_SafeCls_3039` reads as
+  unported and *is* `CraftingViewStateEnum`, sitting in that exact directory with its names properly
+  recovered. A generated stand-in overwrote it before typecheck caught it. A recovered name hides
+  the obfuscated file from a diff just as surely as an obfuscated name hides the class.
+
   After this batch `sweep-unwired.mjs habbo/catalog` reports one remaining hit, 3404
   CloseConnection, whose AS3 handler `onRoomExit()` has an **empty body** — subscribing it would
   register a no-op, so it will report forever. The other two catalog hits (448, 3599) are closed.
