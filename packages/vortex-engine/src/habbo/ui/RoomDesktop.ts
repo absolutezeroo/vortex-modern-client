@@ -1627,10 +1627,24 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineObjectEvent.REOE_SELECTED:
                 // AS3 only builds the update event when selection is allowed; when it is disabled
                 // the local stays null and nothing is dispatched.
-                if(!this.isFurnitureSelectionDisabled(event)) 
+                if(!this.isFurnitureSelectionDisabled(event))
                 {
                     translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED;
                 }
+
+                // Selecting an avatar in the room is what arms the mod tool's "User info" button.
+                // AS3 runs this outside the selection-disabled guard above, and `type == 1` skips
+                // bots and pets, whose webID the moderation tool cannot look up.
+                if(this._moderation !== null && event.category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+                {
+                    const selectedUser = this._session?.userDataManager?.getUserDataByIndex(event.objectId) ?? null;
+
+                    if(selectedUser !== null && selectedUser.type === 1)
+                    {
+                        this._moderation.userSelected(selectedUser.webID, selectedUser.name);
+                    }
+                }
+
                 break;
             case RoomEngineObjectEvent.REOE_DESELECTED:
                 translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;

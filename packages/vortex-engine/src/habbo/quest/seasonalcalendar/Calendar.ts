@@ -1131,6 +1131,10 @@ export class Calendar implements IDisposable, IUpdateReceiver
     {
         const canvas = new OffscreenCanvas(width, height);
 
+        // `transferToImageBitmap()` throws InvalidStateError unless a context exists; a fresh 2d
+        // context is already transparent black, so there is nothing to draw.
+        canvas.getContext('2d');
+
         return canvas.transferToImageBitmap();
     }
 }

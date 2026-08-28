@@ -2,6 +2,7 @@ import type {IToolTipAgentService} from './IToolTipAgentService';
 import type {IWindow} from '../IWindow';
 import type {IInteractiveWindow} from '../components/IInteractiveWindow';
 import {WindowMouseOperator} from './WindowMouseOperator';
+import {WindowContext} from '../WindowContext';
 
 /**
  * Tooltip agent service.
@@ -47,6 +48,14 @@ export class WindowToolTipAgent extends WindowMouseOperator implements IToolTipA
                 this._caption = window.caption;
                 this._delay = 500;
             }
+
+            // AS3 reads the stage's live pointer (`_displayObject.mouseX/mouseY`) here before
+            // measuring where inside the window it sits. Without it `_mouse` holds whatever the
+            // last drag left behind — (0,0) until something is dragged — so `_pointerOffset`
+            // came out as minus the window's global position and every tooltip landed at
+            // `_toolTipOffset`, i.e. the top-left corner of the screen.
+            this._mouse.x = WindowContext.inputEventQueue?.mouseX ?? 0;
+            this._mouse.y = WindowContext.inputEventQueue?.mouseY ?? 0;
 
             this.getMousePositionRelativeTo(window, this._mouse, this._pointerOffset);
 
