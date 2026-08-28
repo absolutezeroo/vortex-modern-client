@@ -364,6 +364,9 @@ import {
 // Incoming Events - Room Layout
 import {RoomEntryTileMessageEvent, RoomOccupiedTilesMessageEvent,} from './messages/incoming/room/layout';
 import {
+    OfferRewardDeliveredMessageEvent
+} from './messages/incoming/catalog/OfferRewardDeliveredMessageEvent';
+import {
     GetOccupiedTilesMessageComposer
 } from './messages/outgoing/room/layout/GetOccupiedTilesMessageComposer';
 import {
@@ -1970,6 +1973,7 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(3279, HeightMapUpdateMessageEvent);
         this._events.set(2792, RoomEntryTileMessageEvent);
         this._events.set(1235, RoomOccupiedTilesMessageEvent);
+        this._events.set(2621, OfferRewardDeliveredMessageEvent);
         this._events.set(2914, RoomEntryInfoMessageEvent);
         this._events.set(2104, ObjectsMessageEvent);
         this._events.set(368, ObjectAddMessageEvent);

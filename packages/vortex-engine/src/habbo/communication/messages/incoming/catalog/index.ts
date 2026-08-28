@@ -40,3 +40,4 @@ export * from './LtdRaffleEnteredMessageEvent';
 export * from './LtdRaffleResultMessageEvent';
 export {SeasonalCalendarDailyOfferMessageEvent} from './SeasonalCalendarDailyOfferMessageEvent';
 export * from './SnowWarGameTokensMessageEvent';
+export * from './OfferRewardDeliveredMessageEvent';

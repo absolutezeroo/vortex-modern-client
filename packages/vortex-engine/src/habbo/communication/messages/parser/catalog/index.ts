@@ -32,3 +32,4 @@ export * from './LtdRaffleResultMessageParser';
 export {SeasonalCalendarDailyOfferMessageEventParser} from './SeasonalCalendarDailyOfferMessageEventParser';
 export * from './SnowWarGameTokenOffer';
 export * from './SnowWarGameTokensMessageParser';
+export * from './OfferRewardDeliveredMessageParser';

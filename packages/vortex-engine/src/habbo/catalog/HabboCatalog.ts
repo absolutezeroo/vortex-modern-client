@@ -238,6 +238,9 @@ import {BuilderFurniPlaceableStatus} from './enum/BuilderFurniPlaceableStatus';
 import {CatalogType} from './enum/CatalogType';
 import {CatalogSearchEntry} from './search/CatalogSearchEntry';
 import {FurnitureOffer} from './viewer/FurnitureOffer';
+import type {IOfferCenter} from './offers/IOfferCenter';
+import type {IOfferExtension} from './offers/IOfferExtension';
+import {OfferCenter} from './offers/OfferCenter';
 import {PlacedObjectPurchaseData} from './purchase/PlacedObjectPurchaseData';
 import {RentConfirmationWindow} from './purchase/RentConfirmationWindow';
 import {RoomAdPurchaseData} from './purchase/RoomAdPurchaseData';
@@ -370,6 +373,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     private static readonly SEARCH_PRODUCT_CODE_OVERRIDES_BY_FURNI_CLASS_NAME: Record<string, string> = {};
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_searchEntries
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_offerCenter
+    private _offerCenter: OfferCenter | null = null;
+
     private _searchEntries: CatalogSearchEntry[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::_SafeStr_6916
@@ -3242,10 +3248,26 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this.getBoolean('client.desktop.use.non.tabbed.catalog');
     }
 
+    /**
+     * The offer centre, built on first use and handed the extension that will display its badges.
+     *
+     * Two callers share the one instance — `HabboClubCenter` and the toolbar's `OfferExtension` —
+     * and each replaces the extension as it asks, which is AS3's own behaviour: whoever asked last
+     * gets the notifications.
+     */
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getOfferCenter()
-    public getOfferCenter(_extension: unknown): unknown | null 
+    public getOfferCenter(extension: IOfferExtension | null): IOfferCenter | null
     {
-        return null;
+        if(this._offerCenter === null)
+        {
+            if(this.windowManager === null) return null;
+
+            this._offerCenter = new OfferCenter(this.windowManager, this);
+        }
+
+        this._offerCenter.offerExtension = extension;
+
+        return this._offerCenter;
     }
 
     /**

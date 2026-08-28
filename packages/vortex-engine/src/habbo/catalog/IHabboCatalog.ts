@@ -1,4 +1,6 @@
 import type {IDragAndDropDoneReceiver} from './viewer/IDragAndDropDoneReceiver';
+import type {IOfferCenter} from './offers/IOfferCenter';
+import type {IOfferExtension} from './offers/IOfferExtension';
 import type {ICollectorHub} from './collectibles/ICollectorHub';
 import type {EventEmitter} from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
@@ -186,7 +188,7 @@ export interface IHabboCatalog
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getCatalogNavigator()
     getCatalogNavigator(catalogType: string): ICatalogNavigator | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getOfferCenter()
-    getOfferCenter(extension: unknown): unknown | null;
+    getOfferCenter(extension: IOfferExtension | null): IOfferCenter | null;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::itemAddedToInventory()
     itemAddedToInventory(classId: number, itemId: number, category: number): void;
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::getActivityPointName()
