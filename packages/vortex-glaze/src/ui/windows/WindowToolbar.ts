@@ -32,13 +32,13 @@ interface IBarItem
     height: number;
     /** Starts a new row even when the current one still has room. */
     breakBefore: boolean;
+    /** Packed from the right edge of its row instead of the left. */
+    alignRight: boolean;
 }
 
 /** Cap the layout dropdown so populating doesn't build hundreds of item windows. */
 const DROPDOWN_LIMIT = 200;
 
-/** Space the "GLAZE" title reserves on the first row. */
-const TITLE_WIDTH = 92;
 const EDGE_PADDING = 12;
 const ROW_HEIGHT = 26;
 const ROW_GAP = 8;
@@ -68,6 +68,7 @@ export class WindowToolbar
     private readonly _signals: EditorSignals;
     private _fileInput: HTMLInputElement | null = null;
     private _breakNext = false;
+    private _alignRight = false;
     private readonly _gallery: WindowGallery | null;
     private readonly _palette: WindowPalette | null;
 
@@ -90,38 +91,79 @@ export class WindowToolbar
      */
     public layout(width: number): number
     {
-        let row = 0;
-        let x = TITLE_WIDTH;
+        const rows: IBarItem[][] = [[]];
+        let used = EDGE_PADDING;
 
         for(const item of this._items)
         {
-            const rowStart = row === 0 ? TITLE_WIDTH : EDGE_PADDING;
-            const wraps = (x + item.width) > (width - EDGE_PADDING);
+            const row = rows[rows.length - 1];
 
-            if((item.breakBefore || wraps) && x > rowStart)
+            if(row.length && (item.breakBefore || used + item.width > width - EDGE_PADDING))
             {
-                row++;
-                x = row === 0 ? TITLE_WIDTH : EDGE_PADDING;
+                rows.push([item]);
+                used = EDGE_PADDING + item.width + ITEM_GAP;
+
+                continue;
             }
 
-            const top = ROW_GAP + row * (ROW_HEIGHT + ROW_GAP);
+            row.push(item);
+            used += item.width + ITEM_GAP;
+        }
 
+        rows.forEach((row, index) => this.layoutRow(row, index, width));
+
+        return ROW_GAP + rows.length * (ROW_HEIGHT + ROW_GAP);
+    }
+
+    /**
+     * Places one row: left-aligned items run out from the left margin, and the
+     * `alignRight` ones are packed back from the right edge — that is where
+     * Glaze keeps the align/distribute group.
+     */
+    private layoutRow(row: IBarItem[], index: number, width: number): void
+    {
+        const top = ROW_GAP + index * (ROW_HEIGHT + ROW_GAP);
+        let left = EDGE_PADDING;
+        let right = width - EDGE_PADDING;
+
+        const place = (item: IBarItem, x: number): void =>
+        {
             (item.window as unknown as WindowController).rectangle = {
                 x,
                 y: top + Math.round((ROW_HEIGHT - item.height) / 2),
                 width: item.width,
                 height: item.height
             };
+        };
 
-            x += item.width + ITEM_GAP;
+        for(const item of row)
+        {
+            if(item.alignRight) continue;
+
+            place(item, left);
+            left += item.width + ITEM_GAP;
         }
 
-        return ROW_GAP + (row + 1) * (ROW_HEIGHT + ROW_GAP);
+        for(let i = row.length - 1; i >= 0; i--)
+        {
+            const item = row[i];
+
+            if(!item.alignRight) continue;
+
+            right -= item.width;
+            place(item, right);
+            right -= ITEM_GAP;
+        }
     }
 
+    /**
+     * Row 1 is Glaze's own file/asset strip, in its order; the port's extras
+     * (New, Widgets) sit next to the actions they belong with. Row 2 keeps the
+     * view tools on the left and the align/distribute group on the right, which
+     * is how Glaze lays it out.
+     */
     private build(): void
     {
-        this.layoutDropdown();
         this.button('New', () => this.newFile());
         this.button('Open', () => this.importFile());
         this.button('Reload', () => this.reload());
@@ -134,11 +176,13 @@ export class WindowToolbar
         this.button('Save Screenshot', () => this.saveScreenshot());
         this.button('Generate Screenshots', () => this.saveScreenshot());
         this.button('Batch Theme Convert', () => log.warn('Batch Theme Convert — batch over the whole asset set, not implemented'));
+        this.layoutDropdown();
+        this.label('Snap', 34);
+        this.snapInput();
         this.button('Background', () => this.toggleBackground());
-        this.button('Canvas Back Color', () => this.cycleBackColor());
         this.button('Load Image', () => this.loadImage());
         this.button('Image Gallery', () => this._gallery?.toggle());
-        this.button('Widgets', () => this._palette?.toggle());
+        this.button('Canvas Back Color', () => this.cycleBackColor());
 
         this.rowBreak();
         this.buildViewTools();
@@ -147,8 +191,6 @@ export class WindowToolbar
     /** The view/geometry strip: it always starts its own row. */
     private buildViewTools(): void
     {
-        this.label('Snap', 34);
-        this.snapInput();
         this.label('Zoom', 36);
         this.zoomDropdown();
         // Sized from the initial caption — button() derives width from it, and
@@ -169,14 +211,18 @@ export class WindowToolbar
 
         this.label('Guides', 44);
         this.guidesToggle();
+        this.button('Widgets', () => this._palette?.toggle());
+
+        this._alignRight = true;
         this.button('Align L', () => this._state.alignSelected('left'));
         this.button('Align R', () => this._state.alignSelected('right'));
         this.button('Align T', () => this._state.alignSelected('top'));
         this.button('Align B', () => this._state.alignSelected('bottom'));
-        this.button('Center H', () => this._state.alignSelected('hcenter'));
-        this.button('Center V', () => this._state.alignSelected('vmiddle'));
         this.button('Distribute V', () => this.distribute('v'));
         this.button('Distribute H', () => this.distribute('h'));
+        this.button('Center V', () => this._state.alignSelected('vmiddle'));
+        this.button('Center H', () => this._state.alignSelected('hcenter'));
+        this._alignRight = false;
     }
 
     /**
@@ -259,7 +305,7 @@ export class WindowToolbar
         if(!window) return;
 
         (this._bar as unknown as IContainerLike).addChild(window);
-        this._items.push({window, width, height, breakBefore: this._breakNext});
+        this._items.push({window, width, height, breakBefore: this._breakNext, alignRight: this._alignRight});
         this._breakNext = false;
     }
 
@@ -366,13 +412,17 @@ export class WindowToolbar
         });
     }
 
+    /**
+     * Glaze's switches are the red/green Illumina switch, not a checkbox — the
+     * `checkbox intent="switch" style="100"` element description.
+     */
     private guidesToggle(): void
     {
-        const chk = this._wm.buildWidgetLayout('glaze_check_xml');
+        const chk = this._wm.buildWidgetLayout('glaze_switch_xml');
 
         if(!chk) return;
 
-        this.add(chk, 19, 21);
+        this.add(chk, 38, 21);
 
         const widget = chk as unknown as ICheckWidget;
 
@@ -400,7 +450,9 @@ export class WindowToolbar
                 onClick();
             }
         };
-        this.add(btn, Math.max(44, caption.length * 7 + 20), ROW_HEIGHT);
+        // The caption setter auto-sizes the button to its text; the old
+        // `length * 7` estimate ran ~40 % wide and pushed row 1 onto a third row.
+        this.add(btn, Math.max(40, bc.width), ROW_HEIGHT);
 
         return bc;
     }

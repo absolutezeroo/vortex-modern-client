@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout name="glaze_splitter" width="14" height="600">
+  <window>
+    <container x="0" y="0" width="14" height="600" params="1" style="3" name="glaze_splitter" background="true" color="0xfff3f3f8">
+      <children>
+        <!-- The rule runs the strip's full height and breaks around the caption. -->
+        <region x="6" y="0" width="1" height="200" params="16" style="3" name="glaze_splitter_rule_top" background="true" color="0xffb4b4be"/>
+        <region x="6" y="0" width="1" height="200" params="16" style="3" name="glaze_splitter_rule_bottom" background="true" color="0xffb4b4be"/>
+        <static_bitmap x="1" y="0" width="12" height="90" params="16" style="3" name="glaze_splitter_label">
+          <variables>
+            <var key="stretched_x" value="false" type="Boolean"/>
+            <var key="stretched_y" value="false" type="Boolean"/>
+            <var key="pivot_point" value="center" type="String"/>
+            <var key="fit_size_to_contents" value="false" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+      </children>
+    </container>
+  </window>
+</layout>

@@ -4,7 +4,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowTreeInspector} from '@core/window/debugger';
 import type {IWindowDebugNode} from '@core/window/debugger';
-import {signal, computed, onCleanup, type Scope, type SignalReader} from '@core/reactive';
+import {signal, computed, effect, onCleanup, type Scope, type SignalReader} from '@core/reactive';
 import {createWindowScope, bind, on, each, type IReconcilableList} from '@core/window/reactive';
 import {type EditorState} from '../../state/EditorState';
 import {signalsOf, type EditorSignals} from '../../state/EditorSignals';
@@ -17,6 +17,54 @@ const ROW = slotsOf('glaze_hierarchy_row_xml');
 interface IListLike { destroyListItems(): void; }
 interface IContainerLike { addChild(child: IWindow): IWindow; }
 interface IToggle { isSelected: boolean; disposed: boolean; }
+interface IBitmapLike { bitmapData: ImageBitmap | null; invalidate(): void; }
+
+/** The tree's collapse arrow, drawn once per direction and shared by every row. */
+type TwistyDir = 'right' | 'down' | null;
+
+const TWISTY_SIZE = 11;
+const TWISTY_CACHE = new Map<string, ImageBitmap>();
+
+const twistyBitmap = (dir: TwistyDir): ImageBitmap | null =>
+{
+    if(!dir) return null;
+
+    const cached = TWISTY_CACHE.get(dir);
+
+    if(cached) return cached;
+
+    const canvas = new OffscreenCanvas(TWISTY_SIZE, TWISTY_SIZE);
+    const ctx = canvas.getContext('2d');
+
+    if(!ctx) return null;
+
+    const s = TWISTY_SIZE;
+
+    ctx.fillStyle = '#3c3c46';
+    ctx.beginPath();
+
+    if(dir === 'right')
+    {
+        ctx.moveTo(3, 1);
+        ctx.lineTo(s - 2, s / 2);
+        ctx.lineTo(3, s - 1);
+    }
+    else
+    {
+        ctx.moveTo(1, 3);
+        ctx.lineTo(s - 1, 3);
+        ctx.lineTo(s / 2, s - 2);
+    }
+
+    ctx.closePath();
+    ctx.fill();
+
+    const bitmap = canvas.transferToImageBitmap();
+
+    TWISTY_CACHE.set(dir, bitmap);
+
+    return bitmap;
+};
 
 const SELECTED_COLOR = 0xffef9a9a; // Glaze's pink selection tint
 const CO_SELECTED_COLOR = 0xfff5cfcf; // secondary members of a multi-selection
@@ -43,7 +91,7 @@ interface IHierarchyRow
     dimmed: boolean;
     visible: boolean;
     hasChildren: boolean;
-    arrow: string;
+    arrow: TwistyDir;
 }
 
 /** A version signal: read it to depend on it, pulse it to invalidate readers. */
@@ -158,7 +206,7 @@ export class WindowHierarchy
                 dimmed: ancestorHidden || !node.visible,
                 visible: node.visible,
                 hasChildren,
-                arrow: hasChildren ? (collapsed ? '▸' : '▾') : '',
+                arrow: hasChildren ? (collapsed ? 'right' : 'down') : null,
             });
 
             if(hasChildren && !collapsed)
@@ -204,7 +252,7 @@ export class WindowHierarchy
 
         const vis = ROW.findAs<IToggle & IWindow>(rowWin, 'glaze_row_vis');
         const twisty = ROW.findAs<WindowController>(rowWin, 'glaze_row_twisty');
-        const arrow = ROW.findAs<WindowController & { text: string }>(rowWin, 'glaze_row_arrow');
+        const arrow = ROW.findAs<IBitmapLike>(rowWin, 'glaze_row_arrow');
         const labelEl = ROW.findAs<WindowController & { text: string }>(rowWin, 'glaze_row_label');
 
         if(vis)
@@ -229,7 +277,20 @@ export class WindowHierarchy
 
         if(arrow)
         {
-            bind(arrow, 'text', () => row().arrow);
+            // Not a text glyph: `▸`/`▾` are absent from the Illumina font atlas
+            // and came out as a dash. Glaze draws a filled triangle, so the port
+            // draws one too and shows it through the bitmap slot.
+            effect(() =>
+            {
+                if((arrow as unknown as IWindow).disposed) return;
+
+                const next = twistyBitmap(row().arrow);
+
+                if(arrow.bitmapData === next) return;
+
+                arrow.bitmapData = next;
+                arrow.invalidate();
+            });
         }
 
         if(labelEl)

@@ -57,6 +57,10 @@ async function main(): Promise<void>
 
     chrome.mount();
 
+    // Both panels dock to the left, so a layout centred on the whole desktop
+    // would sit half-under them; the state centres inside the free canvas.
+    state.contentInsets = () => chrome.contentInsets;
+
     const hierarchyList = chrome.hierarchyList;
     const hierarchy = hierarchyList ? new WindowHierarchy(state, hierarchyList, surface) : null;
 
@@ -78,6 +82,8 @@ async function main(): Promise<void>
     chrome.setToolbarSizer(toolbar ? (width) => toolbar.layout(width) : null);
     surface.setResizeHandler(() => chrome.relayout());
     const bottomBar = chrome.bottomBar ? new WindowBottomBar(state, chrome.bottomBar, colorPicker) : null;
+
+    chrome.setBottomSizer(bottomBar ? (width) => bottomBar.layout(width) : null);
 
     // Direct manipulation (select/move/resize + handles) in the canvas centre.
     const editorCanvas = new EditorCanvasLayer(state, surface, () => chrome.contentInsets);

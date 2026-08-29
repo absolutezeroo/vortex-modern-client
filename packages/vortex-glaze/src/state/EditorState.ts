@@ -1,5 +1,6 @@
 import {EventEmitter} from 'eventemitter3';
 import type {IWindow} from '@core/window/IWindow';
+import type {WindowController} from '@core/window/WindowController';
 import type {IGlazeRuntime} from '../boot/GlazeBoot';
 import {VariablesModel} from './VariablesModel';
 import {EditorHistory} from './EditorHistory';
@@ -56,7 +57,13 @@ export class EditorState
     public readonly mouse = {x: 0, y: 0};
 
     /** Canvas background behind the edited layout (Background / Canvas Back Color / Load Image). */
-    public readonly canvasBg = {mode: 'checker' as 'checker' | 'solid', color: 0xffe7e7f4, image: null as HTMLImageElement | null};
+    public readonly canvasBg = {mode: 'solid' as 'checker' | 'solid', color: 0xffe7e7f4, image: null as HTMLImageElement | null};
+
+    /**
+     * The chrome's insets, wired by `main`. `center()` centres in the whole
+     * desktop, which now puts the layout half-under the two docked panels.
+     */
+    public contentInsets: (() => { top: number; left: number; right: number; bottom: number }) | null = null;
 
     /** True while a modal popup (e.g. Image Gallery) is open, so the centre picker stands down. */
     public modalOpen = false;
@@ -250,7 +257,7 @@ export class EditorState
         // saved layout would tell the client to place the window wherever it
         // happened to sit in the editor.
         this._rootOrigin = {x: built.x, y: built.y};
-        built.center();
+        this.centerInContent(built);
 
         this._rootWindow = built;
         this._currentLayoutName = name;
@@ -321,9 +328,24 @@ export class EditorState
         if(this._rootWindow && !this._rootWindow.disposed)
         {
             this.pushHistory();
-            this._rootWindow.center();
+            this.centerInContent(this._rootWindow);
             this.notifyGeometryChanged();
         }
+    }
+
+    /** `center()`, then shifted by the chrome so it lands in the visible canvas. */
+    private centerInContent(win: IWindow): void
+    {
+        win.center();
+
+        const insets = this.contentInsets?.();
+
+        if(!insets) return;
+
+        const controller = win as unknown as WindowController;
+
+        controller.x += Math.round((insets.left - insets.right) / 2);
+        controller.y += Math.round((insets.top - insets.bottom) / 2);
     }
 
     /** Replaces the selection with `window` (or clears it when null). */

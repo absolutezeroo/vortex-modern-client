@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout name="glaze_prop_group" width="332" height="24">
   <window>
-    <container x="0" y="0" width="332" height="24" params="16" style="3" name="glaze_group" background="true" color="0xffe9e9f2">
+    <container x="0" y="0" width="332" height="24" params="16" style="3" name="glaze_group" background="true" color="0xffd2d2d2">
       <children>
         <text x="8" y="5" width="316" height="16" params="16" style="3" name="glaze_group_label" caption="Group">
           <variables>

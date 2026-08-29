@@ -38,13 +38,17 @@ interface IThemeManagerLike
 const MIN_LIMIT = -2147483648;
 const MAX_LIMIT = 2147483647;
 
+/** Where a check row's box sits, by row kind (see {@link WindowProperty.buildCheck}). */
+const CHECK_X_PROPERTY = 132;
+const CHECK_X_FLAG = 198;
+
 /** One property row, described as data. `id` is the reconciliation key and its
  *  `kind` prefix guarantees a row window is never asked to change shape. */
 type IRowDesc =
     | { id: string; kind: 'group'; label: string }
     | { id: string; kind: 'input'; label: string; type: string; live: boolean; historyKey: string | null;
         read: () => string; write: ((v: string) => void) | null }
-    | { id: string; kind: 'check'; label: string; read: () => boolean; write: (b: boolean) => void }
+    | { id: string; kind: 'check'; label: string; type: string; read: () => boolean; write: (b: boolean) => void }
     | { id: string; kind: 'drop'; label: string; options: string[]; current: () => number;
         onSelect: (index: number) => void }
     | { id: string; kind: 'color'; label: string; historyKey: string; read: () => number; write: (c: number) => void }
@@ -124,7 +128,6 @@ export class WindowProperty
 
         return [
             ...this.describeCommon(win),
-            ...this.describeGeometry(win),
             ...this.describeFlags(win),
             ...this.describeVariables(win),
         ];
@@ -135,20 +138,9 @@ export class WindowProperty
         const out: IRowDesc[] = [];
 
         out.push({id: 'group:common', kind: 'group', label: 'Common Properties'});
-        // Writable: retyping a window in place is otherwise reachable only from
-        // the hierarchy strip's Convert, and the layout root — the one node most
-        // often authored as the wrong type — had no route at all. `historyKey:
-        // null` because `convertSelected` records its own restore point.
-        out.push({
-            id: 'input:type',
-            kind: 'input',
-            label: 'type',
-            type: '',
-            live: false,
-            historyKey: null,
-            read: () => `${TYPE_CODE_TO_NAME[win.type] ?? 'null'} (${win.type})`,
-            write: (v) => this.convertTo(v),
-        });
+        // Glaze opens on `name`. Retyping a window in place has no row here —
+        // it is the hierarchy strip's Convert, on whatever the tree has selected
+        // (the layout root included).
         out.push(this.input('name', 'string', () => win.name, (v) => { win.name = v; }));
         out.push(this.input('caption', 'string', () => win.caption, (v) => { win.caption = v; }));
         out.push(this.input('tags', 'string', () => win.tags.join(', '), (v) =>
@@ -184,6 +176,8 @@ export class WindowProperty
 
         out.push(this.input('style', 'uint', () => String(win.style), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.style = n; }));
         out.push(this.input('dynamicStyle', 'string', () => win.dynamicStyle, (v) => { win.dynamicStyle = v; }));
+        out.push(this.check('clipping', () => win.clipping, (b) => { win.clipping = b; }));
+        out.push(this.check('background', () => win.background, (b) => { win.background = b; }));
         out.push({
             id: 'color:color',
             kind: 'color',
@@ -193,27 +187,20 @@ export class WindowProperty
             write: (c) => { win.color = c >>> 0; },
         });
         out.push(this.input('blend', 'number', () => String(win.blend), (v) => { const n = Number(v); if(!Number.isNaN(n)) win.blend = n; }));
-        out.push(this.check('background', () => win.background, (b) => { win.background = b; }));
-        out.push(this.check('clipping', () => win.clipping, (b) => { win.clipping = b; }));
-        out.push(this.check('visible', () => win.visible, (b) => { win.visible = b; }));
+
+        // Glaze has no separate Geometry group — position, size and threshold
+        // close out Common Properties, in this order.
+        out.push(this.input('x', 'int', () => String(win.x), (v) => this.setNum(v, (n) => { win.x = n; }), true));
+        out.push(this.input('y', 'int', () => String(win.y), (v) => this.setNum(v, (n) => { win.y = n; }), true));
+        out.push(this.input('width', 'int', () => String(win.width), (v) => this.setNum(v, (n) => { win.width = n; }), true));
+        out.push(this.input('width min', 'int', () => this.fmtLimit(win.limits.minWidth, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minWidth = n; })));
+        out.push(this.input('width max', 'int', () => this.fmtLimit(win.limits.maxWidth, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxWidth = n; })));
+        out.push(this.input('height', 'int', () => String(win.height), (v) => this.setNum(v, (n) => { win.height = n; }), true));
+        out.push(this.input('height min', 'int', () => this.fmtLimit(win.limits.minHeight, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minHeight = n; })));
+        out.push(this.input('height max', 'int', () => this.fmtLimit(win.limits.maxHeight, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxHeight = n; })));
+        out.push(this.input('threshold', 'uint', () => String(win.mouseThreshold), (v) => this.setNum(v, (n) => { win.mouseThreshold = n; })));
 
         return out;
-    }
-
-    private describeGeometry(win: WindowController): IRowDesc[]
-    {
-        return [
-            {id: 'group:geometry', kind: 'group', label: 'Geometry'},
-            this.input('x', 'int', () => String(win.x), (v) => this.setNum(v, (n) => { win.x = n; }), true),
-            this.input('y', 'int', () => String(win.y), (v) => this.setNum(v, (n) => { win.y = n; }), true),
-            this.input('width', 'int', () => String(win.width), (v) => this.setNum(v, (n) => { win.width = n; }), true),
-            this.input('height', 'int', () => String(win.height), (v) => this.setNum(v, (n) => { win.height = n; }), true),
-            this.input('width min', 'int', () => this.fmtLimit(win.limits.minWidth, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minWidth = n; })),
-            this.input('width max', 'int', () => this.fmtLimit(win.limits.maxWidth, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxWidth = n; })),
-            this.input('height min', 'int', () => this.fmtLimit(win.limits.minHeight, MIN_LIMIT), (v) => this.setLimit(v, MIN_LIMIT, (n) => { win.limits.minHeight = n; })),
-            this.input('height max', 'int', () => this.fmtLimit(win.limits.maxHeight, MAX_LIMIT), (v) => this.setLimit(v, MAX_LIMIT, (n) => { win.limits.maxHeight = n; })),
-            this.input('threshold', 'uint', () => String(win.mouseThreshold), (v) => this.setNum(v, (n) => { win.mouseThreshold = n; })),
-        ];
     }
 
     private describeFlags(win: WindowController): IRowDesc[]
@@ -241,35 +228,45 @@ export class WindowProperty
 
         return [
             {id: 'group:flags', kind: 'group', label: 'Flags'},
+            // Glaze spells the options out with the flag's own name, not a short
+            // form — "relative horizontal scale fixed", never "fixed".
             dropOf('horizontal scaling', WindowParam.RELATIVE_HORIZONTAL_SCALE_MASK, [
-                {label: 'fixed', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_FIXED},
-                {label: 'move', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_MOVE},
-                {label: 'stretch', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_STRETCH},
-                {label: 'center', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER}
+                {label: 'relative horizontal scale fixed', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_FIXED},
+                {label: 'relative horizontal scale move', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_MOVE},
+                {label: 'relative horizontal scale stretch', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_STRETCH},
+                {label: 'relative horizontal scale center', value: WindowParam.RELATIVE_HORIZONTAL_SCALE_CENTER}
             ]),
             dropOf('vertical scaling', WindowParam.RELATIVE_VERTICAL_SCALE_MASK, [
-                {label: 'fixed', value: WindowParam.RELATIVE_VERTICAL_SCALE_FIXED},
-                {label: 'move', value: WindowParam.RELATIVE_VERTICAL_SCALE_MOVE},
-                {label: 'stretch', value: WindowParam.RELATIVE_VERTICAL_SCALE_STRETCH},
-                {label: 'center', value: WindowParam.RELATIVE_VERTICAL_SCALE_CENTER}
+                {label: 'relative vertical scale fixed', value: WindowParam.RELATIVE_VERTICAL_SCALE_FIXED},
+                {label: 'relative vertical scale move', value: WindowParam.RELATIVE_VERTICAL_SCALE_MOVE},
+                {label: 'relative vertical scale stretch', value: WindowParam.RELATIVE_VERTICAL_SCALE_STRETCH},
+                {label: 'relative vertical scale center', value: WindowParam.RELATIVE_VERTICAL_SCALE_CENTER}
             ]),
-            dropOf('horizontal align', 0xC0000, [
-                {label: 'left', value: WindowParam.ON_RESIZE_ALIGN_LEFT},
-                {label: 'right', value: WindowParam.ON_RESIZE_ALIGN_RIGHT},
-                {label: 'center', value: WindowParam.ON_RESIZE_ALIGN_CENTER}
+            dropOf('horizontal alignment', 0xC0000, [
+                {label: 'on resize align left', value: WindowParam.ON_RESIZE_ALIGN_LEFT},
+                {label: 'on resize align right', value: WindowParam.ON_RESIZE_ALIGN_RIGHT},
+                {label: 'on resize align center', value: WindowParam.ON_RESIZE_ALIGN_CENTER}
             ]),
-            dropOf('vertical align', 0x300000, [
-                {label: 'top', value: WindowParam.ON_RESIZE_ALIGN_TOP},
-                {label: 'bottom', value: WindowParam.ON_RESIZE_ALIGN_BOTTOM},
-                {label: 'middle', value: WindowParam.ON_RESIZE_ALIGN_MIDDLE}
+            dropOf('vertical alignment', 0x300000, [
+                {label: 'on resize align top', value: WindowParam.ON_RESIZE_ALIGN_TOP},
+                {label: 'on resize align bottom', value: WindowParam.ON_RESIZE_ALIGN_BOTTOM},
+                {label: 'on resize align middle', value: WindowParam.ON_RESIZE_ALIGN_MIDDLE}
             ]),
-            this.flag(win, 'input event processor', WindowParam.INPUT_EVENT_PROCESSOR),
             this.flag(win, 'use parent graphic context', WindowParam.USE_PARENT_GRAPHIC_CONTEXT),
-            this.flag(win, 'bound to parent rect', WindowParam.BOUND_TO_PARENT_RECT),
+            this.flag(win, 'reflect horizontal resize to parent', WindowParam.REFLECT_HORIZONTAL_RESIZE_TO_PARENT),
+            this.flag(win, 'reflect vertical resize to parent', WindowParam.REFLECT_VERTICAL_RESIZE_TO_PARENT),
             this.flag(win, 'expand to accommodate children', WindowParam.EXPAND_TO_ACCOMMODATE_CHILDREN),
-            this.flag(win, 'mouse dragging target', WindowParam.MOUSE_DRAGGING_TARGET),
-            this.flag(win, 'mouse scaling target', WindowParam.MOUSE_SCALING_TARGET),
+            this.flag(win, 'resize to accommodate children', WindowParam.RESIZE_TO_ACCOMMODATE_CHILDREN),
+            this.flag(win, 'input event processor', WindowParam.INPUT_EVENT_PROCESSOR),
+            this.flag(win, 'internal event handling', WindowParam.INTERNAL_EVENT_HANDLING),
+            this.flag(win, 'route input events to parent', WindowParam.ROUTE_INPUT_EVENTS_TO_PARENT),
+            this.flag(win, 'observe parent input events', WindowParam.OBSERVE_PARENT_INPUT_EVENTS),
+            this.flag(win, 'bound to parent rect', WindowParam.BOUND_TO_PARENT_RECT),
             this.flag(win, 'force clipping', WindowParam.FORCE_CLIPPING),
+            this.flag(win, 'mouse dragging target', WindowParam.MOUSE_DRAGGING_TARGET),
+            this.flag(win, 'mouse dragging trigger', WindowParam.MOUSE_DRAGGING_TRIGGER),
+            this.flag(win, 'mouse scaling target', WindowParam.MOUSE_SCALING_TARGET),
+            this.flag(win, 'mouse scaling trigger', WindowParam.MOUSE_SCALING_TRIGGER),
             this.flag(win, 'inherit caption', WindowParam.INHERIT_CAPTION),
         ];
     }
@@ -343,14 +340,23 @@ export class WindowProperty
         convertSelected(this._state, name);
     }
 
+    /** A boolean property: Glaze shows its `boolean` type like any other row. */
     private check(label: string, read: () => boolean, write: (b: boolean) => void): IRowDesc
     {
-        return {id: `check:${label}`, kind: 'check', label, read, write};
+        return {id: `check:${label}`, kind: 'check', label, type: 'boolean', read, write};
     }
 
+    /** A param flag: Glaze prints no type for these, and the box sits further right. */
     private flag(win: WindowController, label: string, flagBit: number): IRowDesc
     {
-        return this.check(label, () => win.testParamFlag(flagBit), (b) => { win.setParamFlag(flagBit, b); });
+        return {
+            id: `check:${label}`,
+            kind: 'check',
+            label,
+            type: '',
+            read: () => win.testParamFlag(flagBit),
+            write: (b) => { win.setParamFlag(flagBit, b); },
+        };
     }
 
     private themeManager(): IThemeManagerLike | null
@@ -444,12 +450,22 @@ export class WindowProperty
         if(!widget) return null;
 
         const label = CHECK_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_crow_label');
+        const typeEl = CHECK_ROW.findAs<WindowController & { text: string }>(widget, 'glaze_crow_type');
         const check = CHECK_ROW.findAs<ICheckWidget>(widget, 'glaze_crow_check');
 
         if(label) bind(label, 'text', () => { const d = row(); return d.kind === 'check' ? d.label : ''; });
+        if(typeEl) bind(typeEl, 'text', () => { const d = row(); return d.kind === 'check' ? d.type : ''; });
 
         if(check)
         {
+            // A property's box lines up with the value column; a flag's, which
+            // has no type beside it, sits where Glaze puts it — further right.
+            bind(check as unknown as WindowController, 'x', () =>
+            {
+                const d = row();
+
+                return d.kind === 'check' && d.type ? CHECK_X_PROPERTY : CHECK_X_FLAG;
+            });
             bind(check, 'isSelected', () => { const d = row(); return d.kind === 'check' ? d.read() : false; });
 
             const commit = (value: boolean): void =>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout name="glaze_prop_addvar" width="332" height="26">
   <window>
-    <container x="0" y="0" width="332" height="26" params="16" style="3" name="glaze_arow">
+    <container x="0" y="0" width="332" height="26" params="16" style="3" name="glaze_arow" background="true" color="0xffeaeaea">
       <children>
-        <border x="8" y="2" width="112" height="21" params="16" style="105" name="glaze_arow_keybox">
+        <border x="8" y="2" width="112" height="21" params="16" style="5" name="glaze_arow_keybox">
           <children>
             <input x="4" y="2" width="104" height="16" params="2177" style="3" name="glaze_arow_key" tags="INPUT" caption="">
               <variables>
@@ -17,7 +17,7 @@
             </input>
           </children>
         </border>
-        <border x="128" y="2" width="140" height="21" params="16" style="105" name="glaze_arow_valuebox">
+        <border x="128" y="2" width="140" height="21" params="16" style="5" name="glaze_arow_valuebox">
           <children>
             <input x="4" y="2" width="132" height="16" params="2177" style="3" name="glaze_arow_value" tags="INPUT" caption="">
               <variables>

@@ -45,7 +45,7 @@ export interface GlazeLayoutSlots
         | 'glaze_gallery_frame'
         | 'glaze_gallery_list';
 
-    /** glaze_row: region, glaze_row_arrow: text, glaze_row_label: text, glaze_row_twisty: region, glaze_row_vis: checkbox */
+    /** glaze_row: region, glaze_row_arrow: static_bitmap, glaze_row_label: text, glaze_row_twisty: region, glaze_row_vis: checkbox */
     glaze_hierarchy_row_xml:
         | 'glaze_row'
         | 'glaze_row_arrow'
@@ -53,11 +53,13 @@ export interface GlazeLayoutSlots
         | 'glaze_row_twisty'
         | 'glaze_row_vis';
 
-    /** glaze_hierarchy_controls: container, glaze_hierarchy_frame: frame, glaze_hierarchy_list: scrollable_itemlist_vertical */
+    /** glaze_hierarchy_controls: container, glaze_hierarchy_frame: container, glaze_hierarchy_header: container, glaze_hierarchy_list: scrollable_itemlist_vertical, glaze_hierarchy_title: text */
     glaze_hierarchy_xml:
         | 'glaze_hierarchy_controls'
         | 'glaze_hierarchy_frame'
-        | 'glaze_hierarchy_list';
+        | 'glaze_hierarchy_header'
+        | 'glaze_hierarchy_list'
+        | 'glaze_hierarchy_title';
 
     /** glaze_lbl: text */
     glaze_label_xml:
@@ -127,24 +129,36 @@ export interface GlazeLayoutSlots
         | 'glaze_vrow_remove'
         | 'glaze_vrow_type';
 
-    /** glaze_property_frame: frame, glaze_property_list: scrollable_itemlist_vertical */
+    /** glaze_property_frame: container, glaze_property_header: container, glaze_property_list: scrollable_itemlist_vertical, glaze_property_title: text */
     glaze_property_xml:
         | 'glaze_property_frame'
-        | 'glaze_property_list';
+        | 'glaze_property_header'
+        | 'glaze_property_list'
+        | 'glaze_property_title';
 
     /** glaze_sibox: border, glaze_siinput: input */
     glaze_smallinput_xml:
         | 'glaze_sibox'
         | 'glaze_siinput';
 
+    /** glaze_splitter: container, glaze_splitter_label: static_bitmap, glaze_splitter_rule_bottom: region, glaze_splitter_rule_top: region */
+    glaze_splitter_xml:
+        | 'glaze_splitter'
+        | 'glaze_splitter_label'
+        | 'glaze_splitter_rule_bottom'
+        | 'glaze_splitter_rule_top';
+
     /** glaze_swatch: region */
     glaze_swatch_xml:
         | 'glaze_swatch';
 
-    /** glaze_toolbar_bar: container, glaze_toolbar_title: text */
+    /** glaze_switch: checkbox */
+    glaze_switch_xml:
+        | 'glaze_switch';
+
+    /** glaze_toolbar_bar: container */
     glaze_toolbar_xml:
-        | 'glaze_toolbar_bar'
-        | 'glaze_toolbar_title';
+        | 'glaze_toolbar_bar';
 }
 
 /** Every registered editor layout, keyed as `buildWidgetLayout()` expects. */

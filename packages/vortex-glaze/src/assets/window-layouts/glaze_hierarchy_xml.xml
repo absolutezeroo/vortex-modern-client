@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<layout name="glaze_hierarchy" width="318" height="600">
+<!--
+  Glaze's panels are flat: a grey body, a header band with a bold centred
+  caption, and the content edge to edge. The Illumina `frame` this used to be
+  put rounded corners, a border, a drop shadow and a close button around it —
+  none of which Glaze has.
+
+  params: 144 = 0x90 use_parent_graphic_context | relative_horizontal_scale_stretch
+          208 = 0xD0 use_parent_graphic_context | relative_horizontal_scale_center
+-->
+<layout name="glaze_hierarchy" width="330" height="600">
   <window>
-    <frame x="0" y="0" width="318" height="600" params="1" style="102" name="glaze_hierarchy_frame" caption="Hierarchy View">
-      <variables>
-        <var key="margin_left" value="6" type="int"/>
-        <var key="margin_top" value="26" type="int"/>
-        <var key="margin_right" value="6" type="int"/>
-        <var key="margin_bottom" value="7" type="int"/>
-      </variables>
+    <container x="0" y="0" width="330" height="600" params="1" style="3" name="glaze_hierarchy_frame" background="true" color="0xfff0f0f0">
       <children>
-        <container x="0" y="0" width="306" height="88" params="0" style="3" name="glaze_hierarchy_controls"/>
-        <scrollable_itemlist_vertical x="0" y="90" width="306" height="477" params="16" style="100" name="glaze_hierarchy_list">
+        <container x="0" y="0" width="330" height="22" params="144" style="3" name="glaze_hierarchy_header" background="true" color="0xffe2e2e2">
+          <children>
+            <text x="0" y="3" width="330" height="16" params="208" style="3" name="glaze_hierarchy_title" caption="Hierarchy View" color="0xff2b2b33">
+              <variables>
+                <var key="auto_size" value="left" type="String"/>
+                <var key="text_style" value="il_button" type="String"/>
+                <var key="bold" value="true" type="Boolean"/>
+                <var key="mouse_wheel_enabled" value="false" type="Boolean"/>
+              </variables>
+            </text>
+          </children>
+        </container>
+        <container x="0" y="22" width="330" height="88" params="0" style="3" name="glaze_hierarchy_controls"/>
+        <scrollable_itemlist_vertical x="0" y="112" width="330" height="488" params="16" style="100" name="glaze_hierarchy_list">
           <variables>
             <var key="resize_on_item_update" value="false" type="Boolean"/>
           </variables>
         </scrollable_itemlist_vertical>
       </children>
-    </frame>
+    </container>
   </window>
 </layout>

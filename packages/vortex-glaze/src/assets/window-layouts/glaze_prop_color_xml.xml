@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout name="glaze_prop_color" width="332" height="24">
   <window>
-    <container x="0" y="0" width="332" height="24" params="16" style="3" name="glaze_korow">
+    <container x="0" y="0" width="332" height="24" params="16" style="3" name="glaze_korow" background="true" color="0xffeaeaea">
       <children>
         <text x="8" y="5" width="74" height="16" params="16" style="3" name="glaze_korow_label" caption="color">
           <variables>
@@ -11,7 +11,7 @@
           </variables>
         </text>
         <region x="100" y="3" width="22" height="18" params="17" style="3" name="glaze_korow_swatch" background="true" color="0xffffffff" treshold="0"/>
-        <border x="128" y="1" width="196" height="21" params="16" style="105" name="glaze_korow_inputbox">
+        <border x="128" y="1" width="196" height="21" params="16" style="5" name="glaze_korow_inputbox">
           <children>
             <input x="4" y="2" width="188" height="16" params="2177" style="3" name="glaze_korow_input" tags="INPUT">
               <variables>

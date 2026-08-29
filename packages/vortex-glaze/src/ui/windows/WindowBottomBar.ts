@@ -12,6 +12,10 @@ import type {WindowColorPicker} from './WindowColorPicker';
 
 const log = Logger.getLogger('glaze.ui.windows.WindowBottomBar');
 
+/** The Illumina switch's fixed box (the skin pins height to 21). */
+const SWITCH_W = 38;
+const SWITCH_H = 21;
+
 interface IContainerLike { addChild(child: IWindow): IWindow; }
 interface ICheckWidget extends IWindow { isSelected: boolean; }
 interface IDropWidget extends IWindow { populate(items: unknown[]): void; selection: number; }
@@ -40,6 +44,11 @@ export class WindowBottomBar
     private _x = 12;
     private _coords: ILabelWidget | null = null;
     private _rafId = 0;
+    /** Widgets Glaze packs against the right edge, with the x `build()` gave them. */
+    private readonly _right: { window: WindowController; x: number }[] = [];
+    private _collectRight = false;
+    private _rightEnd = 0;
+    private _shift = 0;
 
     public constructor(state: EditorState, bar: IWindow, colorPicker: WindowColorPicker | null = null)
     {
@@ -62,9 +71,29 @@ export class WindowBottomBar
         return sel && !sel.disposed ? (sel.color >>> 0) : 0xffffffff;
     }
 
+    /**
+     * Packs the readouts against the right edge, which is where Glaze keeps
+     * them — only Show Tags stays on the left. Called by the chrome on resize.
+     */
+    public layout(width: number): void
+    {
+        const shift = Math.max(0, Math.round(width - 12 - this._rightEnd));
+
+        if(shift === this._shift) return;
+
+        this._shift = shift;
+
+        for(const item of this._right)
+        {
+            if(!item.window.disposed) item.window.x = item.x + shift;
+        }
+    }
+
     private build(): void
     {
         this.toggle('Show Tags', () => this._state.showTags, (v) => { this._state.showTags = v; this._state.notifyDebugChanged(); });
+
+        this._collectRight = true;
         this.toggle('Debug Rects', () => this._state.debugRects, (v) => { this._state.debugRects = v; this._state.notifyDebugChanged(); });
         this.toggle('Show scaler', () => this._state.showScaler, (v) => { this._state.showScaler = v; this._state.notifyDebugChanged(); });
 
@@ -128,8 +157,26 @@ export class WindowBottomBar
                 return String(this._state.selection.length);
             });
         }
+
+        this._rightEnd = this._x;
+        this._collectRight = false;
     }
 
+    /** Positions one widget and, while collecting, records it for the right pack. */
+    private place(win: IWindow, x: number, y: number, width: number, height: number): void
+    {
+        const controller = win as unknown as WindowController;
+
+        controller.rectangle = {x, y, width, height};
+
+        if(this._collectRight) this._right.push({window: controller, x});
+    }
+
+    /**
+     * Glaze's switches are the red/green Illumina switch, not a checkbox — the
+     * `checkbox intent="switch" style="100"` element description, which draws
+     * from `illumina_light_switch.png`.
+     */
     private toggle(text: string, read: () => boolean, write: (v: boolean) => void): void
     {
         const width = text.length * 7 + 4;
@@ -137,13 +184,13 @@ export class WindowBottomBar
         this.label(text, this._x, 7, width);
         this._x += width;
 
-        const chk = this._wm.buildWidgetLayout('glaze_check_xml');
+        const chk = this._wm.buildWidgetLayout('glaze_switch_xml');
 
         if(!chk) return;
 
         (this._bar as unknown as IContainerLike).addChild(chk);
-        (chk as unknown as WindowController).rectangle = {x: this._x, y: 3, width: 19, height: 21};
-        this._x += 26;
+        this.place(chk, this._x, 3, SWITCH_W, SWITCH_H);
+        this._x += SWITCH_W + 8;
 
         const widget = chk as unknown as ICheckWidget;
 
@@ -167,7 +214,7 @@ export class WindowBottomBar
 
         (lbl as unknown as { text: string }).text = text;
         (this._bar as unknown as IContainerLike).addChild(lbl);
-        (lbl as unknown as WindowController).rectangle = {x, y, width, height: 16};
+        this.place(lbl, x, y, width, 16);
     }
 
     private labelRef(text: string, x: number, y: number, width: number): ILabelWidget | null
@@ -178,7 +225,7 @@ export class WindowBottomBar
 
         (lbl as unknown as { text: string }).text = text;
         (this._bar as unknown as IContainerLike).addChild(lbl);
-        (lbl as unknown as WindowController).rectangle = {x, y, width, height: 16};
+        this.place(lbl, x, y, width, 16);
 
         return lbl as unknown as ILabelWidget;
     }
@@ -193,7 +240,7 @@ export class WindowBottomBar
         const controller = sw as unknown as WindowController;
 
         (this._bar as unknown as IContainerLike).addChild(sw);
-        controller.rectangle = {x: this._x, y: 5, width: 18, height: 18};
+        this.place(sw, this._x, 5, 18, 18);
         // The swatch layout is a passive region — opt it into input events so the
         // picker can be opened from here as well as from the Property Editor.
         controller.setParamFlag(WindowParam.INPUT_EVENT_PROCESSOR, true);
@@ -225,7 +272,7 @@ export class WindowBottomBar
         if(!dd) return;
 
         (this._bar as unknown as IContainerLike).addChild(dd);
-        (dd as unknown as WindowController).rectangle = {x: this._x, y: 3, width: 120, height: 22};
+        this.place(dd, this._x, 3, 120, 22);
 
         const drop = dd as unknown as IDropWidget;
         const locales = ['en', 'fr', 'de', 'es', 'it', 'nl', 'pt', 'fi'];

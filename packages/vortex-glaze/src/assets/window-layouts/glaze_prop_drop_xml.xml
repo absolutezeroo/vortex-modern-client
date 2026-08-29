@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layout name="glaze_prop_drop" width="332" height="26">
   <window>
-    <container x="0" y="0" width="332" height="26" params="16" style="3" name="glaze_drow">
+    <container x="0" y="0" width="332" height="26" params="16" style="3" name="glaze_drow" background="true" color="0xffeaeaea">
       <children>
         <text x="8" y="6" width="74" height="16" params="16" style="3" name="glaze_drow_label" caption="prop">
           <variables>
