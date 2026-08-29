@@ -2614,9 +2614,15 @@ Re-ranked **2026-08-03**, biggest product gap first.
    furniture samples. Songs play.
 4. **Protocol batches, in gap order**: `game`, `users`, `collectibles`, `catalog`, `room`,
    `inventory`, `groupforums`. Read the naming caveat in the message section before trusting any
-   per-category count. **`game` started 2026-08-28** — 9 of the 13 `parser/game/snowwar/data/` DTOs,
-   alongside the engine-side foundation; see the top entry under "Recent Work Recorded" for the
-   dependency order the rest has to follow.
+   per-category count. **`game` started 2026-08-28** — the engine-side deterministic foundation
+   first, then the whole DTO tier: all 13 `parser/game/snowwar/data/` classes plus the 15 game-object
+   and event DTOs they need out of `src/unknowns/`, then the 8-file arena tier, then the tile grid
+   and all seven game objects, then the eight replayable events — **37 of 63, all guarded by
+   `scripts/check-snowwar.mjs`, which exercises queue → pulse → apply → stage end to end**. See the
+   five top entries under "Recent Work Recorded" for the dependency order the rest has to follow.
+   `SnowWarEngine` (1,444 l.) is next and is the last thing any of this stubs out; behind it sit
+   `ui/` (7), `leaderboard/` (7), `KeyboardControl`, the 825-line incoming-message handler and
+   `HabboGameManager`.
 5. ~~**Retire the parity-audit backlog**~~ — **closed.** The 2026-07-17 audit is fully worked:
    25/26 real criticals fixed (one deliberately not acted on), 94/94 majors (3 of them false
    positives) and 48/48 open minors. See the audit section's own closing paragraph. The rule it
@@ -3876,7 +3882,193 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
-- 🆕 **`habbo/game` starts, 2026-08-28 — the deterministic foundation, 12 of 63 files.** Snow War
+- 🆕 **The snow-war events, 2026-08-28 — 9 files, `habbo/game` 28 → 37/63, and the lock-step loop
+  closes.** `events/`: the derived-name base `AbstractSynchronizedGameEvent` (`_SafeCls_2596`,
+  obfuscated in the 2016 tree too) and the eight inputs the game is made of — move target, start
+  making a snowball, get snowballs from a machine, create snowball, throw at a human, throw at a
+  position, machine creates snowball, human left.
+
+  **This is the tier that makes the previous three do anything.** A turn's DTOs become events, the
+  arena queues them by *(turn, sub-turn)*, and `apply()` reaches into the game objects. The check now
+  runs that whole path — `addGameEvent()` → `gamePulse()` → `apply()` → stage → object — so a break
+  anywhere along it fails here rather than as a silent desync.
+
+  🐛 **A ghost's id is assigned twice, and the port's comment had it wrong.** The
+  `SnowWarGameObject` doc written the previous slice said a ghost simply carries the negation of its
+  id. It does — for about one statement. `_SafeCls_1951` (the incoming-message handler) constructs
+  the ghost and immediately overwrites it: `ghost.gameObjectId = real.ghostObjectId`, which is
+  `-(id + 1)`, not `-id`. That second value is the key the ghost is filed under in the stage, the one
+  `SnowWarEngine.getGhostPlayer()` looks up, and the one `Tile.canMoveTo()` compares — a ghost left
+  on the constructor's value would match nothing and would be blocked out of its own tile. It is also
+  what the otherwise-pointless `set gameObjectId` accessor on the base exists for. Both declarations
+  now say so and the check asserts the whole sequence, including that the re-filed ghost can enter
+  the tile its real object holds while anything else is blocked.
+
+  AS3 details transcribed rather than tidied: `HumanThrowsSnowballAt*Event` both carry a `trajectory`
+  they never use — `throwSnowball()` takes only a point, and the trajectory travels separately to
+  `CreateSnowballEvent`, which is the event that actually launches anything; the at-human throw aims
+  at where the target is **when the event is applied**, a turn after the click; `HumanLeftGameEvent`
+  both queues the deletion *and* calls `onRemove()` immediately, so the tiles are released before
+  anybody can walk into them; `HumanGetsSnowballsFromMachineEvent` takes exactly one snowball per
+  application and credits the thrower's ghost with the same one; and
+  `MachineCreatesSnowballEvent.apply()` keeps AS3's null branch — the server queues these from the
+  moment the arena exists, so a machine the client has not built yet gets "Too early for this stuff.."
+  and the event is dropped.
+
+  **Only `SnowWarEngine` still stubs anything below this tier**: the three `playSound()` calls in the
+  events are `TODO(AS3)` lines that log. That class (1,444 l.) is the next slice and is a different
+  kind of work — a DI component with ~15 manager dependencies that pulls in `ui/` (7), `leaderboard/`
+  (7), `KeyboardControl` and the 825-line incoming-message handler behind it.
+
+- **The snow-war game objects and the tile grid, 2026-08-28 — 9 files, `habbo/game` 19 → 28/63.**
+  `Tile`, `SnowWarGameStage` (`_SafeCls_2604`) and all seven of `gameobjects/`: the base
+  `SnowWarGameObject`, `SnowballGivingGameObject` and its pile and machine subclasses,
+  `TreeGameObject`, `SnowBallGameObject` and the 779-line `HumanGameObject`. **The arena's stage hole
+  from the entry below is closed** — `SynchronizedGameArena.initialize()` now builds the real
+  `SnowWarGameStage`, which is what AS3 does with a direct `new` (the generic arena naming a
+  snow-war class is AS3's own layering break, not the port's).
+
+  🔍 **Two bugs that cancel, and must both be left alone.** `Direction8.isDiagonal()` answers true
+  for the four *cardinal* directions — the port already had that transcribed with a note saying
+  nothing reads it. Something does: `Tile.getPathCost()`, its only reader, charges `TILE_WIDTH` when
+  that method says "diagonal" and `TILE_DIAMETER` otherwise. Each half looks backwards alone and the
+  pair comes out right — 3,200 for a straight step, 4,525 for a diagonal. Correcting either one on
+  its own would invert every path cost and this client would stop choosing the server's routes.
+  Both declarations now say so, and `check-snowwar.mjs` pins the two numbers.
+
+  🔍 **The height map's heights are decoded and thrown away.** `linkTiles()` parses every character —
+  digit, `x`, or `10 + (letter - 'a')` — and then tests one thing: whether it is the no-tile
+  sentinel. A tile's height comes entirely from the scenery on it. That also explains
+  `parseHeightMap()`'s tallest-height local, which is computed and never read: the whole numeric half
+  of the format is vestigial in this build. Found by writing the check, which asserted height 10 for
+  an `a` tile and got 0.
+
+  **What the check now pins, and why it is the right thing to pin.** Every game object's
+  `getVariable()` table *is* the checksum's input, and it has to line up slot for slot with the DTO
+  the server sent. The new section builds a pile, a machine and a tree from real DTOs and compares
+  the two tables index by index — the only thing that catches a swapped pair, since both sides would
+  otherwise stay internally consistent and simply disagree with the server. It also covers the tile
+  grid (holes, edge clamping, symmetric N/NE/NW/W linking, nearest-tile rounding), the 534-unit
+  movement step with its snap-on-arrival, tile hand-over between the two tiles a walker holds, the
+  ghost id negation, and trajectory selection from range.
+
+  AS3 oddities transcribed rather than tidied, each stated at its declaration:
+  `HumanGameObject.get action()` is a switch whose only case and whose default both return
+  `figure_dance`; `Tile.directionIsBlocked()` returns whether the mover *can* move, the opposite of
+  its own name; `SnowBallGameObject.updatePosition()` divides the base vectors by **255** where
+  `CollisionUtils` divides by 256; `SnowballPileGameObject.BOUNDING_DATA_PER_SNOWBALL` is declared
+  and every use is the inlined literal; and `SnowWarGameStage.checkAndAdjustNeighbouringTiles()`
+  walks its two axes independently — an L, not a rectangle, so a 3×3 object never touches its far
+  corner.
+
+  **Two typing decisions worth knowing.** `SnowWarGameObject` returns null from all three
+  `ICollidable` shape accessors and lets `boundingType` 0 keep the collision tests off them; the port
+  casts at that one place rather than widening `ICollidable` and putting a null check on each of the
+  forty dereferences in `CollisionUtils` that AS3 does not have. And `Direction8.requireDirection8()`
+  is a new TS-only guard for the call sites AS3 wrote as unconditional, so an out-of-range wire
+  direction names itself instead of surfacing three frames later.
+
+  **Still open below this tier:** `SnowWarEngine` (1,444 l.) — `HumanGameObject`'s
+  `stopWaitingForSnowball()`/`registerHit()` and the three `playSound()` calls are `TODO(AS3)` stubs
+  that log, and the engine reference is typed `unknown`. That class is next, with `events/`,
+  `leaderboard/`, `ui/` and `HabboGameManager` behind it.
+
+- **The snow-war arena, 2026-08-28 — 8 files, and the lock-step clock runs.**
+  `SynchronizedGameArena` plus the stage hierarchy under it (`DefaultGameStage`,
+  `SynchronizedGameStage`), the three interfaces the arena talks through (`ISynchronizedGameEvent`,
+  `ISynchronizedGameObject`, and the two derived-name ones below), and `SnowWarArenaExtension` — the
+  50 ms pulse, 3 sub-turns to a turn, and the death-match test.
+
+  **The arena has no game rules in it at all.** It owns a turn counter split into sub-turns, an event
+  queue indexed by *(turn, sub-turn)*, and one checksum per turn; everything snow-specific arrives
+  through `IGameArenaExtension`. Two ordering facts are load-bearing and are stated at their
+  declarations:
+  - **The extension must be set before `initialize()`** — `initialize()` sizes its first event queue
+    from `getNumberOfSubTurns()`, which asks the extension. `SnowWarEngine` does
+    `new`/`setExtension`/`initialize` in exactly that order.
+  - **Removal is deferred to the end of the sub-turn.** `putGameObjectOnDeleteList()` deactivates and
+    queues; `subturn()` drains. Removing where the event asked would change what the rest of that
+    sub-turn's objects see, and two clients applying the same events would still diverge on
+    iteration order.
+
+  🐛 **A comment this port nearly shipped wrong, caught by its own check.** `_newTurn` — the flag
+  `seekToTurn()` sets — is cleared *inside the turn-close branch*, not after one pulse. It therefore
+  suppresses `stage.subturn()` for **every sub-turn of that whole turn**: a client just told where
+  the server is applies that turn's events without advancing objects it has not received yet, and
+  resumes simulating on the next turn. The first draft of the comment (and of the check) said "one
+  sub-turn"; running it is what said otherwise.
+
+  `scripts/check-snowwar.mjs` grew an arena section for exactly that reason — it pins the checksum
+  fold (weight restarts at 1 per object, ghosts and inactive objects excluded), the pulse on which a
+  turn closes, the deferred removal, the 1-based team scores, and the seek suppression. The wire
+  section is unchanged; the script was renamed from `check-snowwar-wire.mjs` since it now covers both.
+
+  Names: `SynchronizedGameStage` (`_SafeCls_2603`) and most of the arena's fields — `_events`,
+  `_turn`, `_subturn`, `_extension`, `_newTurn`, `_synchronizedGameStage`, `_gameObjects`,
+  `_removedGameObjects` — are **recovered** from `PRODUCTION-…/src/snowwar/_Str_231/`. Three names
+  are **derived** and say so: `IGameStage` (`_SafeCls_2602`), `IGameArenaExtension` (`_SafeCls_3121`)
+  and `SnowWarArenaExtension` (`_SafeCls_3122`), all three obfuscated in the 2016 tree too.
+
+  Two AS3 members ported and labelled as the dead code they are: `SynchronizedGameStage
+  .appendGameObjects()` writes an active-object count and then walks the objects a second time with
+  an **empty body** — identical in all three trees, and with no caller in any of them — and
+  `SnowWarArenaExtension.createGameStage()`, which nothing calls because the arena builds its stage
+  with a direct `new`.
+
+  **Two holes, both named.** `_gameEngine` is `unknown` because `SnowWarEngine` (1,444 l.) sits above
+  the arena and is unported; and `initialize()` builds the **base** `SynchronizedGameStage` where AS3
+  builds `SnowWarGameStage`, the subclass that adds the tile map. Turns, events, objects and the
+  checksum all behave meanwhile — only tile-dependent behaviour is absent, and it is a one-line swap.
+  Building the base rather than leaving null is what makes the clock exercisable at all.
+  (**The stage hole closed the same day** — see the entry above. `_gameEngine` stays open.)
+
+  **Next is `gameobjects/`** — `Tile`, `SnowWarGameObject` and `HumanGameObject`, which unblock both
+  holes above.
+
+- **The snow-war DTO tier, 2026-08-28 — 19 files, and the arena's blocker is gone.** The slice the
+  entry below named as next: the four remaining `parser/game/snowwar/data/` classes
+  (`GameObjectsData`, `GameStatusData`, `FullGameStatusData`, `Game2PlayerData`) plus the fifteen
+  they depend on out of `src/unknowns/` — `SnowWarGameObjectData` with its five subclasses
+  (`_SafePkg_1721`) and `SnowWarGameEventData` with its eight (`_SafePkg_4149`). All nineteen live
+  under `parser/game/snowwar/data/`, since the port mirrors no `unknowns/` tree and the two
+  consumers are in that directory already.
+
+  **A game object has no length prefix on the wire, and that is the whole risk.** The type is read
+  first because it is what decides how many integers the body is — 11 for a snowball, 9 for a tree,
+  7 for a pile, 8 for a machine, 19 (plus four strings) for a human. One wrong `NUM_OF_VARIABLES`
+  does not truncate one object, it shifts every byte after it, and neither AS3 nor the port throws:
+  the arena simply fills with plausible nonsense. `scripts/check-snowwar.mjs` is the answer to
+  that — it bundles the real classes with esbuild and runs them against a fake wrapper whose slots
+  are *typed*, so a read that lands on the wrong one fails at the field that drifted rather than
+  three objects later. It also asserts each stream is consumed to the byte.
+
+  Names: `OBJECT_TYPE_SNOWBALL`…`OBJECT_TYPE_HUMAN`, `NUM_OF_VARIABLES` and `_variables` are
+  **recovered** from `PRODUCTION-…/src/snowwar/_Str_62/`, the one tree where these two classes are
+  unobfuscated. The eight `EVENT_TYPE_*` ids are **derived** and said to be so at their declaration:
+  they are obfuscated in all four trees, and PRODUCTION does not carry the event DTOs at all, so
+  each is named after the subclass its id builds in `create()`.
+
+  Three AS3 behaviours transcribed rather than tidied:
+  - **`SnowWarGameEventData.create()` has holes at 5, 6, 9 and 10.** `GameStatusData` drops the null
+    and carries on, which is how a client of this build survives a server whose event set is wider
+    than its own. `GameObjectsData` cannot do the same and does not try — see above.
+  - **`FullGameStatusData.parse()` reads two integers into nothing**, one before
+    `remainingTimeSeconds` and one before `numberOfTeams`. They still have to be consumed; the check
+    covers exactly that with marker values either side.
+  - **`Game2PlayerData.dispose()` clears the two strings and leaves `_gender` and both integers**,
+    and declares `disposed` *and* `isDisposed` over the same field. Both are kept.
+
+  🔧 **The one deliberate deviation: AS3's two `create()` switches import their own subclasses.** In
+  ESM that cycle makes the base module evaluate first, so every `extends` runs against a binding in
+  its temporal dead zone — the same fault `wrapperCtors.ts` documents in `wired_setup`. Here each
+  subclass registers itself with the base at module scope instead, and the two consumers carry
+  side-effect imports to guarantee the table is populated. Tidy those imports away as "unused" and
+  `create()` silently returns null for everything; that is the other half of what the check catches.
+
+  **Next is `SynchronizedGameArena` and the stage** — the DTO tier was the last thing under it.
+  (**Landed the same day** — see the entry above.)
+
+- **`habbo/game` starts, 2026-08-28 — the deterministic foundation, 12 of 63 files.** Snow War
   is not "a minigame with some maths in it": it is **lock-step deterministic**. The server sends
   *inputs*, not positions, and every client advances the same simulation from the same seed. So the
   bottom layer cannot be modernised at all — `Math.random()` for the xorshift, `Math.atan2` for a
@@ -3919,7 +4111,8 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   chain, not a flat list: the events need the game objects, the game objects need the arena stage,
   the stage needs `SynchronizedGameArena`, and the arena needs the last 4 DTOs — which in turn need
   `SnowWarGameObjectData`/`SnowWarGameEventData` out of the `unknowns/` packages. So the next slice
-  is that DTO tier, then the arena, then game objects, then events, then the leaderboards and UI,
+  is that DTO tier (**landed 2026-08-28, see the entry above**), then the arena, then game objects,
+  then events, then the leaderboards and UI,
   then `HabboGameManager` and its `IncomingMessages`. Nothing above the foundation is wired yet and
   `HabboGameManager` is still absent, so `habbo/friendbar`'s `_gameManager: unknown | null` and
   `HabboFreeFlowChat`'s `get gameManager()` TODO both stay as they are.

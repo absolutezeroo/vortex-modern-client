@@ -98,6 +98,22 @@ export class Direction8
         return Direction8.ALL_DIRECTIONS[value] ?? null;
     }
 
+    /**
+     * TS-only: `getDirection8()` answers null for a value outside 0..7, where AS3 simply stores the
+     * null and fails at the next dereference. Call sites AS3 wrote as unconditional go through here
+     * instead, so a bad wire value names itself rather than surfacing three frames later.
+     */
+    // TS-only: null-check for AS3's unguarded getDirection8() call sites.
+    public static requireDirection8(direction: Direction8 | null): Direction8
+    {
+        if(direction === null)
+        {
+            throw new Error('Direction8 value out of range');
+        }
+
+        return direction;
+    }
+
     /** Wrapping into 0..7 by masking, which is also what makes a negative rotation work. */
     // AS3: Direction8.as::validateDirection8Value()
     public static validateDirection8Value(value: number): number
@@ -223,7 +239,12 @@ export class Direction8
     /**
      * **AS3 has this backwards and it is transcribed as written**: an even ordinal is N/E/S/W, the
      * *cardinal* directions, so this answers true for exactly the four that are not diagonal.
-     * Nothing in the AS3 tree reads it, which is presumably how the mistake survived.
+     *
+     * It has exactly one reader, `Tile.getPathCost()`, and **the two mistakes cancel**: that method
+     * charges `TILE_WIDTH` when this says "diagonal" and `TILE_DIAMETER` otherwise, which looks
+     * backwards on its own and comes out right once this is. Correcting either one alone would make
+     * A* charge 4,525 for a straight step and 3,200 for a diagonal, and every path the client picked
+     * would stop matching the server's.
      */
     // AS3: Direction8.as::isDiagonal()
     public isDiagonal(): boolean
