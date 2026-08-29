@@ -42,12 +42,8 @@
                 ['Recrutement', 'Les candidatures se font en jeu, aupres d\'un administrateur.'],
             ],
         },
-        '/community/fansites': {
-            title: 'Fansites',
-            blocks: [
-                ['Les sites de fans', 'Les fansites officiels sont tenus par des joueurs. Ce hotel n\'en a pas encore.'],
-            ],
-        },
+        // /community/fansites is NOT here: it is a real tabbed community page on habbo.com
+        // (pages/community/Fansites.svelte), not an editorial one.
         '/habbo-nft': {
             title: 'Habbo NFT',
             blocks: [

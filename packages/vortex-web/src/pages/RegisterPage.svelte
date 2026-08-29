@@ -17,8 +17,9 @@
     // form) but NOT sent, and the comment on each says so rather than implying they save.
     import {push, link} from 'svelte-spa-router';
     import Button from '../components/Button.svelte';
+    import HotelClosed from '../components/HotelClosed.svelte';
     import * as api from '../lib/api.js';
-    import {refresh} from '../lib/session.js';
+    import {refresh, outage} from '../lib/session.js';
     import {t} from '../lib/i18n.js';
 
     const TEASER = new URL('../assets/teaser_registration.png', import.meta.url).href;
@@ -86,6 +87,12 @@
 </script>
 
 <main class="mx-auto max-w-[1200px] px-3 py-6">
+    {#if $outage}
+        <!-- `registration.html`: `<habbo-hotel-closed ng-if="!RegistrationController.isOpen"
+             class="main">` — the form is not rendered at all while the hotel is shut, because an
+             account cannot be created without the server that would hold it. -->
+        <HotelClosed reason={$outage} />
+    {:else}
     <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
         <!-- `.form--left` -->
         <form class="min-w-0 lg:w-[62%]" onsubmit={submit}>
@@ -215,4 +222,5 @@
             </div>
         </aside>
     </div>
+    {/if}
 </main>

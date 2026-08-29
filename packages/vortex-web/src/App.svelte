@@ -15,7 +15,7 @@
     import Footer from './components/Footer.svelte';
     import Client from './components/Client.svelte';
     import {routes} from './lib/routes.js';
-    import {refresh, outage, signedIn} from './lib/session.js';
+    import {refresh, signedIn} from './lib/session.js';
 
     let status = $state('loading');
     let loginOpen = $state(false);
@@ -66,21 +66,24 @@
              The client itself is rendered ABOVE this branch, so hiding the chrome never unmounts it. -->
         <Router {routes} on:conditionsFailed={() => replace('/')} />
     {:else}
-    {#if $outage}
-        <!-- The game server is unreachable. Everything that does not need it still works, so this
-             is a strip and not a wall. -->
-        <p class="bg-error px-3 py-1.5 text-center text-sm text-white">
-            {$outage} — la connexion et l'entree dans l'hotel sont indisponibles.
-        </p>
-    {/if}
+    <!-- No outage strip. habbo.com never puts one across the top of the site: when the hotel is
+         not open it renders `habbo-hotel-closed` in the two places that need the hotel — the client
+         and the registration form (components/HotelClosed.svelte). Everything else keeps working,
+         so a crimson band over every page said nothing the visitor could act on. -->
+    <!-- `habbo-header-small { background:#069; display:block }` — and `habbo-header-large` has the
+         same one. The navigation is INSIDE that element in both templates, which is why the band
+         wraps it here too: `.navigation` is `rgba(255,255,255,.9)`, so the 10% it lets through is
+         this blue and not the page's navy. Without the wrapper the whole strip sat on
+         `--color-page` (#0c3a65) and read a shade too dark and too grey the whole way down. -->
+    <div class="w-full bg-[#069]">
+        {#if large}
+            <HeaderLarge />
+        {:else}
+            <HeaderSmall onLogin={() => (loginOpen = true)} />
+        {/if}
 
-    {#if large}
-        <HeaderLarge />
-    {:else}
-        <HeaderSmall onLogin={() => (loginOpen = true)} />
-    {/if}
-
-    <Navigation />
+        <Navigation />
+    </div>
 
     <div class="w-full flex-[1_0_auto] overflow-hidden bg-gradient-to-br from-page-top to-page">
         <Router {routes} on:conditionsFailed={() => replace('/')} />

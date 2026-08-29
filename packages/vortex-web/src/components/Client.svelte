@@ -16,6 +16,7 @@
     //    left-pointing arrow head (the nav's green button mirrored) that widens on hover to reveal
     //    the word "Web", and the fullscreen one swaps between two sprite cuts.
     import Sprite from './Sprite.svelte';
+    import HotelClosed from './HotelClosed.svelte';
     import * as api from '../lib/api.js';
     import {selectedId} from '../lib/session.js';
     import {CLIENT_URL} from '../lib/config.js';
@@ -82,9 +83,11 @@
      layout, and some engines stop or reset media in it. Off-screen keeps it running. -->
 <div class="absolute top-0 z-[600] h-full w-full {visible ? 'left-0' : 'left-[-9999px]'}">
     {#if error}
-        <div class="flex h-full flex-col items-center justify-center gap-3 bg-page px-6 text-center">
-            <h1>{t('HOTEL_UNAVAILABLE_TITLE')}</h1>
-            <p class="text-ink">{error}</p>
+        <!-- `client-closed.html` — the ticket did not come back, so the hotel is shut as far as
+             this visitor is concerned, and habbo.com's own box says so. `habbo-client-closed
+             habbo-hotel-closed { max-width: 620px }`. -->
+        <div class="flex h-full items-center justify-center bg-page px-3">
+            <HotelClosed reason={error} className="w-full max-w-[620px]" />
         </div>
     {:else if src}
         <iframe bind:this={frame} {src} title="Vortex" class="h-full w-full border-0" allow="autoplay; fullscreen"></iframe>

@@ -56,7 +56,7 @@ export const routes = {
     '/community/category/:category': open(() => import('../pages/community/News.svelte')),
     '/community/photos': open(() => import('../pages/community/Photos.svelte')),
     '/community/rooms': open(() => import('../pages/community/Rooms.svelte')),
-    '/community/fansites': open(() => import('../pages/StaticPage.svelte')),
+    '/community/fansites': open(() => import('../pages/community/Fansites.svelte')),
     '/article/:id': open(() => import('../pages/community/Article.svelte')),
     '/article/:id/:title': open(() => import('../pages/community/Article.svelte')),
 

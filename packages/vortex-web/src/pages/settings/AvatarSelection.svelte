@@ -18,6 +18,7 @@
     import Avatar from '../../components/Avatar.svelte';
     import Button from '../../components/Button.svelte';
     import FormError from '../../components/FormError.svelte';
+    import EmptyResults from '../../components/EmptyResults.svelte';
     import AvatarCreateModal from '../../components/AvatarCreateModal.svelte';
     import {avatars, selectedId, choose} from '../../lib/session.js';
     import {t} from '../../lib/i18n.js';
@@ -117,7 +118,7 @@
     </ul>
 
     {#if !shown.length}
-        <p class="py-6 text-center">{t('EMPTY_RESULTS_TEXT')}</p>
+        <EmptyResults className="py-6" />
     {/if}
 
     {#if creating}

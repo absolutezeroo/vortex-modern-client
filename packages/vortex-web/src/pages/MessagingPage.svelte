@@ -9,6 +9,7 @@
     import {link} from 'svelte-spa-router';
     import Tabs from '../components/Tabs.svelte';
     import Avatar from '../components/Avatar.svelte';
+    import EmptyResults from '../components/EmptyResults.svelte';
     import {HOME_TABS} from '../lib/tabs.js';
     import {t} from '../lib/i18n.js';
     import {DISCUSSIONS} from '../lib/mock.js';
@@ -20,7 +21,7 @@
     <h1>{t('HOME_MESSAGING_TAB')}</h1>
 
     {#if !DISCUSSIONS.length}
-        <p class="py-12 text-center">{t('DISCUSSIONS_EMPTY')}</p>
+        <EmptyResults key="DISCUSSIONS_EMPTY" className="py-12" />
     {:else}
         <ul>
             {#each DISCUSSIONS as discussion (discussion.id)}

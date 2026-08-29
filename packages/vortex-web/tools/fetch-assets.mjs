@@ -36,6 +36,13 @@ const ASSETS = {
     'teaser_baghead.png': 'teaser_baghead.6244c397.png',
     'teaser_registration.png': 'teaser_registration.171e1aec.png',
 
+    // Frank, three times: shrugging beside every empty result (`habbo-empty-results::after`, 64px),
+    // asleep on the hotel-closed box (`.hotel-closed::before`, 118x88), and holding a magnifying
+    // glass on the 404 (`.not-found__content::before`, 132x115).
+    'teaser_frank_unsure.png': 'teaser_frank_unsure.1bb317b2.png',
+    'teaser_frank_closed.png': 'teaser_frank_closed.88816de8.png',
+    'teaser_frank_looking.png': 'teaser_frank_looking.374ad9d0.png',
+
     // The four profile-card illustrations.
     'teaser_profile_badges.png': 'teaser_profile_badges.b20597b3.png',
     'teaser_profile_friends.png': 'teaser_profile_friends.45ec1e42.png',

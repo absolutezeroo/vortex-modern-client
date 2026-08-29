@@ -16,6 +16,7 @@
     // The feed's markup is SERVER-rendered on habbo.com (`habbo-compile data="…"`), so it is not in
     // sources/templates/ — this follows the rendered page, with the class rules above for geometry.
     import {link} from 'svelte-spa-router';
+    import EmptyResults from './EmptyResults.svelte';
     import {IMAGES} from '../lib/config.js';
 
     let {articles = [], categories = [], lead = false, columns = 1} = $props();
@@ -82,5 +83,5 @@
 </div>
 
 {#if !articles.length}
-    <p class="py-12 text-center">Rien à lire dans cette catégorie pour le moment.</p>
+    <EmptyResults className="py-12" />
 {/if}
