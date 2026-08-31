@@ -612,8 +612,15 @@ what to correct.
 
 Two things went with the panel:
 
-- **The zone name and level gate.** The server refuses a spot the player cannot fish, and that error
-  lands in the strip's status line like every other outcome, so nothing is lost but a label.
+- **The zone name and level gate.** The server refuses a spot the player cannot fish. This section
+  used to claim the refusal "lands in the strip's status line like every other outcome, so nothing is
+  lost but a label", and that was wrong in the one case it mattered: the strip exists only for the
+  length of a session, and `LevelTooLow`, `TooFarAway` and `DailyCapReached` all answer the click
+  that would have *begun* one. There was no strip to write into, so clicking the water did nothing
+  and said nothing. `HabboFishing.onFishingError()` raises a notification bubble now, and 8114
+  carries a trailing `detail` int — the zone's required level — so the message names the number
+  instead of saying "too low". The client cannot derive it: the refusal is what stops it ever
+  learning which zone the spot is in.
 - **The mount button.** `mountLastCatch()` survives and nothing calls it. It was already inert —
   mounting needs `fishing.trophy_furni_class` set and the shipped default is empty — and the
   Fishopedia's records tab is where it belongs, being the one screen that lists catches.
@@ -845,8 +852,14 @@ bubble and an explicit `iconBitmap` overrides its own icon.
 | The page-opening animation | The Lingo names it (`pAnimStartTime`, `getPageImages`, `addCoverToPage`); `fishpedia_page` and `fishpedia_book_cover` are extracted and unused |
 | The trophy on the rod | `h_hooked_object_2` and `_3` are the small and large caught fish, extracted and unused. Needs a wire signal for "holding one" and an effect variant |
 | `fishpedia_slot_shadow`, `fishing_splash_0_0` | Extracted, no use found in Origins' own Lingo either |
-| The additions | `MutedBubble`, `FloatingHeart`, `TypingBubble` and the rest of `visualization/avatar/additions/` set only `assetName`, exactly as the effect sprites did before §21. Presumably the same bug; unverified |
 
-Two surfaces show the same records on purpose and that is settled: the **inventory tab**
-(`FishingBookView`, a Vortex addition) and the **Fish-O-Pedia** (Origins' own book, opened by the
-sign). Neither supersedes the other.
+**The additions are not open — they were already fixed.** This table used to carry a row saying
+`MutedBubble`, `FloatingHeart` and `TypingBubble` set only `assetName` and presumably still had the
+bug §21 fixed for the effect sprites. They do set only `assetName`, and that is correct: the fix went
+into `AvatarVisualization.applyAdditionTexture()`, which runs over *every* addition in the update
+loop, not into each addition. All eight `user_*` assets they name resolve in the shipped library.
+
+**There is one Fish-O-Pedia.** An earlier `FishingBookView` showed the same records in an inventory
+tab and was kept beside Origins' own book while the two were compared. The book won; the tab, its
+model and its three layouts were deleted on 2026-08-31, and the entry point is the me-menu
+(`vortex_memenu_fishpedia_xml` → `fishpedia/open`), the room's wooden sign, or `:fishpedia`.

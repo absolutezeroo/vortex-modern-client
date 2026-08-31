@@ -346,12 +346,27 @@ eq(derby.entries[0].userName, 'Zoe', 'first place');
 eq(derby.entries[0].score, 41000, 'scored on combined weight of the ten heaviest');
 eq(derby.ownRank, 17, 'and own rank comes after the list, not inside it');
 
-// Error codes are append-only, and an unknown future one must still parse.
-const known = parseWith(VortexFishingErrorMessageParser, [FishingErrorCode.DailyCapReached], 'FishingError');
+// Error codes are append-only, and an unknown future one must still parse. The trailing `detail` is
+// the code's own number and is always on the wire, zero included — VortexFishingErrorMessageComposer
+// writes it unconditionally.
+const known = parseWith(VortexFishingErrorMessageParser, [FishingErrorCode.DailyCapReached, 0], 'FishingError');
 
 eq(known.code, 2, 'a known code');
 eq(known.known, true, 'reads as known');
-eq(parseWith(VortexFishingErrorMessageParser, [99], 'a future error code').known, false, 'a future code reads as unknown, and still parses');
+eq(known.detail, 0, 'a code that needs no number carries a zero, not a shorter packet');
+eq(parseWith(VortexFishingErrorMessageParser, [99, 0], 'a future error code').known, false, 'a future code reads as unknown, and still parses');
+
+// The reach check was appended after `known` was written against DerbyClosed, and reported itself as
+// unknown for it. The bound is derived from the enum now; this is what says so.
+const reach = parseWith(VortexFishingErrorMessageParser, [FishingErrorCode.TooFarAway, 0], 'FishingError');
+
+eq(reach.known, true, 'the newest code reads as known, not as a future one');
+
+// LevelTooLow is the only code with a number today: the level the zone wants, which the client
+// cannot derive because the refusal is what stops it learning which zone the spot is in.
+const level = parseWith(VortexFishingErrorMessageParser, [FishingErrorCode.LevelTooLow, 7], 'FishingError');
+
+eq(level.detail, 7, 'the required level rides along with the refusal');
 
 // Records: only caught species travel. The tab draws the whole table from the definitions and greys
 // out whatever this message does not mention, so a zero row per uncaught species would cost bytes to

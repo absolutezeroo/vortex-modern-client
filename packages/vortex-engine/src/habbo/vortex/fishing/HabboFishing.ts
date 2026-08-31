@@ -27,6 +27,7 @@ import type {VortexHookHavocResultMessageParser} from '@habbo/communication/mess
 import type {VortexHookHavocStartedMessageParser} from '@habbo/communication/messages/parser/vortex/VortexHookHavocStartedMessageParser';
 import type {VortexFishingCatchResultMessageParser} from '@habbo/communication/messages/parser/vortex/VortexFishingCatchResultMessageParser';
 import type {VortexFishingDefinitionsMessageParser} from '@habbo/communication/messages/parser/vortex/VortexFishingDefinitionsMessageParser';
+import {fishingErrorKey} from '@habbo/communication/messages/parser/vortex/VortexFishingErrorMessageParser';
 import type {VortexFishingErrorMessageParser} from '@habbo/communication/messages/parser/vortex/VortexFishingErrorMessageParser';
 import type {VortexFishingPlayerStateMessageParser} from '@habbo/communication/messages/parser/vortex/VortexFishingPlayerStateMessageParser';
 import type {FishingRecord, VortexFishingRecordsMessageParser} from '@habbo/communication/messages/parser/vortex/VortexFishingRecordsMessageParser';
@@ -551,6 +552,12 @@ export class HabboFishing extends Component implements ILinkEventTracker
      * A refusal. Logged as well as shown, because most of these mean the client asked for something
      * it should have known better than to ask for — a cast with the cap reached, or into a zone the
      * player's level does not reach.
+     *
+     * **It raises a bubble as well as writing the widget's status line, and the bubble is the half
+     * the player actually reads.** The status line is where Origins puts a refusal, and on its own
+     * it is unreachable: the commonest refusals — `LevelTooLow`, `TooFarAway`, `DailyCapReached` —
+     * answer the click that would have *started* a session, so there is no panel on screen to write
+     * into. Nothing told the player why the water did nothing.
      */
     // TS-only: Vortex-only handler.
     private onFishingError(event: IMessageEvent): void
@@ -560,7 +567,18 @@ export class HabboFishing extends Component implements ILinkEventTracker
         if(parser === null) return;
 
         log.warn(`Fishing refused, code ${parser.code}${parser.known ? '' : ' (unknown to this build)'}.`);
-        this._widget?.onError(parser.code, parser.known);
+        this._widget?.onError(parser.code, parser.known, parser.detail);
+
+        // `%detail%` is the code's own number — the required level for `LevelTooLow`. A key whose
+        // text does not use it simply ignores it, so every refusal goes through one call.
+        //
+        // No icon: `copyIcon` resolves the Fish-O-Pedia species previews, and a refusal names no
+        // species. `announce()` already draws the bubble without one.
+        this.announce(
+            fishingErrorKey(parser.code, parser.known),
+            new Map([['detail', `${parser.detail}`]]),
+            null
+        );
     }
 
     /**

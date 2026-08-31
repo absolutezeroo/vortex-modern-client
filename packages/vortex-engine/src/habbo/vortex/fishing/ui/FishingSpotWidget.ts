@@ -7,6 +7,7 @@ import {VortexFishingMountCatchComposer} from '@habbo/communication/messages/out
 import {VortexHookHavocInputComposer} from '@habbo/communication/messages/outgoing/vortex/VortexHookHavocInputComposer';
 import {VortexStartFishingComposer} from '@habbo/communication/messages/outgoing/vortex/VortexStartFishingComposer';
 import {VortexStopFishingComposer} from '@habbo/communication/messages/outgoing/vortex/VortexStopFishingComposer';
+import {fishingErrorKey} from '@habbo/communication/messages/parser/vortex/VortexFishingErrorMessageParser';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -58,8 +59,6 @@ const KEY_HOOK_HAVOC_WON = 'vortex.fishing.hook_havoc.won';
 const KEY_HOOK_HAVOC_LOST = 'vortex.fishing.hook_havoc.lost';
 const KEY_CUE_GOLDEN = 'vortex.fishing.cue.golden';
 const KEY_CAUGHT = 'vortex.fishing.caught';
-const KEY_ERROR_PREFIX = 'vortex.fishing.error.';
-const KEY_ERROR_UNKNOWN = 'vortex.fishing.error.unknown';
 const KEY_MOUNTED = 'vortex.fishing.mounted';
 
 /** What the widget needs to send. Narrow on purpose: four composers and nothing else. */
@@ -421,14 +420,22 @@ export class FishingSpotWidget extends RoomWidgetBase
     /**
      * Error codes are append-only, so a code this build does not know is always a newer one. It
      * falls back to a generic message rather than showing a bare number.
+     *
+     * `detail` is the code's own number — the required level for `LevelTooLow`, zero for a code that
+     * needs none — and a text that does not name `%detail%` ignores it.
+     *
+     * **This strip is not where a refused start is read.** It only exists for the length of a
+     * session, and the commonest refusals answer the click that would have begun one, so there is
+     * nothing on screen to write into. `HabboFishing.onFishingError()` raises the bubble that is
+     * actually seen; this stays for a refusal that arrives mid-session.
      */
     // TS-only: Vortex-only widget, driven by VortexFishingErrorMessageEvent.
-    public onError(code: number, known: boolean): void
+    public onError(code: number, known: boolean, detail: number): void
     {
         // A refused start is the common case, and it leaves no session behind — so the panel has to
         // come back to idle here or the button stays dead until it is rebuilt.
         this.endSession();
-        this.setCaption(CHILD_STATUS, this.translate(known ? `${KEY_ERROR_PREFIX}${code}` : KEY_ERROR_UNKNOWN));
+        this.setCaption(CHILD_STATUS, this.translate(fishingErrorKey(code, known), 'detail', `${detail}`));
     }
 
     /**

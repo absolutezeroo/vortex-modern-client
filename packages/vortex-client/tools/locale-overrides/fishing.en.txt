@@ -53,8 +53,11 @@ vortex.fishing.hook_havoc.lost=It got away. Fishing continues.
 # --- refusals ---------------------------------------------------------------------------------
 # The numeric suffix is the FishingErrorCode value. Codes are append-only on both sides, so a code
 # this client does not know falls back to `.unknown` rather than showing a bare number.
+#
+# %detail% is the one number the code carries, and only .1 has one: the level the zone wants. A text
+# that does not name it simply ignores it.
 vortex.fishing.error.0=That is not a fishing spot.
-vortex.fishing.error.1=Your fishing level is too low for this spot.
+vortex.fishing.error.1=You need fishing level %detail% to fish here.
 vortex.fishing.error.2=You have earned all the fish tokens you can today.
 vortex.fishing.error.3=You are already fishing.
 vortex.fishing.error.4=That catch is no longer available.
