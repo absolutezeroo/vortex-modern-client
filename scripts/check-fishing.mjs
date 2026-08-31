@@ -509,8 +509,8 @@ eq(
     const ALL = 0xFFFFFF;
     const pad = (h) => (h < 10 ? `0${h}` : `${h}`);
 
-    // Mirrors FishingBookView.describeHours(). Kept here rather than imported because the view
-    // reaches the window system, which does not exist under Node.
+    // Reads the mask back as ranges, which is what makes a wrong seed legible: the view draws it as
+    // a bar of lit hours and a missing bit there is one invisible pixel column.
     const describe = (mask) =>
     {
         if((mask & ALL) === ALL) return 'any';

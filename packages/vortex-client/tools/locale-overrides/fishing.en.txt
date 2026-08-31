@@ -216,3 +216,7 @@ vortex.fishing.minigame_window=Fishing
 vortex.fishing.derby.empty_slot=Empty
 vortex.fishing.derby.registration_failed=Fishing Derby registration could not be completed.
 vortex.fishing.derby.registration_unavailable=Fishing Derby registration is unavailable right now.
+
+# The me-menu entry. Origins opens the book from the wooden sign in the room; this port keeps that
+# and adds a menu entry, because a sign only exists in a fishing room.
+vortex.fishing.memenu=Fish-O-Pedia

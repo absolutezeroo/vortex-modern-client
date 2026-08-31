@@ -85,9 +85,9 @@ const KEY_UNKNOWN = 'vortex.fishing.book.unknown';
  * in `sources/` contains a line of it. The reference is `hh_fishing.cct` plus two screenshots of the
  * real screen, and `docs/vortex-original/fishing.md` §19 records what each of them settled.
  *
- * **This does not replace `FishingBookView`.** That one drives the list-and-detail panel the
- * inventory tab still opens; this is the same data on Origins' own artwork, reachable from
- * `:fishpedia` while the two are compared. Only one of them should survive.
+ * **It is the only Fish-O-Pedia.** An earlier list-and-detail panel in an inventory tab was kept
+ * beside it while the two were compared; this one won and the other is gone. Reached from the
+ * me-menu entry, the room's wooden sign, and `:fishpedia`.
  *
  * **It computes nothing.** Species, rarity, rewards and the hour and weekday masks all come from
  * `FishingDefinitions`; whether a species is caught is `HabboFishing.getRecord()` answering non-null.

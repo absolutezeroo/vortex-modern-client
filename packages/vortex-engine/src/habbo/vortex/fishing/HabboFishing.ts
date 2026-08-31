@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {IAssetLibrary} from '@core/assets';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
@@ -133,7 +134,7 @@ const EMPTY_STATE: IFishingPlayerState = {
  * It holds no authoritative state. The definitions are whatever the server last pushed, the player
  * state likewise, and every catch outcome is decided server-side before it arrives here.
  */
-export class HabboFishing extends Component
+export class HabboFishing extends Component implements ILinkEventTracker
 {
     // TS-only: Vortex-only system — no AS3 counterpart for any member here.
     private _communication: IHabboCommunicationManager | null = null;
@@ -230,9 +231,8 @@ export class HabboFishing extends Component
     /**
      * Opens Origins' own Fish-O-Pedia, built on first use.
      *
-     * Opened by the wooden sign in the room and by `:fishpedia`. It sits beside the inventory tab
-     * `FishingBookView` draws: both show the same records, the tab inside the inventory window and
-     * this as Origins' own book. That is deliberate — see `docs/vortex-original/fishing.md` §23.
+     * Opened by the me-menu entry, by the wooden sign in the room, and by `:fishpedia` — the three
+     * routes all land here. See `docs/vortex-original/fishing.md` §23.
      */
     // TS-only: Vortex-only fishing system — no AS3 counterpart.
     public openPedia(): void
@@ -298,6 +298,24 @@ export class HabboFishing extends Component
         this.addMessageEvent(new VortexHookHavocResultMessageEvent(this.onHookHavocResult.bind(this)));
         this.addMessageEvent(new VortexFishingErrorMessageEvent(this.onFishingError.bind(this)));
         this.addMessageEvent(new VortexFishingRecordsMessageEvent(this.onRecords.bind(this)));
+
+        // `fishpedia/open` is how the me-menu button reaches the book. A link event rather than a
+        // direct call for the reason every other component uses one: the toolbar has no business
+        // holding a reference to fishing, and `HabboCatalog` registers itself the same way.
+        this.context.addLinkEventTracker(this);
+    }
+
+    // TS-only: `ILinkEventTracker` — Vortex-only system, no AS3 counterpart.
+    public get linkPattern(): string
+    {
+        return 'fishpedia/';
+    }
+
+    /** Only `fishpedia/open` for now; anything else under the prefix is ignored, not guessed at. */
+    // TS-only: `ILinkEventTracker` — Vortex-only system, no AS3 counterpart.
+    public linkReceived(link: string): void
+    {
+        if(link === 'fishpedia/open' || link === 'fishpedia/show') this.openPedia();
     }
 
     // TS-only: Vortex-only accessor — the definition tables, shared with whatever draws them.

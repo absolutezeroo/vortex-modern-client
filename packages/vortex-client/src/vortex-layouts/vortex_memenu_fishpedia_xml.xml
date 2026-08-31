@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The Fish-O-Pedia entry in the me-menu.
+
+  A layout of its own rather than an edit to `me_menu_new_view_xml`, because that file lives in
+  src/assets/window-layouts/, which is gitignored and rewritten by tools/build-window-assets.mjs out
+  of the dump — an edit there is wiped on the next asset build. `MeMenuNewController` builds this and
+  adds it to the shipped menu's `buttons` container at runtime.
+
+  Shaped on the menu's own `rooms` entry, verbatim: a 60x48 region, the icon above a 9pt label,
+  `params="17"` and `style="1"` for the hover plate.
+
+  Its x and y here are only what vortex-glaze needs to draw it; they are never read at runtime. The
+  menu's row is a `boxsizer` and it assigns every child's position itself, so the entry is placed by
+  being inserted before the row's `spacer` — see `MeMenuNewController.addFishpediaEntry()`.
+
+  The region's NAME is the whole wiring. `AbstractSubMenuController` puts a single procedure on the
+  window and dispatches on `window.name`, so a child region needs no handler of its own — see
+  `MeMenuNewController.onSubMenuItemClick()`, which answers `fishpedia` with a `fishpedia/open` link
+  event.
+
+  Vortex-only: fishing is an Origins feature and has no counterpart in any Habbo Flash dump.
+-->
+<layout name="vortex_memenu_fishpedia" width="60" height="48" version="0.1">
+  <window>
+    <region x="0" y="0" width="60" height="48" params="17" style="1"
+            name="fishpedia" color="0xff3d3d3d" treshold="0">
+      <children>
+
+        <!-- `fishing_rod_icon` is 11x23 where the shipped icons are ~32x30, so it is centred in the
+             column by hand rather than stretched: the cast drew it at that size and scaling a
+             23px-tall rod to 30 makes it visibly soft next to its neighbours.
+
+             TWO copies, colour then greyscale, exactly as every shipped entry ships them. That pair
+             IS the hover: `AbstractSubMenuController.windowProcedure()` looks up
+             `<region name>_icon_color` and `<region name>_icon_grey` by name and swaps their
+             `visible` on OVER/OUT, and it only does so when it finds BOTH — with one of them
+             missing the entry stays grey and the label never lights up. The grey one comes second
+             so it is the one drawn on top at rest. -->
+        <static_bitmap x="24" y="3" width="11" height="23" params="16" style="0"
+                       name="fishpedia_icon_color">
+          <variables>
+            <var key="asset_uri" value="fishing_rod_icon" type="String"/>
+            <var key="stretched_x" value="false" type="Boolean"/>
+            <var key="stretched_y" value="false" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="24" y="3" width="11" height="23" params="16" style="0"
+                       name="fishpedia_icon_grey">
+          <variables>
+            <var key="asset_uri" value="fishing_rod_icon" type="String"/>
+            <var key="stretched_x" value="false" type="Boolean"/>
+            <var key="stretched_y" value="false" type="Boolean"/>
+            <var key="greyscale" value="true" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="0" y="32" width="60" height="14" params="786640" style="0"
+              name="field_text" caption="${vortex.fishing.memenu}" width_max="60">
+          <variables>
+            <var key="auto_size" value="left" type="String"/>
+            <var key="font_size" value="9" type="uint"/>
+            <var key="text_color" value="0xffffff" type="hex"/>
+            <var key="text_style" value="u_regular" type="String"/>
+          </variables>
+        </text>
+
+      </children>
+    </region>
+  </window>
+</layout>

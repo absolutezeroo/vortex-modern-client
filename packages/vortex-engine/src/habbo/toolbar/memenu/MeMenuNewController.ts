@@ -7,6 +7,11 @@ import {AbstractSubMenuController} from '../abstractsubmenu/AbstractSubMenuContr
 import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {GetTalentTrackMessageComposer} from '@habbo/communication/messages/outgoing/talent';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
+import type {IWindow} from '@core/window/IWindow';
+import type {IBoxSizerWindow} from '@core/window/components/IBoxSizerWindow';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('habbo.toolbar.memenu.MeMenuNewController');
 
 /**
  * The "me menu" popup for the new horizontal bottom bar: profile, minimail, rooms,
@@ -23,6 +28,25 @@ export class MeMenuNewController extends AbstractSubMenuController
 {
     // AS3: .../src/com/sulake/habbo/toolbar/memenu/MeMenuNewController.as::USE_GUIDE_TOOL
     public static readonly USE_GUIDE_TOOL: string = 'USE_GUIDE_TOOL';
+
+    /** The Fish-O-Pedia entry, kept out of the dump-built layout — see `addFishpediaEntry()`. */
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    private static readonly FISHPEDIA_LAYOUT: string = 'vortex_memenu_fishpedia_xml';
+
+    /** One entry's column: 60 wide plus the menu's own 8px gutter, as the shipped entries space. */
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    private static readonly FISHPEDIA_COLUMN: number = 68;
+
+    /**
+     * The geometry `me_menu_new_view_xml`'s row was authored with, recovered from the positions it
+     * ships — see `addFishpediaEntry()`.
+     */
+    // TS-only: recovered from the shipped layout, not from AS3.
+    private static readonly ROW_PADDING_H: number = 12;
+    // TS-only: recovered from the shipped layout, not from AS3.
+    private static readonly ROW_PADDING_V: number = 2;
+    // TS-only: recovered from the shipped layout, not from AS3.
+    private static readonly ROW_SPACING: number = 8;
 
     private _iconLoader: MeMenuNewIconLoader | null;
     private _settingsView: MeMenuSettingsMenuView | null = null;
@@ -45,6 +69,73 @@ export class MeMenuNewController extends AbstractSubMenuController
         this.setMinimailVisibility(false);
 
         this._iconLoader = new MeMenuNewIconLoader(toolbar);
+
+        this.addFishpediaEntry();
+    }
+
+    /**
+     * Adds the Fish-O-Pedia entry to the shipped menu.
+     *
+     * Vortex-only: fishing is an Origins feature, so `me_menu_new_view_xml` has no such region —
+     * and it cannot be given one, because that file is rewritten from the dump by
+     * `build-window-assets.mjs`. The entry is its own layout in `vortex-layouts/` and is parented
+     * here instead, which is also how it survives an asset rebuild.
+     *
+     * No click handler is bound: `AbstractSubMenuController` puts one procedure on the whole window
+     * and dispatches on `window.name`, so the region's name is the wiring.
+     *
+     * **The row is a `boxsizer`, which owns its children's positions.** It re-lays the whole row out
+     * on `WE_CHILD_ADDED` — and on `WE_CHILD_VISIBILITY`, which the three `set*Visibility()` calls in
+     * the constructor already fire — so the entry's own x in the layout is never read, and neither
+     * are the shipped x's of the eight entries beside it. It also carries no `spacing`/`padding`
+     * variables, so it arranges with `BoxSizerController`'s defaults (8/8/5) rather than the pitch
+     * the row was drawn at, which moves every icon the first time one of them is hidden. The three
+     * constants above are that pitch, recovered by solving the shipped positions: 12, 70, 128, 196,
+     * 264, 332, 400, 468 and the spacer at 536 are exactly `paddingHorizontal 12`, `spacing 8`, with
+     * every region at `paddingVertical 2`. Setting them makes the arrangement reproduce the layout
+     * as drawn, and places the ninth column without a hardcoded coordinate anywhere.
+     */
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    private addFishpediaEntry(): void
+    {
+        const window = this.window;
+        const spacer = window?.findChildByName('spacer') ?? null;
+        const row = spacer?.parent as IBoxSizerWindow | null;
+
+        if(window === null || spacer === null || row === null || typeof row.setSpacing !== 'function')
+        {
+            log.warn('me_menu_new_view_xml is not the boxsizer row it was; the Fish-O-Pedia entry is not added.');
+
+            return;
+        }
+
+        const entry = this.toolbar?.windowManager?.buildWidgetLayout(
+            MeMenuNewController.FISHPEDIA_LAYOUT, 2
+        ) as IWindow | null;
+
+        if(entry === null || entry === undefined)
+        {
+            log.warn(`${MeMenuNewController.FISHPEDIA_LAYOUT} is not registered; the Fish-O-Pedia entry is not added.`);
+
+            return;
+        }
+
+        row.setHorizontalPadding(MeMenuNewController.ROW_PADDING_H);
+        row.setVerticalPadding(MeMenuNewController.ROW_PADDING_V);
+        row.setSpacing(MeMenuNewController.ROW_SPACING);
+
+        // Before the spacer, which is the row's right margin rather than an entry.
+        row.addChildAt(entry, row.getChildIndex(spacer));
+
+        // Nothing in the chain reflects its parent's resize — no REFLECT_*_RESIZE_TO_PARENT in any
+        // of their params — so the boxsizer, the container, the bordered plate and the window each
+        // need the ninth column added by hand, or it draws outside the plate.
+        for(let level: IWindow | null = row; level !== null; level = level.parent)
+        {
+            level.width = level.width + MeMenuNewController.FISHPEDIA_COLUMN;
+
+            if(level === window) break;
+        }
     }
 
     /**
@@ -120,6 +211,11 @@ export class MeMenuNewController extends AbstractSubMenuController
                 break;
             case 'collectibles':
                 this.toolbar?.context.createLinkEvent('collectibles/open');
+                break;
+            // TS-only: Vortex-only fishing system — no AS3 counterpart. `HabboFishing` registers
+            //   itself as the `fishpedia/` link tracker, so the toolbar needs no reference to it.
+            case 'fishpedia':
+                this.toolbar?.context.createLinkEvent('fishpedia/open');
                 break;
         }
     }

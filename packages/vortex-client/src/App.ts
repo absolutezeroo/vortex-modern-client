@@ -759,11 +759,6 @@ const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
     'if_icon_ltd',
     'if_icon_earning',
 
-    // The Fishopedia's rarity stars. FishingBookView paints one to five of these into the row's
-    // bitmap column, so a missing entry costs the whole rarity column — the exact silent failure
-    // this list exists to prevent, and it caught this one on the first run.
-    'star_small_gold',
-
     // The rod-quality indicator in the Fishopedia's header, one sprite per tier.
     'fishing_skill_level_0',
     'fishing_skill_level_1',
