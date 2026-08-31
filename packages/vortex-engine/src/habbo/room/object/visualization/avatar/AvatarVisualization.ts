@@ -15,6 +15,9 @@
  *
  * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as
  */
+import {Texture} from 'pixi.js';
+
+import type {IAsset} from '@core/assets/IAsset';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IRoomObjectModel} from '@room/object/IRoomObjectModel';
 import type {IRoomObject} from '@room/object/IRoomObject';
@@ -162,6 +165,16 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private _partSpriteCount: number = 0;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_additions
     private _additions: Map<number, IAvatarAddition> | null = null;
+
+    /**
+     * Addition artwork, wrapped once and shared by every avatar in the room.
+     *
+     * Static because the pictures are: `user_idle_left_1` is the same image over every sleeping
+     * avatar, and the library hands out the same `ImageBitmap` for it. Bounded by the number of
+     * addition assets that ship — about thirty — so it needs no eviction.
+     */
+    // TS-only: AS3 hands the sprite an asset and lets Flash blit it; this port needs a Texture.
+    private static readonly ADDITION_TEXTURES: Map<string, Texture> = new Map();
     private _geometryUpdateCounter: number = -1;
     private _postureParameter: string = '';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_isTalking
@@ -253,21 +266,85 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     }
 
     /**
-     * Gets an asset from the avatar render manager by name.
-     * Used by additions to resolve their sprite assets.
+     * The asset an addition draws with, out of the avatar render manager's library.
      *
-     * @param name - The asset name to look up
-     * @returns The asset name string (for sprite asset resolution)
+     * AS3 is `_visualizationData.getAvatarRendererAsset(k)`, which ends at
+     * `_avatarRenderer.assets.getAssetByName(k)`. This **returned the name back to the caller** —
+     * a stub with the right signature and no lookup — which is one of the three reasons no addition
+     * has ever drawn: the Zzz over a sleeping avatar, the muted bubble, the typing bubble and the
+     * blown kiss all resolve their artwork through here.
+     *
+     * The name is normalised on the way past. AS3 asks for `user_idle_left_1_png`, because in Flash
+     * the embed's class name carried the extension; this port keys images by their shipped filename
+     * with no suffix (`user_idle_left_1`). Asking with the suffix returns null and says nothing —
+     * the trap `.claude/rules` records for image versus layout keys. Both spellings are tried so
+     * the additions can keep AS3's own names.
      */
-    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::getAvatarRendererAsset()
-    getAvatarRendererAsset(name: string): string | null 
+    /**
+     * Gives an addition's sprite the picture its `assetName` asks for.
+     *
+     * **A restored line, not a deviation.** AS3 assigns the picture as well as the name —
+     * `_loc6_.asset = …content as BitmapData` — and this port assigned only the name. `assetName`
+     * is read by nothing here: in Flash it is the cache key for the coloured and flipped variants
+     * (`getBitmapData(asset, assetName, …)` takes the BitmapData separately), never a lookup. So
+     * every addition set a name and drew whatever texture its pooled slot last held, which for the
+     * idle Zzz, the muted bubble, the typing bubble, the blown kiss and the number bubble meant
+     * nothing at all. The same line was missing on the effect-sprite path in `updateExtraSprites()`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as:910
+    private applyAdditionTexture(sprite: IRoomObjectSprite | null): void
     {
-        if(!this._visualizationData) 
+        if(sprite === null) return;
+
+        if(!sprite.visible || !sprite.assetName)
         {
-            return null;
+            sprite.texture = null;
+
+            return;
         }
 
-        return name;
+        // Cached by name: this runs once per addition per frame, and `.claude/rules/room.md` is
+        // explicit that the render path allocates nothing per frame and caches textures by content
+        // key. An addition alternates between two or three names for its whole life.
+        let texture = AvatarVisualization.ADDITION_TEXTURES.get(sprite.assetName) ?? null;
+
+        if(texture === null)
+        {
+            const asset = this.getAvatarRendererAsset(sprite.assetName);
+            const content = (asset?.content ?? null) as ImageBitmap | null;
+
+            if(content !== null)
+            {
+                texture = Texture.from(content);
+                AvatarVisualization.ADDITION_TEXTURES.set(sprite.assetName, texture);
+            }
+        }
+
+        // Hidden rather than left holding the last texture: a name the library cannot answer is a
+        // missing asset, and drawing the previous addition's picture in its place is worse than
+        // drawing none.
+        sprite.texture = texture;
+        sprite.visible = texture !== null;
+    }
+
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::getAvatarRendererAsset()
+    getAvatarRendererAsset(name: string): IAsset | null
+    {
+        const renderer = this._visualizationData?.avatarRenderManager ?? null;
+
+        if(renderer === null) return null;
+
+        // Stripped FIRST, not as a fallback: `AssetLibrary.getAssetByName()` warns on every miss,
+        // and asking with the suffix would log one per addition per frame for an asset that is
+        // there under the other spelling.
+        if(name.endsWith('_png'))
+        {
+            const stripped = renderer.getAssetByName(name.slice(0, -4));
+
+            if(stripped !== null) return stripped;
+        }
+
+        return renderer.getAssetByName(name);
     }
 
     /**
@@ -399,12 +476,16 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         {
             let spriteIndex = this._extraSpritesStartIndex;
 
-            for(const addition of this._additions.values()) 
+            for(const addition of this._additions.values())
             {
-                if(addition.animate(this.getSprite(spriteIndex++))) 
+                const sprite = this.getSprite(spriteIndex++);
+
+                if(addition.animate(sprite))
                 {
                     this.increaseUpdateId();
                 }
+
+                this.applyAdditionTexture(sprite);
             }
         }
 
@@ -1588,21 +1669,53 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
                     const assetName = `${this._activeAvatarImage.getScale()}_${spriteData.member}_${dd}_${animFrame}`;
                     const asset = this._activeAvatarImage.getAsset(assetName);
 
-                    if(asset == null) 
+                    if(asset == null)
                     {
+                        // DEVIATION: AS3 `continue`s here and leaves the sprite shown, holding its
+                        //   previous BitmapData — the same staleness this port has, and the same
+                        //   bug; Flash simply never had a frame missing from a library it embedded.
+                        //   A sprite whose asset the library cannot answer is hidden instead, so a
+                        //   missing frame draws nothing rather than the last thing that slot held.
+                        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as:1245
+                        sprite.visible = false;
                         spriteIndex++;
+
                         continue;
                     }
 
                     sprite.assetName = assetName;
 
-                    // AS3 (AvatarVisualization.as:294-298) applies the asset's own offset
-                    // unconditionally when the asset exists — there is no "no offset" branch.
-                    // GraphicAsset.offsetX/offsetY are the port's equivalent of BitmapDataAsset
-                    // offset.x/offset.y. (Previously getAsset() returned a string, so asset.offset
-                    // was undefined and this always fell to the invented else, dropping the offset.)
-                    sprite.offsetX = (-asset.offsetX - (scale / 2)) + dx;
-                    sprite.offsetY = -asset.offsetY + dy;
+                    // A restored line, not a deviation: AS3 assigns BOTH, the name and the picture —
+                    // `_loc22_.asset = _loc6_.content as BitmapData` — and this port assigned only
+                    // the name. `assetName` is read by nothing here; in Flash it is the cache key
+                    // for the coloured and flipped variants, never a lookup. So the sprite kept
+                    // whatever texture its pool slot last held, and the pool is shared with the
+                    // body-part block: what the fishing rod's line and float drew in-room was a
+                    // stale slice of an avatar's own leg standing on the water.
+                    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as:1250
+                    sprite.texture = asset.texture;
+
+                    // DEVIATION: AS3 writes `-_loc2_.offset.x - _loc8_ / 2 + _loc13_` and this
+                    //   copied that sign. It cannot be copied, because the offset no longer comes
+                    //   from the same place: AS3 read a Flash asset library's `<offset>`, and this
+                    //   port reads a Nitro bundle, where `GraphicAssetCollection.createFromSpritesheet`
+                    //   already stores `offsetX = -assetDef.x`. Negating again lands an effect sprite
+                    //   mirrored about the object's origin.
+                    //
+                    //   The body path settles which sign is right, because both have to end up in
+                    //   the same space: `AvatarImageCache` takes `-graphicAsset.offsetX` as a part's
+                    //   regPoint and `setContainerOffset` negates that in turn, so a body part draws
+                    //   at `+asset.offsetX`. An effect sprite has to do the same.
+                    //
+                    //   Rendered, not reasoned: `vortex-imager` composites effects with `+offsetX`
+                    //   and puts Hoverboard's board under the feet and Torch's flame in the hand;
+                    //   the AS3 sign put the board some 60px below the avatar with clear air between
+                    //   them. Nothing in the room had shown it because effect libraries were not in
+                    //   the alias collection until recently, so `getAsset()` returned null here and
+                    //   no effect sprite was ever drawn.
+                    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::update()
+                    sprite.offsetX = (asset.offsetX - (scale / 2)) + dx;
+                    sprite.offsetY = asset.offsetY + dy;
 
                     if(spriteData.hasStaticY) 
                     {

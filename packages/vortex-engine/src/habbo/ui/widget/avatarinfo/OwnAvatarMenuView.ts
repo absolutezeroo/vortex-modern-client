@@ -8,6 +8,7 @@
  * which the room desktop routes to the handler that registered that type.
  */
 import type {IWindow} from '@core/window/IWindow';
+import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
@@ -140,13 +141,19 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
 
         if(this._buttons) this._buttons.procedure = this.buttonEventProc;
 
-        const signsGrid = this._window.findChildByName('signs_grid') as IWindowContainer | null;
+        // AS3 casts to IItemGridWindow and walks its `iterator` — the grid's ITEMS. This walked
+        // `numChildren`/`getChildAt()` instead, as if the grid were a plain container, and a grid's
+        // items are not its direct children: it holds them in an inner container, exactly as an item
+        // list does. So the loop found no cell, no button was ever given `gridEventProc`, and every
+        // sign in the menu was inert. `showButtonGrid()` two classes up already iterates it the
+        // right way, which is why the icons load and the clicks did not.
+        const signsGrid = this._window.findChildByName('signs_grid') as unknown as IItemGridWindow | null;
 
         if(signsGrid)
         {
-            for(let i = 0; i < signsGrid.numChildren; i++)
+            for(let i = 0; i < signsGrid.numGridItems; i++)
             {
-                const cell = signsGrid.getChildAt(i) as IWindowContainer | null;
+                const cell = signsGrid.getGridItemAt(i) as unknown as IWindowContainer | null;
                 const button = cell?.findChildByName('button');
 
                 if(button) button.procedure = this.gridEventProc;

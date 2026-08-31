@@ -127,12 +127,36 @@ export class ExtensionView implements IExtensionView
         }
     }
 
-    // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::get screenHeight()
-    public get screenHeight(): number 
+    /**
+     * The y everything below the toolbar stacks from — the notification column reads this and
+     * nothing else.
+     */
+    // DEVIATION: AS3 returns `_var104.height + _var104.y`, the item list's own box. That is the same
+    //   number here only when every extension window is as tall as it draws, and several are not:
+    //   a collapsed widget keeps its expanded height, so the list adds up to some 345 where it
+    //   paints 90. `resize_on_item_update` is honoured — the list really is that tall — so the
+    //   number is not wrong, the widgets are. Until they are fixed, taking the box leaves the first
+    //   notification a couple of hundred pixels below the toolbar with nothing in between, which is
+    //   the visible bug; the bottom of the last item that actually draws is the honest answer to
+    //   what the caller is asking.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ExtensionView.as::get screenHeight()
+    public get screenHeight(): number
     {
         if(!this._var104) return 0;
 
-        return this._var104.height + this._var104.y;
+        let bottom = 0;
+
+        for(let i = 0; i < this._var104.numListItems; i++)
+        {
+            const item = this._var104.getListItemAt(i);
+
+            if(item !== null && item.visible) bottom = Math.max(bottom, item.y + item.height);
+        }
+
+        // No items, or none of them visible: the list is the only thing left to measure.
+        if(bottom === 0) bottom = this._var104.height;
+
+        return bottom + this._var104.y;
     }
 
     // AS3: .../src/com/sulake/habbo/toolbar/ExtensionView.as::attachExtension()

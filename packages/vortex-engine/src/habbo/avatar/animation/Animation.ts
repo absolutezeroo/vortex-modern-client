@@ -317,6 +317,18 @@ export class Animation implements IAnimation
         }
     }
 
+    /**
+     * One frame's layers, or none.
+     *
+     * **`index` can be negative.** `AvatarImageCache.getImageContainer()` asks for
+     * `frameCounter - action.startFrame`, and an action whose `startFrame` was recorded before the
+     * counter was reset is ahead of it. `index % length` is then negative, and a negative array
+     * index is `undefined` in both languages — the difference is what each does next: AS3's
+     * `for each` over `undefined` iterates nothing and the part simply gets no layer data, while a
+     * TypeScript `for...of` throws `is not a function or its return value is not iterable`, from
+     * inside the room's render loop, every frame. That is the same for-each-on-null trap this port
+     * has hit before; the tolerance has to be written out rather than inherited.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/animation/Animation.as::getFrame()
     private getFrame(index: number, overrideAction: string | null = null): AnimationLayerData[]
     {
@@ -324,7 +336,7 @@ export class Animation implements IAnimation
         {
             if(this._frames.length > 0)
             {
-                return this._frames[index % this._frames.length];
+                return this._frames[index % this._frames.length] ?? Animation.EMPTY_ARRAY;
             }
         }
         else if(this._overrideFrames)
@@ -333,7 +345,7 @@ export class Animation implements IAnimation
 
             if(frames && frames.length > 0)
             {
-                return frames[index % frames.length];
+                return frames[index % frames.length] ?? Animation.EMPTY_ARRAY;
             }
         }
 

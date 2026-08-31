@@ -25,9 +25,14 @@ import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
  * Every AS3 sibling view is ported now, the two conditional stand-ins for the own-avatar menu
  * included: DecorateModeView (`isUserDecorating`) and NewUserHelpView (`RoomEnterEffect.isRunning()`).
  *
- * AS3 adaptations: positioning uses roomEngine.getRoomObjectBoundingRectangle
- * directly (no RWGOI message round-trip); the per-frame tick uses the window
- * manager's update receiver.
+ * Positioning goes through the `RWGOI_MESSAGE_GET_OBJECT_LOCATION` round-trip, as AS3's `update()`
+ * does. It used to call `roomEngine.getRoomObjectBoundingRectangle()` directly instead — a
+ * deliberate shortcut, noted here as an adaptation — and that shortcut is what stranded the "Admin"
+ * nametag in the top-left corner and pushed the avatar menu off the head once fishing gave avatars
+ * a wide effect. `ObjectLocationRequestHandler` answers the message, was already ported and correct,
+ * and was simply not being asked. See `positionView()`.
+ *
+ * AS3 adaptation that remains: the per-frame tick uses the window manager's update receiver.
  */
 import {RoomWidgetBase} from '@habbo/ui/widget/RoomWidgetBase';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
@@ -1567,53 +1572,49 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::update()
     // — route this through `ObjectLocationRequestHandler`, which is now ported and registered for
     // both RWGOI_ message types. It is deliberately *not* done in the same change as the handler:
-    // AS3 takes `screenLocation` from `getRoomObjectScreenLocation()`, which projects the object's
-    // own location (an avatar's feet), while the block below computes
-    // `(left + width/2, bottom)` off the bounding box. Those are near but not equal, so swapping
-    // the source would move every bubble — it needs its own before/after check rather than being
-    // folded into a handler port.
+    /**
+     * Asks the engine where an object is and hands the answer to the view.
+     *
+     * **This asks; it does not work it out.** AS3's `update()` sends
+     * `RWGOI_MESSAGE_GET_OBJECT_LOCATION` (or the `_GAME_` variant for a game-room nametag) and
+     * passes the returned `rectangle` and `screenLocation` straight into `view.update()`. That
+     * message is answered by `ObjectLocationRequestHandler`, which is ported, correct, and was
+     * being bypassed: this method used to resolve the room index itself, call
+     * `getRoomObjectBoundingRectangle()`, and *invent* the anchor as the box's
+     * `(left + width / 2, bottom)`.
+     *
+     * Both halves of that invention were wrong, in ways that took three patches to stop treating as
+     * separate bugs:
+     *
+     * - The box covers every sprite an avatar draws, so a wide effect moves the anchor. The fishing
+     *   rod's float, ripple and line pushed the name bubble and the whole avatar menu off the head.
+     *   The handler uses `getRoomObjectScreenLocation()`, the object's own projected position,
+     *   which no effect can move.
+     * - `userData.roomObjectId` is 0 for a user the room has no object for, and 0 is an id the
+     *   engine resolves rather than refuses — so the bubble was anchored to the room's origin and
+     *   re-anchored there every frame. The handler answers `rectangle: null` for that case, and
+     *   `ContextInfoView.update()` returns on a null rectangle without showing anything, which is
+     *   how AS3 has always kept an unplaceable bubble off the screen.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::update()
     private positionView(view: AvatarContextInfoButtonView | UserNameView, deltaTime: number): void
     {
-        const container = this.container;
+        const gameRoomMode = view instanceof UserNameView && view.isGameRoomMode;
+        const location = this.messageListener?.processWidgetMessage(
+            new RoomWidgetGetObjectLocationMessage(
+                gameRoomMode
+                    ? RoomWidgetGetObjectLocationMessage.GET_GAME_OBJECT_LOCATION
+                    : RoomWidgetGetObjectLocationMessage.GET_OBJECT_LOCATION,
+                view.userId,
+                view.userType
+            )
+        ) as RoomWidgetUserLocationUpdateEvent | null ?? null;
 
-        if(!container?.roomEngine) return;
+        // AS3 hands `screenLocation` straight through; the port declares it nullable on the event
+        // and non-null on `update()`, so the pair is applied only when both arrived.
+        if(location === null || location.screenLocation === null) return;
 
-        let roomIndex = view.roomIndex;
-
-        if(roomIndex < 0)
-        {
-            const userData = container.roomSession.userDataManager.getUserDataByType(view.userId, view.userType);
-
-            if(!userData) return;
-
-            roomIndex = userData.roomObjectId;
-        }
-
-        const roomId = container.roomSession.roomId;
-        const canvasId = container.getFirstCanvasId();
-        const rect = container.roomEngine.getRoomObjectBoundingRectangle(roomId, roomIndex, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER, canvasId);
-
-        if(!rect) return;
-
-        const viewRect = container.getRoomViewRect();
-        const offsetX = viewRect?.x ?? 0;
-        const offsetY = viewRect?.y ?? 0;
-
-        const screenRect = {
-            left: rect.left + offsetX,
-            top: rect.top + offsetY,
-            right: rect.right + offsetX,
-            bottom: rect.bottom + offsetY,
-            width: rect.width,
-            height: rect.height,
-        };
-
-        const screenLocation = {
-            x: screenRect.left + screenRect.width / 2,
-            y: screenRect.bottom,
-        };
-
-        view.update(screenRect, screenLocation, deltaTime);
+        view.update(location.rectangle, location.screenLocation, deltaTime);
     }
 
     // --- state getters read by OwnAvatarMenuView ---

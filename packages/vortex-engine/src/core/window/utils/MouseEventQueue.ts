@@ -69,6 +69,29 @@ export class MouseEventQueue extends GenericEventQueue<IMouseEventEntry>
     }
 
     /**
+     * Records where the pointer is, without queueing anything.
+     *
+     * AS3 keeps `_mouseX`/`_mouseY` current because every stage mouse event passes through this
+     * queue's listener on its way into the window system. This port dispatches events straight to
+     * the window under the cursor instead — a deliberate architectural difference — so `enqueue()`
+     * is never called and the two fields sat at 0 for the whole session.
+     *
+     * Nothing complained, because only one caller reads them: `WindowToolTipAgent.begin()`. With the
+     * pointer at (0, 0) its `getMousePositionRelativeTo()` came back as minus the window's global
+     * position, the two cancelled in `showToolTip()`, and every tooltip in the client appeared at
+     * the bare (20, 20) offset in the top-left corner instead of beside the cursor.
+     *
+     * Coordinates are the desktop's, the same space `getGlobalPosition()` reports — not the DOM's.
+     */
+    // TS-only: the port dispatches mouse events directly, so the position AS3 gets for free through
+    // this queue's listener has to be handed to it.
+    public recordPointer(x: number, y: number): void
+    {
+        this._mouseX = x;
+        this._mouseY = y;
+    }
+
+    /**
 	 * Dequeues and returns the oldest event in the queue.
 	 *
 	 * @returns The oldest event, or null if empty

@@ -1,6 +1,7 @@
 import {Component} from '@core/runtime/Component';
 import {ComponentDependency} from '@core/runtime/ComponentDependency';
 import type {IContext} from '@core/runtime/IContext';
+import {copyBitmap} from '@habbo/notifications/utils/copyBitmap';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
@@ -463,7 +464,14 @@ export class RewardTrackController extends Component implements IRewardTrackCont
             return;
         }
 
-        notifications.addItemWithBitmap(content, 'info', this._windowManager?.getAsset(iconAssetName) ?? null);
+        // A COPY, because `HabboNotificationItemStyle` is built with `ownsIcon` true and closes the
+        // bitmap when the bubble expires. Handing it `getAsset()` directly destroys the shared
+        // library asset for the rest of the session: the `ImageBitmap` detaches, and every later
+        // `drawImage` of it throws `InvalidStateError: The image source is detached` from inside a
+        // paint — which aborts the frame, so what the user sees is not a missing icon but a window
+        // stuck half-drawn. Observed with the fishing catch bubble, which took the Fish-O-Pedia and
+        // the tooltips down with it.
+        notifications.addItemWithBitmap(content, 'info', copyBitmap(this._windowManager?.getAsset(iconAssetName) ?? null));
     }
 
     /**

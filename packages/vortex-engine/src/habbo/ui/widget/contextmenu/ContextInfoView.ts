@@ -78,6 +78,13 @@ export class ContextInfoView
     private _forceActivateOnUpdate: boolean = true;
     // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::_forcedPositionUpdate
     private _forcedPositionUpdate: boolean = false;
+
+    /**
+     * The window this view has actually placed. Anything else — null, or a window swapped in by
+     * `updateWindow()` — has never been positioned, and for a window that means (0, 0).
+     */
+    // TS-only: guards a hole AS3's own gate leaves open; no counterpart there.
+    private _positionedView: IWindowContainer | null = null;
     protected _autoHideTimer: ReturnType<typeof setTimeout> | null = null;
     protected _autoHideDelay: number = 3000;
     protected _hidePending: boolean = false;
@@ -230,7 +237,15 @@ export class ContextInfoView
             return;
         }
 
-        if(!this._mouseOver || this._forcedPositionUpdate)
+        // DEVIATION: AS3 gates this on `!_mouseOver || _forcedPositionUpdate` alone, so a view whose
+        //   very first update arrives while the pointer is over it is shown by the `show()` below
+        //   without ever having been given a position — and a window that has never been positioned
+        //   is at (0, 0). That is the stranded bubble in the top-left corner: visible, parented to
+        //   the desktop, following nothing, and impossible to dismiss because the thing that would
+        //   move it is the branch that never runs. `_positioned` forces the first placement through
+        //   regardless; every later frame behaves exactly as AS3 does.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::update()
+        if(this._positionedView !== this._activeView || !this._mouseOver || this._forcedPositionUpdate)
         {
             const offset = this.getOffset(rect);
             const raw = screenLocation.y - rect.top;
@@ -258,6 +273,7 @@ export class ContextInfoView
             this._activeView.x = screenLocation.x - this._activeView.width / 2;
             this._activeView.y = finalY;
             this._forcedPositionUpdate = false;
+            this._positionedView = this._activeView;
         }
 
         this._activeView.blend = this._blend;

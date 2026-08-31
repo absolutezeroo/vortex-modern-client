@@ -11,6 +11,7 @@ import type {AssetUrlSource} from '@core/window/IResourceManager';
 import type {ISkinData} from '@core/window';
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowController} from '@core/window/WindowController';
+import {WindowContext} from '@core/window/WindowContext';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {NativeWheelDelta} from '@core/window/utils/NativeWheelDelta';
 import type {WindowMouseOperator} from '@core/window/services/WindowMouseOperator';
@@ -400,7 +401,7 @@ async function registerChatStyleImageAssets(vortex: Vortex, imageBundle: AssetBu
  *
  * @see sources/win63_version/habbo/window/ResourceManager.as
  */
-async function readImageAssets(imageBundle: AssetBundle): Promise<{
+async function readImageAssets(imageBundle: AssetBundle, layoutNames: ReadonlySet<string>): Promise<{
     imageUrls: Map<string, AssetUrlSource>;
     libraryImages: Map<string, ImageBitmap>;
 }>
@@ -423,9 +424,38 @@ async function readImageAssets(imageBundle: AssetBundle): Promise<{
         // request for the same name costs nothing.
         imageUrls.set(name, () => imageBundle.getUrl(key));
 
-        if(name.startsWith('ctlg_') || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_')
-            || name.startsWith('color_chooser_') || name.startsWith('badge_part_') || name.startsWith('position_')
+        // Three sources, in order of how much they are trusted.
+        //
+        // 1. `layoutNames` — every image the shipped layouts actually ask for, read out of the
+        //    layouts. This is the part that used to be guessed at, and the guess was wrong both
+        //    ways: it decoded some 491 images no layout names, and missed 453 that they do.
+        //
+        // 2. The prefixes below, which are the families resolved at RUNTIME and therefore in no
+        //    layout — an effect icon keyed by effect id, a species preview keyed by a localisation
+        //    key, a catalog icon by page, a badge part by number, an avatar-editor thumbnail by
+        //    figure part. Measured, not assumed: of 126 `fishpedia_*` only 18 are named by a layout
+        //    and of 57 `avatar_editor_*` only 29, so dropping these would blank the rest.
+        //    `sign_icon_*` is NOT here — all seven are layout-named, which is the point.
+        //
+        // 3. `LIBRARY_IMAGE_NAMES` — one-off `getAssetByName('…')` calls in code, which no rule can
+        //    derive. Almost none of them appear in a layout; that list has to stay explicit.
+        //
+        // Deliberately in none of the three: `s_fish_area_*`, `h_fishing_rod_*`, `sh_*`,
+        // `h_hooked_*`. They are room sprites — the spot furni, the rod, the splash — which the room
+        // renderer fetches by URL, and decoding 120-odd of them here would cost memory for something
+        // no window ever asks the library for.
+        if(layoutNames.has(name)
+            || name.startsWith('fx_icon_') || name.startsWith('memenu_fx_')
+            || name.startsWith('ctlg_') || name.startsWith('badge_part_')
+            || name.startsWith('color_chooser_') || name.startsWith('position_')
             || name.startsWith('avatar_editor_')
+            || name.startsWith('fish') || name.startsWith('derby')
+            // user_* and number_*: the avatar ADDITIONS — the idle Zzz, the muted and typing
+            // bubbles, the blown kiss, the guide bubbles, the number bubble. No layout names them;
+            // each is built at runtime from a direction, a frame or a digit, and
+            // `AvatarVisualization.getAvatarRendererAsset()` asks the library for the result. Thirty
+            // images between them.
+            || name.startsWith('user_') || name.startsWith('number_')
             || LIBRARY_IMAGE_NAMES.has(name))
         {
             decodes.push(imageBundle.getImageBitmap(key).then((bitmap) =>
@@ -470,6 +500,53 @@ function readLibraryLayouts(xmlBundle: AssetBundle): Map<string, string>
     log.debug(`Read ${layouts.size} window layout assets`);
 
     return layouts;
+}
+
+/**
+ * Every image name the shipped layouts ask for, read out of the layouts themselves.
+ *
+ * This replaces a hand-written allowlist of prefixes and one-off names, which was wrong in both
+ * directions at once and silently: measured against the layouts, it eagerly decoded some 491 images
+ * nothing ever asks the library for, and **missed 453 that the layouts name**. Every one of those is
+ * a window that draws nothing with no error — `getAssetByName()` answers null, `setImageAsset()`
+ * shrugs, and the slot is blank. The sign grid's seven picture signs were one of them; the
+ * infostand's house icon, the catalog icons and the effect icons had each been found the same way,
+ * one bug report at a time.
+ *
+ * Two things in a layout name an image:
+ *
+ * - `<var key="asset_uri" value="X"/>` — a `<static_bitmap>` naming its own picture.
+ * - `tags="icon"` — a bare `<bitmap>` whose pixels code supplies, and the convention every menu
+ *   uses is `setImageAsset(icon, icon.name)`, so the window's NAME is the asset name.
+ */
+// TS-only: the port's own boot-time asset registration; AS3 embedded these per component.
+function readLayoutImageNames(layouts: Map<string, string>): Set<string>
+{
+    const names = new Set<string>();
+
+    for(const xml of layouts.values())
+    {
+        for(const match of xml.matchAll(/key="asset_uri"\s+value="([^"]+)"/g))
+        {
+            names.add(match[1]);
+        }
+
+        // `name` and `tags` appear in either order across the dump's layouts, so both are matched
+        // rather than assuming the one this repository's own generators happen to emit.
+        for(const match of xml.matchAll(/<[a-z_]+[^>]*\bname="([^"]+)"[^>]*\btags="([^"]*)"/g))
+        {
+            if(match[2].split(',').some((tag) => tag.trim() === 'icon')) names.add(match[1]);
+        }
+
+        for(const match of xml.matchAll(/<[a-z_]+[^>]*\btags="([^"]*)"[^>]*\bname="([^"]+)"/g))
+        {
+            if(match[1].split(',').some((tag) => tag.trim() === 'icon')) names.add(match[2]);
+        }
+    }
+
+    log.debug(`Layouts name ${names.size} image assets`);
+
+    return names;
 }
 
 async function registerSoundAssets(vortex: Vortex, xmlBundle: AssetBundle): Promise<void>
@@ -681,6 +758,22 @@ const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
     'if_icon_recycler',
     'if_icon_ltd',
     'if_icon_earning',
+
+    // The Fishopedia's rarity stars. FishingBookView paints one to five of these into the row's
+    // bitmap column, so a missing entry costs the whole rarity column — the exact silent failure
+    // this list exists to prevent, and it caught this one on the first run.
+    'star_small_gold',
+
+    // The rod-quality indicator in the Fishopedia's header, one sprite per tier.
+    'fishing_skill_level_0',
+    'fishing_skill_level_1',
+    'fishing_skill_level_2',
+    'fishing_skill_level_3',
+    'fishing_skill_level_4',
+    'fishing_skill_level_5',
+
+    // The Fish Token, beside its count in the same header.
+    'icon_fish_token',
 ]);
 
 export class VortexApp 
@@ -1124,7 +1217,14 @@ export class VortexApp
 
         // 4. Images. Both halves go in before the engine boots, because components built during
         // prepareCore() read from both — see registerWindowAssetLibraryContent() in VortexMain.
-        const {imageUrls, libraryImages} = await readImageAssets(imageBundle);
+        //
+        // Which images get DECODED is derived from the layouts read just above rather than listed by
+        // hand; `readLayoutImageNames()` says why. Vortex's own authored layouts (3b) are included,
+        // because they name images too.
+        const {imageUrls, libraryImages} = await readImageAssets(
+            imageBundle,
+            readLayoutImageNames(new Map([...windowAssets.libraryLayouts, ...windowAssets.layouts]))
+        );
 
         windowAssets.imageUrls = imageUrls;
         windowAssets.libraryImages = libraryImages;
@@ -1887,6 +1987,15 @@ export class VortexApp
         if(Vortex.instance.disposed) return;
 
         const {x, y} = this.getCanvasCoords(e);
+
+        // Before anything is dispatched: `WindowToolTipAgent.begin()` reads the pointer off this
+        // queue the instant the OVER below lands, and AS3 keeps it current because every stage
+        // event passes through the queue on its way into the window system. This port dispatches
+        // straight to the window under the cursor, so the queue never saw one, `mouseX`/`mouseY`
+        // stayed at 0 all session, and every tooltip opened at the bare (20, 20) offset in the
+        // top-left corner instead of beside the cursor.
+        WindowContext.inputEventQueue?.recordPointer(x, y);
+
         const vortex = Vortex.instance;
         const hit = vortex.windowManager.findWindowAtPoint(x, y);
 

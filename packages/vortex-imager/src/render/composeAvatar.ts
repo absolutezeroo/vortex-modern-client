@@ -155,9 +155,11 @@ export function composeAvatarWithSprites(
         // avatar's feet with clear air between them; adding puts it exactly under them, and
         // effects 9 and 178 (hearts, the emblem halo) land correctly too.
         //
-        // Which side is wrong in the room is not something this file can answer — that branch
-        // could never run before, since effect libraries were not registered with the alias
-        // collection, so `getAsset()` always returned null and no effect sprite was ever drawn.
+        // Which side is wrong in the room now has an answer: the room's was, and
+        // `AvatarVisualization.updateExtraSprites` was changed to add too (2026-08-30). It had
+        // never shown, because effect libraries were not registered with the alias collection
+        // until recently and `getAsset()` returned null there, so no effect sprite was ever drawn
+        // in a room. The two paths agree again; keep them that way.
         layers.push({
             texture: asset.texture,
             x: (asset.offsetX - (ROOM_SCALE / 2)) + dx,
