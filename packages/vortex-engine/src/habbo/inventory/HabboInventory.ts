@@ -1,5 +1,9 @@
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
+// Vortex-only: the fishing tab. Optional — the inventory works unchanged without it.
+import {IID_HabboFishing} from '@iid/IIDHabboFishing';
+import type {HabboFishing} from '@habbo/vortex/fishing/HabboFishing';
+import {FishingBookModel} from '@habbo/vortex/fishing/ui/FishingBookModel';
 import {isRoomViewerMode} from '@habbo/configuration/enum/HabboComponentFlags';
 import type {IHabboInventory, InventoryCategoryType} from './IHabboInventory';
 import type {IFurniModel} from './furni/IFurniModel';
@@ -289,6 +293,10 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 {
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
+    // TS-only: Vortex-only fishing system; null when the feature is not present.
+    private _fishing: HabboFishing | null = null;
+    // TS-only: Vortex-only fishing tab's model, built only when `_fishing` is there.
+    private _fishingModel: FishingBookModel | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     // AS3: .../src/com/sulake/habbo/inventory/HabboInventory.as::_catalog
@@ -874,6 +882,18 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
                 },
                 true
             ),
+            // TS-only: Vortex-only fishing system. **Optional (`false`)** on purpose — a build
+            //   without it must still open its inventory, so the tab is simply absent rather than
+            //   the whole component locking on a dependency nothing provides.
+            //   See docs/vortex-original/fishing.md 2.6.
+            new ComponentDependency(
+                IID_HabboFishing,
+                (fishing: HabboFishing | null) =>
+                {
+                    this._fishing = fishing;
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_HabboWindowManager,
                 (manager: IHabboWindowManager | null) =>
@@ -1238,6 +1258,13 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         // tab exists and reports no window, rather than being absent from the map.
         this._inventories.add('effects', this._effectsModel);
 
+        // TS-only: Vortex-only fishing tab. `getCategoryWindowContainer()` is a lookup in this very
+        //   map, so registering a model under 'fishing' is the entire hook — no branch in the
+        //   lookup, no special case in InventoryMainView beyond adding the tab button.
+        //   Skipped when the fishing component is absent, which leaves the inventory exactly as it
+        //   was. See docs/vortex-original/fishing.md 2.6.
+        this.ensureFishingModel();
+
         // The marketplace model was already being built above but never registered, so
         // `getCategoryWindowContainer('marketplace')` and `updateView('marketplace')` resolved to
         // nothing. AS3 adds it first, before furni.
@@ -1490,6 +1517,30 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     getCategoryWindowContainer(category: string): IWindowContainer | null
     {
         return this._inventories.getValue(category)?.getWindowContainer() ?? null;
+    }
+
+    /**
+     * Registers the Vortex fishing tab's model, if fishing is available and it is not registered
+     * already.
+     *
+     * TS-only: Vortex-only system — no AS3 counterpart.
+     *
+     * **Called on demand rather than only from `init()`.** `_fishing` arrives through an optional DI
+     * dependency, and optional dependencies attach after several components — so whether the tab
+     * existed came down to whether fishing happened to have resolved by the time the inventory first
+     * initialised. It had not, and the tab was simply absent, with nothing logged. Asking again when
+     * the tabs are built removes the ordering from the question entirely.
+     */
+    // TS-only: Vortex-only fishing system — see docs/vortex-original/fishing.md 2.6.
+    ensureFishingModel(): void
+    {
+        if(this._fishingModel !== null || this._fishing === null || this._windowManager === null)
+        {
+            return;
+        }
+
+        this._fishingModel = new FishingBookModel(this._fishing, this._windowManager, this._localization, this.assets);
+        this._inventories.add('fishing', this._fishingModel);
     }
 
     /**

@@ -3882,6 +3882,49 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Fishing, both halves, 2026-08-29 — 15 packets, a four-grain server, and three defects that
+  broke nothing visibly.** The first Vortex-original system: not ported from AS3, reconstructed from
+  Habbo Hotel: Origins, which has no client dump. Design and evidence level per part are in
+  `docs/vortex-original/fishing.md`; ids come from the 8000–8999 band both repositories reserve.
+
+  Client: `habbo/vortex/fishing/` (definitions push target, spot widget + handler, Fishopedia view,
+  spot furni logic), 15 message classes, four layouts, and 47 localisation keys routed through
+  `packages/vortex-client/tools/locale-overrides/fishing.en.txt` — Vortex-only keys exist in no
+  `external_flash_texts`, and both the source `.txt` and `src/assets/` are gitignored, so a repo-
+  tracked override is the only place they can live. Server: `../vortex-emulator/Vortex.Fishing`,
+  grains for definitions/player/session/derby, eight tables, and a seed that makes it playable.
+
+  **Content is a table; tunables are not.** Species, zones, rod tiers and the level curve are
+  reference data an operator fills, re-read and broadcast by `FishingDefinitionsGrain.ReloadAsync()`.
+  The knobs — daily cap, sighting delays, session decay, frenzy, Hook Havoc, derby size, trophy furni
+  class — are `IServerConfigGrain` keys under `fishing.*`, resolved by `FishingConfig.ResolveAsync`
+  in one round trip against compiled defaults, the `FreezeConfig` / `GroupConfig` / `ClubConfig`
+  shape. The first cut put them in a `fishing_settings` singleton row copied from
+  `marketplace_settings`; that grain's own summary says why it is the wrong home — *"tunable gameplay
+  config lives here rather than in a boot-cached provider or (for runtime-editable knobs)
+  appsettings"*. `marketplace_settings` remains a pre-existing instance of the same mistake.
+
+  **The interesting part is what the port already knows how to get wrong.** Three defects, none of
+  which threw and none of which a typecheck sees:
+
+  1. `FishingSpotWidgetHandler.getProcessedEvents()` returned **null**, so `RoomDesktop` — which
+     appends the open/close pair to whatever comes back, and appends nothing to null — never opened
+     the panel. All four documented wirings were present and correct. This is a *fifth*, and the
+     handler's own comment asserted the null was deliberate. See "Ported but never wired" and
+     "A narrow interface hides dead code": same shape, third occurrence.
+  2. `StartFishing` sent the **sighting id** where the spot id belongs, and gated the start on an
+     armed sighting — which deadlocks, because a shadow only arrives inside a session that has
+     already begun. The client was also dropping `FishSighted.spotItemId`, so it had nothing correct
+     to send.
+  3. Every `translate()` call passed **positional values** to `getLocalizationWithParams()`, which
+     reads its params as name/value **pairs**. Bare values register the first under the second's name
+     and substitute nothing, so every `%placeholder%` would have rendered literally.
+
+  `scripts/check-fishing.mjs` now guards 1 and 2 from the sources, next to the wire format and the
+  reload path it already exercised. Still owed, and stated in the design doc rather than left to be
+  discovered: the Hook Havoc minigame's client half (the server replay is complete), a derby UI, the
+  collectible ids, and the `vtx_fishing_*` furniture, which is in no furnidata.
+
 - 🆕 **The snow-war events, 2026-08-28 — 9 files, `habbo/game` 28 → 37/63, and the lock-step loop
   closes.** `events/`: the derived-name base `AbstractSynchronizedGameEvent` (`_SafeCls_2596`,
   obfuscated in the 2016 tree too) and the eight inputs the game is made of — move target, start

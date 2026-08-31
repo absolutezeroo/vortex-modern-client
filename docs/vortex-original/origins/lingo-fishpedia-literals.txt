@@ -1,0 +1,80 @@
+# Every literal of hh_fishing.cct's Fish-O-Pedia script, in the order its own literal
+# table stores them. Recovered by parsing the Lscr literal section -- NOT a decompile:
+# the bytecode is unread, and Lingo encodes small integers as opcode operands rather than
+# literals, so there are no coordinates here. What there is: every member it draws, every
+# label it prints, and the two text styles it switches between.
+
+fish_o_pedia_window
+fishpedia_bold_left
+struct.font.bold
+fishpedia_plain_left
+struct.font.plain
+fishpedia_weekdays
+[
+]
+Mon
+Tue
+Wed
+Thu
+Fri
+Sat
+Sun
+fish_o_pedia.window
+drag
+canvas_hitbox
+The Fishpedia is empty. No fish to display.
+page_details_
+page_overview_
+fishpedia_book_cover
+fishpedia_background
+fishpedia_hiliter
+fishpedia_corner
+fishpedia_close_btn
+fishpedia_bookmark
+fishpedia_
+_name
+fishpedia_fish_details_title
+%n Details
+%n
+fishpedia_rarity_title
+Rarity:
+fishpedia_xp_title
+XP:
+fishpedia_tokens_title
+Tokens:
+tokens
+fishpedia_catch_rate_title
+Catch Rate:
+fishpedia_location_title
+Location:
+fishpedia_location_bar
+fishpedia_location_
+???
+fishpedia_timeline_title
+Active Hours:
+fishpedia_active_days_title
+Active Days:
+fishpedia_fish_overview_title
+Fish Overview
+fishpedia_info_slot
+fishpedia_slot
+_preview
+fishpedia_gray
+fishpedia_page
+fishpedia_page_text
+Page
+/
+fishpedia_arrow
+fishpedia_timeline_bg
+fishpedia_days_grid_bg
+fishpedia_active_day_marker
+fishpedia_star_empty
+fishpedia_star_filled
+_icon
+fishpedia_info_field_a_l
+fishpedia_info_field_a_m
+fishpedia_info_field_a_r
+fishpedia_info_field_b_m
+fishpedia_info_field_b_r
+fishpedia_slot_shadow
+fishpedia_bookmark_shadow

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  vortex_derby_frenzy, converted from Habbo Origins' own window declaration.
+
+  GENERATED - do not edit. Change scripts/origins/convert-window.py, or the source list in
+  docs/vortex-original/origins/derby_frenzy.window.txt, and re-run it.
+
+  Origins declares its windows as a flat list of Lingo property lists rather than drawing them, so
+  every coordinate below is Origins' own `#locH`/`#locV`, verbatim. What it does NOT carry is a
+  window frame: the elements are sprites on the stage, so the container here is this port's, sized to
+  their union.
+
+  Vortex-only: fishing is an Origins feature and has no counterpart in any Habbo *Flash* dump, so
+  this lives in vortex-layouts/ rather than in the gitignored src/assets/window-layouts/.
+-->
+<layout name="vortex_derby_frenzy" width="505" height="197" version="0.1">
+  <window>
+    <container x="60" y="60" width="505" height="197" params="17" style="0"
+               name="vortex_derby_frenzy_root">
+      <children>
+
+        <static_bitmap x="0" y="0" width="505" height="197" params="16" style="0"
+                       name="drag">
+          <variables>
+            <var key="asset_uri" value="derby_frenzy_background" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="188" y="10" width="126" height="18" params="144" style="0"
+              name="drag_1" caption="${vortex.fishing.store.storage_title}">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="480" y="6" width="13" height="13" params="16" style="0"
+                       name="derby_button_close_up">
+          <variables>
+            <var key="asset_uri" value="derby.button.close.up" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="27" y="40" width="14" height="26" params="16" style="0"
+                       name="fish_preview_0">
+          <variables>
+            <var key="asset_uri" value="fish_preview_0" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="49" y="43" width="129" height="13" params="144" style="0"
+              name="derby_fzy_label" caption="${vortex.fishing.derby.frenzy}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="147" y="43" width="112" height="13" params="144" style="0"
+              name="derby_frenzy_number" caption="">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="49" y="56" width="143" height="13" params="144" style="0"
+              name="derby_fzy_goal_label" caption="${vortex.fishing.derby.frenzy_goal}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="280" y="51" width="129" height="13" params="144" style="0"
+              name="derby_count_label" caption="${vortex.fishing.derby.count}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="auto_size" value="right" type="String"/>
+          </variables>
+        </text>
+
+        <text x="110" y="164" width="149" height="11" params="144" style="0"
+              name="derby_timer_label" caption="${vortex.fishing.derby.timer}">
+          <variables>
+            <var key="text_color" value="0x890000" type="hex"/>
+            <var key="auto_size" value="right" type="String"/>
+          </variables>
+        </text>
+
+        <text x="262" y="164" width="149" height="11" params="144" style="0"
+              name="derby_timer" caption="">
+          <variables>
+            <var key="text_color" value="0x890000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="425" y="47" width="44" height="16" params="144" style="0"
+              name="total_count" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0x40000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="28" y="86" width="450" height="60" params="144" style="0"
+              name="frenzy_fish_canvas" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0x40000000" type="hex"/>
+          </variables>
+        </text>
+
+      </children>
+    </container>
+  </window>
+</layout>

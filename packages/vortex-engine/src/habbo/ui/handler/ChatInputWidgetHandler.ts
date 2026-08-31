@@ -51,6 +51,20 @@ import {FriendBarResizeEvent} from '@habbo/friendbar/events/FriendBarResizeEvent
 
 const log = Logger.getLogger('habbo.ui.handler.ChatInputWidgetHandler');
 
+/**
+ * The Origins windows `:fishwindow` can open, by their source name in
+ * `docs/vortex-original/origins/*.window.txt`. A closed set rather than a free string, so a typo
+ * says so instead of quietly building a layout that does not exist.
+ */
+const FISHING_WINDOWS = new Set([
+    'fishing_store_a',
+    'fishing_store_c',
+    'derby_ui',
+    'derby_standard',
+    'derby_frenzy',
+    'derby_leader_b',
+]);
+
 export class ChatInputWidgetHandler implements IRoomWidgetHandler
 {
     /**
@@ -470,6 +484,50 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                     : (argument === 'off' ? false : !RoomCullingMode.avatars);
 
                 log.info(`:roomculling — off-screen avatar updates are now ${RoomCullingMode.avatars ? 'skipped' : 'running'}.`);
+
+                return true;
+            }
+
+            // TS-only: no AS3 counterpart. Opens Origins' own Fish-O-Pedia — the book rebuilt on
+            // `hh_fishing.cct`'s plates — beside the panel the inventory tab still shows, so the two
+            // can be compared before one replaces the other. See docs/vortex-original/fishing.md §19.
+            case ':fishpedia':
+            {
+                const fishing = container.fishing;
+
+                if(fishing === null)
+                {
+                    log.warn(':fishpedia — HabboFishing has not resolved; nothing to open.');
+                }
+                else
+                {
+                    fishing.openPedia();
+                }
+
+                return true;
+            }
+
+            // TS-only: no AS3 counterpart. The six windows converted from Origins' own element lists
+            // by scripts/origins/convert-window.py. **Artwork only** — layout, sprites and text are
+            // finished, the behaviour is not, and §23 of docs/vortex-original/fishing.md lists what
+            // each still needs. They are reachable rather than left as XML nothing opens, which is
+            // how a finished-looking thing goes unnoticed for months in this port.
+            case ':fishwindow':
+            {
+                const fishing = container.fishing;
+
+                if(fishing === null)
+                {
+                    log.warn(':fishwindow — HabboFishing has not resolved; nothing to open.');
+                }
+                else if(FISHING_WINDOWS.has(argument))
+                {
+                    fishing.openStaticWindow(`vortex_${argument}_xml`);
+                }
+                else
+                {
+                    log.warn(`:fishwindow — unknown window "${argument}". One of: ${[...FISHING_WINDOWS].join(', ')}`);
+                }
 
                 return true;
             }

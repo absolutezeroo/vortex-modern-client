@@ -7973,6 +7973,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         // cases; `widget` and `contextMenu` are the same underlying field.
         const widgetName = (event.object as IRoomObjectController | null)?.getEventHandler?.()?.widget ?? null;
 
+        // The seam where the four silent furni-widget wirings meet: the logic names a widget, the
+        // desktop routes the event to the handler whose `type` matches that name, and a mismatch —
+        // or a null here — is a furni that does nothing, with no throw and no other trace. Diagnosing
+        // one without this line means reading four files and guessing; with it,
+        // `__log.set('habbo.room.RoomEngine', 'debug')` answers it in one click.
+        log.debug(`Widget request ${event.type} for object ${objectId} (${objectType}) → widget ${widgetName ?? 'none'}`);
+
         switch(event.type)
         {
             case RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET:

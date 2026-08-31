@@ -22,7 +22,7 @@ export default defineConfig({
     plugins: [tailwindcss(), svelte()],
     server: {
         host: true,
-        port: 5174,
+        port: 5172,
         strictPort: true,
 
         // Vite refuses a request whose Host header it does not recognise — a DNS-rebinding guard —

@@ -1,0 +1,42 @@
+<window>
+
+    <name>
+        "fishingUI"
+    </name>
+
+    <date>
+        30/03/2025
+    </date>
+
+    <version>
+        1.1
+    </version>
+
+    <elements>
+        [#member: "fishingUI_bg", #media: #bitmap, #locH: 0, #locV: 0, #ink: 8, #blend: 100, #width: 160, #height: 243, #id: "bg", #Active: 0]
+        [#member: "fishingUI_green_pixel", #media: #bitmap, #locH: 28, #locV: 54, #blend: 100, #width: 1, #height: 10, #id: "fishing_bar"]
+        [#member: "fishingUI_mittari", #media: #bitmap, #locH: 22, #locV: 73, #ink: 8, #blend: 100, #width: 110, #height: 122, #id: "mittari", #Active: 1]
+        [#member: "fishingUI_button_active", #media: #bitmap, #locH: 41, #locV: 208, #ink: 8, #blend: 100, #width: 30, #height: 30, #palette: #systemMac, #id: "fishing_image_1", #Active: 1]
+        [#member: "fishingUI_button_active", #media: #bitmap, #locH: 83, #locV: 208, #ink: 8, #blend: 100, #width: 30, #height: 30, #palette: #systemMac, #id: "fishing_image_2", #Active: 1]
+        [#member: "fishingUI_viisari1", #media: #bitmap, #locH: 78, #locV: 148, #ink: 36, #blend: 100, #width: 11, #height: 28, #id: "needle", #Active: 0]
+        [#member: "fishingUI_viisari2", #media: #bitmap, #locH: 78, #locV: 148, #ink: 36, #blend: 100, #width: 14, #height: 14, #id: "needle_ball", #Active: 1]
+        [#member: "fishingUITitle", #media: #field, #locH: 35, #locV: 18, #ink: 36, #blend: 100, #width: 83, #height: 10, #editable: 0, #autoTab: 0, #boxType: #adjust, #wordWrap: 1, #alignment: "center", #txtColor: "#FDFDFD", #font: "vb", #fontStyle: "plain", #fontSize: 9, #lineHeight: 11, #type: "text", #id: "bg", #model: #image, #key: "fishing_event_title", #strech: #fixed]
+        [#member: "fishingUI33102613", #media: #field, #locH: 33, #locV: 38, #ink: 36, #blend: 100, #width: 88, #height: 10, #editable: 0, #autoTab: 0, #boxType: #adjust, #wordWrap: 1, #alignment: "center", #txtColor: "#FDFDFD", #font: "Volter", #fontStyle: "plain", #fontSize: 9, #lineHeight: 11, #type: "text", #id: "bg", #model: #image, #key: "fishing_balance_meter", #strech: #fixed]
+        [#member: "fishingUI33102613", #media: #field, #locH: 44, #locV: 196, #ink: 36, #blend: 100, #width: 66, #height: 10, #editable: 0, #autoTab: 0, #boxType: #adjust, #wordWrap: 1, #alignment: "center", #txtColor: "#FDFDFD", #font: "Volter", #fontStyle: "plain", #fontSize: 9, #lineHeight: 11, #type: "text", #id: "bg", #model: #image, #key: "paalu_ui2", #strech: #fixed]
+        [#member: "fishingUISeconds", #media: #field, #locH: 26, #locV: 176, #ink: 36, #blend: 100, #width: 104, #height: 10, #editable: 0, #autoTab: 0, #boxType: #adjust, #wordWrap: 1, #alignment: "center", #txtColor: "#FDFDFD", #font: "vb", #fontStyle: "plain", #fontSize: 9, #lineHeight: 11, #type: "text", #id: "fishing_seconds", #model: #image, #key: "X Seconds left", #strech: #fixed]
+        [#member: "fishing_keys", #media: #field, #locH: 40, #locV: 213, #ink: 36, #blend: 100, #width: 35, #height: 21, #editable: 0, #autoTab: 0, #boxType: #limit, #wordWrap: 0, #alignment: "center", #txtColor: "#FDFDFD", #font: "v", #fontStyle: "plain", #fontSize: 18, #lineHeight: 21, #type: "text", #id: "fishing_btext_1", #model: #image, #key: "", #strech: #fixed]
+        [#member: "fishing_keys", #media: #field, #locH: 82, #locV: 213, #ink: 36, #blend: 100, #width: 35, #height: 21, #editable: 0, #autoTab: 0, #boxType: #limit, #wordWrap: 0, #alignment: "center", #txtColor: "#FDFDFD", #font: "v", #fontStyle: "plain", #fontSize: 18, #lineHeight: 21, #type: "text", #id: "fishing_btext_2", #model: #image, #key: "", #strech: #fixed]
+        [#member: "fishingUI_button_active", #media: #bitmap, #locH: 41, #locV: 208, #ink: 8, #blend: 0, #width: 30, #height: 30, #palette: #systemMac, #id: "fishing_button_1", #Active: 1, #cursor: "finger.cursor"]
+        [#member: "fishingUI_button_active", #media: #bitmap, #locH: 83, #locV: 208, #ink: 8, #blend: 0, #width: 30, #height: 30, #palette: #systemMac, #id: "fishng_button_2", #Active: 1, #cursor: "finger.cursor"]
+        [#member: "shadow.pixel", #media: #bitmap, #locH: 70, #locV: 77, #ink: 8, #blend: 100, #width: 14, #height: 26, #type: "image", #id: "fish_preview", #strech: #fixed, #cursor:"cursor.finger"] 
+    </elements>
+
+    <rect>
+        [118, 45, 368, 282]
+    </rect>
+
+    <border>
+        [0, 0, 0, 0]
+    </border>
+
+</window>

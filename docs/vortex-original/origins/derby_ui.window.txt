@@ -1,0 +1,29 @@
+<window>
+
+    <name>
+        "derby_ui"
+    </name>
+
+    <date>
+        -
+    </date>
+
+    <version>
+        1.1
+    </version>
+
+    <elements>
+        [#member: "derby_ui_background", #media: #bitmap, #locH: 0, #locV: 0, #ink: 36, #blend: 100, #width: 182, #height: 48, #type: "piece", #id: "derby_ui_background", #strech: #fixed]
+        [#member: "derby_ui_leader", #media: #bitmap, #locH: 144, #locV: 14, #ink: 36, #blend: 100, #width: 24, #height: 24, #type: "piece", #id: "derby_ui_leader", #strech: #fixed, #cursor: "cursor.finger"]
+        [#member: "derby_ui_basket", #media: #bitmap, #locH: 111, #locV: 14, #ink: 36, #blend: 100, #width: 24, #height: 24, #type: "piece", #id: "derby_ui_basket", #strech: #fixed, #cursor: "cursor.finger"]
+        [#member: "derby_timer", #media: #text, #locH: 12, #locV: 22, #ink: 36, #blend: 100, #width: 87, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#f1b201", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_timer", #model: #image, #key: "", #strech: #fixed]
+    </elements>
+
+    <rect>
+        [0, 0, 182, 48]
+    </rect>
+
+    <border>
+        [0, 0, 0, 0]
+    </border>
+</window>

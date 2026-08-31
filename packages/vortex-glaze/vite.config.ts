@@ -1,6 +1,6 @@
 import {defineConfig, type Plugin} from 'vite';
 import {resolve} from 'path';
-import {readdirSync, readFileSync, statSync, writeFileSync} from 'fs';
+import {existsSync, readdirSync, readFileSync, statSync, writeFileSync} from 'fs';
 
 /**
  * Dev-server middleware.
@@ -18,7 +18,21 @@ import {readdirSync, readFileSync, statSync, writeFileSync} from 'fs';
 function glazeSavePlugin(): Plugin
 {
     const layoutsDir = resolve(__dirname, '../vortex-client/src/assets/window-layouts');
+
+    /**
+     * Vortex's own layouts, which are NOT in `window-layouts/`.
+     *
+     * That directory is gitignored and rewritten wholesale by `build-window-assets.mjs`, so a
+     * layout with no counterpart in the Flash dump lives in `vortex-layouts/` instead and is the
+     * real source. Saving one into `window-layouts/` looked like it worked and was wiped by the
+     * next asset build, while the file the client actually reads never changed.
+     */
+    const vortexLayoutsDir = resolve(__dirname, '../vortex-client/src/vortex-layouts');
     const xmlBundle = resolve(__dirname, '../vortex-client/public/assets-xml.bundle');
+
+    /** Where a layout came from: its own directory if it has one there, else the dump's. */
+    const dirFor = (name: string): string =>
+        existsSync(resolve(vortexLayoutsDir, `${name}.xml`)) ? vortexLayoutsDir : layoutsDir;
 
     return {
         name: 'glaze-save',
@@ -41,13 +55,24 @@ function glazeSavePlugin(): Plugin
                         bundleTime = 0; // no bundle built yet — everything counts as newer
                     }
 
-                    const files = readdirSync(layoutsDir)
-                        .filter((file) => file.endsWith('.xml'))
-                        .filter((file) => statSync(resolve(layoutsDir, file)).mtimeMs > bundleTime)
-                        .map((file) => ({
-                            name: file.replace(/\.xml$/, ''),
-                            xml: readFileSync(resolve(layoutsDir, file), 'utf8')
-                        }));
+                    // The dump's layouts are IN the bundle, so only the ones edited since it was
+                    // built need sending. Vortex's own are in NO bundle — the client reaches them
+                    // through an `import.meta.glob` at build time — so "newer than the bundle" is
+                    // the wrong question for them and they always come. Filtering them the same way
+                    // is why the fishing strip could not be opened in the editor at all.
+                    const collect = (dir, always) =>
+                        readdirSync(dir)
+                            .filter((file) => file.endsWith('.xml'))
+                            .filter((file) => always || statSync(resolve(dir, file)).mtimeMs > bundleTime)
+                            .map((file) => ({
+                                name: file.replace(/\.xml$/, ''),
+                                xml: readFileSync(resolve(dir, file), 'utf8')
+                            }));
+
+                    const files = [
+                        ...collect(layoutsDir, false),
+                        ...collect(vortexLayoutsDir, true)
+                    ];
 
                     res.statusCode = 200;
                     res.end(JSON.stringify({files}));
@@ -88,9 +113,10 @@ function glazeSavePlugin(): Plugin
                             return;
                         }
 
-                        const file = resolve(layoutsDir, `${name}.xml`);
+                        const targetDir = dirFor(name);
+                        const file = resolve(targetDir, `${name}.xml`);
 
-                        if(!file.startsWith(layoutsDir))
+                        if(!file.startsWith(targetDir))
                         {
                             res.statusCode = 400;
                             res.end(JSON.stringify({message: 'Bad path'}));
@@ -131,6 +157,19 @@ export default defineConfig({
     server: {
         port: 5174,
         strictPort: true,
+
+        // The same asset-host roots vortex-client proxies, for the same reason: the shipped
+        // configuration holds RELATIVE urls (`localization.1.url=/gamedata/hashes.json`), so
+        // whichever origin served the page has to forward them. Without this the fetch resolved
+        // against glaze itself, Vite answered the SPA fallback with a 200, and `GameDataResources`
+        // reported "Failed to parse game data JSON" — an HTML page parsed as JSON, not a missing
+        // asset server. That is what made Localise silently do nothing.
+        proxy: {
+            '/c_images': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/gamedata': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/gordon': {target: 'http://vortex-assets.local', changeOrigin: true},
+            '/dcr': {target: 'http://vortex-assets.local', changeOrigin: true},
+        },
     },
     publicDir: resolve(__dirname, '../vortex-client/public'),
     resolve: {

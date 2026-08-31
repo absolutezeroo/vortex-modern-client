@@ -1,0 +1,60 @@
+<window>
+
+    <name>
+        "fishing_store_a"
+    </name>
+
+    <date>
+        19/03/2025
+    </date>
+
+    <version>
+        1.1
+    </version>
+
+    <elements>
+         [#member: "content.middle.middle", #media: #bitmap, #locH: 5, #locV: 21, #ink: 8, #blend: 100, #width: 316, #height: 375, #palette: "interface palette", #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_store_bg_l", #media: #bitmap, #locH: 0, #locV: 21, #ink: 8, #blend: 100, #width: 5, #height: 375, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_store_bg_l", #media: #bitmap, #locH: 325, #locV: 21, #ink: 8, #blend: 100, #width: 7, #height: 375, #flipH:1, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_store_bg_t", #media: #bitmap, #locH: 4, #locV: 400, #ink: 8, #blend: 100, #width: 317, #height: 5, #flipV:1, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_store_bg_c", #media: #bitmap, #locH: 0, #locV: 400, #ink: 8, #blend: 100, #width: 4, #height: 4, #flipV:1, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_store_bg_c", #media: #bitmap, #locH: 325, #locV: 400, #ink: 8, #blend: 100, #width: 4, #height: 4, #flipH:1, #flipV:1, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_store_tab2_l", #media: #bitmap, #locH: 0, #locV: 1, #ink: 36, #blend: 100, #width: 5, #height: 24, #type: "piece", #id: "fishing_store_tab_info", #strech: #fixed]
+        [#member: "fishing_store_tab2_m", #media: #bitmap, #locH: 5, #locV: 0, #ink: 8, #blend: 100, #width: 99, #height: 26, #type: "piece", #id: "fishing_store_tab_info", #strech: #fixed]
+        [#member: "fishing_store_tab2_r", #media: #bitmap, #locH: 104, #locV: 1, #ink: 36, #blend: 100, #width: 5, #height: 24, #type: "piece", #id: "fishing_store_tab_info", #strech: #fixed]
+        [#member: "fishing_store_icon_1", #media: #bitmap, #locH: 6, #locV: 8, #ink: 36, #blend: 100, #width: 12, #height: 12, #type: "piece", #id: "fishing_store_tab_info", #strech: #fixed]
+        [#member: "text_tab_info", #media: #text, #locH: 21, #locV: 7, #ink: 36, #blend: 100, #width: 85, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_tab_info", #model: #image, #key: "fishing_store_tab_info", #strech: #fixed]
+        [#member: "fishing_store_tab1_l", #media: #bitmap, #locH: 108, #locV: 1, #ink: 36, #blend: 100, #width: 5, #height: 24, #type: "piece", #id: "fishing_store_tab_store", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_tab1_m", #media: #bitmap, #locH: 113, #locV: 0, #ink: 8, #blend: 100, #width: 99, #height: 26, #type: "piece", #id: "fishing_store_tab_store", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_tab1_r", #media: #bitmap, #locH: 212, #locV: 1, #ink: 36, #blend: 100, #width: 5, #height: 24, #type: "piece", #id: "fishing_store_tab_store", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_icon_2_hi", #media: #bitmap, #locH: 115, #locV: 7, #ink: 36, #blend: 100, #width: 7, #height: 14, #type: "piece", #id: "fishing_store_tab_store", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "text_tab_store", #media: #text, #locH: 124, #locV: 7, #ink: 36, #blend: 100, #width: 89, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_tab_store", #model: #image, #key: "fishing_store_tab_store", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_tab1_l", #media: #bitmap, #locH: 216, #locV: 1, #ink: 36, #blend: 100, #width: 5, #height: 24, #type: "piece", #id: "fishing_store_tab_stats", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_tab1_m", #media: #bitmap, #locH: 221, #locV: 0, #ink: 8, #blend: 100, #width: 99, #height: 26, #type: "piece", #id: "fishing_store_tab_stats", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_tab1_r", #media: #bitmap, #locH: 320, #locV: 1, #ink: 36, #blend: 100, #width: 5, #height: 24, #type: "piece", #id: "fishing_store_tab_stats", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_icon_3_hi", #media: #bitmap, #locH: 221, #locV: 6, #ink: 36, #blend: 100, #width: 15, #height: 15, #type: "piece", #id: "fishing_store_tab_stats", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "text_tab_stats", #media: #text, #locH: 238, #locV: 7, #ink: 36, #blend: 100, #width: 83, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_tab_stats", #model: #image, #key: "fishing_store_tab_stats", #strech: #fixed, #cursor:"cursor.finger"]
+        [#member: "fishing_store_header", #media: #bitmap, #locH: 20, #locV: 37, #ink: 36, #blend: 100, #width: 286, #height: 60, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_help_bg", #media: #bitmap, #locH: 10, #locV: 113, #ink: 36, #blend: 100, #width: 305, #height: 80, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_help_bg", #media: #bitmap, #locH: 10, #locV: 203, #ink: 36, #blend: 100, #width: 305, #height: 80, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_help_bg", #media: #bitmap, #locH: 10, #locV: 293, #ink: 36, #blend: 100, #width: 305, #height: 80, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_help_prev_1", #media: #bitmap, #locH: 219, #locV: 117, #ink: 36, #blend: 100, #width: 94, #height: 73, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_help_prev_2", #media: #bitmap, #locH: 10, #locV: 203, #ink: 36, #blend: 100, #width: 88, #height: 80, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "fishing_help_prev_3", #media: #bitmap, #locH: 250, #locV: 300, #ink: 36, #blend: 100, #width: 53, #height: 71, #type: "piece", #id: "fishing_store_bg", #strech: #fixed]
+        [#member: "help_title_1", #media: #text, #locH: 10, #locV: 113, #ink: 36, #blend: 100, #width: 223, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_bg", #model: #image, #key: "fishing_help_title_1", #strech: #fixed]
+        [#member: "help_title_2", #media: #text, #locH: 95, #locV: 203, #ink: 36, #blend: 100, #width: 218, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_bg", #model: #image, #key: "fishing_help_title_2", #strech: #fixed]
+        [#member: "help_title_3", #media: #text, #locH: 10, #locV: 293, #ink: 36, #blend: 100, #width: 223, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_bg", #model: #image, #key: "fishing_help_title_3", #strech: #fixed]
+        [#member: "fishing_help_text_1", #media: #text, #locH: 16, #locV: 131, #ink: 36, #blend: 100, #width: 196, #height: 60, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 1, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_bg", #model: #image, #key: "fishing_help_text_1", #strech: #fixed]
+        [#member: "fishing_help_text_2", #media: #text, #locH: 104, #locV: 221, #ink: 36, #blend: 100, #width: 209, #height: 60, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 1, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_bg", #model: #image, #key: "fishing_help_text_2", #strech: #fixed]
+        [#member: "fishing_help_text_3", #media: #text, #locH: 16, #locV: 311, #ink: 36, #blend: 100, #width: 216, #height: 60, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 1, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fishing_store_bg", #model: #image, #key: "fishing_help_text_3", #strech: #fixed]
+    </elements>
+
+    <rect>
+        [166, 85, 491, 484]
+    </rect>
+
+    <border>
+        [0, 0, 0, 0]
+    </border>
+
+</window>

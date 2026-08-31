@@ -1,0 +1,28 @@
+<window>
+
+    <name>
+        "fish_o_pedia"
+    </name>
+
+    <date>
+        -
+    </date>
+
+    <version>
+        1.1
+    </version>
+
+    <elements>
+		[#member: "CANVAS", #media: #bitmap, #locH: 13, #locV: -50, #ink: 36, #blend: 100, #width: 528, #height: 409, #type: "image", #id: "drag", #strech: #fixed]
+        [#member: "CANVAS_HITBOX", #media: #bitmap, #locH: 13, #locV: -50, #ink: 8, #blend: 0, #width: 528, #height: 409, #type: "image", #id: "canvas_hitbox", #strech: #fixed, #cursor: "cursor.finger"] 
+    </elements>
+
+    <rect>
+        [0, 0, 487, 309]
+    </rect>
+
+    <border>
+        [0, 0, 0, 0]
+    </border>
+
+</window>

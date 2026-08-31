@@ -1631,15 +1631,30 @@ import {
     WithdrawCreditVaultMessageComposer,
 } from './messages/outgoing/inventory';
 
-// Vortex-specific (no AS3 backing) - furni editor
+// Vortex-specific (no AS3 backing) - furni editor and fishing
 import {
     VortexApplyFurniDefinitionComposer,
     VortexApplyFurniEditComposer,
+    VortexStartFishingComposer,
+    VortexStopFishingComposer,
+    VortexHookHavocInputComposer,
+    VortexFishingJoinDerbyComposer,
+    VortexFishingMountCatchComposer,
     VortexGetFurniDefinitionComposer,
     VortexGetFurniEditorDataComposer,
 } from './messages/outgoing/vortex';
 
 import {
+    VortexFishingSpotDepletedMessageEvent,
+    VortexHookHavocStartedMessageEvent,
+    VortexHookHavocResultMessageEvent,
+    VortexFishingCatchResultMessageEvent,
+    VortexFishingDefinitionsMessageEvent,
+    VortexFishingDerbyStandingMessageEvent,
+    VortexFishingErrorMessageEvent,
+    VortexFishingPlayerStateMessageEvent,
+    VortexFishingRecordsMessageEvent,
+    VortexFishSightedMessageEvent,
     VortexFurniDefinitionMessageEvent,
     VortexFurniEditorDataMessageEvent,
     VortexFurniEditorRightsMessageEvent,
@@ -2803,6 +2818,24 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(8002, VortexFurniEditorDataMessageEvent);
         this._events.set(8004, VortexFurniEditorRightsMessageEvent);
         this._events.set(8006, VortexFurniDefinitionMessageEvent);
+
+        // Fishing takes 8100-8199 of the same band, leaving the furni editor room to grow. Even for
+        // events, odd for composers, so a request and its reply sit next to each other.
+        // 8102 is re-sendable: the server broadcasts it again whenever an operator reloads the
+        // tables, and FishingDefinitions.apply() drops a push whose version is not newer.
+        // See docs/vortex-original/fishing.md §3 and §6.
+        this._events.set(8102, VortexFishingDefinitionsMessageEvent);
+        this._events.set(8104, VortexFishingPlayerStateMessageEvent);
+        this._events.set(8106, VortexFishSightedMessageEvent);
+        this._events.set(8108, VortexFishingCatchResultMessageEvent);
+        // 8110 was CatchFailed. Origins has no per-cast miss: catches keep coming until the spot
+        // runs dry, so the id now carries the end of the session instead.
+        this._events.set(8110, VortexFishingSpotDepletedMessageEvent);
+        this._events.set(8112, VortexFishingDerbyStandingMessageEvent);
+        this._events.set(8114, VortexFishingErrorMessageEvent);
+        this._events.set(8116, VortexFishingRecordsMessageEvent);
+        this._events.set(8118, VortexHookHavocStartedMessageEvent);
+        this._events.set(8120, VortexHookHavocResultMessageEvent);
     }
 
     /**
@@ -3800,5 +3833,15 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(8003, VortexApplyFurniEditComposer);
         this._composers.set(8005, VortexGetFurniDefinitionComposer);
         this._composers.set(8007, VortexApplyFurniDefinitionComposer);
+
+        // Fishing's outgoing half — 8100-8199, odd for composers. The client sends three things and
+        // decides none of them; see docs/vortex-original/fishing.md §5.
+        // Origins fishing is a session, not a cast per fish: the client starts one and then only
+        // listens. 8101 was VortexFishingCastComposer and modelled the wrong interaction.
+        this._composers.set(8101, VortexStartFishingComposer);
+        this._composers.set(8103, VortexFishingMountCatchComposer);
+        this._composers.set(8105, VortexFishingJoinDerbyComposer);
+        this._composers.set(8107, VortexStopFishingComposer);
+        this._composers.set(8109, VortexHookHavocInputComposer);
     }
 }

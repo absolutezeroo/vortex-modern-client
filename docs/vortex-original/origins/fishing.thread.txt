@@ -1,0 +1,8 @@
+#pool
+#thread
+#index
+
+thread.id       = fishing
+interface.class = Fishing Interface Class
+component.class = Fishing Component Class
+handler.class    = Fishing Handler Class

@@ -1,0 +1,68 @@
+<window>
+
+    <name>
+        "derby_standard"
+    </name>
+
+    <date>
+        -
+    </date>
+
+    <version>
+        1.1
+    </version>
+
+    <elements>
+        [#member: "derby_standard_background", #media: #bitmap, #locH: 0, #locV: 0, #ink: 36, #blend: 100, #width: 505, #height: 280, #type: "piece", #id: "drag", #strech: #fixed]
+        [#member: "derby_std_info_label", #media: #text, #locH: 58, #locV: 231, #ink: 36, #blend: 100, #width: 389, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_std_info_label", #model: #image, #key: "derby_std_info_label", #strech: #fixed]
+        [#member: "fish_storage_title", #media: #text, #locH: 190, #locV: 10, #ink: 36, #blend: 100, #width: 126, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "fish_storage_title", #model: #image, #key: "fish_storage_title", #strech: #fixed, #color: "#FFFFFF"]
+        [#member: "derby_std_label", #media: #text, #locH: 49, #locV: 43, #ink: 36, #blend: 100, #width: 129, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_std_label", #model: #image, #key: "derby_std_label", #strech: #fixed]
+        [#member: "derby_number", #media: #text, #locH: 159, #locV: 43, #ink: 36, #blend: 100, #width: 112, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_standard_number", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_std_goal_label", #media: #text, #locH: 49, #locV: 56, #ink: 36, #blend: 100, #width: 143, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_std_goal_label", #model: #image, #key: "derby_std_goal_label", #strech: #fixed]
+        [#member: "derby_timer_label", #media: #text, #locH: 115, #locV: 245, #ink: 36, #blend: 100, #width: 149, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #right, #txtColor: "#890000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_timer_label", #model: #image, #key: "derby_timer_label", #strech: #fixed]
+        [#member: "derby.button.close.up", #media: #bitmap, #locH: 480, #locV: 6, #ink: 36, #blend: 100, #width: 13, #height: 13, #type: "piece", #id: "derby.button.close.up", #strech: #fixed, #cursor: "cursor.finger"]
+        [#member: "derby_timer", #media: #text, #locH: 267, #locV: 245, #ink: 36, #blend: 100, #width: 149, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#890000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_timer", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_weight_label", #media: #text, #locH: 246, #locV: 51, #ink: 36, #blend: 100, #width: 129, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #right, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_weight_label", #model: #image, #key: "derby_weight_label", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 31, #locV: 84, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_0", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 20, #locV: 84, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_0", #strech: #fixed]
+        [#member: "weight_slot_0", #media: #text, #locH: 21, #locV: 128, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_0", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_weight_unit", #media: #text, #locH: 456, #locV: 55, #ink: 36, #blend: 100, #width: 23, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#f1b201", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_weight_unit", #model: #image, #key: "derby_weight_unit", #strech: #fixed]
+        [#member: "shadow.pixel", #media: #bitmap, #locH: 389, #locV: 47, #ink: 36, #blend: 100, #width: 65, #height: 16, #type: "image", #id: "total_weight", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 126, #locV: 84, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_1", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 115, #locV: 84, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_1", #strech: #fixed]
+        [#member: "weight_slot_1", #media: #text, #locH: 116, #locV: 128, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_1", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 221, #locV: 84, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_2", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 210, #locV: 84, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_2", #strech: #fixed]
+        [#member: "weight_slot_2", #media: #text, #locH: 211, #locV: 128, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_2", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 316, #locV: 84, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_3", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 305, #locV: 84, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_3", #strech: #fixed]
+        [#member: "weight_slot_3", #media: #text, #locH: 306, #locV: 128, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_3", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 411, #locV: 84, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_4", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 400, #locV: 84, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_4", #strech: #fixed]
+        [#member: "weight_slot_4", #media: #text, #locH: 401, #locV: 128, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_4", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 31, #locV: 155, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_5", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 20, #locV: 155, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_5", #strech: #fixed]
+        [#member: "weight_slot_5", #media: #text, #locH: 21, #locV: 199, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_5", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 126, #locV: 155, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_6", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 115, #locV: 155, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_6", #strech: #fixed]
+        [#member: "weight_slot_6", #media: #text, #locH: 116, #locV: 199, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_6", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 221, #locV: 155, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_7", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 210, #locV: 155, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_7", #strech: #fixed]
+        [#member: "weight_slot_7", #media: #text, #locH: 211, #locV: 199, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_7", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 316, #locV: 155, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_8", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 305, #locV: 155, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_8", #strech: #fixed]
+        [#member: "weight_slot_8", #media: #text, #locH: 306, #locV: 199, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_8", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_empty_fish", #media: #bitmap, #locH: 411, #locV: 155, #ink: 36, #blend: 100, #width: 63, #height: 34, #type: "image", #id: "fish_slot_9", #strech: #fixed]
+        [#member: "derby_gold_catch", #media: #bitmap, #locH: 400, #locV: 155, #ink: 36, #blend: 100, #width: 11, #height: 9, #type: "image", #id: "star_slot_9", #strech: #fixed]
+        [#member: "weight_slot_9", #media: #text, #locH: 401, #locV: 199, #ink: 36, #blend: 100, #width: 84, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "weight_slot_9", #model: #image, #key: "", #strech: #fixed]
+        [#member: "fish_preview_0", #media: #bitmap, #locH: 27, #locV: 40, #ink: 36, #blend: 100, #width: 14, #height: 26, #type: "piece", #id: "fish_preview_0", #strech: #fixed]
+    </elements>
+
+    <rect>
+        [0, 0, 505, 280]
+    </rect>
+
+    <border>
+        [0, 0, 0, 0]
+    </border>
+</window>

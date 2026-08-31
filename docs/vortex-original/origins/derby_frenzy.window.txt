@@ -1,0 +1,37 @@
+<window>
+
+    <name>
+        "derby_frenzy"
+    </name>
+
+    <date>
+        -
+    </date>
+
+    <version>
+        1.1
+    </version>
+
+    <elements>
+        [#member: "derby_frenzy_background", #media: #bitmap, #locH: 0, #locV: 0, #ink: 36, #blend: 100, #width: 505, #height: 197, #type: "piece", #id: "drag", #strech: #fixed]
+        [#member: "fish_storage_title", #media: #text, #locH: 188, #locV: 10, #ink: 36, #blend: 100, #width: 126, #height: 18, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #center, #txtColor: "#decba8", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "drag", #model: #image, #key: "fish_storage_title", #strech: #fixed, #color: "#FFFFFF"]
+        [#member: "derby.button.close.up", #media: #bitmap, #locH: 480, #locV: 6, #ink: 36, #blend: 100, #width: 13, #height: 13, #type: "piece", #id: "derby.button.close.up", #strech: #fixed, #cursor: "cursor.finger"]
+        [#member: "fish_preview_0", #media: #bitmap, #locH: 27, #locV: 40, #ink: 36, #blend: 100, #width: 14, #height: 26, #type: "piece", #id: "fish_preview_0", #strech: #fixed]
+        [#member: "derby_fzy_label", #media: #text, #locH: 49, #locV: 43, #ink: 36, #blend: 100, #width: 129, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_fzy_label", #model: #image, #key: "derby_fzy_label", #strech: #fixed]
+        [#member: "derby_number", #media: #text, #locH: 147, #locV: 43, #ink: 36, #blend: 100, #width: 112, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_frenzy_number", #model: #image, #key: "", #strech: #fixed]
+        [#member: "derby_fzy_goal_label", #media: #text, #locH: 49, #locV: 56, #ink: 36, #blend: 100, #width: 143, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#000000", #font: "v", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_fzy_goal_label", #model: #image, #key: "derby_fzy_goal_label", #strech: #fixed]
+        [#member: "derby_count_label", #media: #text, #locH: 280, #locV: 51, #ink: 36, #blend: 100, #width: 129, #height: 13, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #right, #txtColor: "#000000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_count_label", #model: #image, #key: "derby_count_label", #strech: #fixed]
+        [#member: "derby_timer_label", #media: #text, #locH: 110, #locV: 164, #ink: 36, #blend: 100, #width: 149, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #right, #txtColor: "#890000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_timer_label", #model: #image, #key: "derby_timer_label", #strech: #fixed]
+        [#member: "derby_timer", #media: #text, #locH: 262, #locV: 164, #ink: 36, #blend: 100, #width: 149, #height: 11, #editable: 0, #autoTab: 0, #boxType: #fixed, #wordWrap: 0, #alignment: #left, #txtColor: "#890000", #font: "vb", #fontStyle: [#plain], #fontSize: 9, #fixedLineSpace: 12, #type: "text", #id: "derby_timer", #model: #image, #key: "", #strech: #fixed]
+        [#member: "shadow.pixel", #media: #bitmap, #locH: 425, #locV: 47, #ink: 36, #blend: 100, #width: 44, #height: 16, #type: "image", #id: "total_count", #strech: #fixed]
+        [#member: "shadow.pixel", #media: #bitmap, #locH: 28, #locV: 86, #ink: 36, #blend: 100, #width: 450, #height: 60, #type: "image", #id: "frenzy_fish_canvas", #strech: #fixed]
+    </elements>
+
+    <rect>
+        [0, 0, 505, 197]
+    </rect>
+
+    <border>
+        [0, 0, 0, 0]
+    </border>
+</window>

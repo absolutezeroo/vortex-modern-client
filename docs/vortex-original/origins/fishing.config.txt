@@ -1,0 +1,2 @@
+fishing.cycle.time=100
+fishing.key.list=["Q", "E"]

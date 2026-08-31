@@ -40,7 +40,9 @@ const full = process.argv.includes('--full');
 // add to this list only when the emulator side says the same thing.
 const VORTEX_CUSTOM = new Set([
     4600, 4601, // rentable-space configuration
-    8001, 8002, 8003, 8004, 8005, 8006, 8007 // vortex-glaze furni editor
+    8001, 8002, 8003, 8004, 8005, 8006, 8007, // vortex-glaze furni editor
+    // fishing — odd composers, even events, all mirrored in the emulator's Headers.cs
+    8101, 8102, 8103, 8104, 8105, 8106, 8107, 8108, 8109, 8110, 8112, 8114, 8116, 8118, 8120
 ]);
 
 // The registry's two tables. `_composers` is named; the incoming one is an obfuscated field, so it

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  vortex_derby_leader_b, converted from Habbo Origins' own window declaration.
+
+  GENERATED - do not edit. Change scripts/origins/convert-window.py, or the source list in
+  docs/vortex-original/origins/derby_leader_b.window.txt, and re-run it.
+
+  Origins declares its windows as a flat list of Lingo property lists rather than drawing them, so
+  every coordinate below is Origins' own `#locH`/`#locV`, verbatim. What it does NOT carry is a
+  window frame: the elements are sprites on the stage, so the container here is this port's, sized to
+  their union.
+
+  Vortex-only: fishing is an Origins feature and has no counterpart in any Habbo *Flash* dump, so
+  this lives in vortex-layouts/ rather than in the gitignored src/assets/window-layouts/.
+-->
+<layout name="vortex_derby_leader_b" width="205" height="405" version="0.1">
+  <window>
+    <container x="60" y="60" width="205" height="405" params="17" style="0"
+               name="vortex_derby_leader_b_root">
+      <children>
+
+        <static_bitmap x="0" y="0" width="205" height="405" params="16" style="0"
+                       name="drag">
+          <variables>
+            <var key="asset_uri" value="derby_leaderboard_background" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="7" y="35" width="191" height="71" params="16" style="0"
+                       name="derby_leaderboard_logo">
+          <variables>
+            <var key="asset_uri" value="derby_leaderboard_logo" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="16" y="378" width="173" height="19" params="144" style="0"
+              name="derby_leader_close" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0x40000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="42" y="114" width="129" height="13" params="144" style="0"
+              name="derby_fzy_label" caption="${vortex.fishing.derby.frenzy}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="140" y="114" width="42" height="13" params="144" style="0"
+              name="derby_frenzy_number" caption="">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="39" y="11" width="126" height="18" params="144" style="0"
+              name="drag_1" caption="${vortex.fishing.derby.leader_title}">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="76" y="337" width="56" height="13" params="144" style="0"
+              name="derby_txt_page" caption="${vortex.fishing.derby.page}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="50" y="333" width="30" height="30" params="16" style="0"
+                       name="derby_fzy_arrow_pageBack">
+          <variables>
+            <var key="asset_uri" value="fishing.button.left.active" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="128" y="333" width="30" height="30" params="16" style="0"
+                       name="derby_fzy_arrow_pageFwd">
+          <variables>
+            <var key="asset_uri" value="fishing.button.right.active" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="76" y="351" width="56" height="13" params="144" style="0"
+              name="derby_leader_txt_pageNumber" caption="">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="7" y="131" width="191" height="199" params="144" style="0"
+              name="derby_leader_fzy_list" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0x40000000" type="hex"/>
+          </variables>
+        </text>
+
+      </children>
+    </container>
+  </window>
+</layout>

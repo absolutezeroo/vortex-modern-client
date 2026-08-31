@@ -71,6 +71,10 @@ import {CustomUserNotificationWidgetHandler} from './handler/CustomUserNotificat
 import {RentableSpaceWidgetHandler} from './handler/RentableSpaceWidgetHandler';
 import {PlayListEditorWidgetHandler} from './handler/PlayListEditorWidgetHandler';
 import {CraftingWidgetHandler} from './handler/CraftingWidgetHandler';
+// Vortex-only: the fishing handler lives under src/vortex/, not in the ported tree.
+import type {HabboFishing} from '@habbo/vortex/fishing/HabboFishing';
+import {FishingSignWidgetHandler} from '@habbo/vortex/fishing/ui/FishingSignWidgetHandler';
+import {FishingSpotWidgetHandler} from '@habbo/vortex/fishing/ui/FishingSpotWidgetHandler';
 import {YoutubeDisplayWidgetHandler} from './handler/YoutubeDisplayWidgetHandler';
 import {VimeoDisplayWidgetHandler} from './handler/VimeoDisplayWidgetHandler';
 import {ChatInputWidgetHandler} from './handler/ChatInputWidgetHandler';
@@ -469,8 +473,23 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._avatarRenderManager = value;
     }
 
+    // TS-only: Vortex-only fishing system. Pushed by RoomUI beside `catalog` and `inventory`.
+    private _fishing: HabboFishing | null = null;
+
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    public get fishing(): HabboFishing | null
+    {
+        return this._fishing;
+    }
+
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    public set fishing(value: HabboFishing | null)
+    {
+        this._fishing = value;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get catalog()
-    public get catalog(): IHabboCatalog | null 
+    public get catalog(): IHabboCatalog | null
     {
         return this._catalog;
     }
@@ -1230,6 +1249,18 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:921-922
                 handler = new CraftingWidgetHandler(this);
                 break;
+
+            // TS-only: Vortex-only fishing system — no AS3 counterpart.
+            //   See docs/vortex-original/fishing.md §2.3.
+            case 'RWE_FISHING_SPOT':
+                handler = new FishingSpotWidgetHandler();
+                break;
+
+            // TS-only: Vortex-only fishing system — the sign. It builds no widget of its own; the
+            //   handler opens the book `HabboFishing` owns. See fishing.md §1 and §15.
+            case 'RWE_FISHING_SIGN':
+                handler = new FishingSignWidgetHandler();
+                break;
             case 'RWE_YOUTUBE':
                 // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as:897-898
                 handler = new YoutubeDisplayWidgetHandler();
@@ -1763,12 +1794,24 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
 
         const handlers = this._widgetEventHandlers.get(event.type);
 
-        if(handlers)
+        if(!handlers) return;
+
+        // Open/close carry the name of the widget they are for, and go only to the handler whose
+        // `type` matches — the same rule `processEvent()` applies, and for the same reason: every
+        // widget handler registers for these two ids, so an unfiltered dispatch would open all of
+        // them on any furni click.
+        const isOpenClose = event.type === RoomEngineToWidgetEvent.REQUEST_OPEN_WIDGET
+            || event.type === RoomEngineToWidgetEvent.REQUEST_CLOSE_WIDGET;
+        const targetWidget = isOpenClose ? (event as RoomEngineToWidgetEvent).widget : null;
+
+        for(const handler of handlers)
         {
-            for(const handler of handlers)
+            if(isOpenClose && handler.type !== targetWidget)
             {
-                handler.processEvent(event);
+                continue;
             }
+
+            handler.processEvent(event);
         }
     }
 

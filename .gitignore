@@ -50,3 +50,7 @@ packages/vortex-client/.vortex-dev/
 
 # Scratch self-check scripts: never committed.
 *.check.ts
+
+# Python bytecode from scripts/origins/
+__pycache__/
+*.pyc

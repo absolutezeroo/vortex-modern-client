@@ -2,3 +2,8 @@ export {VortexGetFurniEditorDataComposer} from './VortexGetFurniEditorDataCompos
 export {VortexApplyFurniEditComposer} from './VortexApplyFurniEditComposer';
 export {VortexGetFurniDefinitionComposer} from './VortexGetFurniDefinitionComposer';
 export {VortexApplyFurniDefinitionComposer} from './VortexApplyFurniDefinitionComposer';
+export {VortexStartFishingComposer} from './VortexStartFishingComposer';
+export {VortexFishingMountCatchComposer} from './VortexFishingMountCatchComposer';
+export {VortexFishingJoinDerbyComposer} from './VortexFishingJoinDerbyComposer';
+export {VortexStopFishingComposer} from './VortexStopFishingComposer';
+export {VortexHookHavocInputComposer} from './VortexHookHavocInputComposer';

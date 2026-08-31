@@ -61,6 +61,9 @@ import {RoomWidgetBase} from './widget/RoomWidgetBase';
 import {PetPackageFurniWidget} from './widget/furniture/petpackage/PetPackageFurniWidget';
 import {FurnitureContextMenuWidget} from './widget/furniture/contextmenu/FurnitureContextMenuWidget';
 import {CraftingWidget} from './widget/crafting/CraftingWidget';
+// Vortex-only: the fishing widget lives under src/vortex/, not in the ported tree.
+import {FishingSpotWidget} from '@habbo/vortex/fishing/ui/FishingSpotWidget';
+import type {FishingSpotWidgetHandler} from '@habbo/vortex/fishing/ui/FishingSpotWidgetHandler';
 import {CameraWidget} from './widget/camera/CameraWidget';
 import {RoomThumbnailCameraWidget} from './widget/camera/RoomThumbnailCameraWidget';
 import {YoutubeDisplayWidget} from './widget/furniture/video/YoutubeDisplayWidget';
@@ -339,6 +342,39 @@ export class RoomWidgetFactory implements IRoomWidgetFactory
                 );
             case 'RWE_CRAFTING':
                 return new CraftingWidget(handler, this._roomUI.windowManager, this._roomUI);
+
+            // TS-only: Vortex-only fishing system — no AS3 counterpart. See
+            //   docs/vortex-original/fishing.md §2.3.
+            //
+            //   `setFishing()` is not optional decoration: it hands the panel the definition tables
+            //   it draws a zone from AND registers it on HabboFishing, which is the only path a
+            //   sighting, a catch or a refusal has back to the UI. Built without it the panel opens,
+            //   reads "you cannot fish here", and swallows every message the server sends —
+            //   which is exactly what shipped before this line existed.
+            case 'RWE_FISHING_SPOT':
+            {
+                const widget = new FishingSpotWidget(
+                    handler as FishingSpotWidgetHandler,
+                    this._roomUI.windowManager,
+                    this._roomUI.assets,
+                    this._roomUI.localization
+                );
+                const fishing = this._roomUI.fishing;
+
+                // Optional dependencies attach after several components, so a null here means the
+                // fishing component has not resolved yet rather than that it is absent. Saying so
+                // out loud beats a panel that silently shows nothing.
+                if(fishing === null)
+                {
+                    log.warn('RWE_FISHING_SPOT built before HabboFishing resolved; the panel will not receive anything.');
+                }
+                else
+                {
+                    widget.setFishing(fishing);
+                }
+
+                return widget;
+            }
             case 'RWE_PLAYLIST_EDITOR_WIDGET':
             {
                 // The editor is driven entirely by the music controller — with no sound manager

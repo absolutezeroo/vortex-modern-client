@@ -9,6 +9,7 @@ import {HabboInventory} from '@habbo/inventory/HabboInventory';
 import {HabboCatalog} from '@habbo/catalog/HabboCatalog';
 import {HabboClubCenter} from '@habbo/catalog/clubcenter/HabboClubCenter';
 import {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
+import {HabboFishing} from '@habbo/vortex/fishing/HabboFishing';
 import {HabboFurniEditor} from '@habbo/vortex/furnieditor/HabboFurniEditor';
 import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import {RoomEngine, RoomMessageHandler} from '@habbo/room';
@@ -93,6 +94,7 @@ import {IID_HabboModeration} from '@iid/IIDHabboModeration';
 import {IID_HabboClubCenter} from '@iid/IIDHabboClubCenter';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
+import {IID_HabboFishing} from '@iid/IIDHabboFishing';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
@@ -327,6 +329,7 @@ export class VortexMain implements IVortexMain
     }
 
     private _furniEditor: HabboFurniEditor | null = null;
+    private _fishing: HabboFishing | null = null;
 
     /**
      * The Vortex furni editor (staff tool, not from AS3). Null until prepareCore() has run.
@@ -868,6 +871,17 @@ export class VortexMain implements IVortexMain
         // server says otherwise it stays inert and offers no UI.
         this._furniEditor = new HabboFurniEditor(ctx);
         ctx.attachComponent(this._furniEditor, [IID_HabboFurniEditor]);
+
+        // 12q. Fishing (Vortex-specific, not from AS3). Attached after the communication manager it
+        // depends on. It subscribes to seven incoming messages and holds what the server pushes;
+        // with no server support it simply never hears any of them and stays inert.
+        // See docs/vortex-original/fishing.md.
+        // The asset library is not optional decoration: `Component.assets` is what the Fish-O-Pedia
+        // reads its species artwork and its stars out of, and constructed without one every
+        // `getAssetByName()` answers null — a book of empty cards, with a warning per fish and no
+        // error. Every other component on this list that draws anything is given the same one.
+        this._fishing = new HabboFishing(ctx, 0, this._assets);
+        ctx.attachComponent(this._fishing, [IID_HabboFishing]);
 
         // Set PixiJS stage on room engine for rendering
         this._roomEngine.setStage(this._application!.stage);

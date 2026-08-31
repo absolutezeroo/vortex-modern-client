@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  vortex_fishing_store_a, converted from Habbo Origins' own window declaration.
+
+  GENERATED - do not edit. Change scripts/origins/convert-window.py, or the source list in
+  docs/vortex-original/origins/fishing_store_a.window.txt, and re-run it.
+
+  Origins declares its windows as a flat list of Lingo property lists rather than drawing them, so
+  every coordinate below is Origins' own `#locH`/`#locV`, verbatim. What it does NOT carry is a
+  window frame: the elements are sprites on the stage, so the container here is this port's, sized to
+  their union.
+
+  Vortex-only: fishing is an Origins feature and has no counterpart in any Habbo *Flash* dump, so
+  this lives in vortex-layouts/ rather than in the gitignored src/assets/window-layouts/.
+-->
+<layout name="vortex_fishing_store_a" width="332" height="405" version="0.1">
+  <window>
+    <container x="60" y="60" width="332" height="405" params="17" style="0"
+               name="vortex_fishing_store_a_root">
+      <children>
+
+        <text x="5" y="21" width="316" height="375" params="144" style="0"
+              name="fishing_store_bg" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0xffe6e6e6" type="hex"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="0" y="21" width="5" height="375" params="16" style="0"
+                       name="fishing_store_bg_1">
+          <variables>
+            <var key="asset_uri" value="fishing_store_bg_l" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="325" y="21" width="7" height="375" params="16" style="0"
+                       name="fishing_store_bg_2">
+          <variables>
+            <var key="asset_uri" value="fishing_store_bg_l" type="String"/>
+            <var key="flip_x" value="true" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="4" y="400" width="317" height="5" params="16" style="0"
+                       name="fishing_store_bg_3">
+          <variables>
+            <var key="asset_uri" value="fishing_store_bg_t" type="String"/>
+            <var key="flip_y" value="true" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="0" y="400" width="4" height="4" params="16" style="0"
+                       name="fishing_store_bg_4">
+          <variables>
+            <var key="asset_uri" value="fishing_store_bg_c" type="String"/>
+            <var key="flip_y" value="true" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="325" y="400" width="4" height="4" params="16" style="0"
+                       name="fishing_store_bg_5">
+          <variables>
+            <var key="asset_uri" value="fishing_store_bg_c" type="String"/>
+            <var key="flip_x" value="true" type="Boolean"/>
+            <var key="flip_y" value="true" type="Boolean"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="0" y="1" width="5" height="24" params="16" style="0"
+                       name="fishing_store_tab_info">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab2_l" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="5" y="0" width="99" height="26" params="16" style="0"
+                       name="fishing_store_tab_info_1">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab2_m" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="104" y="1" width="5" height="24" params="16" style="0"
+                       name="fishing_store_tab_info_2">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab2_r" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="6" y="8" width="12" height="12" params="16" style="0"
+                       name="fishing_store_tab_info_3">
+          <variables>
+            <var key="asset_uri" value="fishing_store_icon_1" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="21" y="7" width="85" height="18" params="144" style="0"
+              name="fishing_store_tab_info_4" caption="${vortex.fishing.store.tab_info}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="108" y="1" width="5" height="24" params="16" style="0"
+                       name="fishing_store_tab_store">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab1_l" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="113" y="0" width="99" height="26" params="16" style="0"
+                       name="fishing_store_tab_store_1">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab1_m" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="212" y="1" width="5" height="24" params="16" style="0"
+                       name="fishing_store_tab_store_2">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab1_r" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="115" y="7" width="7" height="14" params="16" style="0"
+                       name="fishing_store_tab_store_3">
+          <variables>
+            <var key="asset_uri" value="fishing_store_icon_2_hi" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="124" y="7" width="89" height="18" params="144" style="0"
+              name="fishing_store_tab_store_4" caption="${vortex.fishing.store.tab_store}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="216" y="1" width="5" height="24" params="16" style="0"
+                       name="fishing_store_tab_stats">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab1_l" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="221" y="0" width="99" height="26" params="16" style="0"
+                       name="fishing_store_tab_stats_1">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab1_m" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="320" y="1" width="5" height="24" params="16" style="0"
+                       name="fishing_store_tab_stats_2">
+          <variables>
+            <var key="asset_uri" value="fishing_store_tab1_r" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="221" y="6" width="15" height="15" params="16" style="0"
+                       name="fishing_store_tab_stats_3">
+          <variables>
+            <var key="asset_uri" value="fishing_store_icon_3_hi" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="238" y="7" width="83" height="18" params="144" style="0"
+              name="fishing_store_tab_stats_4" caption="${vortex.fishing.store.tab_stats}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="20" y="37" width="286" height="60" params="144" style="0"
+              name="fishing_store_bg_6" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0xff9ec7d1" type="hex"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="10" y="113" width="305" height="80" params="16" style="0"
+                       name="fishing_store_bg_7">
+          <variables>
+            <var key="asset_uri" value="fishing_help_bg" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="10" y="203" width="305" height="80" params="16" style="0"
+                       name="fishing_store_bg_8">
+          <variables>
+            <var key="asset_uri" value="fishing_help_bg" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="10" y="293" width="305" height="80" params="16" style="0"
+                       name="fishing_store_bg_9">
+          <variables>
+            <var key="asset_uri" value="fishing_help_bg" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="219" y="117" width="94" height="73" params="16" style="0"
+                       name="fishing_store_bg_10">
+          <variables>
+            <var key="asset_uri" value="fishing_help_prev_1" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="10" y="203" width="88" height="80" params="16" style="0"
+                       name="fishing_store_bg_11">
+          <variables>
+            <var key="asset_uri" value="fishing_help_prev_2" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="250" y="300" width="53" height="71" params="16" style="0"
+                       name="fishing_store_bg_12">
+          <variables>
+            <var key="asset_uri" value="fishing_help_prev_3" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="10" y="113" width="223" height="18" params="144" style="0"
+              name="fishing_store_bg_13" caption="${vortex.fishing.store.help_title_1}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="95" y="203" width="218" height="18" params="144" style="0"
+              name="fishing_store_bg_14" caption="${vortex.fishing.store.help_title_2}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="10" y="293" width="223" height="18" params="144" style="0"
+              name="fishing_store_bg_15" caption="${vortex.fishing.store.help_title_3}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="16" y="131" width="196" height="60" params="144" style="0"
+              name="fishing_store_bg_16" caption="${vortex.fishing.store.help_text_1}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="word_wrap" value="true" type="Boolean"/>
+            <var key="multiline" value="true" type="Boolean"/>
+          </variables>
+        </text>
+
+        <text x="104" y="221" width="209" height="60" params="144" style="0"
+              name="fishing_store_bg_17" caption="${vortex.fishing.store.help_text_2}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="word_wrap" value="true" type="Boolean"/>
+            <var key="multiline" value="true" type="Boolean"/>
+          </variables>
+        </text>
+
+        <text x="16" y="311" width="216" height="60" params="144" style="0"
+              name="fishing_store_bg_18" caption="${vortex.fishing.store.help_text_3}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="word_wrap" value="true" type="Boolean"/>
+            <var key="multiline" value="true" type="Boolean"/>
+          </variables>
+        </text>
+
+      </children>
+    </container>
+  </window>
+</layout>

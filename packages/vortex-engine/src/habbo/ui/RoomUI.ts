@@ -30,12 +30,14 @@ import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
+import {IID_HabboFishing} from '@iid/IIDHabboFishing';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
 import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
 import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
+import type {HabboFishing} from '@habbo/vortex/fishing/HabboFishing';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import type {IHabboFriendBarView} from '@habbo/friendbar/view/IHabboFriendBarView';
@@ -251,6 +253,15 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         return this._soundManager;
     }
 
+    // TS-only: Vortex-only fishing system — DI-resolved, and null until it attaches.
+    private _fishing: HabboFishing | null = null;
+
+    // TS-only: Vortex-only — read by RoomWidgetFactory when it builds the spot panel.
+    public get fishing(): HabboFishing | null
+    {
+        return this._fishing;
+    }
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_messenger
     private _messenger: IHabboMessenger | null = null;
 
@@ -456,6 +467,19 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_ROTATE, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_PICKUP, this.roomObjectEventHandler, this);
                         engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_MOVE, this.roomObjectEventHandler, this);
+                        // AS3: RoomUI.as:231-235 — the generic open/close pair, on the same
+                        // handler as every RETWE_REQUEST_* below.
+                        //
+                        // These two were missing, and they are the ones every *generic* furni widget
+                        // rides on: a logic that names a widget (crafting table, rentable space,
+                        // fishing spot) makes RoomEngine emit RETWE_OPEN_WIDGET, and with nobody
+                        // subscribed the event died in the emitter. RoomDesktop registers handlers
+                        // for exactly these two ids and was never handed one — which is why the
+                        // furni looked wired from every angle and still did nothing. The named
+                        // requests below (trophy, stickie, …) each have their own event, so they
+                        // worked and hid the hole.
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_OPEN_WIDGET, this.roomObjectEventHandler, this);
+                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CLOSE_WIDGET, this.roomObjectEventHandler, this);
                         // AS3: RoomUI.as:252 — the same roomObjectEventHandler is registered for
                         // the RETWE_REQUEST_* furni-widget requests. Without this the engine's
                         // new bridge would emit into nothing.
@@ -685,6 +709,18 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 },
                 false
             ),
+            // TS-only: Vortex-only fishing system — no AS3 counterpart. Optional, like every
+            //   dependency around it: a hotel that has not configured fishing still gets a room.
+            //   `RoomWidgetFactory` reads it back when it builds the spot panel, which is what hands
+            //   the panel its definition tables and registers it for incoming messages.
+            new ComponentDependency(
+                IID_HabboFishing,
+                (fishing: HabboFishing | null) =>
+                {
+                    this._fishing = fishing;
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_HabboMessenger,
                 (messenger: IHabboMessenger | null) =>
@@ -869,6 +905,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.roomWidgetFactory = this._widgetFactory;
         desktop.catalog = this._catalog;
         desktop.inventory = this._inventory;
+        desktop.fishing = this._fishing;
         desktop.avatarRenderManager = this._avatarRenderManager;
         desktop.furniEditor = this._furniEditor;
         desktop.habboHelp = this._habboHelp;
@@ -1318,6 +1355,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                     desktop.createWidget('RWE_ROOM_LINK');
                     // AS3: RoomUI.as:978 — the crafting table.
                     desktop.createWidget('RWE_CRAFTING');
+                    // TS-only: Vortex-only fishing system — the spot's panel.
+                    //   See docs/vortex-original/fishing.md §2.3.
+                    desktop.createWidget('RWE_FISHING_SPOT');
+                    // TS-only: Vortex-only fishing system — the sign, which opens the book.
+                    //   See docs/vortex-original/fishing.md §1 and §15.
+                    desktop.createWidget('RWE_FISHING_SIGN');
                     desktop.createWidget('RWE_CLOTHING_CHANGE');
                     // AS3: RoomUI.as:966 — the scoreboard bubble over a high-score furni.
                     desktop.createWidget('RWE_HIGH_SCORE_DISPLAY');

@@ -430,7 +430,13 @@ export class FurnitureLogic extends MovingObjectLogic
 
         if(this.eventDispatcher !== null)
         {
-            if(this._widget !== null)
+            // The **getter**, not the backing field — `_SafeCls_1722.as:306` reads `widget`, and so
+            // does the `getEventTypes()` test above. Every logic that names a widget does it by
+            // overriding the getter and never assigns `widgetType`, so reading the field here left
+            // `_widget` null and the click emitted nothing: the crafting table, the rentable space
+            // and the fishing spot were all silently inert. The same mistake was found and fixed in
+            // `getEventTypes()` and left standing at the two emit sites.
+            if(this.widget !== null)
             {
                 this.eventDispatcher.emit(
                     RoomObjectWidgetRequestEvent.ROWRE_OPEN_WIDGET,
@@ -540,7 +546,8 @@ export class FurnitureLogic extends MovingObjectLogic
     {
         const model = this.object?.getModelController();
 
-        if(this._widget !== null && model?.getNumber('furniture_real_room_object') === 1)
+        // The getter, for the same reason as the open above — `_SafeCls_1722.as:443`.
+        if(this.widget !== null && model?.getNumber('furniture_real_room_object') === 1)
         {
             this.eventDispatcher?.emit(
                 RoomObjectWidgetRequestEvent.ROWRE_CLOSE_WIDGET,

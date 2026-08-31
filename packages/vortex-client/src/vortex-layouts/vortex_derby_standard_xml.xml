@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  vortex_derby_standard, converted from Habbo Origins' own window declaration.
+
+  GENERATED - do not edit. Change scripts/origins/convert-window.py, or the source list in
+  docs/vortex-original/origins/derby_standard.window.txt, and re-run it.
+
+  Origins declares its windows as a flat list of Lingo property lists rather than drawing them, so
+  every coordinate below is Origins' own `#locH`/`#locV`, verbatim. What it does NOT carry is a
+  window frame: the elements are sprites on the stage, so the container here is this port's, sized to
+  their union.
+
+  Vortex-only: fishing is an Origins feature and has no counterpart in any Habbo *Flash* dump, so
+  this lives in vortex-layouts/ rather than in the gitignored src/assets/window-layouts/.
+-->
+<layout name="vortex_derby_standard" width="505" height="280" version="0.1">
+  <window>
+    <container x="60" y="60" width="505" height="280" params="17" style="0"
+               name="vortex_derby_standard_root">
+      <children>
+
+        <static_bitmap x="0" y="0" width="505" height="280" params="16" style="0"
+                       name="drag">
+          <variables>
+            <var key="asset_uri" value="derby_standard_background" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="58" y="231" width="389" height="11" params="144" style="0"
+              name="derby_std_info_label" caption="${vortex.fishing.derby.standard_info}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="190" y="10" width="126" height="18" params="144" style="0"
+              name="fish_storage_title" caption="${vortex.fishing.store.storage_title}">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="49" y="43" width="129" height="13" params="144" style="0"
+              name="derby_std_label" caption="${vortex.fishing.derby.standard}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="159" y="43" width="112" height="13" params="144" style="0"
+              name="derby_standard_number" caption="">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="49" y="56" width="143" height="13" params="144" style="0"
+              name="derby_std_goal_label" caption="${vortex.fishing.derby.standard_goal}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="115" y="245" width="149" height="11" params="144" style="0"
+              name="derby_timer_label" caption="${vortex.fishing.derby.timer}">
+          <variables>
+            <var key="text_color" value="0x890000" type="hex"/>
+            <var key="auto_size" value="right" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="480" y="6" width="13" height="13" params="16" style="0"
+                       name="derby_button_close_up">
+          <variables>
+            <var key="asset_uri" value="derby.button.close.up" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="267" y="245" width="149" height="11" params="144" style="0"
+              name="derby_timer" caption="">
+          <variables>
+            <var key="text_color" value="0x890000" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="246" y="51" width="129" height="13" params="144" style="0"
+              name="derby_weight_label" caption="${vortex.fishing.derby.weight}">
+          <variables>
+            <var key="text_color" value="0x000000" type="hex"/>
+            <var key="auto_size" value="right" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="31" y="84" width="63" height="34" params="16" style="0"
+                       name="fish_slot_0">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="20" y="84" width="11" height="9" params="16" style="0"
+                       name="star_slot_0">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="21" y="128" width="84" height="11" params="144" style="0"
+              name="weight_slot_0" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <text x="456" y="55" width="23" height="13" params="144" style="0"
+              name="derby_weight_unit" caption="${vortex.fishing.derby.weight_unit}">
+          <variables>
+            <var key="text_color" value="0xf1b201" type="hex"/>
+          </variables>
+        </text>
+
+        <text x="389" y="47" width="65" height="16" params="144" style="0"
+              name="total_weight" caption="">
+          <variables>
+            <var key="background" value="true" type="Boolean"/>
+            <var key="background_color" value="0x40000000" type="hex"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="126" y="84" width="63" height="34" params="16" style="0"
+                       name="fish_slot_1">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="115" y="84" width="11" height="9" params="16" style="0"
+                       name="star_slot_1">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="116" y="128" width="84" height="11" params="144" style="0"
+              name="weight_slot_1" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="221" y="84" width="63" height="34" params="16" style="0"
+                       name="fish_slot_2">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="210" y="84" width="11" height="9" params="16" style="0"
+                       name="star_slot_2">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="211" y="128" width="84" height="11" params="144" style="0"
+              name="weight_slot_2" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="316" y="84" width="63" height="34" params="16" style="0"
+                       name="fish_slot_3">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="305" y="84" width="11" height="9" params="16" style="0"
+                       name="star_slot_3">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="306" y="128" width="84" height="11" params="144" style="0"
+              name="weight_slot_3" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="411" y="84" width="63" height="34" params="16" style="0"
+                       name="fish_slot_4">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="400" y="84" width="11" height="9" params="16" style="0"
+                       name="star_slot_4">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="401" y="128" width="84" height="11" params="144" style="0"
+              name="weight_slot_4" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="31" y="155" width="63" height="34" params="16" style="0"
+                       name="fish_slot_5">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="20" y="155" width="11" height="9" params="16" style="0"
+                       name="star_slot_5">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="21" y="199" width="84" height="11" params="144" style="0"
+              name="weight_slot_5" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="126" y="155" width="63" height="34" params="16" style="0"
+                       name="fish_slot_6">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="115" y="155" width="11" height="9" params="16" style="0"
+                       name="star_slot_6">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="116" y="199" width="84" height="11" params="144" style="0"
+              name="weight_slot_6" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="221" y="155" width="63" height="34" params="16" style="0"
+                       name="fish_slot_7">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="210" y="155" width="11" height="9" params="16" style="0"
+                       name="star_slot_7">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="211" y="199" width="84" height="11" params="144" style="0"
+              name="weight_slot_7" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="316" y="155" width="63" height="34" params="16" style="0"
+                       name="fish_slot_8">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="305" y="155" width="11" height="9" params="16" style="0"
+                       name="star_slot_8">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="306" y="199" width="84" height="11" params="144" style="0"
+              name="weight_slot_8" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="411" y="155" width="63" height="34" params="16" style="0"
+                       name="fish_slot_9">
+          <variables>
+            <var key="asset_uri" value="derby_empty_fish" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <static_bitmap x="400" y="155" width="11" height="9" params="16" style="0"
+                       name="star_slot_9">
+          <variables>
+            <var key="asset_uri" value="derby_gold_catch" type="String"/>
+          </variables>
+        </static_bitmap>
+
+        <text x="401" y="199" width="84" height="11" params="144" style="0"
+              name="weight_slot_9" caption="">
+          <variables>
+            <var key="text_color" value="0xdecba8" type="hex"/>
+            <var key="auto_size" value="center" type="String"/>
+          </variables>
+        </text>
+
+        <static_bitmap x="27" y="40" width="14" height="26" params="16" style="0"
+                       name="fish_preview_0">
+          <variables>
+            <var key="asset_uri" value="fish_preview_0" type="String"/>
+          </variables>
+        </static_bitmap>
+
+      </children>
+    </container>
+  </window>
+</layout>

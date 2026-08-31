@@ -16,6 +16,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
+import type {HabboFishing} from '@habbo/vortex/fishing/HabboFishing';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
@@ -66,6 +67,9 @@ export interface IRoomWidgetHandlerContainer
     readonly inventory: IHabboInventory | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get avatarRenderManager()
     readonly avatarRenderManager: IAvatarRenderManager | null;
+    // TS-only: Vortex-only fishing system — no AS3 counterpart. Reached the same way `catalog` and
+    // `inventory` are, so the chat handler's `:fishpedia` can open the Fish-O-Pedia.
+    readonly fishing: HabboFishing | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get habboHelp()
     readonly habboHelp: IHabboHelp | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/IRoomWidgetHandlerContainer.as::get config()

@@ -165,6 +165,13 @@ export const RoomWidgetEnum = {
 
     // AS3: RoomWidgetEnum.as::CRAFTING
     CRAFTING: "RWE_CRAFTING",
+
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    //   See docs/vortex-original/fishing.md §2.3.
+    FISHING_SPOT: "RWE_FISHING_SPOT",
+    // TS-only: the wooden sign beside a fishing zone; a click opens the Fish-O-Pedia.
+    //   See docs/vortex-original/fishing.md §1 and §15.
+    FISHING_SIGN: "RWE_FISHING_SIGN",
 } as const;
 
 export type RoomWidgetEnum = typeof RoomWidgetEnum[keyof typeof RoomWidgetEnum];
