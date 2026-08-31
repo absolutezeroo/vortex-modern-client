@@ -296,9 +296,21 @@ export class BitmapSkinRenderer extends SkinRenderer
             }
             case 'fill':
             {
+                // AS3 is `param1.fillRect(rect, param4.color)`, and `BitmapData.fillRect` takes an
+                // **ARGB** colour — the alpha byte decides whether anything is painted at all. This
+                // masked it off with `& 0xFFFFFF` and built a six-digit hex, which CSS paints fully
+                // opaque, so every skin fill whose colour says "transparent" was drawn solid.
+                //
+                // The toolbar's left end cap is one: `<border style="2" color="0x03b3933">`, alpha
+                // 0, drawn last of `main_toolbar`'s children. Painted opaque it covered the collapse
+                // arrow, whose own render buffer had the chevron in it all along — the pixels went
+                // in and this fill went over them. `FillSkinRenderer` already reads the byte the
+                // same way.
                 const previous = ctx.fillStyle;
+                const color = layoutEntity.color;
+                const alpha = ((color >>> 24) & 0xFF) / 255;
 
-                ctx.fillStyle = `#${(layoutEntity.color & 0xFFFFFF).toString(16).padStart(6, '0')}`;
+                ctx.fillStyle = `rgba(${(color >> 16) & 0xFF},${(color >> 8) & 0xFF},${color & 0xFF},${alpha})`;
                 ctx.fillRect(x, y, layoutEntity.region.width, layoutEntity.region.height);
                 ctx.fillStyle = previous;
 

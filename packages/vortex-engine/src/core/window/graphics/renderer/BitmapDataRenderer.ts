@@ -257,10 +257,18 @@ export class BitmapDataRenderer extends SkinRenderer
 
                 switch(pivotPoint)
                 {
+                    // AS3 l.88-92 (case 1/4/7, the centre-column pivots):
+                    // `int((width - drawW) / 2) + (flipped ? drawW : 0)`. The flip term was
+                    // missing here, and it is not optional: `setTransform` gets a NEGATIVE
+                    // scaleX for a mirrored bitmap, so tx has to name the destination's RIGHT
+                    // edge. Without it the image draws from the centre LEFTWARDS — the toolbar's
+                    // expand chevron (`zoom_x=-1`, `pivot_point=center`) landed 6px to the left,
+                    // half of it outside its own 13px window. The left- and right-column cases
+                    // below and above already carried their own version of this term.
                     case PivotPoint.TOP_CENTER:
                     case PivotPoint.CENTER:
                     case PivotPoint.BOTTOM_CENTER:
-                        baseTx = Math.trunc((logicalW - drawW) / 2);
+                        baseTx = Math.trunc((logicalW - drawW) / 2) + (isFlippedX ? drawW : 0);
                         break;
                     case PivotPoint.TOP_RIGHT:
                     case PivotPoint.CENTER_RIGHT:
@@ -282,10 +290,11 @@ export class BitmapDataRenderer extends SkinRenderer
 
                 switch(pivotPoint)
                 {
+                    // AS3 l.110-114 (case 3/4/5): the same flip term on the vertical axis.
                     case PivotPoint.CENTER_LEFT:
                     case PivotPoint.CENTER:
                     case PivotPoint.CENTER_RIGHT:
-                        baseTy = Math.trunc((logicalH - drawH) / 2);
+                        baseTy = Math.trunc((logicalH - drawH) / 2) + (isFlippedY ? drawH : 0);
                         break;
                     case PivotPoint.BOTTOM_LEFT:
                     case PivotPoint.BOTTOM_CENTER:

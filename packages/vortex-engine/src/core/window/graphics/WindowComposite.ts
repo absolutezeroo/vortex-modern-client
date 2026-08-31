@@ -10,6 +10,21 @@ type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
 type ClipRect = { left: number; top: number; right: number; bottom: number };
 
 /**
+ * A window held back to be composited above its context owner's bitmap, with the coordinates and
+ * clip it would have been drawn at.
+ *
+ * See `compositeWindow()`: AS3 layers by graphic-context ownership, not by tree order alone, and
+ * an own-context window rises to its nearest context-owning ancestor rather than to its parent.
+ */
+type DeferredComposite = {
+    window: IWindow;
+    offsetX: number;
+    offsetY: number;
+    clip: ClipRect | null;
+    visibleRegion: ClipRect | null;
+};
+
+/**
  * Canvas composition and hit-test adapter for the web runtime.
  *
  * This class is not part of AS3 WindowRenderer itself; it contains the
@@ -217,7 +232,8 @@ export class WindowComposite
         offsetX: number,
         offsetY: number,
         inheritedClip: ClipRect | null,
-        inheritedVisibleRegion: ClipRect | null = null
+        inheritedVisibleRegion: ClipRect | null = null,
+        deferred: DeferredComposite[] | null = null
     ): void
     {
         if(!window.visible) return;
@@ -408,18 +424,67 @@ export class WindowComposite
         // own-context child can legitimately widen it past its ancestors.
         ctx.restore();
 
+        // Does this window own a graphic context? AS3's `hasGraphicsContext()` is
+        // `_context != null || !testParamFlag(16)`, so anything without USE_PARENT_GRAPHIC_CONTEXT
+        // does — and a context is a display container whose `setDisplayObject()` inserts the
+        // rendered bitmap at index 0, leaving every own-context descendant above it.
+        const ownsContext = !window.testParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT);
+        const ownDeferred: DeferredComposite[] = [];
+        const collector = ownsContext ? ownDeferred : deferred;
+
         const container = window as unknown as IWindowContainer;
 
         if(typeof container.numChildren === 'number')
         {
+            // Layering follows GRAPHIC-CONTEXT ownership, not tree order alone.
+            //
+            // AS3 does not composite a window tree flatly. `hasGraphicsContext()` is
+            // `_context != null || !testParamFlag(16)`, so a child WITHOUT
+            // USE_PARENT_GRAPHIC_CONTEXT owns a graphic context of its own, and a context is a
+            // Flash display container whose `setDisplayObject()` puts the rendered bitmap at
+            // **index 0**. Everything rendered into that bitmap — the window's own content and
+            // every `param 16` descendant — is therefore BELOW every own-context descendant,
+            // whatever order they were declared in.
+            //
+            // Composited flatly, a `param 16` sibling declared later wins instead. That is what
+            // hid the toolbar's collapse arrow: the unnamed `<border x="-6" style="2">` is the
+            // bar's left end cap, `param 16`, and the LAST child of `main_toolbar`; the arrow's
+            // region `collapse_left` is `param 1`, owns a context, and is declared before it. AS3
+            // draws the cap into the bar's bitmap and the arrow above it. This drew the cap last,
+            // over an arrow whose own render buffer had the chevron in it all along.
+            //
+            // The deferral is to the nearest context-OWNING ancestor, not to the immediate parent:
+            // `collapse_left` is a grandchild of `main_toolbar`, and holding it back only within
+            // `arrow_container_left` still leaves it inside that container's own turn — ahead of
+            // the cap, which is `main_toolbar`'s last child. It has to rise all the way to
+            // `main_toolbar`, which is what owning a graphic context means in AS3.
             for(let i = 0; i < container.numChildren; i++)
             {
                 const child = container.getChildAt(i);
 
-                if(child)
+                if(!child) continue;
+
+                if(collector !== null && !child.testParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT))
                 {
-                    this.compositeWindow(ctx, child, absX, absY, effectiveClip, visibleRegion);
+                    collector.push({window: child, offsetX: absX, offsetY: absY, clip: effectiveClip, visibleRegion});
+
+                    continue;
                 }
+
+                this.compositeWindow(ctx, child, absX, absY, effectiveClip, visibleRegion, collector);
+            }
+        }
+
+        // This window owns the context, so everything held back above belongs on top of the bitmap
+        // just drawn. Each entry owns a context of its own, so compositing it starts a fresh
+        // collector and the same rule applies one level down.
+        if(ownsContext)
+        {
+            for(const entry of ownDeferred)
+            {
+                this.compositeWindow(
+                    ctx, entry.window, entry.offsetX, entry.offsetY, entry.clip, entry.visibleRegion, null
+                );
             }
         }
     }
