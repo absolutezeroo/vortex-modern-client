@@ -1,17 +1,15 @@
 import {Container} from 'pixi.js';
 import type {IDisposable} from '@core/runtime';
 import type {ChatFlowViewer} from './viewer/ChatFlowViewer';
+import type {ChatHistoryTray} from './history/visualization/ChatHistoryTray';
 
 /**
  * ChatViewController
  *
  * Thin root-container wrapper exposed as HabboFreeFlowChat.displayObject -
- * RoomUI mounts this into the room's "room_new_chat" layout slot. AS3 also
- * bundles the drag-down chat-history tray (ChatHistoryTray) as a second
- * child here; that's explicitly out of scope for this pass (a distinct
- * scrollback-panel feature, not part of chat-style rendering) - see
- * docs/IMPLEMENTATION_STATUS.md. The `pulldown` param is already shaped for
- * it so wiring the tray in later doesn't need to change this constructor.
+ * RoomUI mounts this into the room's "room_new_chat" layout slot. It holds two
+ * children: the live bubble viewer, and the drag-down chat-history tray
+ * (`ChatHistoryTray`) on top of it.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as
  */
@@ -23,17 +21,25 @@ export class ChatViewController implements IDisposable
     private readonly _flowViewerDisplayObject: Container;
     // AS3: .../src/com/sulake/habbo/freeflowchat/ChatViewController.as::_pulldownDisplayObject
     private readonly _pulldownDisplayObject: Container | null;
+    /**
+     * DEVIATION: AS3 waits for `addedToStage`, keeps the stage's own `resize` event, and reads
+     *   `stage.stageWidth/stageHeight`. This port has one canvas sized to the window, so the size
+     *   comes from `window` and so does the event.
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as::onStageResized()
+     */
     private readonly onResize = (): void =>
     {
         this._chatFlowViewer?.resize(window.innerWidth, window.innerHeight);
+        this._pulldown?.resize(window.innerWidth, window.innerHeight);
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/ChatViewController.as::ChatViewController()
-    // TODO(AS3): 3rd AS3 param (ChatHistoryTray) omitted - see class header.
-    constructor(private readonly _chatFlowViewer: ChatFlowViewer, pulldown: {rootDisplayObject: Container} | null = null)
+    // AS3 takes the owning HabboFreeFlowChat as its first parameter and never reads it; that one is
+    // dropped here rather than carried as an unused field.
+    constructor(private readonly _chatFlowViewer: ChatFlowViewer, private readonly _pulldown: ChatHistoryTray | null = null)
     {
         this._flowViewerDisplayObject = _chatFlowViewer.rootDisplayObject;
-        this._pulldownDisplayObject = pulldown?.rootDisplayObject ?? null;
+        this._pulldownDisplayObject = _pulldown?.rootDisplayObject ?? null;
 
         const root = new Container();
 

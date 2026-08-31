@@ -41,11 +41,15 @@ import type {IFreeFlowChatRoomSessionManager, IHabboFreeFlowChat, IRoomChatSetti
 import {ChatEventHandler} from './data/ChatEventHandler';
 import {RoomSessionEventHandler} from './data/RoomSessionEventHandler';
 import {ChatHistoryBuffer} from './history/ChatHistoryBuffer';
+import {ChatHistoryScrollView} from './history/visualization/ChatHistoryScrollView';
+import {ChatHistoryTray} from './history/visualization/ChatHistoryTray';
 import {ChatItem} from './data/ChatItem';
 import {ChatBubble} from './viewer/visualization/ChatBubble';
 import {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
+import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
 import {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
 import {ChatFlowViewer} from './viewer/ChatFlowViewer';
@@ -174,12 +178,22 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._chatBubbleFactory;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatHistoryScrollView()
-    // and sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::set visible()
-    // (the IHabboFreeFlowChat-equivalent interface member HabboFreeFlowChat implements) both
-    // address the drag-down chat history panel. Neither ChatHistoryScrollView nor ChatHistoryTray
-    // is built here — see ChatViewController.ts's header for the scope cut — so there is no panel
-    // to hand back or hide (AS3's setter forwards to `_chatHistoryPulldown.visible`).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatHistoryScrollView
+    private _chatHistoryScrollView: ChatHistoryScrollView | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatHistoryPulldown
+    private _chatHistoryPulldown: ChatHistoryTray | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get chatHistoryScrollView()
+    get chatHistoryScrollView(): ChatHistoryScrollView | null
+    {
+        return this._chatHistoryScrollView;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::set visible()
+    set visible(value: boolean)
+    {
+        if(this._chatHistoryPulldown !== null) this._chatHistoryPulldown.visible = value;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::isNotificationStyle()
     // (declared on _SafeCls_70.as, the IHabboFreeFlowChat-equivalent interface). AS3 casts the
@@ -193,11 +207,19 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return style !== null && (style as unknown as IChatStyleInternal).isNotification;
     }
 
-    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get gameManager(),
-    // get windowManager() and get toolbar() hand callers three components this class holds as
-    // dependencies. It takes none of them here — the bubbles are drawn onto the room canvas rather
-    // than into windows, and there is no game manager at all (habbo/game is 0/63) — so the three
-    // accessors have no field to return.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get windowManager()
+    get windowManager(): IHabboWindowManager | null
+    {
+        return this._windowManager;
+    }
+
+    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get gameManager() and
+    // get toolbar() hand callers two more components this class holds as dependencies. It takes
+    // neither here — the bubbles are drawn onto the room canvas rather than into windows, and there
+    // is no game manager at all (habbo/game is 0/63) — so the two accessors have no field to return.
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
     get roomChatBorderLimited(): boolean
@@ -252,8 +274,9 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
      * result without them leaves the current value alone, which is the opposite of what
      * `onRoomChatSettings()` does with an empty message. Both asymmetries are AS3's.
      *
-     * AS3 also inserts a room-change divider into the chat history here; that history panel
-     * (`ChatHistoryScrollView`) is unported, and its own gap is documented on `chatHistory` below.
+     * It is also where the history gets its "you moved room" divider — once per room, because this
+     * message arrives again on every room-info refresh and each one would otherwise draw another
+     * separator. `onRoomEnter()` is what re-arms the flag.
      */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onGuestRoomData()
     private onGuestRoomData(event: IMessageEvent): void
@@ -262,6 +285,13 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 
         const parser = event.parser as GetGuestRoomResultMessageParser | null;
         const chatSettings = parser?.chatSettings ?? null;
+
+        if(this._chatHistory !== null && !this._roomChangeInserted)
+        {
+            this._chatHistory.insertRoomChange(parser?.data ?? null);
+        }
+
+        this._roomChangeInserted = true;
 
         if(chatSettings !== null)
         {
@@ -276,15 +306,21 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     /**
 	 * Entering a room throws the previous room's bubbles away.
 	 *
-	 * AS3 also resets the "room-change divider already inserted" flag here; that divider belongs to
-	 * the unported history panel and is deferred with it (see `onGuestRoomData()` above), so only
-	 * the `clear()` half is ported.
+	 * It also re-arms the "room-change divider already inserted" flag, so the next room-info result
+	 * draws one separator and the ones after it do not — see `onGuestRoomData()` above.
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onRoomEnter()
     private onRoomEnter(): void
     {
+        this._roomChangeInserted = false;
+
         this.clear();
     }
+
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_roomChangeInserted
+    // Name DERIVED: `_SafeStr_7938` is obfuscated in every tree. The two lines that read and write
+    // it — the guard in onGuestRoomData() and the reset in onRoomEnter() — are what name it.
+    private _roomChangeInserted: boolean = false;
 
     /**
      * The room pushed a new flood sensitivity.
@@ -705,6 +741,17 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                 },
                 false
             ),
+            // Optional, and read live rather than cached: the window manager attaches after several
+            // other components, and the only thing that needs it is the history tray's ignore
+            // confirmation, which cannot run before somebody has opened the tray and clicked a row.
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = manager;
+                },
+                false
+            ),
         ];
     }
 
@@ -825,21 +872,24 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     /**
 	 * Called when a room session is created/entered.
 	 *
+	 * Builds all four pieces AS3 builds, in AS3's order: the flow stage and viewer for the live
+	 * bubbles, then the history scroll view and the tray that slides it in, then the controller
+	 * whose one container holds the viewer and the tray side by side.
+	 *
 	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
-	 * TODO(AS3): ChatHistoryScrollView/ChatHistoryTray (the drag-down history panel) are
-	 * not built here — see ChatViewController.ts's header. displayObject/chatFlowViewer
-	 * still work without them; the history toggle button stays a no-op.
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::roomEntered()
     roomEntered(): void
     {
         this._isInRoom = true;
 
-        if(this._isInitialized && this._chatBubbleFactory)
+        if(this._isInitialized && this._chatBubbleFactory && this._chatHistory)
         {
             this._chatFlowStage = new ChatFlowStage(this);
             this._chatFlowViewer = new ChatFlowViewer(this, this._chatFlowStage);
-            this._chatViewController = new ChatViewController(this._chatFlowViewer);
+            this._chatHistoryScrollView = new ChatHistoryScrollView(this, this._chatHistory);
+            this._chatHistoryPulldown = new ChatHistoryTray(this, this._chatHistoryScrollView);
+            this._chatViewController = new ChatViewController(this._chatFlowViewer, this._chatHistoryPulldown);
 
             const rootDisplayObject = this._chatViewController.rootDisplayObject;
 
@@ -870,6 +920,15 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     roomLeft(): void
     {
         if(this._displayObject) this._roomEngine?.removeStageChild(this._displayObject);
+
+        this._chatHistoryPulldown?.dispose();
+        this._chatHistoryPulldown = null;
+
+        // AS3 nulls `_chatHistoryPulldown` a second time here instead of `_chatHistoryScrollView`
+        // — a copy-paste slip that leaks the view for the life of the session. Corrected, and noted
+        // rather than transcribed: the tray is already gone one branch up.
+        this._chatHistoryScrollView?.dispose();
+        this._chatHistoryScrollView = null;
 
         this._chatViewController?.dispose();
         this._chatViewController = null;
@@ -958,16 +1017,31 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     }
 
     /**
-	 * Toggle the chat history visibility.
+	 * Slides the chat-history tray in or out. This is what the room tools' `button_chat_history`
+	 * reaches, and until the tray was built it emitted an event nobody listened for.
+	 *
+	 * AS3 gates on the perk flag, which this port stands in for with `_isInitialized`, as
+	 * everywhere else in this class.
 	 */
     // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::toggleVisibility()
     toggleVisibility(): void
     {
-        if(this._isDisabledInPreferences || !this._isInitialized)
+        // AS3 returns in silence here. The room-tools button is the only caller, so a silent return
+        // is a button that does nothing for a reason nobody can see — the same trade the fishing
+        // refusals were given a voice for. `warn`, because each of the three means a real gap:
+        // no tray built (roomEntered() has not run, or ran before the buffer existed), the component
+        // never initialised, or the feature switched off in preferences.
+        if(this._isDisabledInPreferences || !this._isInitialized || this._chatHistoryPulldown === null)
         {
+            log.warn('Chat history toggle ignored — '
+                + `disabledInPreferences=${this._isDisabledInPreferences}, `
+                + `initialized=${this._isInitialized}, `
+                + `tray=${this._chatHistoryPulldown !== null}`);
+
             return;
         }
 
+        this._chatHistoryPulldown.toggleHistoryVisibility();
         this._chatEvents.emit('visibilityToggled');
     }
 
@@ -1024,7 +1098,7 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 */
     protected override initComponent(): void
     {
-        this._chatHistory = new ChatHistoryBuffer();
+        this._chatHistory = new ChatHistoryBuffer(this);
         this._chatEventHandler = new ChatEventHandler(this);
         this._roomSessionEventHandler = new RoomSessionEventHandler(this);
         this._chatBubbleFactory = new ChatBubbleFactory(this);

@@ -656,6 +656,22 @@ declare global
  *   Tab headers (hdr_*), the category arrows, the footer buttons and the row buttons.
  */
 const LIBRARY_IMAGE_NAMES: ReadonlySet<string> = new Set([
+    // HabboFreeFlowChatCom.as — the chat-history tray. Every one is read by a *variable*
+    // (`createBitmapSprite(chatFlow, name)`, `createSlice(chatFlow, name, grid)`), so the grep
+    // this file prescribes cannot see them: the literal is at the call site, not inside the
+    // `getAssetByName()` call. The `*Com.as` field names are the authority, as for the friend
+    // list below. Without them the tray opens as a bare dark column: no bar, no handle — and no
+    // handle means no hit area, so the only way to shut it again is the room-tools button.
+    // `room_change` is the older miss of the set: `getRoomChangeBitmap()` has answered null since
+    // it was written, so every room-change divider drew its timestamp and name over nothing.
+    'close_x',
+    'room_change',
+    'scrollbar_back',
+    'scrollbar_thumb',
+    'tray_bar',
+    'tray_handle_close',
+    'tray_handle_open',
+
     // Second sweep, over `refreshButton(container, name, ...)` rather than
     // `getAssetByName('<literal>')`. The prescribed grep cannot see these: the
     // name is an argument that HabboNavigator.getButtonImage() resolves, so no
@@ -1817,11 +1833,51 @@ export class VortexApp
     }
 
     /**
+     * Points PixiJS's event system at the UI canvas, which is the one the browser actually
+     * delivers pointer events to.
+     *
+     * There are two canvases stacked in `#vortex-ui`: PixiJS's own, and `#vortex-canvas` above it,
+     * created by `createCanvas()` for the window system's 2D composite. Every DOM pointer event
+     * therefore lands on the *top* one — which is why `setupMouseEvents()` below listens there —
+     * while PixiJS's `EventSystem` had attached its listeners to the canvas underneath, where
+     * nothing can reach it.
+     *
+     * The consequence was total and silent: **no object on the PixiJS stage had ever been
+     * clickable.** Both of them are on that stage — `PooledChatBubble`, whose `pointertap` →
+     * `selectAvatar()` has been dead code since it was written (clicking a speech bubble also
+     * happens to work by clicking the avatar under it, so nobody missed it), and the chat-history
+     * tray's handle, which is how it is meant to be pulled shut. The window system never noticed
+     * because it does its own hit testing off its own listeners.
+     *
+     * Retargeting is exact rather than approximate: both canvases are `window.innerWidth ×
+     * innerHeight` with no CSS scaling (`resolution: 1`, `autoDensity: true`, `resizeTo: window` on
+     * one; `resizeCanvas()` on the other), so the two coordinate spaces are the same one. PixiJS
+     * adds its own listeners to the element and does not remove the client's, so the window system
+     * keeps receiving everything it did before.
+     */
+    // TS-only: no AS3 counterpart — Flash had one display list and one input path.
+    private retargetPixiEvents(): void
+    {
+        const events = Vortex.instance.application?.renderer?.events ?? null;
+
+        if(!events || !this._canvas)
+        {
+            log.warn('Pixi event system unavailable — stage objects will not receive clicks.');
+
+            return;
+        }
+
+        events.setTargetElement(this._canvas);
+    }
+
+    /**
      * Sets up mouse event listeners on the canvas.
      */
-    private setupMouseEvents(): void 
+    private setupMouseEvents(): void
     {
         if(!this._canvas) return;
+
+        this.retargetPixiEvents();
 
         this._canvas.addEventListener('mousedown', this._onMouseDown);
         this._canvas.addEventListener('mousemove', this._onMouseMove);

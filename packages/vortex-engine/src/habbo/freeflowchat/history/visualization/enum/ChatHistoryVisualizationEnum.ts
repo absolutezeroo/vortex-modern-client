@@ -51,9 +51,12 @@ export class ChatHistoryVisualizationEnum
     // AS3: _SafeCls_2520.as::MAX_ENTRY_WIDTH
     public static readonly MAX_ENTRY_WIDTH: number = 415;
 
-    // AS3: _SafeCls_2520.as::_SafeStr_11316 — name not recovered in any tree; the value is 8 and
-    // ChatHistoryRoomChangeEntry adds it to the row height, so it is that row's vertical padding.
-    public static readonly ROOM_CHANGE_ROW_PADDING: number = 8;
+    // AS3: _SafeCls_2520.as::_SafeStr_11316 — name DERIVED, not recovered in any tree; the value
+    // is 8. ChatHistoryBuffer and ChatHistoryScrollView both *subtract* it from every row's
+    // advance, and ChatHistoryRoomChangeEntry adds it back to its own height, so it is how much
+    // consecutive rows overlap. (An earlier pass, seeing only the room-change use, called it
+    // ROOM_CHANGE_ROW_PADDING; that name was too narrow by three call sites.)
+    public static readonly ROW_HEIGHT_OVERLAP: number = 8;
 
     // AS3: _SafeCls_2520.as::_SafeStr_11475 — name not recovered in any tree; the value is 3.
     public static readonly ENTRY_SPACING: number = 3;

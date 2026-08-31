@@ -49,11 +49,20 @@ export class FloorPlanPreviewer
         this._bcFloorPlanEditor = bcFloorPlanEditor;
         this._floorPlan = bcFloorPlanEditor.floorPlanCache;
 
-        // AS3 instantiates seventeen [Embed]ed classes; this port reads the same seventeen PNGs
-        // out of the asset library, which is where the build ships them.
-        this._tileImages = FloorPlanPreviewer.TILE_ASSETS.map(
-            (name) => bcFloorPlanEditor.windowManager?.getAsset(name) ?? null
-        );
+        // AS3 instantiates seventeen [Embed]ed classes and has them all before it draws. This port
+        // has to ask for each — see `BCFloorPlanEditor.requestEmbeddedAsset()`, and the blank panel
+        // that reading the synchronous cache instead produced.
+        this._tileImages = FloorPlanPreviewer.TILE_ASSETS.map(() => null);
+
+        FloorPlanPreviewer.TILE_ASSETS.forEach((name, index) =>
+        {
+            bcFloorPlanEditor.requestEmbeddedAsset(name, (bitmap) =>
+            {
+                this._tileImages[index] = bitmap;
+
+                this.updatePreview();
+            });
+        });
     }
 
     /**
@@ -136,6 +145,9 @@ export class FloorPlanPreviewer
         context.fillStyle = '#ffffff';
         context.fillRect(0, 0, width, height);
 
+        // A tile still on its way is skipped, not waited for: `requestEmbeddedAsset()` redraws the
+        // whole preview as each one lands, so the first open paints in over a frame or two. It
+        // warns by name for a tile that can never arrive, which is why nothing is said here.
         for(const placement of placements)
         {
             const image = this._tileImages[placement.type];

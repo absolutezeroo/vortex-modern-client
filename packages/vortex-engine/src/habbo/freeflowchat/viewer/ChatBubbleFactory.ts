@@ -160,9 +160,11 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/ChatBubbleFactory.as::getHistoryLineEntry()
-    // TS note: async — see ChatBubble.ts::toImageBitmap()'s header for why (no
-    // synchronous caller exists yet to break).
-    async getHistoryLineEntry(item: ChatItem): Promise<IChatHistoryEntry | null>
+    // This was `async` while nothing called it. `ChatHistoryBuffer.insertChat()` does now, and it
+    // must stay ordered: two lines said in the same frame would resolve in whatever order their
+    // bitmaps decoded and land in the buffer that way round. `toImageBitmapSync()` bakes the same
+    // picture with no await, so the row is appended before the next one is asked for.
+    getHistoryLineEntry(item: ChatItem): IChatHistoryEntry | null
     {
         if(!this._chatFlow) return null;
 
@@ -198,7 +200,7 @@ export class ChatBubbleFactory implements IGetImageListener, IAvatarImageListene
 
         const {face, color} = this.resolveFaceAndColor(item, style, userData, true);
         const chatBubble = new ChatBubble(item, style, face, name, item.forcedColor ? (item.forcedColor >>> 0) : color, this._chatFlow, 1);
-        const bitmap = await chatBubble.toImageBitmap();
+        const bitmap = chatBubble.toImageBitmapSync();
 
         chatBubble.dispose();
 

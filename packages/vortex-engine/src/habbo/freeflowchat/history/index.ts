@@ -3,3 +3,7 @@
 
 // Exports
 export {ChatHistoryBuffer} from './ChatHistoryBuffer';
+export {ChatHistoryScrollBar} from './visualization/ChatHistoryScrollBar';
+export {ChatHistoryScrollView} from './visualization/ChatHistoryScrollView';
+export {ChatHistoryTray} from './visualization/ChatHistoryTray';
+export {BitmapSpriteWithUserId} from './visualization/entry/BitmapSpriteWithUserId';

@@ -1602,24 +1602,58 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         }
     }
 
+    /**
+     * DEVIATION: AS3 only assigns the field here, because in Flash this dependency callback always
+     *   ran before the configuration's `complete` event, so `onConfigurationComplete()` could count
+     *   on `_communication`. This port's DI resolves the two the other way round often enough that
+     *   the guard there simply failed, and the block was skipped in silence — see
+     *   `buildCommunicationBoundHelpers()`, which both call sites now share.
+     */
+    // DEVIATION: see the block above.
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::setCommunicationManager()
-    private setCommunicationManager(manager: IHabboCommunicationManager | null): void 
+    private setCommunicationManager(manager: IHabboCommunicationManager | null): void
     {
         this._communication = manager;
+
+        this.buildCommunicationBoundHelpers();
     }
 
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::onConfigurationComplete()
-    private onConfigurationComplete(): void 
+    private onConfigurationComplete(): void
     {
-        if(this._communication && !this._elementPointerHandler)
+        this.buildCommunicationBoundHelpers();
+    }
+
+    /**
+     * The two helpers AS3 builds in `onConfigurationComplete()`, built the moment the communication
+     * manager is in — which is the only thing either of them actually reads.
+     *
+     * Both subscribe message events in their own constructors, and for `BCFloorPlanEditor` that
+     * timing is the whole point: `FloorHeightMap` is a room-entry message, so an editor built when
+     * its window is first opened has already missed the only copy it will get. That is what it did
+     * — `displayFloorPlanEditor()` was constructing it lazily, and it opened on an empty plan with
+     * both panels blank. `ElementPointerHandler` sat behind the same guard and was lost the same
+     * way, silently.
+     *
+     * AS3 can build them from the configuration's `complete` event alone because in Flash the
+     * dependency callbacks have all run by then. Here three orderings are possible and one of them
+     * loses both helpers outright: `applyDependency()` calls the setter *before* it attaches the
+     * event listeners, so a configuration that finished loading early has already emitted
+     * `complete` by the time this component subscribes, and `initComponent()`'s `isInitialized()`
+     * fallback runs while the optional communication dependency is still null. Hanging the build on
+     * `communication` instead of on the configuration removes the ordering from the question.
+     */
+    // TS-only: AS3 needs no such method — its two callers cannot run in the losing order.
+    private buildCommunicationBoundHelpers(): void
+    {
+        if(!this._communication) return;
+
+        if(!this._elementPointerHandler)
         {
             this._elementPointerHandler = new ElementPointerHandler(this);
         }
 
-        // AS3 builds the floor plan editor here too, on the same guard: it subscribes six message
-        // events in its constructor and has to be listening before the room's height map arrives,
-        // not when the window is first opened.
-        if(this._communication && this._bcFloorPlanEditor === null)
+        if(this._bcFloorPlanEditor === null)
         {
             this._bcFloorPlanEditor = new BCFloorPlanEditor(this);
         }

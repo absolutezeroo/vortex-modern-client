@@ -8,6 +8,8 @@ import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IScrollbarWindow} from '@core/window/components/IScrollbarWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
+import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowState} from '@core/window/enum/WindowState';
@@ -193,6 +195,15 @@ export class BCFloorPlanEditor implements IUpdateReceiver, IDisposable
             communication.addHabboConnectionMessageEvent(this._roomVisualizationSettingsMessageEvent);
             communication.addHabboConnectionMessageEvent(this._perkAllowancesMessageEvent);
         }
+        else
+        {
+            // The editor is deaf *and* mute without this: no FloorHeightMap, and `set visible()`
+            // cannot send GetOccupiedTiles/GetRoomEntryTile either. AS3 builds this class only from
+            // `onConfigurationComplete()`, where the manager is always in; here it can also be built
+            // lazily by `displayFloorPlanEditor()`, and this says when that happened too early.
+            log.warn('Floor plan editor built with no communication manager — it will receive no'
+                + ' floor height map and can send no requests.');
+        }
 
         windowManager.roomEngine?.events?.on('REE_DISPOSED', this.onRoomDisposed);
         windowManager.registerUpdateReceiver(this, 0);
@@ -319,6 +330,19 @@ export class BCFloorPlanEditor implements IUpdateReceiver, IDisposable
         this._heightMapEditor.refreshFromCache();
         this.createTileHeightColorMap(this._heightMapEditor.heigthColorMap);
         this.setDrawMode('add_tile');
+
+        // The third way both panels come up blank, after "no tile art" and "no 2d context": the
+        // plan itself is empty. `FloorHeightMapMessageEvent` is a room-entry message and this class
+        // subscribes at configuration-complete precisely so it cannot be missed — if it is missed
+        // anyway, every draw below is a legal no-op and says nothing.
+        if(this._floorPlanCache.floorWidth <= 0 || this._floorPlanCache.floorHeight <= 0)
+        {
+            log.warn('Floor plan editor opened with an empty plan'
+                + ` (${this._floorPlanCache.floorWidth}x${this._floorPlanCache.floorHeight},`
+                + ` receivedHeightMap=${this._lastReceivedMapEvent !== null})`
+                + ' — both panels stay blank. `false` means this editor was built after the message'
+                + ' went by; `true` means it arrived and carried no model data.');
+        }
 
         if(!this.canSave) this._editorWindow.findChildByName('save')?.disable();
     }
@@ -725,17 +749,22 @@ export class BCFloorPlanEditor implements IUpdateReceiver, IDisposable
     }
 
     /**
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/floorplaneditor/BCFloorPlanEditor.as::updateEntryDirectionAvatar()
-     * AS3 reaches the `enterdirection_ghost_avatar` window's `AvatarImageWidget` and sets its
-     * `direction`, so the little figure turns with the two arrow buttons. That widget
-     * (`habbo/window/widgets/_SafeCls_2592`) is not ported, and there is no other way to reach it —
-     * the arrows still change the entry direction, which is what gets saved; only the preview of it
-     * is missing.
+     * Turns the little ghost figure with the two arrow buttons.
+     *
+     * AS3 casts the lookup twice without a null check on either; both are guarded here, because a
+     * layout that ships without the widget node would throw on every arrow click instead of just
+     * not moving the figure. The figure itself is the widget's own `FIGURE_DEFAULT` — AS3 never
+     * sets one here either, and the layout's `<variables>` only carry `avatar_image:scale`.
      */
-    // TODO(AS3): BCFloorPlanEditor.as::updateEntryDirectionAvatar() — see the block above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/floorplaneditor/BCFloorPlanEditor.as::updateEntryDirectionAvatar()
     private updateEntryDirectionAvatar(): void
     {
-        // Deliberately empty until the widget exists; see the TODO above.
+        const host = this._editorWindow?.findChildByName('enterdirection_ghost_avatar') as unknown as IWidgetWindow | null;
+        const widget = (host?.widget ?? null) as IAvatarImageWidget | null;
+
+        if(widget === null) return;
+
+        widget.direction = this._floorPlanCache.entryPointDir;
     }
 
     /** The inverse of `getThicknessSettingBySelectionIndex()`, over the wire's own multipliers. */
@@ -790,6 +819,64 @@ export class BCFloorPlanEditor implements IUpdateReceiver, IDisposable
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
+    }
+
+    /**
+     * Hands `onReady` one of the editor's tile bitmaps, now if it is decoded and later if it is not.
+     *
+     * AS3 needs nothing like this: `HeightMapEditor` and `FloorPlanPreviewer` each declare their
+     * tiles as `[Embed]`ed classes and instantiate them in their own constructors, so the bitmaps
+     * exist before either draws. This port ships the same 21 PNGs in the image bundle, but
+     * `ResourceManager` holds only a *URL* for each until somebody asks — and both classes were
+     * asking through the synchronous `getAsset()`, which reads the decoded cache that nothing had
+     * ever filled.
+     *
+     * That returned null 21 times out of 21, and nothing said so: `getColoredTile()` answered null
+     * for every tile, both `updateView()` and `updatePreview()` found an empty placement list and
+     * returned *before* assigning a bitmap, and the two panels kept the blank of an untouched
+     * `IBitmapWrapperWindow` — the black left panel and white right panel the editor opened with.
+     * Every step of it was a legal null.
+     *
+     * The receiver path loads on first request, so the first open costs one redraw per tile as they
+     * land and every open after that takes the synchronous branch.
+     */
+    // TS-only: AS3 has no counterpart — its tiles are embedded, not fetched.
+    requestEmbeddedAsset(name: string, onReady: (bitmap: ImageBitmap) => void): void
+    {
+        const cached = this._windowManager?.getAsset(name) ?? null;
+
+        if(cached !== null)
+        {
+            onReady(cached);
+
+            return;
+        }
+
+        const resourceManager = this._windowManager?.resourceManager ?? null;
+
+        // Both of these leave `retrieveAsset()` queueing a receiver that is never served, which is
+        // the one failure mode this whole path exists to make visible. `hasAsset()` is the probe
+        // ResourceManager provides for exactly that question — it answers without queueing anything.
+        if(resourceManager === null)
+        {
+            log.warn(`No resource manager yet — tile "${name}" cannot be requested.`);
+
+            return;
+        }
+
+        if(!resourceManager.hasAsset(name))
+        {
+            log.warn(`Tile "${name}" is in neither the decoded cache nor the URL registry`
+                + ' — it does not ship in the images bundle under that name.');
+
+            return;
+        }
+
+        resourceManager.retrieveAsset(name, {
+            disposed: false,
+            dispose: (): void => {},
+            receiveAsset: (asset: ImageBitmap): void => onReady(asset),
+        });
     }
 
     // AS3: BCFloorPlanEditor.as::get heightMapBitmapElement()

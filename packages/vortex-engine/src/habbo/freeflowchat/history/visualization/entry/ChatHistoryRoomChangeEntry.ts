@@ -61,7 +61,7 @@ export class ChatHistoryRoomChangeEntry implements IChatHistoryEntry
         // AS3 reads `TextField.textHeight`, which for one line is the format's own size plus the
         // field's 2px gutters.
         const nameHeight = nameFormat.size + 4;
-        const height = nameHeight + 5 + ChatHistoryVisualizationEnum.ROOM_CHANGE_ROW_PADDING + top;
+        const height = nameHeight + 5 + ChatHistoryVisualizationEnum.ROW_HEIGHT_OVERLAP + top;
         const canvas = new OffscreenCanvas(ChatHistoryVisualizationEnum.MAX_ENTRY_WIDTH, height);
         const ctx = canvas.getContext('2d');
 

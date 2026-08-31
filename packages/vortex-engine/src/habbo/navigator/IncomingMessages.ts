@@ -542,6 +542,14 @@ export class IncomingMessages
         this.data.createdFlatId = parser.flatId;
 
         log.info(`Flat created: ${parser.flatName} (${parser.flatId})`);
+
+        // AS3 does three more things here, and this port did none of them, so creating a room
+        // recorded the id and left the create-room view sitting open on screen: it walks you into
+        // the new room, refreshes "my rooms" (category 5) so it is listed, and returns the navigator
+        // to its main view — which is what actually takes the creation form down.
+        this._navigator.goToRoom(parser.flatId, true);
+        this._navigator.transitionalNavigator?.mainViewCtrl?.reloadRoomList(5);
+        this._navigator.goToMainView();
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onUserObject()

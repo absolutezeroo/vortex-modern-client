@@ -109,12 +109,15 @@ export class HeightMapEditor
         if(bitmapElement !== null) bitmapElement.procedure = this.editorWindowProcedure;
         if(mouseCapturer !== null) mouseCapturer.procedure = this.editorWindowProcedure;
 
-        const windowManager = bcFloorPlanEditor.windowManager;
+        // AS3 instantiates four [Embed]ed classes here and has its bitmaps before the first line of
+        // drawing code runs. See `BCFloorPlanEditor.requestEmbeddedAsset()` for why this port has to
+        // ask, and what the black panel it fixes looked like.
+        const request = bcFloorPlanEditor.requestEmbeddedAsset.bind(bcFloorPlanEditor);
 
-        this._tileImageBase = windowManager?.getAsset(HeightMapEditor.TILE_BASE) ?? null;
-        this._tileImageEntry = windowManager?.getAsset(HeightMapEditor.TILE_ENTRY) ?? null;
-        this._tileImageBaseLarge = windowManager?.getAsset(HeightMapEditor.TILE_BASE_LARGE) ?? null;
-        this._tileImageEntryLarge = windowManager?.getAsset(HeightMapEditor.TILE_ENTRY_LARGE) ?? null;
+        request(HeightMapEditor.TILE_BASE, bitmap => { this._tileImageBase = bitmap; this.refreshFromCache(); });
+        request(HeightMapEditor.TILE_ENTRY, bitmap => { this._tileImageEntry = bitmap; this.refreshFromCache(); });
+        request(HeightMapEditor.TILE_BASE_LARGE, bitmap => { this._tileImageBaseLarge = bitmap; this.refreshFromCache(); });
+        request(HeightMapEditor.TILE_ENTRY_LARGE, bitmap => { this._tileImageEntryLarge = bitmap; this.refreshFromCache(); });
 
         // The ramp: hue walks 0.6 down by 0.85 over the 30 levels and wraps back into 0..1 when it
         // goes negative, so the top of the scale comes round to red again.
@@ -453,6 +456,9 @@ export class HeightMapEditor
             }
         }
 
+        // Nothing to place while the plan is empty, and nothing to place either until the four tile
+        // bitmaps land — `requestEmbeddedAsset()` calls back into `refreshFromCache()` per tile, so
+        // this runs again as they do, and warns by name for one that can never arrive.
         if(placements.length === 0) return;
 
         const canvas = new OffscreenCanvas(maxX - minX + 18, maxY - minY + 27);

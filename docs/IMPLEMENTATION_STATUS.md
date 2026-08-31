@@ -369,8 +369,8 @@ Resolving all ten through WIN63's registry to their AS3 composer, then to the cl
 | 2931 | `ClubDiscountPromoExtension.onTextRegionClicked()` | that click handler is not ported |
 | 1760 | `AchievementsResolutionController`               | the port's is a 177-line log-only shell |
 | 916  | `AchievementsResolutionController`               | same |
-| 3426 | `BCFloorPlanEditor`                              | whole window unported |
-| 880  | `BCFloorPlanEditor`                              | whole window unported |
+| 3426 | `BCFloorPlanEditor`                              | ported 2026-08-28; measured before that |
+| 880  | `BCFloorPlanEditor`                              | ported 2026-08-28; measured before that |
 | 625  | `VariableManagementDetailView`                   | the `habbo/roomevents` remainder |
 | 785  | —                                                | **not a client gap** |
 
@@ -623,9 +623,10 @@ thirteen main modules, **419 wired, 46 missing**:
 | `navigator`, `messenger`, `quest`, `toolbar`, `roomevents` | full | 0 |
 
 **`wire-coverage.mjs` — can the client trigger what the server implements?** 40 send gaps, of which
-**3 have a real handler**: 3426 and 880 (the floor-plan editor, `BCFloorPlanEditor` at 1,879 lines,
-wholly unported) and 785, which has no entry in the WIN63 registry in either table and is an
-emulator-side leftover rather than a client gap. 29 of the other 37 sit behind emulator stubs.
+**3 have a real handler**: 3426 and 880 (the floor-plan editor, `BCFloorPlanEditor` at 1,879 lines
+of AS3 — unported when this was measured, ported 2026-08-28, so both now send) and 785, which has no
+entry in the WIN63 registry in either table and is an emulator-side leftover rather than a client
+gap. 29 of the other 37 sit behind emulator stubs.
 
 **`todo-inventory.mjs` — what is knowingly incomplete?** 363 TODOs, 310 of them `TODO(AS3)`. By kind:
 203 micro-gaps with no blocker cited, 86 blocked on a whole unported module, 28 Flash-only
@@ -680,7 +681,8 @@ Details worth keeping:
   comparison, transcribed.
 
 Real-handler send gaps: **5 -> 3**, and the three that remain are two floor-plan-editor composers
-(3426, 880 — `BCFloorPlanEditor` is 1,879 lines and wholly unported) plus nothing else.
+(3426, 880 — `BCFloorPlanEditor` is 1,879 lines, unported at the time of this measure and ported
+2026-08-28) plus nothing else.
 
 #### The toolbar promo bars, and five classes that only look like gaps — 2026-08-16
 
@@ -2957,9 +2959,9 @@ Two things the slice turned up:
   works because the room canvas sits at the desktop origin. There is a comment on
   `isMouseEventDisabledByRect()` saying so, because the obvious "fix" would break it.
 
-`HabboFreeFlowChat.disableRoomMouseEventsLeftOfX()` is ported with it, and is dormant: its only
-AS3 callers are in `freeflowchat/history/visualization/ChatHistoryTray.as`, and the tray, its
-scroll bar and its scroll view are all unported. That is a separate slice.
+`HabboFreeFlowChat.disableRoomMouseEventsLeftOfX()` is ported with it. It was dormant until
+2026-08-31 — its only AS3 callers are in `freeflowchat/history/visualization/ChatHistoryTray.as` —
+and the tray now calls it on every width change, so this path is live.
 
 **Not exercised at runtime.** This path needs the emulator and a room; `vortex-glaze`, the bench
 the widget slices used, has no room engine.
@@ -3296,6 +3298,146 @@ not readable off this client.
 facts of the path, not placeholders. The client renders `chestCount` as its own column
 (`TransactionTableObject.getTableCell()`), the log entity carries a single chest foreign key so one
 row can only ever be about one chest, and no path deposits coins into a chest.
+
+### The chat-history tray, and the floor editor's last stale blocker (2026-08-31)
+
+Two features that were each one step from done, and the step was different in each case.
+
+**The chat-history tray (`habbo/freeflowchat/history/visualization/`, ~1,330 l. AS3).** The buffer
+had shipped, the row renderers had shipped, the room-tools `button_chat_history` had shipped — and
+the button emitted an event nobody listened for, because the panel it opens had never been ported.
+Four classes close it:
+
+  `ChatHistoryTray`         the sliding column, its handle, and the 140ms cubic ease. It is the
+                            only update receiver of the pair: the scroll view registers for
+                            nothing and is ticked from here, so a shut tray costs no frames.
+  `ChatHistoryScrollView`   the scrollback. Three writers of `topY` that each cancel the others —
+                            a drag, a `SmoothScroller` wheel, and two eased animations (the
+                            springback out of an over-scroll, the auto-scroll that follows new
+                            chat while you are near the bottom).
+  `ChatHistoryScrollBar`    the track and thumb, drawn from `topY` against the buffer height.
+  `BitmapSpriteWithUserId`  the row sprite. Obfuscated in both WIN63 trees; the name is
+                            **recovered** from PRODUCTION, which has the 2016 version of the same
+                            class (one `userId` where 2026 splits `userIndex` and `webId`).
+
+`ChatHistoryBuffer` was storing `ChatItem`s where AS3 stores *rendered rows*, so it had no
+`totalHeight` to scroll through and no `insertRoomChange()`. Both are ported, and
+`ChatBubbleFactory.getHistoryLineEntry()` went from `async` to sync on the way: it had no callers
+while it was async, and with one it must stay ordered — two lines said in the same frame would have
+landed in whatever order their bitmaps decoded. `ChatBubble.toImageBitmapSync()` already existed.
+
+The AS3 side is faithful including one bug and one slip, both noted at the declaration: the overflow
+splice scrolls by the height of the row it *added* rather than the one it drops, and `roomLeft()`
+nulls `_chatHistoryPulldown` twice instead of the scroll view (corrected here, or the view would
+leak for the session). Four Flash-isms have no PixiJS equivalent and are marked `DEVIATION:` — stage
+size and `stage.resize` become `window`, `stage.mouseMove`/`mouseUp` subscriptions become
+`globalpointermove` plus a drag flag, and `stage != null` becomes "has a parent".
+
+`HabboFreeFlowChat` gains what the tray needs: `chatHistoryScrollView`, `set visible()`, a real
+`toggleVisibility()`, an optional `IID_HabboWindowManager` (read live, never cached — it attaches
+late, and only the ignore-confirmation dialog wants it), and the room-change divider on
+`onGuestRoomData()` behind the once-per-room flag `onRoomEnter()` re-arms.
+
+`node scripts/check-chat-history.mjs` runs the row stacking, the insert ordering, the 1000-row
+splice and the springback at both ends against a stubbed PixiJS.
+
+**`BCFloorPlanEditor.updateEntryDirectionAvatar()`.** One `TODO(AS3)`, blocked on
+`habbo/window/widgets/AvatarImageWidget` — which has since been ported and registered under
+`avatar_image`, and the `enterdirection_ghost_avatar` node ships in
+`floor_plan_editor_bc_xml.xml`. The blocker was stale in all three places at once. The little figure
+turns with the arrows again; the figure itself is the widget's own `FIGURE_DEFAULT`, because AS3
+never sets one here either.
+
+### The four silent nulls behind two blank panels and a dead handle (2026-08-31)
+
+Everything above shipped and then failed on screen, in four separate ways that shared one shape: a
+legal `null` that no code path complained about. Worth recording as a group, because the same shape
+is still out there.
+
+**Nothing on the PixiJS stage had ever been clickable.** `#vortex-canvas`, the window system's 2D
+composite, is stacked *over* the PixiJS canvas inside `#vortex-ui`, so the browser delivers every
+pointer event to it — while PixiJS's `EventSystem` had its listeners on the canvas underneath.
+`App.ts::retargetPixiEvents()` calls `renderer.events.setTargetElement()` on the UI canvas; both
+canvases are `innerWidth × innerHeight` with no CSS scaling, so the mapping is identity, and PixiJS
+adds listeners rather than replacing the client's. Two things were dead behind this and only one was
+known: the history tray's handle, and `PooledChatBubble`'s `pointertap` → `selectAvatar()`, dead
+since it was written — clicking a bubble also works by clicking the avatar under it, so nobody
+missed it.
+
+**The chat tray's seven images were in no library.** `getAssetByName('scrollbar_thumb')` and its six
+siblings returned null: they read the name from a *variable* (`createSlice(chatFlow, name, grid)`),
+so the grep `App.ts` prescribes for `LIBRARY_IMAGE_NAMES` cannot see them — the same blind spot that
+file already documents for `refreshButton()`. `room_change` was the oldest of them:
+`getRoomChangeBitmap()` had answered null since it was written, so every room-change divider drew
+its timestamp and name over nothing.
+
+**The floor editor's 21 tiles were read out of the wrong store.** AS3 `[Embed]`s them on
+`HeightMapEditor` and `FloorPlanPreviewer`, so they exist before either draws; the port asked
+`windowManager.getAsset()`, a *synchronous* read of `ResourceManager`'s decoded cache, which only
+ever holds what something has already loaded. 21 nulls, and then: `getColoredTile()` null for every
+tile, `updateView()` returning before it assigned a bitmap (black left panel), `updatePreview()`
+filling white and skipping every `drawImage` (white right panel). `BCFloorPlanEditor
+.requestEmbeddedAsset()` now takes the receiver path and redraws per tile, and warns by name for one
+that can never arrive.
+
+**And the editor was not listening when the map arrived.** `onConfigurationComplete()` builds
+`BCFloorPlanEditor` and `ElementPointerHandler` only `if(_communication)`, which is faithful — AS3's
+dependency callbacks have all run by the time Flash fires that event. Here they need not have:
+`applyDependency()` calls the setter *before* attaching the event listeners, so a configuration that
+finished loading early has already emitted `complete`, and `initComponent()`'s `isInitialized()`
+fallback runs while the optional communication dependency is still null. Both helpers were lost,
+silently; `displayFloorPlanEditor()` then built the editor lazily on first open, by which point
+`FloorHeightMap` — a room-entry message — was long gone. It opened on a `-1x-1` plan. The build now
+hangs off `communication`, the only thing either helper reads, which takes the ordering out of the
+question.
+
+Four `log.warn`s were added at the points that used to return in silence, and two were taken back
+out once they proved to cry wolf — an asset still in flight is not a fault. What survives names the
+asset or the condition: the toggle that refused, the plan that was empty and whether a height map
+had ever arrived, and the tile that is in neither store.
+
+**Also fixed, found on the way:** `NavigatorIncomingMessages.onFlatCreated()` recorded
+`createdFlatId` and stopped. AS3 does three more things — `goToRoom(flatId, true)`,
+`mainViewCtrl.reloadRoomList(5)`, `goToMainView()` — and it is the last of them that takes the
+creation form off the screen. Creating a room left the form sitting open and did not walk you in.
+
+**And the editor's Save, which really was server-side.** `UpdateFloorPropertiesMessageParser` was
+fully written; `UpdateFloorPropertiesMessageHandler.HandleAsync()` was `await ValueTask.CompletedTask`
+and nothing else. Implemented in `../vortex-emulator` the same day: `IRoomModelProvider
+.CompileCustomModel()` exposes the compile `ReloadAsync()` already ran over every stored model, and
+`RoomGrain.FloorPlan.cs` does the rest — owner check, a per-room `custom_<roomId>` row in
+`room_models` (editing the shared stock model in place would redraw every room built on it), a full
+tile-map rebuild through `EnsureMapBuiltAsync()` because a plan can change the room's *dimensions*,
+the furniture re-seated onto the new arrays, and anyone standing where the floor no longer is moved
+to the door. A plan whose door lands on a hole is refused rather than saved: every arrival is placed
+on the door tile, so it would make the room unenterable.
+
+  How the room is told is the part that took a second attempt. Pushing a fresh `FloorHeightMap` and
+  `HeightMap` at the occupants changes nothing they can see — **this client builds its room model
+  once, on entry**, so a mid-session height map is read and dropped. What works is the card the
+  navigator already answers with: `GetGuestRoomResult` with `EnterRoom` set, which
+  `NavigatorIncomingMessages.onGetGuestRoomResult()` turns into `goToRoom()`, and the entry that
+  follows re-sends the whole room. It goes to everyone in the room, not just whoever saved — the
+  tiles moved under all of them.
+
+**The pathfinder and the walk disagreed about how high a step is, and only the walk knew.**
+`RoomAvatarTickSystem.ValidateAvatarStepAsync()` refused a step taller than `MaxStepHeight`;
+`RoomMapModule.CanAvatarWalkBetween()` — the predicate the A* actually asks — had no height rule at
+all. So a route was planned straight up a cliff and then aborted at the first tile it could not
+climb, and the avatar stopped wherever the doomed path had reached: in a room with a raised
+platform, clicking the platform walked you along the shortest line to its *edge* instead of round by
+its stairs. It surfaced as `WRN ... Failed to advance avatar 1 to next tile ... The move target is
+invalid.` The rule moved into `CanAvatarWalkBetween()`, so both callers share it and a planned path
+is a walkable one; the tick's own copy is gone, and an unclimbable step now re-routes through the
+branch below it rather than throwing.
+
+**The same gap, one row over: hiding the walls never updated live either.**
+`RoomMessageHandler.onRoomVisualizationSettings()` has always applied a mid-session update on the
+spot — `updateObjectRoomVisibilities()` and `updateObjectRoomPlaneThicknesses()`, no room re-entry
+needed — but the emulator sent `RoomVisualizationSettings` from exactly one place, `RoomService`'s
+room-entry burst. `UpdateRoomSettingsAsync()` is the only thing that changes those three values and
+it never said so, so the walls came down for whoever saved only after they left and came back. It
+now broadcasts them beside the chat settings it already did.
 
 ### Trace hygiene, 2026-08-20
 
@@ -4674,9 +4816,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   **Two gaps this run measured rather than closed.** `GetOccupiedTilesMessageComposer` and
   `GetRoomEntryTileMessageComposer` are the only other send gaps with a real emulator handler
   behind them, and both are sent from exactly one place: `BCFloorPlanEditor`. That is 1,879 AS3
-  lines across five files **and** its window layout does not ship in
-  `src/assets/window-layouts/`, so the asset side is a prerequisite — see
-  `HabboWindowManager.displayFloorPlanEditor()`.
+  lines across five files, and the layout was believed missing when this was written. Both turned
+  out to be wrong-by-then: `floor_plan_editor_bc_xml.xml` ships, and the editor was ported
+  2026-08-28 — see `HabboWindowManager.displayFloorPlanEditor()`.
 
 
 - 🆕 **`habbo/moderation` — the mod-tool window cycle: the module is complete**, 2026-08-18.
@@ -8748,7 +8890,7 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - `TextController`/`TextLabelController` line-height was a flat `fontSize`-based guess (AS3 used Flash's real measured `TextField.textHeight`); replaced with `CanvasFontString.ts::measureFontLineHeight()` using `TextMetrics.fontBoundingBoxAscent/Descent` (the font's fixed design metrics — not `actualBoundingBox*`, which is per-glyph ink and was tried/reverted for being inconsistent across caption strings). Fixes descenders getting clipped (e.g. "My World" rendering as "Mv World").
   - JSON layouts commonly declare text margins as one nested `vars.margins: {left,top,right,bottom}` var (serialized to XML as a `Map`), but `TextController`/`TextLabelController`'s property-application only recognized 4 flat `margin_left`/`margin_top`/`margin_right`/`margin_bottom` keys — the nested form was silently dropped, so every such label rendered with 0 margins (buttons shrink-wrapped via AS3's real `ButtonController` `EXPAND_TO_ACCOMMODATE_CHILDREN`/`WE_CHILD_RESIZED` → `width = 0` behavior ended up tight enough to look cropped/too-narrow). Both controllers now handle a `case 'margins'`.
 - 🟡 **Second room widget ported: room-tools (RWE_ROOM_TOOLS)**: `RoomToolsWidget`/`RoomToolsCtrlBase`/`RoomToolsToolbarCtrl`/`RoomToolsInfoCtrl`/`RoomToolsHistory` fully ported from `sources/win63_version/habbo/ui/widget/roomtools/*.as` (no decompiler corruption found there), `RoomToolsWidgetHandler` fully ported. Settings/room-info popup, collapse/expand slide animation, camera button dispatch (`HabboToolbarEvent`), like/rate, share-room popup + clipboard, room-history back/forward navigation, and tag-click-to-search all work. `RoomWidgetFactory`/`RoomDesktop.createWidget()` wired for `'RWE_ROOM_TOOLS'` matching `RoomDesktop.as:885-890` exactly (constructs the handler, sets `.communicationManager`/`.navigator`). Added `IID_HabboNavigator`/`IID_HabboCommunicationManager` DI wiring to `RoomUI`/`RoomDesktop` (previously registered symbols, never consumed here); added `RoomUI.desktop` (AS3's `var_22` is a single field, the TS port already keyed multiple desktops by room identifier in a `Map` for the underlying multi-session architecture — this exposes "the most recently created desktop" as the AS3-equivalent view) and `IRoomDesktop.getWidget()` (was implemented on the concrete class but missing from the interface). Also created the missing `RoomWidgetZoomToggleMessage` (referenced by infostand-era `getWidgetMessages()` docs but never actually added).
-  - One remaining scope cut, logged in-code as `TODO(AS3)`: the `room_tools_history_item` layout asset is not bundled, so the visited-rooms **dropdown list** doesn't render (back/forward navigation buttons work fully, they only need the in-memory visited-rooms array). `freeFlowChat` **is now wired into `RoomUI`/`RoomDesktop`** (see the `habbo/freeflowchat` row) — the chat-history *toggle button* itself is still a no-op, since the drag-down history tray it would open (`ChatHistoryTray`/`ChatHistoryScrollView`) is a separate, explicitly-deferred feature.
+  - One remaining scope cut, logged in-code as `TODO(AS3)`: the `room_tools_history_item` layout asset is not bundled, so the visited-rooms **dropdown list** doesn't render (back/forward navigation buttons work fully, they only need the in-memory visited-rooms array). `freeFlowChat` **is now wired into `RoomUI`/`RoomDesktop`** (see the `habbo/freeflowchat` row); the chat-history *toggle button* opened nothing until 2026-08-31, when the drag-down history tray it reaches (`ChatHistoryTray`/`ChatHistoryScrollView`) was ported.
   - AS3's cross-room widget-instance reuse (`RoomUI.as`'s `var_4627`/`var_1358`: `RWE_ROOM_TOOLS` and 7 other widget types are reconstructed-or-reused via `widget.reuse(newDesktop)` instead of always reconstructing) is not ported — `RoomDesktop.createWidget()` now sets the `widget.reusable` flag correctly per type (previously hardcoded `false` for everything, which happened to also affect infostand — that flag is currently unread/inert either way) but the caller-side instance cache in `RoomUI` doesn't exist yet, so every widget is still freshly constructed each room-enter.
 - ✅ **core/window dropdown compact text follow-up**: `WindowComposite` treats `_DROPLIST_TITLETEXT` and dropdown item `_BTN_TEXT` as compact Flash TextField content, with AS3-style metrics/clipping and baseline offset.
 - ✅ **Navigator dropdown/create-room input follow-up**: top-level navigator tabs select the AS3 matching search index, dropmenu title text uses compact Flash margins, create-room thumbnails use AS3 interpolated image URIs plus tile label colors, and `TextFieldManager` refocuses the browser input after placeholder clearing.
@@ -8803,7 +8945,7 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   - **Bug 15 (found 2026-07-11, same live user report as bug 14: face crop still not rendering after the wiring above): `AvatarImage.getImage()`/`getCroppedImage()` silently ignored their own `scale` parameter — a genuine, pre-existing gap in `habbo/avatar/`, unrelated to freeflowchat, just never exercised by any caller with `scale !== 1` before `HabboFaceFocuser` became reachable.** A three-round live diagnostic (console logging → per-field sprite/texture inspection → visually rendering the actual bitmaps to an on-page canvas overlay, since the numeric checks all came back valid) showed the full avatar render was correct but the face crop returned a fully transparent 25×25 bitmap — the crop rectangle was landing in empty margin left of the head, not on it. Root cause, confirmed by reading `AvatarImage.as::getImage()` line-by-line: real AS3 calls `class_2495.resampleBitmapData(bitmap, scale)` on the composited canvas whenever `scale != 1` *before* handing it back — `HabboFaceFocuser.focusUserFace()`'s `X_OFFSETS`/`Y_OFFSETS` crop coordinates (already correctly ported, confirmed byte-for-byte against AS3) are calibrated assuming that resampling already happened, i.e. that a `scale=0.5` call returns a canvas *half the pixel size* of an unscaled one. This port's `getImage()` (and the sibling `getCroppedImage()`, same bug) never applied any resampling at all, so `zoom.enabled=true` sessions (`"h"`/large avatar scale + 0.5x icon-crop multiplier) got back a full-size, unshrunk canvas and cropped the wrong region — invisible/transparent result, not a crash, so nothing else caught it. Ported the real resample algorithm as `AvatarImage.resampleCanvas()`/`resizeCanvas()` (progressive halving below 0.5x scale for quality, matching `resampleBitmapData()`/`resizeBitmapData()` exactly) and wired it into both methods, including AS3's specific quirk of caching the *unscaled* bitmap and only resampling the returned copy (so a later same-pose call at a different scale still recomputes correctly). The containing AS3 class's real name is unrecoverable from any of the three source trees (obfuscated `_SafeCls_2871` in the primary tree, generic decompiler name `class_2495` in the secondary tree, absent from the tertiary tree) — the method names themselves are real/legible, only the wrapper class isn't, so `resampleCanvas`/`resizeCanvas` are private statics on `AvatarImage` rather than a wrongly-named standalone class. Independently corroborated by ESLint: `pnpm lint` had *already* been flagging `scale` as an unused parameter on both methods before this fix (a real, live lint error, not just a stylistic warning) — confirms the gap was there prior to this session, not something introduced by the chat-bubble wiring.
   - **`getPetImage()` stays a stub, now for a precisely-scoped reason** (not the vague placeholder it replaces): `IRoomEngine.getPetImage()` doesn't exist and there is no pet-avatar sprite-composition code anywhere in `habbo/room/` — unlike the user-avatar case, this isn't a wiring gap but a missing subsystem comparable in scope to `AvatarRenderManager` itself, out of scope for this pass; documented `TODO(AS3)` in-code with the exact blocking dependency chain, cross-referenced against the identical gap already noted in `ChatWidgetHandler.ts`.
   - **Bug 14 (found 2026-07-11, live user report: "remonte pas assez vite" - scrolls up noticeably too slowly): `roomChatSettings` was permanently `null`, capping the scroll interval at `ChatFlowStage`'s 10000ms fallback instead of AS3's real ~6000ms default.** Root-caused by reading `HabboFreeFlowChat.as`'s actual constructor: it calls `refreshEffectiveChatSettings()` immediately (`_chatMode=0, _chatBubbleWidth=1, scrollSpeed=1, floodSensitivity=1` field defaults), so AS3's `roomChatSettings` is *never* null - `ChatFlowStage.refreshSettings()` always finds it non-null and resolves `scrollSpeed=1` to the 6000ms tier from the very first frame, well before any server message arrives. This port's `HabboFreeFlowChat` never did that self-initialization, leaving `roomChatSettings` null forever and `ChatFlowStage` stuck on its documented-as-unreachable 10000ms fallback - a real, measurable (67% slower) behavioral gap, not just a cosmetic one. Fixed: `HabboFreeFlowChat`'s constructor now calls a new `refreshEffectiveChatSettings()` (matching AS3's own method + defaults exactly) to self-initialize `roomChatSettings`; also wired the real `onAccountPreferences()` handler (`AccountPreferencesEvent`, message 2082) so a genuine server preference update still overrides the default afterward. This surfaced a second, independent bug in the process: `AccountPreferencesParser.ts` stopped reading 11 fields early (after `preferedChatStyle`), silently dropping `chatMode`/`chatBubbleWidth`/`chatScrollSpeed`/`chatSizePreference` (plus `wiredMenuButton`/`wiredInspectButton`/`playTestMode`/`wiredWhisperDisabled`/`showAllNotifications`/`wiredUiStyle`) even though the real AS3 parser (recovered from `src/unknowns/_SafePkg_1927/_SafeCls_1926.as` - genuinely part of the client despite the path, directly imported by `HabboFreeFlowChat.as`/`SessionDataManager.as`, unlike the rest of `src/unknowns/`) reads all of them, the last six behind `bytesAvailable > 0` guards for older/shorter server builds. Rewrote the parser to match field-for-field. `onRoomChatSettings()`/`onGuestRoomData()` (AS3's two other `refreshEffectiveChatSettings()` call sites, both only ever touching `floodSensitivity`) are deliberately not wired - `floodSensitivity` isn't exposed on `IRoomChatSettings` and nothing in this port reads it yet, documented `TODO(AS3)` in both `HabboFreeFlowChat.ts` and `IHabboFreeFlowChat.ts`.
-  - **Deferred, still `TODO(AS3)`**: the chat-history drag-down tray (`ChatHistoryTray`/`ChatHistoryScrollView` — a distinct feature AS3 bundles in the same container; its toggle button stays a no-op) and pet-avatar chat-bubble faces (`getPetImage()`, above).
+  - **Deferred, still `TODO(AS3)`**: pet-avatar chat-bubble faces (`getPetImage()`, above). The chat-history drag-down tray, deferred here since this row was written, shipped 2026-08-31 — see that dated section.
   - **Bug 16 (found 2026-07-20, live user report: picking a new bubble style works for the session but never sticks across relogin): `preferedChatStyle`/`chatFontSizeMode`'s setters never persisted the choice server-side, only the composer to do so was missing.** `ChatInputWidgetHandler.ts` already resolves and remembers a style change in-memory for the current session (`freeFlowChat.preferedChatStyle = chatMessage.styleId`, confirmed already wired), and `onAccountPreferences()` already reads `parser.preferedChatStyle` back on login — the two setters just had their real AS3 send commented out behind a `TODO: Send SetChatStylePreferenceComposer when composer is implemented`. Recovered the composer from the primary source (`_SafePkg_2091/_SafeCls_2257.as`, header 2634 in `_SafeCls_2046.as`) — a 2-int `(preferedChatStyle, chatFontSizeMode)` composer, the 2026-era 2-arg evolution of the older 1-arg form the stale comment referenced — added `SetChatStylePreferenceComposer.ts` (`outgoing/preferences/`) and wired both setters to send it with the current value of both fields, matching AS3's `set preferedChatStyle()`/`set chatFontSizeMode()` exactly (both setters send the same composer). `isDisabledInPreferences`'s separate `SetChatPreferencesMessageComposer` gap is unrelated and stays deferred.
 - ✅ **Custom Volter glyph rasterizer for chat bubbles** (`core/text/rasterizer/`, new — `ttfOutline.ts`/`outlineFlatten.ts`/`distanceRaster.ts`/`glyphRasterizer.ts`/`flashTextDraw.ts`/`FontOutlineRegistry.ts`): `ChatTextLayout.ts`'s `layoutChatText()`/`drawChatText()` measured and drew chat text via the browser's native `ctx.font`/`ctx.measureText()`/`ctx.fillText()`, which (a) never reproduced Flash's actual text rasterizer and (b) was silently falling back to a generic system font — `App.ts::loadWebFonts()` registers the `FontFace` under family `"Volter (Goldfish)"`, but `ChatStyleLibrary.as`'s real default (`"Volter"`, no suffix — verified byte-for-byte at `ChatStyleLibrary.as:114` in the primary `WIN63-202607011411-782849652` source, confirmed the current AS3-authoritative build) never matched it, so the CSS font-family lookup silently skipped straight to `Arial, sans-serif`. Not an AS3-portable fix (Flash's embedded-font rasterization is native Player engine code, no AS3 source exists for it) — instead, a from-scratch TrueType outline parser + polygon rasterizer reads the project's existing bundled `Volter.ttf`/`Volter Bold.ttf` directly and draws real glyph shapes via `putImageData()`, replacing both measurement and drawing so they can't disagree with each other the way two independent native-font calls could. Deliberately scoped to Volter/`anti-alias-type: normal` only (matches TextStyleManager's real Habbo CSS for every `chat_*` style) — Ubuntu/`anti-alias-type: advanced` text in `WindowComposite.ts` (window captions, buttons, dialogs) still renders via native `ctx.font` and is unaffected by this pass. Falls back to the native path automatically if `FontOutlineRegistry` hasn't registered Volter yet. Researched (read-only, never installed) `iSetht/truffle-text` — a same-day-published, unaudited npm package claiming pixel-perfect Habbo text via ~3MB of reverse-engineered Adobe-AIR calibration data — for its general rasterization *technique* (grid-fit hinting + signed-distance-field density curves); deliberately did not depend on the package, its calibration blobs, its bundled fonts, or its per-glyph magic-number correction tables, since none of that is independently verifiable. Result is a reasoned approximation of Flash's glyph rendering, not a pixel-perfect one — full grid-fit/CSM density-curve rendering for Ubuntu's `advanced` AA styles (`WindowComposite.ts`) is unimplemented follow-up work.
 - 🐛 **Full-repo lint cleanup (2026-07-19), surfaced by an unrelated rename.** Renaming `helium-engine`/`helium-client` → `vortex-engine`/`vortex-client` made `git mv` mark every file in both packages as renamed, which made the pre-commit hook's `lint-staged` glob match the entire codebase instead of just genuinely-changed lines — running `eslint` repo-wide for the first time via that gate and surfacing 347 pre-existing errors, none related to the rename itself. Fixing them found several real gaps, not just style:
