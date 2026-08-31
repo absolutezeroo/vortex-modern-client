@@ -174,6 +174,48 @@ not. If you cannot write that sentence, it is a TODO.
 
 Incomplete members still require a compatible TypeScript signature and a `TODO(AS3)` comment with source path, class/member name, and exact remaining behavior. Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface.
 
+## A faithful line is not a faithful port
+
+AS3 is the source of truth. That is not in question, and none of what follows is licence to
+deviate — every time this port *departed* from the AS3 it got worse (`AvatarInfoWidget.positionView()`
+reimplemented what `RWGOI_MESSAGE_GET_OBJECT_LOCATION` already answered and stranded the bubble at
+(0,0); `OwnAvatarMenuView` walked its grid with `numChildren` instead of the grid's own iterator and
+made every panel unclickable). The point is narrower and harder: **transcribing the instruction is
+not the same as reproducing the behaviour**, and when a literal port misbehaves the fault is in the
+port, not in the AS3.
+
+Four shapes account for every such failure found so far. Recognise them before writing the line.
+
+**1. The line is identical; the data it reads is not.** `-offset.x` was right when `offset` came
+from a Flash library `<offset>`. Here `GraphicAssetCollection.createFromSpritesheet` already stores
+`offsetX = -assetDef.x` off the Nitro bundle. Same instruction, opposite result — the AS3 did not
+change, the data's convention did. Check what feeds the value before copying the arithmetic on it.
+
+**2. The language does not tolerate the same thing.** `_frames[index % length]` with a negative
+index yields `undefined` in both languages. AS3's `for each` over `undefined` iterates nothing and
+the body simply has no data; TypeScript's `for...of` throws — in the render loop, every frame. Also
+in this family: `getString()` never returns null in the port, so an AS3 `!= null` key-presence test
+becomes permanently true and must be ported as `hasString()`; `x || 1` destroys a legitimate `0`
+where AS3 defaults on attribute *absence*; and AS3 runs a derived class's field initialisers before
+`super()` where TypeScript runs them after.
+
+**3. The line is faithful but rests on a half-ported contract.** The worst of the four, because
+nothing is visibly wrong. `sprite.assetName = name` is exactly what the AS3 does — and the AS3 also
+assigns `.asset` on the next line, which the port had dropped. Copying one instruction of two looks
+like fidelity. Likewise `WindowToolTipAgent` reads `inputEventQueue.mouseX` exactly as the AS3 does,
+but the port dispatches events straight to windows instead of through the queue, so `enqueue()` is
+never called and that field has read zero since it was written. A perfect line reading a field
+nobody fills. **Read the whole AS3 method, and check that what it depends on is ported too.**
+
+**4. The AS3 has bugs Flash happened to mask.** `ContextInfoView` calls `show()` *outside* the
+branch that sets the position; Flash's ordering meant it never surfaced, and here it does. `userData.roomObjectId`
+of 0 is passed by the AS3 too, but its engine resolved nothing for object 0 where ours resolves it
+happily and returns a valid rectangle at the room origin. Port the behaviour, note the discrepancy
+at the declaration, and say which one you kept.
+
+The recipe that catches all four is the same: **read further than the line you are porting** — the
+rest of the method, the callee it assigns through, and whoever is supposed to be feeding it.
+
 ## Communication rules (`core/communication/`, `habbo/communication/`)
 
 You are editing wire-protocol code (`core/communication/`, `habbo/communication/`).
