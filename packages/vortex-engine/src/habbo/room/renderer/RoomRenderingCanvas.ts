@@ -289,6 +289,10 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     // AS3: sources/win63_version/room/renderer/class_3523.as::_geometry
     private _geometry: RoomGeometry;
 
+    // TS-only: no AS3 counterpart - AS3 applies no stacking correction at all, which is the bug the
+    //   DEVIATION in renderObject() departs from. Depth pulled forward per unit of height.
+    private static readonly STACK_LIFT: number = 2.0;
+
     // The depth z AS3 passes to setDepthVector() while rotating. Literal in both call sites there.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::doMagic()
     private static readonly ROTATION_DEPTH_Z: number = 5;
@@ -1221,6 +1225,32 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
 
         // Base Z with sub-pixel offset (AS3: 1.2E-7 * x)
         let baseZ = screenPos.z;
+
+        // DEVIATION: pull anything resting above the floor forward, so it outranks the layers of
+        //   whatever holds it up. AS3 cannot do this on its own: the canvas builds its geometry
+        //   with the view at 30 degrees but the depth axis at 0.5 (RoomGeometry's 4th argument,
+        //   _SafeCls_3073.as:175), giving depth=(-0.7071,-0.7071,-0.0087). A tile step is worth
+        //   0.7071 of depth and a whole unit of height 0.0087 - 1.2% of it - so height never
+        //   arbitrates and Habbo shows the bug this fixes: measured, hc_exe_s_table spanned
+        //   z=[3.574 .. 5.700] and the rug resting on it sat at 4.986, sandwiched between the
+        //   table's own layers and cut in half by them.
+        //
+        //   It belongs here rather than in FurnitureVisualization because avatars need it too:
+        //   lifting only furniture makes a raised rug draw over the player standing on it.
+        //
+        //   ponytail: STACK_LIFT is a flat 2.0 per unit of height. One scalar sort key cannot both
+        //   outrank another object's layers (which reach +/-3) and stay inside its own tile (worth
+        //   0.7071) - the two demands are incompatible, so no constant is universally safe. 2.0
+        //   clears the offsets furni actually ship. Ceiling: a support whose top layer sits below
+        //   -2.0 still cuts, and a raised object can outrank furniture up to ~2.8 tiles nearer the
+        //   camera. Doing this properly needs a per-tile stack order, not one depth scalar.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::renderObject()
+        const elevation = object.getLocation().z;
+
+        if(elevation > 0)
+        {
+            baseZ -= RoomRenderingCanvas.STACK_LIFT * elevation;
+        }
 
         if(screenPos.x > 0) 
         {
