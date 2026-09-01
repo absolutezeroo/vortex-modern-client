@@ -644,6 +644,15 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     {
         let changed = false;
         let boolValue: boolean;
+        // AS3 reads every one of these through a single `int` local (`_loc9_`), so a key the model
+        // was never given comes back `undefined`, becomes NaN, and is coerced to 0 on assignment.
+        // TypeScript has no such coercion: the NaN survives, and `NaN !== anything` makes the
+        // comparison below it fire on every update. That is what pinned a guide bubble over every
+        // avatar in the room — `figure_guide_status` is only ever written by
+        // RoomObjectAvatarGuideStatusUpdateMessage, so for everyone else it read NaN, and NaN is
+        // not AvatarGuideStatus.NONE. Hence the `| 0` on each read: `int(NaN) === 0`.
+        // getNumber() itself must keep returning NaN — FurnitureFloorHoleLogic tests for it,
+        // exactly as its AS3 does — so the coercion belongs here, where AS3 puts it.
         let numValue: number;
         let strValue: string;
 
@@ -659,7 +668,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Expression
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EXPRESSION);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EXPRESSION) | 0;
 
             if(numValue !== this._expressionType) 
             {
@@ -686,7 +695,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Gesture
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_GESTURE);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_GESTURE) | 0;
 
             if(numValue !== this._gesture) 
             {
@@ -722,7 +731,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Vertical offset
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_VERTICAL_OFFSET) * AvatarVisualization.BASE_Y_SCALE;
+            numValue = (model.getNumber(RoomObjectVariableEnum.AVATAR_VERTICAL_OFFSET) * AvatarVisualization.BASE_Y_SCALE) | 0;
 
             if(numValue !== this._verticalOffset) 
             {
@@ -731,7 +740,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Dance
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_DANCE);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_DANCE) | 0;
 
             if(numValue !== this._danceStyle) 
             {
@@ -740,7 +749,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Effect
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EFFECT);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EFFECT) | 0;
 
             if(numValue !== this._effectType) 
             {
@@ -749,7 +758,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Carry object
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_CARRY_OBJECT);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_CARRY_OBJECT) | 0;
 
             if(numValue !== this._carryObjectType) 
             {
@@ -758,7 +767,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Use object
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_USE_OBJECT);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_USE_OBJECT) | 0;
 
             if(numValue !== this._useObjectType) 
             {
@@ -767,7 +776,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Head direction
-            numValue = model.getNumber(RoomObjectVariableEnum.HEAD_DIRECTION);
+            numValue = model.getNumber(RoomObjectVariableEnum.HEAD_DIRECTION) | 0;
 
             if(numValue !== this._currentHeadAngleDeg) 
             {
@@ -858,7 +867,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Guide status bubble addition
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_GUIDE_STATUS);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_GUIDE_STATUS) | 0;
 
             if(numValue !== AvatarGuideStatus.NONE) 
             {
@@ -897,7 +906,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Number bubble addition
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_NUMBER_VALUE);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_NUMBER_VALUE) | 0;
             const numberAddition = this.getAddition(AvatarVisualization.ADDITION_ID_NUMBER_BUBBLE) as NumberBubble | null;
 
             if(numValue > 0) 
@@ -918,7 +927,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             }
 
             // Expression addition
-            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EXPRESSION);
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EXPRESSION) | 0;
             const expressionAddition = this.getAddition(AvatarVisualization.ADDITION_ID_EXPRESSION);
 
             if(numValue > 0) 
@@ -963,7 +972,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             // Sign
             if(model.hasNumber(RoomObjectVariableEnum.AVATAR_SIGN)) 
             {
-                numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_SIGN);
+                numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_SIGN) | 0;
 
                 if(numValue !== this._signType) 
                 {
@@ -984,7 +993,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             // Highlight value
             if(this._mouseHighlightEnabled) 
             {
-                numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_MOUSE_HIGHLIGHT);
+                numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_MOUSE_HIGHLIGHT) | 0;
 
                 if(numValue !== this._mouseHighlight) 
                 {
