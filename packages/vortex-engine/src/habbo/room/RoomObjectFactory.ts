@@ -86,6 +86,8 @@ import {FurnitureVimeoLogic} from './object/logic/furniture/FurnitureVimeoLogic'
 import {FurnitureCraftingGizmoLogic} from './object/logic/furniture/FurnitureCraftingGizmoLogic';
 // Vortex-only: the fishing spot's logic lives under src/vortex/, not in the ported tree.
 import {FurnitureFishingSignLogic} from '@habbo/vortex/fishing/room/FurnitureFishingSignLogic';
+import {SnowballLogic} from './object/logic/game/SnowballLogic';
+import {SnowSplashLogic} from './object/logic/game/SnowSplashLogic';
 import {FurnitureFishingSpotLogic} from '@habbo/vortex/fishing/room/FurnitureFishingSpotLogic';
 
 type LogicConstructor = new () => IRoomObjectEventHandler;
@@ -532,11 +534,19 @@ export class RoomObjectFactory implements IRoomObjectFactory
 
                 break;
 
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/RoomObjectFactory.as:284-287
-            // maps game_snowball to SnowballLogic and game_snowsplash to _SafeCls_2258. Neither is
-            // ported (habbo/room/object/logic/game/ is empty) and neither derives from
-            // FurnitureLogic - SnowballLogic extends MovingObjectLogic, _SafeCls_2258 extends
-            // ObjectLogicBase - so there is no honest fallback. They fall through to null.
+            // Neither derives from FurnitureLogic: a snowball is a `MovingObjectLogic` (the room
+            // interpolates between the positions the simulation pushes) and its splash is a bare
+            // `ObjectLogicBase` that never moves at all.
+            case RoomObjectLogicEnum.SNOWBALL:
+                LogicClass = SnowballLogic;
+
+                break;
+
+            case RoomObjectLogicEnum.SNOW_SPLASH:
+                LogicClass = SnowSplashLogic;
+
+                break;
+
             default:
                 break;
         }

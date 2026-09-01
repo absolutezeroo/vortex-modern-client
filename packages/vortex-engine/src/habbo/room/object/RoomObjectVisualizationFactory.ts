@@ -71,6 +71,9 @@ import {FurnitureVisualizationData} from './visualization/furniture/FurnitureVis
 import {AnimatedFurnitureVisualizationData} from './visualization/furniture/AnimatedFurnitureVisualizationData';
 import {AnimatedPetVisualization} from './visualization/pet/AnimatedPetVisualization';
 import {AnimatedPetVisualizationData} from './visualization/pet/AnimatedPetVisualizationData';
+import {GameObjectVisualization} from './visualization/furniture/GameObjectVisualization';
+import {SnowballVisualization} from './visualization/game/SnowballVisualization';
+import {SnowSplashVisualization} from './visualization/game/SnowSplashVisualization';
 
 export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationFactory
 {
@@ -308,6 +311,13 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
             case RoomObjectVisualizationEnum.PET_ANIMATED:
                 return new AnimatedPetVisualization();
 
+                // Snow war
+            case RoomObjectVisualizationEnum.GAME_SNOWBALL:
+                return new SnowballVisualization();
+
+            case RoomObjectVisualizationEnum.GAME_SNOWSPLASH:
+                return new SnowSplashVisualization();
+
             default:
                 return null;
         }
@@ -354,6 +364,27 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
             this._visualizationDataCache.set(id, petVizData);
 
             return petVizData;
+        }
+
+        // AS3: `case "game_snowball": case "game_snowsplash": _loc8_ = _SafeCls_2245;` followed by
+        // `_SafeCls_2245(_loc7_).assets = assets`. The two snow-war objects share one data class
+        // that parses nothing and carries only the asset library their fixed bitmaps come from.
+        if(type === RoomObjectVisualizationEnum.GAME_SNOWBALL || type === RoomObjectVisualizationEnum.GAME_SNOWSPLASH)
+        {
+            const gameVizData = new GameObjectVisualization();
+
+            if(!gameVizData.initialize(data))
+            {
+                gameVizData.dispose();
+
+                return null;
+            }
+
+            gameVizData.assets = this._assets;
+
+            this._visualizationDataCache.set(id, gameVizData);
+
+            return gameVizData;
         }
 
         // Avatar visualization types use AvatarVisualizationData
