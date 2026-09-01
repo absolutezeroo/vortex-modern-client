@@ -1,11 +1,9 @@
-import {Logger} from '@core/utils/Logger';
+import {SnowWarEngine} from '../SnowWarEngine';
 
 import type {SynchronizedGameStage} from '../arena/SynchronizedGameStage';
 import type {HumanGameObject} from '../gameobjects/HumanGameObject';
 import type {SnowballGivingGameObject} from '../gameobjects/SnowballGivingGameObject';
 import {AbstractSynchronizedGameEvent} from './AbstractSynchronizedGameEvent';
-
-const log = Logger.getLogger('habbo.game.snowwar.events.HumanGetsSnowballsFromMachineEvent');
 
 /**
  * A player took a snowball from a pile or a machine.
@@ -59,9 +57,8 @@ export class HumanGetsSnowballsFromMachineEvent extends AbstractSynchronizedGame
                     ghost.addSnowballs(taken);
                 }
 
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
-                //   AS3 plays "HBSTG_snowwar_get_snowball" here. SnowWarEngine is unported.
-                log.trace('Snowball picked up (sound HBSTG_snowwar_get_snowball not played: SnowWarEngine unported)');
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
+                SnowWarEngine.playSound('HBSTG_snowwar_get_snowball');
             }
         }
     }

@@ -6,6 +6,7 @@ import type {HumanGameObjectData} from '@habbo/communication/messages/parser/gam
 import type {SynchronizedGameArena} from '../arena/SynchronizedGameArena';
 import type {SynchronizedGameStage} from '../arena/SynchronizedGameStage';
 import type {SnowWarArenaExtension} from '../SnowWarArenaExtension';
+import {SnowWarEngine} from '../SnowWarEngine';
 import type {SnowWarGameStage} from '../SnowWarGameStage';
 import {Direction360} from '../utils/Direction360';
 import {Direction8} from '../utils/Direction8';
@@ -175,12 +176,8 @@ export class HumanGameObject extends SnowWarGameObject
     private _visualizationMode: number = 0;
 
     /** Name recovered from the 2016 tree — `_SafeStr_4581` in the primary. */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as
-    //   AS3 types this `SnowWarEngine` and calls `stopWaitingForSnowball()` and `registerHit()` on
-    //   it. That class is unported, so the field is `unknown` and those three call sites log
-    //   instead. Retype and reconnect them when SnowWarEngine lands.
     // AS3: HumanGameObject.as::_SafeStr_4581
-    private _snowWarEngine: unknown = null;
+    private _snowWarEngine: SnowWarEngine | null = null;
 
     /** Derived name — `_SafeStr_6577`; keyed by turn number, holding where the ghost thought it was. */
     // AS3: HumanGameObject.as::_SafeStr_6577
@@ -191,7 +188,12 @@ export class HumanGameObject extends SnowWarGameObject
      * released — `nextTile` is the one that holds them until they arrive.
      */
     // AS3: HumanGameObject.as::HumanGameObject()
-    public constructor(stage: SnowWarGameStage, data: HumanGameObjectData, isGhost: boolean, snowWarEngine: unknown)
+    public constructor(
+        stage: SnowWarGameStage,
+        data: HumanGameObjectData,
+        isGhost: boolean,
+        snowWarEngine: SnowWarEngine | null
+    )
     {
         super(data.id, isGhost);
 
@@ -707,16 +709,14 @@ export class HumanGameObject extends SnowWarGameObject
                 this.playerFallsDown(direction360);
                 thrower.onKnockDownHuman(stage, this);
 
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
-                //   AS3 plays "HBSTG_snowwar_hit3" here. SnowWarEngine is unported.
-                log.trace('Knock-down (sound HBSTG_snowwar_hit3 not played: SnowWarEngine unported)');
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
+                SnowWarEngine.playSound('HBSTG_snowwar_hit3');
             }
 
             this._hitPoints = this._hitPoints - 1;
 
-            // TODO(AS3): .../SnowWarEngine.as::registerHit()
-            //   AS3 reports the hit to the engine, which drives the score popups and the kill feed.
-            log.trace(`registerHit(${this.gameObjectId}, ${thrower.gameObjectId}) dropped: SnowWarEngine unported`);
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::registerHit()
+            this._snowWarEngine?.registerHit(this, thrower);
         }
     }
 
@@ -1038,9 +1038,8 @@ export class HumanGameObject extends SnowWarGameObject
         this.playerIsHitBySnowball(stage, thrower, snowBall.direction360.intValue());
         thrower.onHitHuman(stage, this);
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
-        //   AS3 plays "HBSTG_snowwar_hit1" here. SnowWarEngine is unported.
-        log.trace('Hit (sound HBSTG_snowwar_hit1 not played: SnowWarEngine unported)');
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
+        SnowWarEngine.playSound('HBSTG_snowwar_hit1');
     }
 
     /** A flat 5,000 — `PLAYER_HEIGHT`, which AS3 also writes here as a literal. */
@@ -1058,14 +1057,12 @@ export class HumanGameObject extends SnowWarGameObject
 
     /**
      * TS-only: the three places AS3 calls `SnowWarEngine.stopWaitingForSnowball(gameObjectId)`,
-     * collected so there is one thing to reconnect when that class lands.
+     * collected into one.
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::stopWaitingForSnowball()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::stopWaitingForSnowball()
     private stopWaitingForSnowball(): void
     {
-        void this._snowWarEngine;
-
-        log.trace(`stopWaitingForSnowball(${this.gameObjectId}) dropped: SnowWarEngine unported`);
+        this._snowWarEngine?.stopWaitingForSnowball(this.gameObjectId);
     }
 
     // AS3: HumanGameObject.as::dispose()

@@ -1,4 +1,6 @@
-import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
+import type {IRoomSession} from '@habbo/session/IRoomSession';
+import {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
+import {GameChatEvent} from '@habbo/game/events/GameChatEvent';
 import type {IHabboFreeFlowChat} from '../IHabboFreeFlowChat';
 import {ChatItem} from './ChatItem';
 
@@ -12,17 +14,6 @@ import {ChatItem} from './ChatItem';
  *
  * @see source_as_win63/habbo/freeflowchat/data/ChatEventHandler.as
  */
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::gameEventHandler()
-// AS3's constructor also does, when `freeFlowChat.gameManager` is set:
-// `gameManager.events.addEventListener("gce_game_chat", gameEventHandler)`, where
-// gameEventHandler() builds a RoomSessionChatEvent with style CHAT_STYLE_SNOWWAR_RED/
-// _BLUE (team-based) and forwards it to insertChat() with a forced locX/color/figure/
-// name (the game event carries its own display identity, not a real room user's).
-// Blocker, re-checked 2026-09-01: `habbo/game/snowwar/` IS ported now, but the two things
-// this hook actually needs are not — `GameManager` (which owns the event bus) and
-// `GameChatEvent` (the "gce_game_chat" payload). Neither exists in `habbo/game/`, which
-// holds only `events/` and `snowwar/`. So this stays a stub, not a silent omission:
-// CHAT_STYLE_SNOWWAR_RED/BLUE stay declared and dead until GameManager exists.
 export class ChatEventHandler
 {
     // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::CHAT_STYLE_SNOWWAR_RED
@@ -34,12 +25,15 @@ export class ChatEventHandler
     private _lastTimeStamp: number = 0;
     private _timeStampCollisionCount: number = 0;
     private _onRoomChatBound: (event: RoomSessionChatEvent) => void;
+    // TS-only: AS3 subscribes a method reference; the port needs a stable bound one to unsubscribe.
+    private _onGameChatBound: (event: GameChatEvent) => void;
 
     constructor(freeFlowChat: IHabboFreeFlowChat)
     {
         this._freeFlowChat = freeFlowChat;
 
         this._onRoomChatBound = this.onRoomChat.bind(this);
+        this._onGameChatBound = this.gameEventHandler.bind(this);
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::ChatEventHandler()
         // AS3 dereferences roomSessionManager here with no null check, because HabboFreeFlowChat
@@ -50,6 +44,11 @@ export class ChatEventHandler
             'RSCE_CHAT_EVENT',
             this._onRoomChatBound
         );
+
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::ChatEventHandler()
+        // Guarded exactly as AS3 guards it: the games component is optional and attaches after this
+        // one, so `gameManager` can legitimately be null here and there is simply no game chat.
+        this._freeFlowChat.gameManager?.events.on(GameChatEvent.GAME_CHAT, this._onGameChatBound);
     }
 
     // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::get disposed()
@@ -73,6 +72,8 @@ export class ChatEventHandler
                 this._onRoomChatBound
             );
         }
+
+        this._freeFlowChat?.gameManager?.events.off(GameChatEvent.GAME_CHAT, this._onGameChatBound);
 
         this._freeFlowChat = null;
     }
@@ -117,5 +118,45 @@ export class ChatEventHandler
         );
 
         this._lastTimeStamp = now;
+    }
+
+    /**
+     * A snow-war line. It has no room session and no room object behind it — the speaker is a game
+     * object — so the bubble is given its identity directly: a forced screen x (the team's side of
+     * the arena), colour, figure and name, and a chat style picked from the team.
+     *
+     * The `null` session is AS3's own: `new RoomSessionChatEvent("RSCE_CHAT_EVENT", null, …)`. The
+     * port's constructor types it non-null because every other caller has one, and nothing on this
+     * path reads it — `ChatItem` takes the fields it needs off the event and stops there.
+     */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::gameEventHandler()
+    private gameEventHandler(event: GameChatEvent): void
+    {
+        if(!this._freeFlowChat) return;
+
+        const styleId = event.teamId === 1
+            ? ChatEventHandler.CHAT_STYLE_SNOWWAR_BLUE
+            : ChatEventHandler.CHAT_STYLE_SNOWWAR_RED;
+        const chatEvent = new RoomSessionChatEvent(
+            RoomSessionChatEvent.RSCE_CHAT_EVENT,
+            null as unknown as IRoomSession,
+            event.userId,
+            event.message,
+            0,
+            styleId
+        );
+
+        this._freeFlowChat.insertChat(
+            new ChatItem(
+                chatEvent,
+                Math.floor(performance.now()),
+                null,
+                0,
+                event.locX,
+                event.color,
+                event.figure,
+                event.name
+            )
+        );
     }
 }

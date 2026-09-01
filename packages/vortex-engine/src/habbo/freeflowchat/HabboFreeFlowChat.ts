@@ -50,6 +50,8 @@ import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
 import {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
 import {ChatFlowViewer} from './viewer/ChatFlowViewer';
@@ -212,16 +214,29 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_gameManager
+    private _gameManager: IHabboGameManager | null = null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get windowManager()
     get windowManager(): IHabboWindowManager | null
     {
         return this._windowManager;
     }
 
-    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get gameManager() and
-    // get toolbar() hand callers two more components this class holds as dependencies. It takes
-    // neither here — the bubbles are drawn onto the room canvas rather than into windows, and there
-    // is no game manager at all (habbo/game is 0/63) — so the two accessors have no field to return.
+    /**
+     * The games component, held only so `ChatEventHandler` can subscribe to its `gce_game_chat`
+     * bus — snow-war chat has no room session behind it and reaches the bubbles this way.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get gameManager()
+    get gameManager(): IHabboGameManager | null
+    {
+        return this._gameManager;
+    }
+
+    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get toolbar() hands
+    // callers one more component this class holds as a dependency. It is not taken here — the
+    // bubbles are drawn onto the room canvas rather than into windows — so the accessor has no
+    // field to return.
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
     get roomChatBorderLimited(): boolean
@@ -751,6 +766,16 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                 (manager: IHabboWindowManager | null) =>
                 {
                     this._windowManager = manager;
+                },
+                false
+            ),
+            // Optional, and it has to be: `habbo/game` attaches after this component, and a hard
+            // dependency on an IID nothing provides yet locks the component forever with no log.
+            new ComponentDependency(
+                IID_HabboGameManager,
+                (manager: IHabboGameManager | null) =>
+                {
+                    this._gameManager = manager;
                 },
                 false
             ),

@@ -3,6 +3,7 @@ import {OrderedMap} from '@core/utils/OrderedMap';
 import type {IDisposable} from '@core/runtime/IDisposable';
 
 import {SnowWarGameStage} from '../SnowWarGameStage';
+import type {SnowWarEngine} from '../SnowWarEngine';
 import type {IGameArenaExtension} from './IGameArenaExtension';
 import type {ISynchronizedGameEvent} from './ISynchronizedGameEvent';
 import type {SynchronizedGameStage} from './SynchronizedGameStage';
@@ -35,12 +36,8 @@ export class SynchronizedGameArena implements IDisposable
      * calls the same field `_snowWarEngine`, but that build's getter is `snowWarEngine`; this one's
      * is `gameEngine`.
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as
-    //   AS3 types this `SnowWarEngine`. That class (1,444 l.) sits above the arena in the dependency
-    //   chain and is unported, so the field is `unknown` for now — the arena only stores it and
-    //   hands it back. Retype it when SnowWarEngine lands.
     // AS3: SynchronizedGameArena.as::_SafeStr_4581
-    private _gameEngine: unknown = null;
+    private _gameEngine: SnowWarEngine | null = null;
 
     /** Name recovered from the 2016 tree — `_SafeStr_5325` in the primary. */
     // AS3: SynchronizedGameArena.as::_SafeStr_5325
@@ -95,7 +92,7 @@ export class SynchronizedGameArena implements IDisposable
     private _teamScores: number[] = [];
 
     // AS3: SynchronizedGameArena.as::initialize()
-    public initialize(gameEngine: unknown, numberOfTeams: number): void
+    public initialize(gameEngine: SnowWarEngine | null, numberOfTeams: number): void
     {
         this._gameEngine = gameEngine;
 
@@ -113,11 +110,8 @@ export class SynchronizedGameArena implements IDisposable
         this.resetTeamScores();
     }
 
-    /**
-     * TODO(AS3): retype to `SnowWarEngine` — see the `_gameEngine` field.
-     */
     // AS3: SynchronizedGameArena.as::get gameEngine()
-    public get gameEngine(): unknown
+    public get gameEngine(): SnowWarEngine | null
     {
         return this._gameEngine;
     }

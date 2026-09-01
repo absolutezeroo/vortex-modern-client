@@ -15,7 +15,7 @@ import type {AccountPreferencesParser} from '@habbo/communication/messages/parse
 import {GetSoundSettingsComposer} from '@habbo/communication/messages/outgoing/sound/GetSoundSettingsComposer';
 import {SetSoundSettingsComposer} from '@habbo/communication/messages/outgoing/sound/SetSoundSettingsComposer';
 
-import type {IID} from '@core/runtime/IID';
+import {releaseProvider} from '@core/runtime/releaseProvider';
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
@@ -34,23 +34,6 @@ import {HabboSoundBase} from './HabboSoundBase';
 import {HabboSoundWithPitch} from './HabboSoundWithPitch';
 
 const log = Logger.getLogger('habbo.sound.HabboSoundManagerFlash10');
-
-/**
- * Gives one interface reference back to the component that provides it.
- *
- * AS3's shape exactly (`instance.release(new IID…())`): the reference count `queueInterface()`
- * bumped lives on the **provider**, not on whoever asked for it. Written as a free function
- * because the three interfaces below do not declare `IUnknown` in this port, even though every
- * implementation of them is a `Component` — anything that is not simply does not get released.
- */
-// TS-only: AS3 calls `IUnknown.release()` on the instance directly; the port's interfaces do not
-// declare it, so the shape is preserved here rather than at each call site.
-function releaseProvider(provider: unknown, iid: IID): void
-{
-    const releasable = provider as {release?: (iid: IID) => number} | null;
-
-    if(releasable !== null && typeof releasable.release === 'function') releasable.release(iid);
-}
 
 /**
  * HabboSoundManagerFlash10

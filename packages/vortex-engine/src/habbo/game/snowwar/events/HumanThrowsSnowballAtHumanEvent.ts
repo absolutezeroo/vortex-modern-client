@@ -1,10 +1,8 @@
-import {Logger} from '@core/utils/Logger';
+import {SnowWarEngine} from '../SnowWarEngine';
 
 import type {SynchronizedGameStage} from '../arena/SynchronizedGameStage';
 import type {HumanGameObject} from '../gameobjects/HumanGameObject';
 import {AbstractSynchronizedGameEvent} from './AbstractSynchronizedGameEvent';
-
-const log = Logger.getLogger('habbo.game.snowwar.events.HumanThrowsSnowballAtHumanEvent');
 
 /**
  * A throw aimed at another player.
@@ -53,9 +51,8 @@ export class HumanThrowsSnowballAtHumanEvent extends AbstractSynchronizedGameEve
         human.throwSnowball(target.currentLocation.x, target.currentLocation.y);
         human.startThrowTimer();
 
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
-        //   AS3 plays "HBSTG_snowwar_throw" here. SnowWarEngine is unported.
-        log.trace('Throw (sound HBSTG_snowwar_throw not played: SnowWarEngine unported)');
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
+        SnowWarEngine.playSound('HBSTG_snowwar_throw');
     }
 
     // AS3: HumanThrowsSnowballAtHumanEvent.as::get human()

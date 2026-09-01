@@ -4,6 +4,7 @@ import type {SnowballGameObjectData} from '@habbo/communication/messages/parser/
 
 import type {SynchronizedGameStage} from '../arena/SynchronizedGameStage';
 import type {SnowWarGameStage} from '../SnowWarGameStage';
+import {SnowWarEngine} from '../SnowWarEngine';
 import {Direction360} from '../utils/Direction360';
 import type {Direction8} from '../utils/Direction8';
 import {FastSqrt} from '../utils/FastSqrt';
@@ -341,9 +342,8 @@ export class SnowBallGameObject extends SnowWarGameObject
 
             if(collided)
             {
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
-                //   AS3 plays "HBSTG_snowwar_miss" here. SnowWarEngine is unported.
-                log.trace('Snowball missed (sound HBSTG_snowwar_miss not played: SnowWarEngine unported)');
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/SnowWarEngine.as::playSound()
+                SnowWarEngine.playSound('HBSTG_snowwar_miss');
             }
         }
 

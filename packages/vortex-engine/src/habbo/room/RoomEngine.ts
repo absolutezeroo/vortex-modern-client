@@ -181,6 +181,7 @@ import {RoomObjectRoomColorUpdateMessage} from './messages/RoomObjectRoomColorUp
 import {RoomEngineRoomColorEvent} from './events/RoomEngineRoomColorEvent';
 import {LegacyStuffData} from './object/data/LegacyStuffData';
 import {RoomObjectUpdateMessage} from '@room/messages/RoomObjectUpdateMessage';
+import {RoomObjectLogicEnum} from './object/RoomObjectLogicEnum';
 import {RoomObjectRoomUpdateMessage} from './messages/RoomObjectRoomUpdateMessage';
 import {RoomObjectRoomPlaneVisibilityUpdateMessage} from './messages/RoomObjectRoomPlaneVisibilityUpdateMessage';
 import {RoomObjectRoomPlanePropertyUpdateMessage} from './messages/RoomObjectRoomPlanePropertyUpdateMessage';
@@ -1035,11 +1036,83 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.getRoomInstanceData(roomId)?.tileObjectMap?.addRoomObject(object);
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get gameEngine(),
-    // addObjectSnowWar(), addObjectSnowSplash(), updateObjectSnowWar() and disposeObjectSnowWar()
-    // are the SnowWar half of the engine. `habbo/game` is 0/63 in this port and 58 of those files
-    // are snowwar/, so there is no game manager to return and no snowball logic to drive — see
-    // RoomObjectFactory.ts's note on the same two logic types.
+    /**
+     * The SnowWar half of the engine: the four calls `GameArenaView` drives every frame while a
+     * game is running.
+     *
+     * A snowball is an ordinary room object of category 201 and type `game_snowball`; the splash it
+     * leaves behind is category 202, `game_snowsplash`. Nothing else in the client creates objects
+     * of either category, which is why `addObjectUpdateCategory(202)` has to be called before the
+     * first splash — an update category the room manager does not know about is not ticked.
+     *
+     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/RoomObjectFactory.as:284-287
+     * still owes `SnowballLogic` and `_SafeCls_2258` plus their two visualizations, so
+     * `createRoomObject()` answers null for both types today and these four methods do nothing
+     * visible yet. They are ported now because `GameArenaView` calls them by name and the note that
+     * used to stand here — "habbo/game is 0/63, there is no game manager to return" — stopped being
+     * true on 2026-09-01.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectSnowWar()
+    addObjectSnowWar(roomId: number, objectId: number, location: IVector3d, category: number): boolean
+    {
+        let type: string | null = null;
+
+        if(category === 201) type = RoomObjectLogicEnum.SNOWBALL;
+        else if(category === 202) type = RoomObjectLogicEnum.SNOW_SPLASH;
+
+        const object = this.createObjectSnowWar(roomId, objectId, type, category);
+
+        if(!object) return false;
+
+        object.getEventHandler()?.processUpdateMessage(new RoomObjectUpdateMessage(location, null));
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectSnowSplash()
+    addObjectSnowSplash(roomId: number, objectId: number, location: IVector3d): boolean
+    {
+        this._roomManager?.addObjectUpdateCategory(202);
+
+        const object = this.createObjectSnowWar(roomId, objectId, RoomObjectLogicEnum.SNOW_SPLASH, 202);
+
+        if(!object) return false;
+
+        object.getEventHandler()?.processUpdateMessage(new RoomObjectUpdateMessage(location, null));
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectSnowWar()
+    updateObjectSnowWar(roomId: number, objectId: number, location: IVector3d, category: number): boolean
+    {
+        const object = this.getRoomObject(roomId, objectId, category) as IRoomObjectController | null;
+
+        object?.getEventHandler()?.processUpdateMessage(new RoomObjectUpdateMessage(location, null));
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectSnowWar()
+    disposeObjectSnowWar(roomId: number, objectId: number, category: number): void
+    {
+        this.disposeRoomObject(roomId, objectId, category);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createObjectSnowWar()
+    private createObjectSnowWar(
+        roomId: number,
+        objectId: number,
+        type: string | null,
+        category: number
+    ): IRoomObjectController | null
+    {
+        if(type === null) return null;
+
+        const room = this._roomManager?.getRoom(this.getRoomIdentifier(roomId)) ?? null;
+
+        return (room?.createRoomObject(objectId, type, category) ?? null) as IRoomObjectController | null;
+    }
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createRoomObjectEventHandlerInstance()
     // is the hook AS3 leaves for a subclass to supply its own event handler. This port folded
