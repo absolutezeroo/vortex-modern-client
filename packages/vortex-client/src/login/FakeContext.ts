@@ -134,9 +134,35 @@ export class FakeContext implements IContext
     }
 
     // AS3: .../src/binaryData/FakeContext.as::debug()
-    debug(_message: string): void 
+    debug(_message: string): void
     {
         // No-op
+    }
+
+    // The three message-history getters and prepareAssetLibrary are stubs in AS3 too — this
+    // context logs nothing and owns no asset library, so it has nothing to hand back.
+    // AS3: .../src/binaryData/FakeContext.as::getLastErrorMessage()
+    getLastErrorMessage(): string
+    {
+        return '';
+    }
+
+    // AS3: .../src/binaryData/FakeContext.as::getLastDebugMessage()
+    getLastDebugMessage(): string
+    {
+        return '';
+    }
+
+    // AS3: .../src/binaryData/FakeContext.as::getLastWarningMessage()
+    getLastWarningMessage(): string
+    {
+        return '';
+    }
+
+    // AS3: .../src/binaryData/FakeContext.as::prepareAssetLibrary()
+    prepareAssetLibrary(_manifest: object, _resourceData: unknown): boolean
+    {
+        return false;
     }
 
     // AS3: .../src/binaryData/FakeContext.as::dispose()

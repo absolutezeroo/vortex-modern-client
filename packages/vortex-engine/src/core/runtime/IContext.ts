@@ -27,10 +27,14 @@ export type InterfaceCallback<T = unknown> = (iid: IID<T>, instance: T) => void;
  * the primary tree outside `core/runtime`, and a browser has no file proxy. See
  * docs/IMPLEMENTATION_STATUS.md → the FakeContext entry.
  *
- * Eight members of `_SafeCls_54` are also out. `getLastErrorMessage`, `getLastDebugMessage` and
- * `getLastWarningMessage` because this port's `Logger` owns that history; `loadFromFile`,
- * `get displayObjectContainer`, `toXMLString`, `prepareComponent` and `prepareAssetLibrary`
- * because they are Flash display-list and file-system entry points.
+ * Four members of `_SafeCls_54` are out: `loadFromFile`, `get displayObjectContainer`,
+ * `toXMLString` and `prepareComponent`, all Flash display-list or file-system entry points, each
+ * carrying its own `TODO(AS3)` on `ComponentContext`.
+ *
+ * The other four used to be listed here too, on the grounds that `Logger` owns the message history.
+ * That was wrong twice over: `ComponentContext` implements all four anyway, and AS3 declares them
+ * on this interface — so the only thing the omission achieved was hiding working code from every
+ * caller holding an `IContext`. Restored 2026-09-01.
  */
 export interface IContext extends IDisposable
 {
@@ -155,6 +159,30 @@ export interface IContext extends IDisposable
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::debug()
     debug(message: string): void;
+
+    /**
+	 * The last message of each severity handed to `error()` / `warning()` / `debug()`.
+	 *
+	 * AS3 keeps them because its `COMPONENT_EVENT_*` events carry no payload: a listener reacting
+	 * to one reads the message back through these.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::getLastErrorMessage()
+    getLastErrorMessage(): string;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::getLastDebugMessage()
+    getLastDebugMessage(): string;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::getLastWarningMessage()
+    getLastWarningMessage(): string;
+
+    /**
+	 * Hands a manifest to the context's own asset library. AS3 takes `(XML, Class)` — the second
+	 * being the embedded resource class the manifest names assets inside; the port takes the parsed
+	 * manifest and whatever resource the caller has, which is the same pair one Flash embedding
+	 * layer down.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_54.as::prepareAssetLibrary()
+    prepareAssetLibrary(manifest: object, resourceData: unknown): boolean;
 }
 
 /**
