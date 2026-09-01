@@ -90,6 +90,11 @@ export class RoomChatInputView
     private _placeholderActive: boolean = false;
     private _lastText: string = '';
     private _isTyping: boolean = false;
+    // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::_typingStartedSent
+    // Whether a "typing" message has actually gone to the server. Obfuscated as `_SafeStr_6063` in
+    // both WIN63 trees, name recovered from PRODUCTION. Without it nothing sends the matching
+    // "stopped typing" on send, and the bubble stays over the avatar forever.
+    private _typingStartedSent: boolean = false;
     private _typingTimer: ReturnType<typeof setTimeout> | null = null;
     private _idleTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -436,6 +441,8 @@ export class RoomChatInputView
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onIdleTimerComplete()
     private onIdleTimerComplete(): void
     {
+        if(this._isTyping) this._typingStartedSent = false;
+
         this._isTyping = false;
         this.sendTypingMessage();
     }
@@ -443,6 +450,8 @@ export class RoomChatInputView
     // AS3: .../src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::onTypingTimerComplete()
     private onTypingTimerComplete(): void
     {
+        if(this._isTyping) this._typingStartedSent = true;
+
         this.sendTypingMessage();
     }
 
@@ -518,6 +527,12 @@ export class RoomChatInputView
 
         this._widget.sendChat(text, chatType, recipientName, styleId);
         this._isTyping = false;
+
+        // The only thing that ever clears the typing bubble: both timers were just cancelled, and
+        // the programmatic `text = restoreText` below fires no input event, so nothing else will.
+        if(this._typingStartedSent) this.sendTypingMessage();
+
+        this._typingStartedSent = false;
 
         this._input.text = restoreText;
         this._lastText = restoreText;
@@ -636,9 +651,8 @@ export class RoomChatInputView
 
     /**
      * Resets the view for widget-pool reuse (RoomChatInputWidget.release()) rather than tearing it
-     * fully down (that's dispose()). AS3 also resets a help-button hide timer and a second typing
-     * flag (`_SafeStr_6063`) that both belong to the unported help-button hover tooltip — see this
-     * file's header TODO(AS3).
+     * fully down (that's dispose()). AS3 also resets a help-button hide timer that belongs to the
+     * unported help-button hover tooltip — see this file's header TODO(AS3).
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::release()
     public release(): void
@@ -646,6 +660,7 @@ export class RoomChatInputView
         this.clearTimers();
 
         this._isTyping = false;
+        this._typingStartedSent = false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::openHabbiconHub()
