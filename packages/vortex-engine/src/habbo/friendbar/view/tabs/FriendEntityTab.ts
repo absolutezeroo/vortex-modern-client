@@ -724,11 +724,14 @@ export class FriendEntityTab extends Tab
 
             case FriendEntityTab.BTN_GAME:
             case FriendEntityTab.GAME_ICON:
-                // TODO(AS3): AS3 calls `GAMES.initGameDirectoryConnection()` here.
-                // `habbo/game` is 0/63 in this port, so the game centre cannot be opened
-                // and only the tracking half of this branch runs.
-                this.deselect(true);
-                Tab.data?.sendGameButtonTracking(this._gameName);
+                // AS3 guards the whole branch on `GAMES` — no games component, nothing happens at
+                // all, not even the tracking.
+                if(Tab.games)
+                {
+                    this.deselect(true);
+                    Tab.games.initGameDirectoryConnection();
+                    Tab.data?.sendGameButtonTracking(this._gameName);
+                }
 
                 break;
 

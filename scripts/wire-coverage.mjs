@@ -60,7 +60,14 @@ function parseHeaders()
             // and the client's real room entry is OpenFlatConnectionMessageComposer.
             if(/UNRESOLVED|not found|placeholder/i.test(line)) continue;
 
-            out[section].set(parseInt(constMatch[2], 10), constMatch[1]);
+            const id = parseInt(constMatch[2], 10);
+
+            // -1 is the emulator's marker for a message the 2026 revision REMOVED — it is not a
+            // header at all, so a client with nothing at it is correct, not incomplete. Two of
+            // these (GiveStarGemToUser, CreditVaultStatus) were being reported as permanent gaps.
+            if(id < 0) continue;
+
+            out[section].set(id, constMatch[1]);
         }
     }
 

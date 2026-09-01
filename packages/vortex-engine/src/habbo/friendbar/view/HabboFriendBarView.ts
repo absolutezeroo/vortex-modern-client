@@ -14,6 +14,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import {HabboFaceFocuser} from '@habbo/utils/HabboFaceFocuser';
 import {SessionDataPreferencesEvent} from '@habbo/session/events/SessionDataPreferencesEvent';
 import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
@@ -21,6 +22,7 @@ import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
 import {IID_HabboFriendBarData} from '@iid/IIDHabboFriendBarData';
 import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
+import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
 
 import type {IHabboFriendBarData} from '../data/IHabboFriendBarData';
 import {FriendBarUpdateEvent} from '../events/FriendBarUpdateEvent';
@@ -176,13 +178,8 @@ export class HabboFriendBarView extends AbstractView implements IHabboFriendBarV
     // AS3: .../view/HabboFriendBarView.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
 
-    /**
-     * TODO(AS3): AS3 also depends on `IIDHabboGameManager` and pushes it into
-     * `Tab.GAMES`/`Token.GAMES`. `habbo/game` is 0/63 in this port, so there is no
-     * component to resolve and the game slots stay inert.
-     */
     // AS3: .../view/HabboFriendBarView.as::_gameManager
-    private _gameManager: unknown | null = null;
+    private _gameManager: IHabboGameManager | null = null;
 
     // AS3: .../view/HabboFriendBarView.as::_SafeStr_4564
     private _window: IWindowContainer | null = null;
@@ -310,7 +307,13 @@ export class HabboFriendBarView extends AbstractView implements IHabboFriendBarV
             new ComponentDependency(IID_HabboToolbar, (toolbar: IHabboToolbar | null) =>
             {
                 this._toolbar = toolbar;
-            }, true)
+            }, true),
+            // Optional: `habbo/game` attaches after the friend bar, and a hard dependency on an
+            // IID nothing provides yet locks the component forever with no log.
+            new ComponentDependency(IID_HabboGameManager, (manager: IHabboGameManager | null) =>
+            {
+                this._gameManager = manager;
+            }, false)
         ] as Array<ComponentDependency<unknown>>;
     }
 
