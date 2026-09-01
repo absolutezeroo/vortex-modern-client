@@ -69,7 +69,9 @@ export class SkinLayout
         return this._height;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as::get numChildren()
+    // `ChildEntityArray` only inherits this; it is declared on its base, whose class name is
+    // obfuscated in every tree (`_SafeCls_4490`, `implements _SafeCls_2083`).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/_SafeCls_4490.as::get numChildren()
     public get numEntities(): number 
     {
         return this._entities.length;
@@ -100,7 +102,8 @@ export class SkinLayout
      * @param index - The entity index
      * @returns The layout entity
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as::getChildAt()
+    // Declared on `ChildEntityArray`'s obfuscated base, as with numEntities above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/_SafeCls_4490.as::getChildAt()
     public getEntityAt(index: number): SkinLayoutEntity 
     {
         return this._entities[index];
@@ -112,7 +115,8 @@ export class SkinLayout
      * @param name - The entity name
      * @returns The layout entity, or null
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/ChildEntityArray.as::getChildByName()
+    // Declared on `ChildEntityArray`'s obfuscated base, as with numEntities above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/_SafeCls_4490.as::getChildByName()
     public getEntityByName(name: string): SkinLayoutEntity | null
     {
         for(const entity of this._entities)

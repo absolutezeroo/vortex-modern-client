@@ -178,6 +178,8 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._chatBubbleFactory;
     }
 
+    // The AS3 field is obfuscated (`_SafeStr_7026`); this name is DERIVED from the readable
+    // accessor `get chatHistoryScrollView()` that returns it.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatHistoryScrollView
     private _chatHistoryScrollView: ChatHistoryScrollView | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_chatHistoryPulldown

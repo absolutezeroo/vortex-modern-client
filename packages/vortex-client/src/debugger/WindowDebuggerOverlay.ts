@@ -1852,7 +1852,7 @@ const NON_DRAWING_TYPES = new Set<number>([WindowType.NULL, WindowType.REGION, W
 // trailing spacing under `if(numChildren > 0)` - the total count, not the
 // visible one. The primary tree has the same guard, so an empty horizontal
 // list lands at -spacing there too and this must not be "fixed".
-// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::updateScrollArea()
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::updateScrollAreaRegion()
 const ITEM_LIST_TYPES = new Set<number>([
     WindowType.ITEMLIST,
     WindowType.ITEMLIST_HORIZONTAL,

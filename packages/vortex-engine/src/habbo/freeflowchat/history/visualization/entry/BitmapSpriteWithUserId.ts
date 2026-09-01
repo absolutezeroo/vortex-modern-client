@@ -21,6 +21,9 @@ export class BitmapSpriteWithUserId extends Sprite
     private _canIgnore: boolean = false;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/history/visualization/entry/BitmapSpriteWithUserId.as::_userName
     private _userName: string = '';
+    // Both fields are obfuscated in WIN63 (`_SafeStr_8298`, `_SafeStr_7616`) and absent from the
+    // 2016 tree, which has `_userId`/`_roomId` instead; the names below are DERIVED from the
+    // readable accessors `userIndex`/`webId` that return them.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2999.as::_userIndex
     private _userIndex: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2999.as::_webId
@@ -35,19 +38,22 @@ export class BitmapSpriteWithUserId extends Sprite
      * sprite built from it (`deactivateView()` nulls this on rows it is about to throw away, and
      * `activateView()` builds fresh rows from the same entries).
      */
+    // Declared in no tree: `bitmapData` is Flash's own, inherited from `flash.display.Bitmap`.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2999.as::bitmapData (flash.display.Bitmap)
     set bitmapData(value: ImageBitmap | null)
     {
         this.texture = value === null ? Texture.EMPTY : Texture.from(value);
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/history/visualization/entry/BitmapSpriteWithUserId.as::get canIgnore()
+    // Traced to WIN63, not to the 2016 tree: PRODUCTION obfuscates this accessor pair as
+    // `_Str_6123` and only its backing field `_canIgnore` is readable there.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2999.as::get canIgnore()
     get canIgnore(): boolean
     {
         return this._canIgnore;
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/freeflowchat/history/visualization/entry/BitmapSpriteWithUserId.as::set canIgnore()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/history/visualization/entry/_SafeCls_2999.as::set canIgnore()
     set canIgnore(value: boolean)
     {
         this._canIgnore = value;

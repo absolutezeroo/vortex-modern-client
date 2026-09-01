@@ -38,6 +38,8 @@ export class TextLabelController extends WindowController implements ILabelWindo
     private _leading: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_localized
     private _localized: boolean = false;
+    // The AS3 field is obfuscated (`_SafeStr_4618`) in every tree; `_textMargins` is DERIVED from
+    // `setTextMargins()`, the callback it is constructed with, and is not a recovered name.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextLabelController.as::_textMargins
     private _margins: TextMargins | null = null;
 
