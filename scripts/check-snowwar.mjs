@@ -130,6 +130,7 @@ const ENTRY = [
     `export { SnowballMachineGameObject } from '${GAME}/gameobjects/SnowballMachineGameObject';`,
     `export { Direction8 } from '${GAME}/utils/Direction8';`,
     `export { QuickRandom } from '${GAME}/utils/QuickRandom';`,
+    `export { ClickType } from '${GAME}/ClickType';`,
     ...[
         'NewMoveTargetEvent', 'HumanStartsToMakeASnowballEvent', 'HumanGetsSnowballsFromMachineEvent',
         'CreateSnowballEvent', 'HumanLeftGameEvent', 'MachineCreatesSnowballEvent',
@@ -166,6 +167,7 @@ const {
     SnowballPileGameObjectData, SnowballMachineGameObjectData, TreeGameObjectData, HumanGameObjectData,
     NewMoveTargetEvent, HumanStartsToMakeASnowballEvent, HumanGetsSnowballsFromMachineEvent,
     CreateSnowballEvent, HumanLeftGameEvent, MachineCreatesSnowballEvent,
+    ClickType,
 } = bundle;
 
 function isA(value, className, what)
@@ -678,10 +680,24 @@ eq(liveStage.getGameObject(702), null, 'which then drains it');
 new MachineCreatesSnowballEvent(null).apply(liveStage);
 eq(giver.snowballCount, 8, 'an event for a machine that does not exist yet is dropped');
 
+// --- the click table -------------------------------------------------------------------------
+// Two modifier keys, four meanings, and the only difference between a tile and an opponent is what
+// the bare click means: walk there, or throw with the trajectory picked from the range. Swapping
+// alt for shift here is invisible — every combination still returns a valid throw.
+eq(ClickType.getClickTypeOnTile(false, false), ClickType.MOVE, 'a bare click on a tile walks');
+eq(ClickType.getClickTypeOnTile(false, true), ClickType.THROW_FAST_BALL, 'shift on a tile is the fast ball');
+eq(ClickType.getClickTypeOnTile(true, false), ClickType.THROW_LONG_LOB_BALL, 'alt on a tile is the long lob');
+eq(ClickType.getClickTypeOnTile(true, true), ClickType.THROW_SHORT_LOB_BALL, 'alt+shift on a tile is the short lob');
+
+eq(ClickType.getClickTypeOnOpponent(false, false), ClickType.THROW_DEFAULT, 'a bare click on an opponent throws');
+eq(ClickType.getClickTypeOnOpponent(false, true), ClickType.THROW_FAST_BALL, 'shift on an opponent is the fast ball');
+eq(ClickType.getClickTypeOnOpponent(true, false), ClickType.THROW_LONG_LOB_BALL, 'alt on an opponent is the long lob');
+eq(ClickType.getClickTypeOnOpponent(true, true), ClickType.THROW_SHORT_LOB_BALL, 'alt+shift on an opponent is the short lob');
+
 if(failures > 0)
 {
     console.error(`\n${failures} snow-war check(s) failed.`);
     process.exit(1);
 }
 
-console.log('Snow-war OK: wire DTOs, the arena clock, the tile grid, the game objects and the events.');
+console.log('Snow-war OK: wire DTOs, the arena clock, the tile grid, the game objects, the events and the click table.');

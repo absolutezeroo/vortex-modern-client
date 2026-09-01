@@ -41,6 +41,7 @@ import {IID_HabboHelp} from '@iid/IIDHabboHelp';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
 import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import {HabboToolbarEnum} from '@habbo/toolbar/HabboToolbarEnum';
 import {Logger} from '@core/utils/Logger';
@@ -158,10 +159,12 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
         return this._avatarEditor;
     }
 
-    // HabboGameManager has no ported manager/interface yet (IID_HabboGameManager
-    // is typed `unknown`). AS3 stores this dependency but never reads it anywhere in
-    // HabboLandingView.as either (no getter, no internal usage) - kept for DI parity only.
-    private _gameManager: unknown = null;
+    // `IHabboGameManager` is ported; `HabboGameManager` itself is not yet, so nothing ever
+    // provides this IID and the callback does not run. AS3 stores this dependency but never reads
+    // it anywhere in HabboLandingView.as either (no getter, no internal usage) - kept for DI
+    // parity only.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::_gameManager
+    private _gameManager: IHabboGameManager | null = null;
 
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/HabboLandingView.as::_errorLayout
     private _errorLayout: IWindow | null = null;
@@ -319,7 +322,7 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
             ),
             new ComponentDependency(
                 IID_HabboGameManager,
-                (gameManager: unknown) =>
+                (gameManager: IHabboGameManager | null) =>
                 {
                     this._gameManager = gameManager;
                 },

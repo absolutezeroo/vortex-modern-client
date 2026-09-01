@@ -16,13 +16,18 @@
  * `PurchaseConfirmationDialog.setImage()` already carried this by hand; the inventory grids and
  * previews (bots, pets) assumed the wrapper would centre for them, and it does not.
  *
+ * `offsetX`/`offsetY` nudge the centred image, which is the shape AS3 writes at the call sites that
+ * take one — `snowwar/utils/WindowUtils.setElementImage()` adds them to the centring term.
+ *
  * TS-only in the sense that AS3 has no such shared function — it inlines these lines per call site.
  */
 export function drawIntoBitmapSlot(
     image: ImageBitmap | null,
     slotWidth: number,
     slotHeight: number,
-    closeSource: boolean = true
+    closeSource: boolean = true,
+    offsetX: number = 0,
+    offsetY: number = 0
 ): ImageBitmap | null
 {
     if(image === null) return null;
@@ -36,8 +41,8 @@ export function drawIntoBitmapSlot(
 
     context.drawImage(
         image,
-        Math.floor((width - image.width) * 0.5),
-        Math.floor((height - image.height) * 0.5)
+        Math.floor((width - image.width) * 0.5) + offsetX,
+        Math.floor((height - image.height) * 0.5) + offsetY
     );
 
     const result = canvas.transferToImageBitmap();
