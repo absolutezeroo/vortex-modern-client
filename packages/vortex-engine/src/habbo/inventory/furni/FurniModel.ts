@@ -194,9 +194,10 @@ export class FurniModel implements IFurniModel
     // through `windowManager.buildWidgetLayout()` instead — same layout, same result per window,
     // the cache lives one layer down. See GroupItem.createWindow().
 
-    // TODO(AS3): .../src/com/sulake/habbo/inventory/furni/FurniModel.as::displayItemInfo() forwards
-    // to FurniView.displayItemInfo(), the panel describing the selected group. That panel is not
-    // ported on the view side, so there is nothing to forward to yet.
+    // Not ported, and not a gap: `FurniModel.as::displayItemInfo()` forwards to
+    // `FurniView.displayItemInfo()`, and BOTH are dead in AS3 itself — a repo-wide grep finds zero
+    // call sites for either, as FurniView.ts's own note records. Re-checked 2026-09-01; the marker
+    // here used to blame the view side for being unported, which read as owed work.
 
     private _showingNfts: boolean = true;
 

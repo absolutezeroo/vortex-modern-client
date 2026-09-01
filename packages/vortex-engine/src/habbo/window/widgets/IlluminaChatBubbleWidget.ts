@@ -5,6 +5,8 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
+import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {ChatBubbleMessage} from './ChatBubbleMessage';
 import {Logger} from '@core/utils/Logger';
@@ -165,6 +167,10 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
 
     // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_disposed
     private _disposed: boolean = false;
+    // Name DERIVED — obfuscated as `_SafeStr_7758` in the primary tree. One subscription at a
+    // time, however many habbicon rows are waiting for the same pack.
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::_awaitingHabbiconAssets
+    private _awaitingHabbiconAssets: boolean = false;
 
     // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::get disposed()
     public get disposed(): boolean
@@ -629,13 +635,7 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
     /**
      * Sizes the habbicon box and fills its bitmap.
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::renderHabbicon()
-    // The bitmap comes from HabbiconAssetManager.getPreviewBitmap(id, false), mirrored
-    // horizontally when the habbicon's direction is HABBICON_DIRECTION_RIGHT, and the widget
-    // subscribes to "habbicon_assets_loaded" to redraw once the pack arrives. None of that
-    // exists yet: habbo/habbicons/assets/ (938 l.) and habbo/catalog/habbicons/ (5089 l.) are
-    // unported. The box is laid out at the right size and left empty until they are, so a
-    // habbicon message occupies its space instead of collapsing the bubble.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::renderHabbicon()
     private renderHabbicon(window: IWindowContainer, habbiconId: number): void
     {
         const asWindow = window as unknown as IWindow;
@@ -643,11 +643,87 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         asWindow.width = IlluminaChatBubbleWidget.HABBICON_SIZE;
         asWindow.height = IlluminaChatBubbleWidget.HABBICON_SIZE;
 
-        // AS3 sets `disposesBitmap = true` here and assigns a BitmapData it just composed.
-        // This port's IStaticBitmapWrapperWindow owns its bitmap through `assetUri` and has
-        // no such flag, so there is nothing to hand over until the asset manager exists.
-        log.warn(`renderHabbicon: habbicon ${habbiconId} cannot be drawn - HabbiconAssetManager is not ported, so the message shows an empty 80x80 box`);
+        const bitmapWindow = window.findChildByName('habbicon_bitmap') as IStaticBitmapWrapperWindow | null;
+
+        if(bitmapWindow === null) return;
+
+        // AS3 sets `disposesBitmap = true` alongside this; the port's wrapper has no such flag
+        // because assigning `bitmapData` replaces whatever it held.
+        bitmapWindow.bitmapData = this.createHabbiconBitmap(habbiconId);
     }
+
+    /**
+	 * The preview is drawn at 2x into an 80x80 surface, mirrored when the habbicon faces the way
+	 * the bubble does not. A pack that has not arrived yet gives null once, and the widget
+	 * subscribes to `ASSETS_LOADED` to redraw every habbicon row when it does.
+	 *
+	 * AS3 returns an empty 80x80 `BitmapData` in that case where this returns null; both leave the
+	 * box laid out and blank, so a habbicon message occupies its space instead of collapsing.
+	 */
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::createHabbiconBitmap()
+    private createHabbiconBitmap(habbiconId: number): ImageBitmap | null
+    {
+        const preview = HabbiconAssetManager.getPreviewBitmap(habbiconId, false);
+
+        if(preview === null)
+        {
+            if(!this._awaitingHabbiconAssets)
+            {
+                HabbiconAssetManager.addEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+                this._awaitingHabbiconAssets = true;
+            }
+
+            return null;
+        }
+
+        const size = IlluminaChatBubbleWidget.HABBICON_SIZE;
+        const canvas = new OffscreenCanvas(size, size);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        // AS3's Matrix: scale(-2,2) then translate(width*2,0) for the mirror, scale(2,2) otherwise.
+        if(this.shouldMirrorHabbicon(habbiconId)) context.setTransform(-2, 0, 0, 2, preview.width * 2, 0);
+        else context.setTransform(2, 0, 0, 2, 0, 0);
+
+        context.drawImage(preview, 0, 0);
+
+        return canvas.transferToImageBitmap();
+    }
+
+    /** Mirror only when both directions are known and they disagree. */
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::shouldMirrorHabbicon()
+    private shouldMirrorHabbicon(habbiconId: number): boolean
+    {
+        // Typed `number`, not the inferred `1 | -1`: AS3's local is an `int` and its `!= 0` test is
+        // vacuous there too. Kept verbatim rather than dropped — narrowing it makes TS reject the
+        // comparison the AS3 actually writes.
+        const bubbleDirection: number = this._flipped ? -1 : 1;
+        const habbiconDirection = HabbiconAssetManager.getDirection(habbiconId);
+
+        return bubbleDirection !== 0 && habbiconDirection !== 0 && bubbleDirection !== habbiconDirection;
+    }
+
+    // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::onHabbiconAssetsLoaded()
+    private onHabbiconAssetsLoaded = (): void =>
+    {
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+
+        this._awaitingHabbiconAssets = false;
+
+        if(this._disposed) return;
+
+        for(let i = 0; i < this.numMessages; i++)
+        {
+            const message = this._messages[i];
+
+            if(message?.type !== ChatBubbleMessage.TYPE_HABBICON) continue;
+
+            const item = this._messageContainer?.getListItemAt(i) ?? null;
+
+            if(item !== null) this.renderHabbicon(item as unknown as IWindowContainer, message.habbiconId);
+        }
+    };
 
     // AS3: .../src/com/sulake/habbo/window/widgets/IlluminaChatBubbleWidget.as::setAwaitingConfirmationId()
     public setAwaitingConfirmationId(messageIndex: number, confirmationId: number): void
@@ -685,6 +761,10 @@ export class IlluminaChatBubbleWidget implements IIlluminaChatBubbleWidget
         if(this._disposed) return;
 
         this._disposed = true;
+
+        // AS3 unsubscribes here unconditionally, as this does.
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+        this._awaitingHabbiconAssets = false;
 
         if(this._root)
         {

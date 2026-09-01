@@ -1,6 +1,7 @@
 import type {IGameArenaExtension} from './arena/IGameArenaExtension';
 import type {IGameStage} from './arena/IGameStage';
 import type {SynchronizedGameArena} from './arena/SynchronizedGameArena';
+import {SnowWarGameStage} from './SnowWarGameStage';
 
 /**
  * Snow War's answers to the four questions the generic arena cannot answer itself: a pulse every
@@ -64,13 +65,10 @@ export class SnowWarArenaExtension implements IGameArenaExtension
      * and never asks the extension, and no other caller exists in any tree. Kept because it is on
      * the interface.
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/_SafeCls_2604.as
-    //   AS3 returns `new SnowWarGameStage()`. That class is unported — it needs `Tile` and the
-    //   `gameobjects/` tier — so this throws rather than handing back something that is not a stage.
     // AS3: _SafeCls_3122.as::createGameStage()
     public createGameStage(): IGameStage
     {
-        throw new Error('SnowWarGameStage is not ported yet');
+        return new SnowWarGameStage();
     }
 
     /** Empty in AS3: the extension has no per-pulse work of its own. */

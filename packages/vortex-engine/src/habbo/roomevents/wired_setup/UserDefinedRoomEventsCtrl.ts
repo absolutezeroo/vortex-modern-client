@@ -90,10 +90,10 @@ export class UserDefinedRoomEventsCtrl implements IUserDefinedRoomEventsCtrl
     * AS3 builds this object inline at each of the three wired notification call sites
     * (`{time_display: 2500}`), which is 2.5s rather than the type's configured default.
     *
-    * TODO(AS3): the key has no reader in this port yet — `HabboNotificationItemView.displayTime`,
-    * which consumes it, is not ported, so a wired notification still shows for the default duration.
-    * The value now reaches the style's `extraData` where AS3 puts it, so wiring the view is the only
-    * step left.
+    * The marker here claimed the key had no reader. It has one, re-checked 2026-09-01:
+    * `HabboNotificationItemView.get displayTime()` reads `TIME_DISPLAY` off the style's
+    * `extraData` and falls back to the view config only when it is absent — so a wired
+    * notification does show for 2.5s, not for the type's default.
     */
     // AS3: UserDefinedRoomEventsCtrl.as::onSaveSuccess() / createClipboardCopy() / prepareForUpdate()
     private static readonly WIRED_NOTIFICATION_OPTIONS: Record<string, unknown> = {[NotificationExtraDataKey.TIME_DISPLAY]: 2500};

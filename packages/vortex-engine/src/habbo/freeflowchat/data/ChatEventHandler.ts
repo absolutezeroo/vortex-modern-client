@@ -18,9 +18,11 @@ import {ChatItem} from './ChatItem';
 // gameEventHandler() builds a RoomSessionChatEvent with style CHAT_STYLE_SNOWWAR_RED/
 // _BLUE (team-based) and forwards it to insertChat() with a forced locX/color/figure/
 // name (the game event carries its own display identity, not a real room user's).
-// habbo/game (GameChatEvent, GameManager, snowwar/*) is entirely unported - only
-// empty placeholder directories exist - so this is a stub, not a silent omission:
-// CHAT_STYLE_SNOWWAR_RED/BLUE stay declared and dead until that module exists.
+// Blocker, re-checked 2026-09-01: `habbo/game/snowwar/` IS ported now, but the two things
+// this hook actually needs are not — `GameManager` (which owns the event bus) and
+// `GameChatEvent` (the "gce_game_chat" payload). Neither exists in `habbo/game/`, which
+// holds only `events/` and `snowwar/`. So this stays a stub, not a silent omission:
+// CHAT_STYLE_SNOWWAR_RED/BLUE stay declared and dead until GameManager exists.
 export class ChatEventHandler
 {
     // AS3: .../src/com/sulake/habbo/freeflowchat/data/ChatEventHandler.as::CHAT_STYLE_SNOWWAR_RED

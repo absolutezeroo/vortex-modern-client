@@ -48,6 +48,8 @@ import {PerfMonitorWindow} from '@habbo/perf/PerfMonitorWindow';
 import {AvatarRenderMode} from '@habbo/avatar/AvatarRenderMode';
 import {RoomCullingMode} from '@habbo/room/renderer/RoomCullingMode';
 import {FriendBarResizeEvent} from '@habbo/friendbar/events/FriendBarResizeEvent';
+import {HideRoomWidgetEvent} from '@habbo/ui/widget/events/HideRoomWidgetEvent';
+import {SessionDataToWidgetEvent} from '@habbo/session/events/SessionDataToWidgetEvent';
 
 const log = Logger.getLogger('habbo.ui.handler.ChatInputWidgetHandler');
 
@@ -1063,15 +1065,19 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
     };
 
     /**
-     * TODO(AS3): AS3 processes two more events this port cannot raise yet —
-     * `SDTWE_PURCHASABLE_STYLES_UPDATED`, which calls a `refreshChatStyles()` the chat-input widget
-     * does not have, and `hrwe_hide_room_widget`, whose `HideRoomWidgetEvent` is unported. The
-     * friend-bar resize is wired: it is the one whose handler exists on both sides.
-     */
+	 * All four AS3 events, in its order. The marker here used to hold two back as unraisable —
+	 * re-checked 2026-09-01, both blockers are gone: `HideRoomWidgetEvent` is ported, and
+	 * `RoomChatInputWidget.refreshChatStyles()` exists.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::getProcessedEvents()
     public getProcessedEvents(): string[]
     {
-        return ['RSCE_FLOOD_EVENT', FriendBarResizeEvent.FRIENDBAR_RESIZE_EVENT];
+        return [
+            'RSCE_FLOOD_EVENT',
+            HideRoomWidgetEvent.HIDE_ROOM_WIDGET,
+            FriendBarResizeEvent.FRIENDBAR_RESIZE_EVENT,
+            SessionDataToWidgetEvent.PURCHASABLE_STYLES_UPDATED
+        ];
     }
 
     // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::update()
@@ -1105,5 +1111,25 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
         {
             this._widget?.checkChatInputPosition();
         }
+
+        if(typedEvent.type === SessionDataToWidgetEvent.PURCHASABLE_STYLES_UPDATED)
+        {
+            this._widget?.refreshChatStyles();
+        }
+
+        // AS3 returns from this case instead of falling through to the dispatch below; there is
+        // nothing after it here either, but the shape is kept.
+        if(typedEvent.type === HideRoomWidgetEvent.HIDE_ROOM_WIDGET)
+        {
+            this.handleHideWidgetEvent(event as HideRoomWidgetEvent);
+            return;
+        }
+    }
+
+    /** Only the widget the event names hides — every handler sees the event. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::handleHideWidgetEvent()
+    private handleHideWidgetEvent(event: HideRoomWidgetEvent): void
+    {
+        if(event && event.widgetType === this.type) this._widget?.hide();
     }
 }

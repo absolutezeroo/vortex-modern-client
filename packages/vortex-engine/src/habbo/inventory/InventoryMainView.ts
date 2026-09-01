@@ -691,7 +691,7 @@ export class InventoryMainView
      * Clears the recycler on every category switch — leaving a tab does not keep your items in the
      * machine.
      *
-     * The TODO here claimed `habbo/catalog/recycler` was unported. It was not: `IRecycler`,
+     * The marker here claimed `habbo/catalog/recycler` was unported. It was not: `IRecycler`,
      * `FurniSlotItem` and `RecyclerLogic` were all present, and `HabboCatalog.getRecycler()`
      * already returned one.
      */
