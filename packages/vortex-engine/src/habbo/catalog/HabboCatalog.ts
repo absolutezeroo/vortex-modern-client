@@ -3580,6 +3580,14 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this.addMessageEvent(new GiftWrappingConfigurationEvent(this.onGiftWrappingConfiguration.bind(this)));
         this.addMessageEvent(new CatalogPublishedMessageEvent(this.onCatalogPublished.bind(this)));
 
+        // DEVIATION: AS3 also registers `CloseConnectionMessageEvent` (3404) here, on
+        //   `onRoomExit()` — whose body is empty (HabboCatalog.as:2724-2726). Registering a
+        //   listener that does nothing has no observable effect in either language, and seven
+        //   other modules already register the same event, so the message is parsed regardless.
+        //   Left out deliberately rather than shipped as dead code; `scripts/sweep-unwired.mjs`
+        //   flags it every run, and this is the answer.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::onRoomExit()
+
         // AS3 registers the tracker here, right after the message events (HabboCatalog.as:752).
         this.context.addLinkEventTracker(this);
 

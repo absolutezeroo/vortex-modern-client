@@ -10,17 +10,29 @@
  * change-looks/change-badges links, and close.
  *
  * Explicitly deferred as TODO(AS3), matching the Phase 1 scope decision:
- * - The groups list entirely, and the GroupDetailsCtrl sub-controller it
- *   drives (306 AS3 lines, zero TS port) — group selection/favourite/
- *   details.
- * - Relationship status (heart/smile/bobba categories) — same feature cut
- *   as InfoStandUserView.ts.
  * - Badge glow effects and the hover badge-details popup (same pattern as
  *   InfoStandUserView.ts/InfoStandFurniView.ts already skip for the same
  *   reason).
  * - The badge-count leaderboard link (needs HabboGroups' internal link
  *   builder, low value alone).
  * - The full_profile_hidden banner.
+ *
+ * Two things came off that list on 2026-09-01, both for the same reason — the
+ * stated blocker had stopped being true:
+ * - **Relationship status** (heart/smile/bobba). The layout ships all three
+ *   rows, `RelationshipStatusEnum` and the `RelationshipStatusInfo` DTO were
+ *   already ported, and only this controller's half was missing — which is why
+ *   `HabboGroupsManager` never subscribed to `RelationshipStatusInfoEvent`
+ *   (3360) as AS3 does.
+ * - **The groups list**, whose marker said `GroupDetailsCtrl` had "zero TS
+ *   port". It has 461 lines and an `onGroupDetails(parent, group)` waiting for
+ *   a caller; only the list, its selection, the favourite pair and the
+ *   no-groups panel were missing.
+ *
+ * Porting the first found the second: `refresh()` sent only
+ * `GetSelectedBadges`, where AS3 sends `GetRelationshipStatusInfo` beside it,
+ * so the relationship rows would have waited forever on a message nobody had
+ * asked for.
  *
  * The online-status tri-state used to be on that list. It is no longer: the
  * parser was reading AS3's `onlineStatus` byte as a boolean and throwing the
@@ -29,6 +41,7 @@
  * `bool` and so cannot yet send state 2 — the client side is done, the server
  * side is the remaining half.
  */
+import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import {WindowEvent} from '@core/window/events/WindowEvent';
@@ -37,7 +50,18 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import {ExtendedProfileData} from '@habbo/communication/messages/incoming/users/ExtendedProfileData';
+import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
+import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
 import {GetSelectedBadgesMessageComposer} from '@habbo/communication/messages/outgoing/users/GetSelectedBadgesMessageComposer';
+import {GetRelationshipStatusInfoMessageComposer} from '@habbo/communication/messages/outgoing/friendlist/GetRelationshipStatusInfoMessageComposer';
+import {GetHabboGroupDetailsMessageComposer} from '@habbo/communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
+import {SelectFavouriteHabboGroupMessageComposer} from '@habbo/communication/messages/outgoing/users/SelectFavouriteHabboGroupMessageComposer';
+import {DeselectFavouriteHabboGroupMessageComposer} from '@habbo/communication/messages/outgoing/users/DeselectFavouriteHabboGroupMessageComposer';
+import {EventLogMessageComposer} from '@habbo/communication/messages/outgoing/tracking/EventLogMessageComposer';
+import type {HabboGroupEntryData} from '@habbo/communication/messages/incoming/users/HabboGroupEntryData';
+import type {HabboGroupDetailsData} from '@habbo/communication/messages/incoming/users/HabboGroupDetailsData';
+import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import {GroupDetailsCtrl} from './GroupDetailsCtrl';
 import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import {Logger} from '@core/utils/Logger';
@@ -56,6 +80,22 @@ export class ExtendedProfileWindowCtrl
     private _profile: ExtendedProfileData | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7764
     private _badgeUpdateExpected: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_8041
+    private _relationshipUpdateExpected: boolean = false;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_5493
+    private _relationshipStatuses: Map<number, RelationshipStatusInfo> = new Map();
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_5964
+    private _groupsList: IItemListWindow | null = null;
+    // The prototype every row is cloned from, built once. Name DERIVED — `_SafeStr_8371`.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_groupEntryTemplate
+    private _groupEntryTemplate: IWindowContainer | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4935
+    private _selectedGroupId: number = 0;
+    // The panel that replaces the list when the user is in no group. Name DERIVED — `_SafeStr_6927`.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_noGroupsWindow
+    private _noGroupsWindow: IWindowContainer | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_6738
+    private _groupDetailsCtrl: GroupDetailsCtrl | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7676
     // Set when onProfileChanged() silently re-requests an already-open profile,
     // so the next onProfile() doesn't steal window focus/activation.
@@ -65,6 +105,8 @@ export class ExtendedProfileWindowCtrl
     constructor(groupsManager: HabboGroupsManager)
     {
         this._groupsManager = groupsManager;
+        // AS3 passes `false` here where DetailsWindowCtrl passes `true`; the flag is never read.
+        this._groupDetailsCtrl = new GroupDetailsCtrl(groupsManager, false);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::dispose()
@@ -74,6 +116,16 @@ export class ExtendedProfileWindowCtrl
         this._window?.dispose();
         this._window = null;
         this._profile = null;
+        // AS3 disposes the relationship map here; the port's is a plain Map, so it is cleared.
+        this._relationshipStatuses.clear();
+
+        this._groupDetailsCtrl?.dispose();
+        this._groupDetailsCtrl = null;
+        this._groupEntryTemplate?.dispose();
+        this._groupEntryTemplate = null;
+        this._noGroupsWindow?.dispose();
+        this._noGroupsWindow = null;
+        this._groupsList = null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get disposed()
@@ -118,13 +170,37 @@ export class ExtendedProfileWindowCtrl
         this._badgeUpdateExpected = value;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get relationshipUpdateExpected() / set relationshipUpdateExpected()
-    // Part of the relationship-status (heart/smile/bobba) feature cut noted in the class header —
-    // this flag gates onRelationshipStatusInfo(), which is deferred with it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::get relationshipUpdateExpected()
+    get relationshipUpdateExpected(): boolean
+    {
+        return this._relationshipUpdateExpected;
+    }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onRelationshipStatusInfo()
-    // Deferred with the relationship-status feature cut noted in the class header — would apply an
-    // incoming _SafeCls_481 relationship snapshot and call the not-yet-ported refreshRelationships().
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::set relationshipUpdateExpected()
+    set relationshipUpdateExpected(value: boolean)
+    {
+        this._relationshipUpdateExpected = value;
+    }
+
+    /**
+	 * `userId` is unused, exactly as in AS3: the flag set alongside the profile request is what
+	 * decides whether this snapshot belongs to the profile on screen.
+	 *
+	 * The `new Map(...)` copy is AS3's `clone()` and is not optional here: the parser owns one
+	 * `Map` instance for the life of the connection and `flush()` clears it, so keeping the
+	 * reference would leave this controller holding an empty map after the next message.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onRelationshipStatusInfo()
+    onRelationshipStatusInfo(userId: number, statuses: Map<number, RelationshipStatusInfo>): void
+    {
+        if(!this._profile || !this._relationshipUpdateExpected) return;
+
+        this._relationshipStatuses = new Map(statuses);
+
+        this.refreshRelationships();
+
+        this._relationshipUpdateExpected = false;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::prepareWindow()
     private prepareWindow(): void
@@ -134,6 +210,22 @@ export class ExtendedProfileWindowCtrl
         const groupsManager = this._groupsManager;
 
         if(!groupsManager) return;
+
+        // Both are built before the profile window and survive it: AS3 keeps the row template and
+        // the no-groups panel across every profile this controller shows.
+        if(this._groupEntryTemplate === null)
+        {
+            this._groupEntryTemplate = groupsManager.getXmlWindow('group_entry') as IWindowContainer | null;
+        }
+
+        if(this._noGroupsWindow === null)
+        {
+            this._noGroupsWindow = groupsManager.getXmlWindow('no_groups') as IWindowContainer | null;
+
+            const viewGroupsButton = this._noGroupsWindow?.findChildByName('view_groups_button') ?? null;
+
+            if(viewGroupsButton) viewGroupsButton.procedure = this.onViewGroups;
+        }
 
         const window = groupsManager.getXmlWindow('new_extended_profile') as IWindowContainer | null;
 
@@ -161,6 +253,8 @@ export class ExtendedProfileWindowCtrl
 
         if(roomsButton) roomsButton.procedure = this.onRooms;
 
+        this._groupsList = window.findChildByName('groups_list') as IItemListWindow | null;
+
         const changeLooks = window.findChildByName('change_looks');
 
         if(changeLooks) changeLooks.procedure = this.onChangeLooks;
@@ -176,6 +270,13 @@ export class ExtendedProfileWindowCtrl
         const userActivityPoints = window.findChildByName('user_activity_points');
 
         if(userActivityPoints) userActivityPoints.visible = groupsManager.isActivityDisplayEnabled;
+
+        for(const status of RelationshipStatusEnum.displayableStatuses)
+        {
+            const region = window.findChildByName(`${RelationshipStatusEnum.statusAsString(status)}_friend_name_link_region`);
+
+            if(region) region.procedure = this.onRelationshipLink;
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onProfile()
@@ -219,11 +320,151 @@ export class ExtendedProfileWindowCtrl
 
         if(!isSameUserAlreadyShown) this.clearSelectedBadges();
 
+        this._relationshipUpdateExpected = true;
         this._badgeUpdateExpected = true;
 
-        if(this._profile) this._groupsManager?.send(new GetSelectedBadgesMessageComposer(this._profile.userId));
+        if(this._profile)
+        {
+            // Both, in AS3's order. The relationship request was missing, which left
+            // onRelationshipStatusInfo() waiting on a message nothing had asked for.
+            this._groupsManager?.send(new GetRelationshipStatusInfoMessageComposer(this._profile.userId));
+            this._groupsManager?.send(new GetSelectedBadgesMessageComposer(this._profile.userId));
+        }
 
         this.refreshHeader();
+        this.refreshGroupList();
+    }
+
+    /** The entry in the profile's own guild list matching the selected id, or null. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::getSelectedGroup()
+    private getSelectedGroup(): HabboGroupEntryData | null
+    {
+        for(const guild of this._profile?.guilds ?? [])
+        {
+            if(guild.groupId === this._selectedGroupId) return guild;
+        }
+
+        return null;
+    }
+
+    /**
+	 * One row per guild, cloned from the template. The favourite pair is only ever *offered* on
+	 * your own profile — on someone else's both buttons stay hidden, whatever the flag says.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshGroupList()
+    private refreshGroupList(): void
+    {
+        const window = this._window;
+        const profile = this._profile;
+        const groupsManager = this._groupsManager;
+        const list = this._groupsList;
+
+        if(!window || !profile || !groupsManager || !list) return;
+
+        const isOwnProfile = profile.userId === groupsManager.avatarId;
+
+        list.visible = profile.guilds.length > 0;
+        list.destroyListItems();
+
+        for(const guild of profile.guilds)
+        {
+            const row = this._groupEntryTemplate?.clone() as IWindowContainer | null;
+
+            if(row === null) continue;
+
+            row.id = guild.groupId;
+
+            const region = row.findChildByName('bg_region');
+
+            if(region)
+            {
+                region.procedure = this.onSelectGroup;
+                region.id = guild.groupId;
+            }
+
+            const clearFavourite = row.findChildByName('clear_favourite');
+
+            if(clearFavourite)
+            {
+                clearFavourite.procedure = this.onClearFavourite;
+                clearFavourite.visible = guild.favourite && isOwnProfile;
+                clearFavourite.id = guild.groupId;
+            }
+
+            const makeFavourite = row.findChildByName('make_favourite');
+
+            if(makeFavourite)
+            {
+                makeFavourite.procedure = this.onMakeFavourite;
+                makeFavourite.visible = !guild.favourite && isOwnProfile;
+                makeFavourite.id = guild.groupId;
+            }
+
+            const badgeWindow = row.findChildByName('group_pic_bitmap') as IWidgetWindow | null;
+            const badgeWidget = (badgeWindow?.widget ?? null) as IBadgeImageWidget | null;
+
+            if(badgeWidget)
+            {
+                badgeWidget.type = 'group';
+                badgeWidget.badgeId = guild.badgeCode;
+                badgeWidget.groupId = guild.groupId;
+            }
+
+            list.addListItem(row);
+        }
+
+        this.refreshGroupListSelection();
+
+        groupsManager.localization?.registerParameter(
+            'extendedprofile.groups.count',
+            'count',
+            profile.guilds.length.toString()
+        );
+
+        if(profile.guilds.length < 1)
+        {
+            const container = window.findChildByName('group_cont') as IWindowContainer | null;
+            const noGroups = this._noGroupsWindow;
+
+            if(container === null || noGroups === null) return;
+
+            container.removeChildAt(0);
+            container.addChild(noGroups);
+
+            const caption = noGroups.findChildByName('no_groups_caption');
+
+            if(caption)
+            {
+                caption.caption = groupsManager.localization?.getLocalization(
+                    isOwnProfile ? 'extendedprofile.nogroups.me' : 'extendedprofile.nogroups.user'
+                ) ?? '';
+            }
+
+            const viewGroupsButton = noGroups.findChildByName('view_groups_button');
+
+            if(viewGroupsButton) viewGroupsButton.visible = true;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshGroupListSelection()
+    private refreshGroupListSelection(): void
+    {
+        const list = this._groupsList;
+
+        if(!list) return;
+
+        for(let i = 0; i < list.numListItems; i++)
+        {
+            const row = list.getListItemAt(i) as IWindowContainer | null;
+
+            if(row === null) continue;
+
+            const selected = row.findChildByName('bg_selected_bitmap');
+            const unselected = row.findChildByName('bg_unselected_bitmap');
+
+            if(selected) selected.visible = this._selectedGroupId === row.id;
+            if(unselected) unselected.visible = this._selectedGroupId !== row.id;
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshHeader()
@@ -330,9 +571,100 @@ export class ExtendedProfileWindowCtrl
         if(blockButton) blockButton.visible = !isOwnProfile;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onGroupDetails()
-    // Deferred with the groups-list feature cut noted in the class header — would swap the
-    // "group_cont" child for the selected group's details, driven by the unported GroupDetailsCtrl.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshRelationships()
+    private refreshRelationships(): void
+    {
+        const window = this._window;
+
+        if(!window || !this._groupsManager?.getBoolean('relationship.status.enabled')) return;
+
+        const label = window.findChildByName('rel_status_label_txt');
+
+        if(label) label.visible = true;
+
+        for(const status of RelationshipStatusEnum.displayableStatuses)
+        {
+            this.setRelationshipDetails(status);
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::setRelationshipDetails()
+    private setRelationshipDetails(status: number): void
+    {
+        const window = this._window;
+
+        if(!window) return;
+
+        const info = this._relationshipStatuses.get(status) ?? null;
+        const name = RelationshipStatusEnum.statusAsString(status);
+        const othersText = window.findChildByName(`${name}_txt`);
+        const nameLink = window.findChildByName(`${name}_friend_name_link_text`);
+        const head = window.findChildByName(`${name}_head`) as IWidgetWindow | null;
+
+        if(info && info.friendCount > 0)
+        {
+            if(nameLink) nameLink.caption = info.randomFriendName;
+
+            if(head)
+            {
+                head.visible = true;
+
+                const widget = (head.widget ?? null) as IAvatarImageWidget | null;
+
+                if(widget) widget.figure = info.randomFriendFigure;
+            }
+
+            if(othersText)
+            {
+                if(info.friendCount > 1)
+                {
+                    othersText.visible = true;
+                    othersText.invalidate();
+                    othersText.caption = this._groupsManager?.localization?.getLocalizationWithParams(
+                        `extendedprofile.relstatus.others.${name}`,
+                        '',
+                        'count',
+                        `${info.friendCount - 1}`
+                    ) ?? '';
+                }
+                else
+                {
+                    othersText.visible = false;
+                }
+            }
+        }
+        else
+        {
+            if(head) head.visible = false;
+
+            if(nameLink) nameLink.caption = '${extendedprofile.add.friends}';
+
+            if(othersText)
+            {
+                othersText.caption = '${extendedprofile.no.friends.in.this.category}';
+                othersText.visible = true;
+            }
+        }
+    }
+
+    /**
+	 * Swaps the `group_cont` child for the selected group's details panel. Ignores details for any
+	 * group other than the selected one — the manager broadcasts them to three controllers.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onGroupDetails()
+    onGroupDetails(group: HabboGroupDetailsData): void
+    {
+        if(this._selectedGroupId !== group.groupId) return;
+
+        const container = this._window?.findChildByName('group_cont') as IWindowContainer | null;
+
+        if(container === null) return;
+
+        container.removeChildAt(0);
+        container.invalidate();
+
+        this._groupDetailsCtrl?.onGroupDetails(container, group);
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::refreshAvatarImage()
     private refreshAvatarImage(): void
@@ -492,6 +824,100 @@ export class ExtendedProfileWindowCtrl
         if(event.type !== WindowMouseEvent.CLICK) return;
 
         this._groupsManager?.context.createLinkEvent('inventory/open/badges');
+    };
+
+    /**
+	 * The clicked region is named `<status>_friend_name_link_region`, so the status is whatever
+	 * precedes the first underscore — AS3 reads it back off the window's own name rather than
+	 * closing over the status it bound.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onRelationshipLink()
+    private onRelationshipLink = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        if(!event.target || !window.name) return;
+
+        const name = window.name.substr(0, window.name.indexOf('_'));
+        const info = this._relationshipStatuses.get(RelationshipStatusEnum.stringAsStatus(name)) ?? null;
+
+        if(info)
+        {
+            // AS3 tests the id for truthiness: a category whose random friend is 0 opens nothing.
+            if(info.randomFriendId) this._groupsManager?.showExtendedProfile(info.randomFriendId);
+        }
+        else
+        {
+            this._groupsManager?.windowManager?.alert(
+                '${extendedprofile.add.friends.alert.title}',
+                '${extendedprofile.add.friends.alert.body}',
+                0,
+                this.addFriendsAlertCallback
+            );
+        }
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onViewGroups()
+    private onViewGroups = (event: WindowEvent): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        this._groupsManager?.navigator?.performGuildBaseSearch();
+    };
+
+    /**
+	 * Selecting a group asks the server for its details — `onGroupDetails()` above is the answer —
+	 * and repaints the selection immediately rather than waiting for it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onSelectGroup()
+    private onSelectGroup = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        this._selectedGroupId = window.id;
+
+        this._groupsManager?.send(new GetHabboGroupDetailsMessageComposer(this._selectedGroupId, false));
+        this._groupsManager?.send(new EventLogMessageComposer('HabboGroups', `${window.id}`, 'select'));
+
+        this.refreshGroupListSelection();
+    };
+
+    /**
+	 * AS3 tracks `window.parent.id` here while sending `window.id` — the button carries the group
+	 * id and so does the row it sits in, and the two are the same value. Kept verbatim.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onMakeFavourite()
+    private onMakeFavourite = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        this._groupsManager?.send(new SelectFavouriteHabboGroupMessageComposer(window.id));
+        this._groupsManager?.send(new EventLogMessageComposer('HabboGroups', `${window.parent?.id ?? 0}`, 'make favourite'));
+
+        this._selectedGroupId = window.id;
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onClearFavourite()
+    private onClearFavourite = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        this._groupsManager?.send(new DeselectFavouriteHabboGroupMessageComposer(window.id));
+        this._groupsManager?.send(new EventLogMessageComposer('HabboGroups', `${window.parent?.id ?? 0}`, 'clear favourite'));
+
+        this._selectedGroupId = window.id;
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::addFriendsAlertCallback()
+    private addFriendsAlertCallback = (dialog: IDisposable, event: WindowEvent): void =>
+    {
+        if(event.type === WindowEvent.WE_OK)
+        {
+            this._groupsManager?.context.createLinkEvent('friendbar/findfriends');
+            this.close();
+        }
+
+        dialog.dispose();
     };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::updateVisibleExtendedProfile()

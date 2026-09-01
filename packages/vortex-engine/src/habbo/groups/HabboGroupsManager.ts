@@ -44,6 +44,7 @@ import {
     HabboUserBadgesMessageEvent,
     ExtendedProfileMessageEvent,
     ExtendedProfileChangedMessageEvent,
+    RelationshipStatusInfoEvent,
     type GuildEditorData,
     type HabboGroupDetailsData
 } from '@habbo/communication/messages/incoming/users';
@@ -467,6 +468,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this.addMessageEvent(new ExtendedProfileMessageEvent(this.onExtendedProfile.bind(this)));
         this.addMessageEvent(new ExtendedProfileChangedMessageEvent(this.onExtendedProfileChanged.bind(this)));
         this.addMessageEvent(new HabboUserBadgesMessageEvent(this.onUserBadgesMessage.bind(this)));
+        this.addMessageEvent(new RelationshipStatusInfoEvent(this.onRelationshipStatusInfo.bind(this)));
         this.addMessageEvent(new HabboGroupDetailsMessageEvent(this.onGroupDetails.bind(this)));
         this.addMessageEvent(new GroupDetailsChangedMessageEvent(this.onGroupDetailsChanged.bind(this)));
         this.addMessageEvent(new HabboGroupDeactivatedMessageEvent(this.onGroupDeactivated.bind(this)));
@@ -521,6 +523,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         if(!data || !data.openProfileWindow) return;
 
         this._extendedProfileWindowCtrl.badgeUpdateExpected = true;
+        this._extendedProfileWindowCtrl.relationshipUpdateExpected = true;
         this._extendedProfileWindowCtrl.onProfile(data);
     }
 
@@ -536,6 +539,14 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         const badgesEvent = event as HabboUserBadgesMessageEvent;
 
         this._extendedProfileWindowCtrl.onUserBadges(badgesEvent.userId, badgesEvent.badges);
+    }
+
+    // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onRelationshipStatusInfo()
+    private onRelationshipStatusInfo(event: IMessageEvent): void
+    {
+        const statusEvent = event as RelationshipStatusInfoEvent;
+
+        this._extendedProfileWindowCtrl.onRelationshipStatusInfo(statusEvent.userId, statusEvent.relationshipStatusMap);
     }
 
     // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetails()
@@ -558,9 +569,7 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
         this._groupDetailsById.set(data.groupId, data);
         this._detailsWindowCtrl.onGroupDetails(data);
         this._groupRoomInfoCtrl.onGroupDetails(data);
-
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetails() also forwards to
-        // ExtendedProfileWindowCtrl::onGroupDetails(), which the port's ExtendedProfileWindowCtrl does not implement.
+        this._extendedProfileWindowCtrl.onGroupDetails(data);
     }
 
     // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onGroupDetailsChanged()
