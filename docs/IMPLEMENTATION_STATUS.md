@@ -3439,6 +3439,125 @@ room-entry burst. `UpdateRoomSettingsAsync()` is the only thing that changes tho
 it never said so, so the walls came down for whoever saved only after they left and came back. It
 now broadcasts them beside the chat settings it already did.
 
+### Three sweep hits, one real (2026-09-01)
+
+`sweep-unwired.mjs` over ten modules reported 4 missing subscriptions out of 354. Only one was a
+gap, and the value of the pass is mostly in what the other three turned out to be — each now
+answered *in the code*, so the next run's hits do not have to be re-investigated.
+
+- **`RelationshipStatusInfoEvent` (3360), `habbo/groups` — real, and now ported.** The profile's
+  heart/smile/bobba rows were a Phase-1 feature cut, so `HabboGroupsManager` never subscribed. But
+  the cut had shrunk to this controller alone: `RelationshipStatusEnum`, the `RelationshipStatusInfo`
+  DTO, its parser and event were all ported, and `new_extended_profile.xml` ships every child the
+  AS3 addresses (`rel_status_label_txt`, and `heart|smile|bobba` × `_txt`/`_friend_name_link_text`/
+  `_friend_name_link_region`/`_head`). Added `relationshipUpdateExpected` (set beside
+  `badgeUpdateExpected` in `onExtendedProfile()`, as AS3 does), `onRelationshipStatusInfo()`,
+  `refreshRelationships()`, `setRelationshipDetails()`, `onRelationshipLink()` and
+  `addFriendsAlertCallback()`.
+
+  **One line is deliberately not literal.** AS3 stores `param2.clone()`; the port stores
+  `new Map(statuses)`. The parser owns a single `Map` for the life of the connection and `flush()`
+  clears it, so keeping the reference would leave the controller holding an empty map after the
+  next message — the clone is load-bearing, not defensive.
+- **`CloseConnectionMessageEvent` (3404), `habbo/catalog` — not ported, on purpose.** AS3's
+  `onRoomExit()` body is empty (`HabboCatalog.as:2724-2726`). A listener that does nothing has no
+  observable effect, and seven other modules already register the event, so the message is parsed
+  regardless. The reason now sits at the registration block.
+- **`UserObjectMessageEvent` (3985), `habbo/groups` — already a documented deviation**, on
+  `get avatarId()`: the port reads the session data manager, fed by the same message. The comment
+  there already predicted this sweep hit.
+- **`RoomVisualizationSettingsEvent` (2986), `habbo/session` — left alone**, per the sweep's own
+  header note: AS3 returns immediately outside the room-viewer embed.
+
+**And one wire fault, found chasing the fourth "recv gap".** `unlistened-server-messages.mjs`
+reported `OfficialSongIdMessageComposer` (2264) as sent-but-unheard. The client was not at fault:
+it registers that event at **3050**, which is what WIN63's registry says (`_SafeCls_2046.as:1502`),
+with the reasoning already written at the registration. The emulator had win63_version's old id,
+and the 2026 registry reassigned 2264 to `WeeklyCompetitiveFriendsLeaderboardEvent` — so the
+answer to a song-disk lookup would have reached the client as a leaderboard. Fixed in
+`Vortex.Revisions/Revision20260701/Headers.cs`. The composer stays empty because nothing constructs
+it: every handler under `Vortex.PacketHandlers/Sound/` is an accept-and-drop stub and the server has
+no song storage — its wire shape (string `officialSongId`, int `songId`) is now recorded on the
+record so it does not have to be re-derived. This is the fifth instance of
+"a wire gap is often a wrong id"; see that section.
+
+### The stale-blocker sweep, 2026-09-01 — 24 candidates, 8 real
+
+`todo-inventory.mjs --stale` flags a `TODO(AS3)` whose *stated* blocker now exists in the port. It
+is a candidate generator, and the ratio is the point: **8 of 24 were genuinely stale, 16 were the
+detector matching a name the marker mentions in passing** (`AvatarRenderManager`'s blocker is
+`BlockedAvatarImage`, a whole view, not `AvatarImage`; `IlluminaChatBubbleWidget`'s *was*
+`habbo/catalog/habbicons/`, which is why that one was real). `TODO(AS3)` 178 → 170, stale
+candidates 24 → 16.
+
+Four were closed by writing the code the blocker no longer blocked:
+
+- **`IlluminaChatBubbleWidget.renderHabbicon()`** drew nothing and logged a warning. Everything it
+  needed had landed: `HabbiconAssetManager.getPreviewBitmap()/getDirection()/ASSETS_LOADED`, and
+  `IStaticBitmapWrapperWindow.bitmapData` takes an `ImageBitmap`. Ported with AS3's 2x draw and its
+  mirror matrix (`OffscreenCanvas` + `setTransform(-2,0,0,2,w*2,0)`, which is Flash's
+  `scale(-2,2)`+`translate(w*2,0)`), the one-at-a-time `ASSETS_LOADED` subscription, and the
+  redraw-every-habbicon-row pass when the pack arrives.
+- **`ChatInputWidgetHandler`** declared 2 of AS3's 4 processed events. `HideRoomWidgetEvent` was
+  ported and `RoomChatInputWidget.refreshChatStyles()` existed, so both missing cases and
+  `handleHideWidgetEvent()` went in. Reading further than the marker mattered here:
+  `handleHideWidgetEvent` calls `hide()` on the **widget**, not the view — neither
+  `RoomChatInputView.as` nor its port declares one.
+- **`GameStartedMessageEventParser.parse()`** read nothing; `GameLobbyData` arrived with snow war,
+  so `lobbyData` is now built as AS3 builds it. Still no reader — the navigator's handler only
+  closes its main view — but a parser that answers `null` to an accessor its own AS3 declares is a
+  trap, not a saving.
+- **`SnowWarArenaExtension.createGameStage()`** threw; `SnowWarGameStage` exists, so it returns one.
+
+Four were markers whose claim had simply gone false, and cost only their own deletion:
+`UserDefinedRoomEventsCtrl`'s `time_display` key **does** have a reader
+(`HabboNotificationItemView.get displayTime()`); `FurniModel.displayItemInfo()` is not owed to an
+unported view, it is **dead in AS3 itself**, as `FurniView.ts`'s own note already said;
+`ChatEventHandler`'s "habbo/game is entirely unported" is now half wrong (`snowwar/` is there,
+`GameManager`/`GameChatEvent` are not — the marker now names those two); and `InventoryMainView`'s
+was already corrected in prose that still read as a marker.
+
+**The extended profile window is finished, and the second half found a bug in the first.** The
+16 candidates left after the sweep above held one more real entry: `ExtendedProfileWindowCtrl`'s
+groups-list marker, whose stated blocker was `GroupDetailsCtrl` having "306 AS3 lines, zero TS
+port". It has 461 TS lines and an `onGroupDetails(parent, group)` that nothing called —
+`HabboGroupsManager.onGroupDetails()` even carried its own `TODO(AS3)` saying the forward was
+missing. Ported: `refreshGroupList()` (one cloned `group_entry` row per guild, the favourite pair
+offered only on your own profile, the group badge widget), `refreshGroupListSelection()`,
+`getSelectedGroup()`, `onSelectGroup`/`onMakeFavourite`/`onClearFavourite`/`onViewGroups`, the
+`no_groups` panel with its `view_groups_button`, and `onGroupDetails()` swapping the `group_cont`
+child. All four composers were already registered (1683, 1887, 306, and 3809 for the tracking
+line).
+
+**And it exposed a hole in the relationship rows shipped an hour earlier.** AS3's `refresh()` sends
+**two** composers — `GetRelationshipStatusInfo` (3219) *and* `GetSelectedBadges` (3726). The port
+sent only the second, so `onRelationshipStatusInfo()` was a correct handler waiting on a message
+nothing had ever requested: the feature would have looked ported and rendered nothing. This is
+rule 3 of `30-as3-traceability.md` — a faithful line resting on a half-ported contract — and it was
+found by reading the *rest* of the method while porting something else in it.
+
+**And `IContext` was not the structural gap it was filed as.** It had been on the list as a
+2016-shaped interface traced to PRODUCTION, needing the config accessors, purge/hibernate/resume,
+the file-proxy pair and the loader counters — i.e. as drift that would touch every Component. None
+of that survived contact: the traces were repointed to the primary `_SafeCls_54.as` on 2026-08-27,
+and the `_SafeCls_57` AIR extras are documented in the file's own header as deliberately out (no
+caller anywhere outside `core/runtime`, and a browser has no file proxy). What was actually left
+was the opposite defect and four lines wide: `getLastErrorMessage`, `getLastDebugMessage`,
+`getLastWarningMessage` and `prepareAssetLibrary` are **declared on AS3's `_SafeCls_54` and
+implemented on `ComponentContext`** — the interface just did not declare them, so no caller holding
+an `IContext` could reach working code. Declared, with the four trivial stubs AS3's own
+`binaryData/FakeContext.as` gives them added to the port's `FakeContext`. A narrow interface hiding
+its own implementation, again.
+
+**The trace audit is back to 0 in the same pass.** 11 unannotated derived names, of which only two
+were really derived (`TextLabelController._textMargins` off `setTextMargins()`,
+`HabboFreeFlowChat._chatHistoryScrollView` off its getter). The rest were wrong citations:
+`SkinLayout`'s three pointed at `ChildEntityArray.as`, which only *inherits* `numChildren`/
+`getChildAt`/`getChildByName` from its obfuscated base `_SafeCls_4490.as`; `BitmapSpriteWithUserId`'s
+`canIgnore` pair cited the 2016 tree, where that accessor is `_Str_6123` and only WIN63 has it
+readable; and `WindowDebuggerOverlay` cited `updateScrollArea()` for a method AS3 calls
+`updateScrollAreaRegion()`.
+
 ### Trace hygiene, 2026-08-20
 
 `audit-as3-traces.mjs` is the forward direction and now exits 0. Three passes that day:
