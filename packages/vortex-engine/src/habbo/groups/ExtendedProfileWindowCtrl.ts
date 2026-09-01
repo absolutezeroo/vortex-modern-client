@@ -15,7 +15,6 @@
  *   reason).
  * - The badge-count leaderboard link (needs HabboGroups' internal link
  *   builder, low value alone).
- * - The full_profile_hidden banner.
  *
  * Two things came off that list on 2026-09-01, both for the same reason — the
  * stated blocker had stopped being true:
@@ -478,6 +477,18 @@ export class ExtendedProfileWindowCtrl
 
         const isOwnProfile = profile.userId === groupsManager.avatarId;
         const isFriendOrOwn = profile.isFriend || isOwnProfile;
+        // Your own profile is never hidden from you, whatever the flag says.
+        const isHiddenFromViewer = profile.isHidden && !isOwnProfile;
+
+        // Both assignments are mandatory, and the port had neither. `full_profile_hidden` ships in
+        // the layout with no `visible` attribute, so it renders by default: the banner sat over
+        // every profile permanently while `bottom` was never shown. The hidden-profile *feature*
+        // was the deliberate cut; dropping the two lines that switch between them was not.
+        const bottom = window.findChildByName('bottom');
+        const fullProfileHidden = window.findChildByName('full_profile_hidden');
+
+        if(bottom) bottom.visible = !isHiddenFromViewer;
+        if(fullProfileHidden) fullProfileHidden.visible = isHiddenFromViewer;
 
         const mottoText = window.findChildByName('motto_txt');
 
