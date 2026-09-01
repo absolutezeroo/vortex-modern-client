@@ -8,8 +8,13 @@ import {Logger} from '@core/utils/Logger';
 
 // Message events
 import {UserObjectMessageEvent} from '../communication/messages/incoming/handshake/UserObjectMessageEvent';
+// The navigator and the snow-war handler both subscribe to 2902, as AS3 does — this used to be a
+// second port of the same class (`_SafeCls_3582`) under the emulator's `GameStarted` name, which
+// left the real one unable to register.
 import {
-    GameStartedMessageEvent,
+    Game2GameStartedMessageEvent
+} from '../communication/messages/incoming/game/directory/Game2GameStartedMessageEvent';
+import {
     NoOwnedRoomsAlertMessageEvent,
     NoSuchFlatMessageEvent,
     RoomFilterSettingsMessageEvent,
@@ -178,7 +183,7 @@ export class IncomingMessages
         // left the info/settings/filter windows open over it, and why HC, event-mod and
         // room-picker state never reached NavigatorData.
         this.addMessageEvent(new FlatAccessibleMessageEvent(this.onDoorOpened.bind(this)));
-        this.addMessageEvent(new GameStartedMessageEvent(this.onGameStarted.bind(this)));
+        this.addMessageEvent(new Game2GameStartedMessageEvent(this.onGameStarted.bind(this)));
         this.addMessageEvent(new RoomMuteAllMessageEvent(this.onMuteAllEvent.bind(this)));
         this.addMessageEvent(new NoOwnedRoomsAlertMessageEvent(this.onNoOwnedRoomsAlert.bind(this)));
         this.addMessageEvent(new NoSuchFlatMessageEvent(this.onNoSuchFlat.bind(this)));

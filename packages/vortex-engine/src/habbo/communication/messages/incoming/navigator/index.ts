@@ -40,7 +40,6 @@ export * from './PromotedRoomsData';
 export * from './RoomModerationSettings';
 export * from './RoomChatSettings';
 export * from './CompetitionRoomsData';
-export * from './GameStartedMessageEvent';
 export * from './RoomMuteAllMessageEvent';
 export * from './NoOwnedRoomsAlertMessageEvent';
 export * from './NoSuchFlatMessageEvent';

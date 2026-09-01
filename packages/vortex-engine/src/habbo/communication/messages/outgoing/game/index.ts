@@ -1,4 +1,4 @@
+export * from './arena';
 export * from './directory';
-export * from './lobby';
+export * from './ingame';
 export * from './score';
-export * from './snowwar';

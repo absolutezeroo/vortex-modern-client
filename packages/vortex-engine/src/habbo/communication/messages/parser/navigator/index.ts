@@ -19,7 +19,6 @@ export * from './RoomEventCancelMessageParser';
 export * from './FlatAccessDeniedMessageParser';
 export * from './ConvertedRoomIdMessageParser';
 export * from './CompetitionRoomsDataMessageParser';
-export * from './GameStartedMessageEventParser';
 export * from './RoomMuteAllMessageEventParser';
 export * from './NoOwnedRoomsAlertMessageEventParser';
 export * from './NoSuchFlatMessageEventParser';
