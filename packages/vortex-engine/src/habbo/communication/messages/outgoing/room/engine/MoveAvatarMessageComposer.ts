@@ -7,6 +7,8 @@ import {MessageComposer} from '@core/communication/messages/MessageComposer';
  */
 export class MoveAvatarMessageComposer extends MessageComposer<[number, number, number]>
 {
+    // TS-only: no AS3 counterpart - the AS3 composer builds its array inline in getMessageArray()
+    //   and stores nothing.
     private _data: [number, number, number];
 
     // DEVIATION: AS3 sends (x, y) only. That was enough while a tile held one surface; with the
