@@ -8320,7 +8320,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
             else if(this._connection)
             {
-                this._connection.send(new MoveAvatarMessageComposer(tileX, tileY));
+                // The floor plane's own height at that tile - the surface actually pointed at, which
+                // for a click on bare floor is the one the server should walk to even when a raised
+                // item shares the tile.
+                this._connection.send(new MoveAvatarMessageComposer(tileX, tileY, tileZ));
             }
         }
     }
@@ -8715,7 +8718,12 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(location !== null && !this.isMoveBlocked() && this._connection !== null)
         {
-            this._connection.send(new MoveAvatarMessageComposer(location.x, location.y));
+            // The surface's absolute altitude: the furni's own base plus the height of the face
+            // that was clicked. getActiveSurfaceLocation() returns the latter relative to the item,
+            // so a rug (sizeZ 0) resting on a table at z=1 resolves to 1, not 0.
+            const surfaceZ = (furni?.getLocation().z ?? 0) + location.z;
+
+            this._connection.send(new MoveAvatarMessageComposer(location.x, location.y, surfaceZ));
 
             return true;
         }
@@ -8723,11 +8731,11 @@ export class RoomEngine extends Component implements IRoomEngine,
         return false;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getActiveSurfaceLocation()
     // Projects the click into the furni's surface grid and returns the tile hit, or null if the furni
-    // is not stand/sit/lay-able or the projected tile falls outside its footprint. Pure pixel math
-    // ported verbatim from AS3 (variable roles preserved: a/b are the screen->iso projection, then
-    // split into the two tile-axis components).
+    // is not stand/sit/lay-able. Pure pixel math ported verbatim from AS3 (variable roles preserved:
+    // a/b are the screen->iso projection, then split into the two tile-axis components); the one
+    // departure is the footprint clamp at the end, explained where it happens.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getActiveSurfaceLocation()
     private getActiveSurfaceLocation(obj: IRoomObject | null, event: RoomObjectMouseEvent): Vector3d | null
     {
         if(obj === null) return null;
@@ -8774,25 +8782,43 @@ export class RoomEngine extends Component implements IRoomEngine,
         const tileX = Math.floor(locX + isoA);
         const tileY = Math.floor(locY - isoB + 1);
 
-        let outsideFootprint = false;
-
-        if(tileX < locX || tileX >= locX + sizeX)
-        {
-            outsideFootprint = true;
-        }
-        else if(tileY < locY || tileY >= locY + sizeY)
-        {
-            outsideFootprint = true;
-        }
-
         const tileZ = canSit ? sizeZ - 0.5 : sizeZ;
 
-        if(!outsideFootprint)
+        if(tileX >= locX && tileX < locX + sizeX && tileY >= locY && tileY < locY + sizeY)
         {
             return new Vector3d(tileX, tileY, tileZ);
         }
 
-        return null;
+        // DEVIATION: AS3 returns null once the projection leaves the furni's own footprint, and
+        //   RoomTileCursorLogic.processUpdateMessage() discards a null update - so the highlight
+        //   freezes on the last tile that resolved and the click sends nothing. Flash could afford
+        //   that: a furni's art matched its footprint, so the miss was rare. It is not rare here.
+        //   Instrumenting elegantp_c17_carpet gave loc=(13,5) size=2x3 local=(149,52)
+        //   spriteOffset=(-96,-17) -> (15,5): an opaque pixel of the item's own art, one tile past
+        //   a footprint of x 13..14. The art overhangs, and those pixels are visually bare floor.
+        //
+        //   The projection itself is exact - offsetX=-96 is precisely the origin tile's centre to
+        //   the footprint's west corner (3 tiles x 32px), so the +scale/2 bias is right, and the
+        //   centres of (13,5)/(14,5)/(13,6) each resolve to themselves. tileX/tileY therefore
+        //   already name the tile under the pointer, in or out of the footprint.
+        //
+        //   Which way to answer depends on sizeZ, because that is the height the projection plane
+        //   sits at. Flat (a rug): the plane IS the floor, the extrapolation is exact, so return
+        //   the tile pointed at - clicking a rug's overhang walks you onto the floor there, as
+        //   aimed. Raised: the plane is above the floor and the overhanging pixels are the item's
+        //   own body, so extrapolating would send you past it; clamp into the footprint instead,
+        //   which is what makes a tall item clickable when it has no tile of its own underneath.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::getActiveSurfaceLocation()
+        if(sizeZ === 0)
+        {
+            return new Vector3d(tileX, tileY, tileZ);
+        }
+
+        return new Vector3d(
+            Math.min(Math.max(tileX, locX), locX + sizeX - 1),
+            Math.min(Math.max(tileY, locY), locY + sizeY - 1),
+            tileZ
+        );
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseDown()
