@@ -49,6 +49,81 @@ single missing member — so 45 commands landed and the number went 304 → 309.
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
 
+### The WIN63 file-level sweep (2026-09-02) — what is actually left, and the six gaps it found
+
+Counting uncited `.as` files against the primary tree is the wrong measure taken alone, and the raw
+number says so: 8,049 filenames, 4,842 with no citation anywhere in the port. Almost none of that is
+code. 1,767 are the flat `_SafeCls_N.as` embed wrappers at `src/` root, 1,069 are `binaryData/`
+asset libraries, 15 are Flex/`deng` framework, and 1,047 are `unknowns/` DTOs largely ported under
+recovered names. What is left is **947 uncited files under `com/sulake/`**, and splitting those by
+whether a TS file of the same name exists at all gives the only two numbers worth quoting:
+
+| | files | what it means |
+|---|---|---|
+| ported, no `AS3:` citation | 448 | rule 30 never applied there; their member coverage is unmeasurable |
+| absent, obfuscated name | 340 | mostly messages ported under recovered names — `wire-coverage` reads 0/0 |
+| absent, readable name | 138 | the only honest shortlist |
+
+Of those 138, most are deliberate: 36 `*Bootstrap.as` are empty SWF entry-point subclasses
+(`RoomEngineBootstrap extends _SafeCls_90` and nothing else) that `VortexMain` replaces with direct
+DI, ~25 are AIR/profiler/Flash-platform, 12 are the notification feed (dead in AS3 — flag off *and*
+controller never constructed), and 5 are `ui/widget/messages/` classes nothing constructs. The real
+remainder was two blocks — the catalog and Discord Rich Presence — plus a handful of room files.
+
+Closed in this pass:
+
+- **The seven unbuilt catalog widgets.** `CatalogPage.createWidget()` fell through on
+  `builderAddonsWidget`, `builderLoyaltyWidget`, `builderSubscriptionWidget`, `roomPreviewWidget`,
+  `traxPreviewWidget`, `trophyWidget` and `userBadgeSelectorWidget` — every name was already in
+  `CatalogWidgetName`, nothing constructed the class. The switch is now 48/48 against AS3's.
+- **`CatalogWidgetBuilderSubscriptionUpdatedEvent` and its dispatcher**, which no ported class
+  raised. Both AS3 call sites are restored, and `onBuildersClubFurniCount()` was additionally
+  missing `refreshBuilderStatus()`.
+- **The two NFT furni logics.** `FURNITURE_NFT_CREDIT` and `FURNITURE_NFT_REWARD_BOX` were
+  registered in `RoomObjectFactory` — to the base `FurnitureLogic`. The enum was wired, the
+  behaviour was not.
+- **`FurniturePlanetSystemVisualization`**, an empty class body the factory had been handing out
+  since it was written.
+- **`HabboLandingView`'s `HTIE_ICON_GAMES` case**, the landing-view half of the pair whose navigator
+  half was ported.
+
+Still open and deliberately so: **Discord Rich Presence** (7 files — manager, IID, presence,
+activity detection/state, settings controller and view), absent from the port entirely.
+
+Two notes for whoever re-runs this. The measure has one systematic false positive worth knowing
+about: an obfuscated file ported under a recovered name reads as "absent" by basename unless its TS
+cites it, so the 340 need `wire-coverage`/`sweep-unwired` to be judged, never the filename alone.
+And the 448-file untraced bucket is the larger finding — it is what makes 9,271 members unmeasurable
+in `as3-member-coverage.mjs`, and no amount of porting shrinks it.
+
+### The hidden member worklist (2026-09-02) — 74 absents, and why most were not
+
+`as3-member-coverage.mjs --unmeasured` counted 74 public/protected members absent from files the
+port cites only at file level, and would not name them. It now does. The list was mostly an
+attribution artifact: a TS file citing *one* member of an AS3 interface was being charged with that
+interface's whole surface — `FurniIconImageManager` cites `getProperty()` off the config interface
+`_SafeCls_53.as` and was answerable for its other six. Ownership now requires a basename match, or
+sole citation when the AS3 name is obfuscated.
+
+What survived the triage was four real defects, all in `core/window/dynamicstyle`: the
+`reward_track_item` style was never built (`fillStyleTable()` registers five, the port registered
+four), `brightness_and_shadow_under` and `..._gentle` pressed their icon with `offsetY: -1` where
+AS3 has `1` so it rose instead of sinking, `disabledStyles` faded to 0.4 against AS3's 0.5, and
+`AvatarUpdateEvent` carried a constant `AVATAR_UPDATE` that exists in no tree — AS3 passes
+`super("AVATAR_FIGURE_UPDATED")`, which is what the landing-view widget listens for, so the editor's
+save never reached it. That last one had been written up in a comment as an AS3 quirk; it was not.
+
+The rest is dead AS3 (`stageChangeResize` is registered nowhere, `mouseCursorType` is an empty
+override returning 0, `defineCustomCursorType` has no caller) or narrowing already argued at the
+declaration. Each now says so where a reader looking for it will land.
+
+**A rename is not a deviation.** Four members had been renamed and the rename then documented with
+a `DEVIATION:` marker, which is backwards — the marker is for behaviour the port changes on purpose,
+not for a name it changed for no reason. `populateWithStrings` is `populateWithVector` again across
+its 16 call sites, `getChildStyleByTags(tags)` takes the `WindowController` AS3 takes,
+`setChildStyle()` gives way to the public `childDynamicStyles` map every style registry writes
+through, and `pressedStyles` goes back to the source's own `pressedSyles` typo.
+
 ### Boot ordering (2026-08-16) — the asset library was empty for every component in `prepareCore()`
 
 Fifteen `Asset not found` / `no bitmap asset` / `not in the asset library` warnings at boot, and all
