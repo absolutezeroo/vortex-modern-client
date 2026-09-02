@@ -22,6 +22,8 @@ import {AvatarLogic} from './object/logic/AvatarLogic';
 import {PetLogic} from './object/logic/PetLogic';
 import {FurnitureRandomStateLogic} from './object/logic/furniture/FurnitureRandomStateLogic';
 import {FurnitureCreditLogic} from './object/logic/furniture/FurnitureCreditLogic';
+import {FurnitureNftCreditLogic} from './object/logic/furniture/FurnitureNftCreditLogic';
+import {FurnitureNftRewardBoxLogic} from './object/logic/furniture/FurnitureNftRewardBoxLogic';
 import {FurnitureStickieLogic} from './object/logic/furniture/FurnitureStickieLogic';
 import {FurnitureExternalImageLogic} from './object/logic/furniture/FurnitureExternalImageLogic';
 import {FurniturePresentLogic} from './object/logic/furniture/FurniturePresentLogic';
@@ -525,12 +527,12 @@ export class RoomObjectFactory implements IRoomObjectFactory
                 break;
 
             case RoomObjectLogicEnum.FURNITURE_NFT_CREDIT:
-                LogicClass = FurnitureLogic;
+                LogicClass = FurnitureNftCreditLogic;
 
                 break;
 
             case RoomObjectLogicEnum.FURNITURE_NFT_REWARD_BOX:
-                LogicClass = FurnitureLogic;
+                LogicClass = FurnitureNftRewardBoxLogic;
 
                 break;
 

@@ -376,18 +376,9 @@ export class CatalogPage implements ICatalogPage
         }
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // 37 of the ~45 AS3 cases are ported so far (itemGridWidget/simplePriceWidget/productViewWidget/
-    // purchaseWidget/spinnerWidget/totalPriceWidget/limitedItemWidget/specialInfoWidget/warningWidget/
-    // textInputWidget/firstProductAutoSelectorWidget/singleViewWidget/builderWidget/
-    // soldLtdItemsWidget/madMoneyWidget/addOnBadgeViewWidget/featuredItemsWidget/colourGridWidget/
-    // bundleGridScrollWidget/activityPointDisplayWidget/redeemItemCodeWidget/spacesNewWidget/
-    // bundlePurchaseExtraInfoWidget/clubGiftWidget/clubBuyWidget/vipBuyWidget/loyaltyVipBuyWidget/
-    // vipGiftWidget/marketPlaceWidget/marketPlaceOwnItemsWidget/recyclerWidget/recyclerPrizesWidget/
-    // buyGuildWidget/guildBadgeViewWidget/guildSelectorWidget/guildForumSelectorWidget/
-    // roomAdsCatalogWidget) -
-    // the rest (trophyWidget, ...) fall through and are silently skipped, matching AS3's own switch
-    // (no default case = unmatched names do nothing).
+    // All 48 of the AS3 switch's cases are ported. Like AS3 it has no default arm, so a layout
+    // naming a widget that does not exist is silently skipped rather than throwing.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
     private createWidget(window: IWindowContainer): void
     {
         switch(window.name)
