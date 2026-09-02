@@ -24,6 +24,9 @@ import {TextInputCatalogWidget} from './widgets/TextInputCatalogWidget';
 import {FirstProductSelectorCatalogWidget} from './widgets/FirstProductSelectorCatalogWidget';
 import {SingleViewCatalogWidget} from './widgets/SingleViewCatalogWidget';
 import {BuilderCatalogWidget} from './widgets/BuilderCatalogWidget';
+import {BuilderAddonsCatalogWidget} from './widgets/BuilderAddonsCatalogWidget';
+import {BuilderLoyaltyCatalogWidget} from './widgets/BuilderLoyaltyCatalogWidget';
+import {BuilderSubscriptionCatalogWidget} from './widgets/BuilderSubscriptionCatalogWidget';
 import {SoldLtdItemsCatalogWidget} from './widgets/SoldLtdItemsCatalogWidget';
 import {MadMoneyCatalogWidget} from './widgets/MadMoneyCatalogWidget';
 import {AddOnBadgeViewCatalogWidget} from './widgets/AddOnBadgeViewCatalogWidget';
@@ -432,6 +435,15 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.FIRST_PRODUCT_AUTO_SELECTOR:
                 this._widgets.push(new FirstProductSelectorCatalogWidget(window));
+                break;
+            case CatalogWidgetName.BUILDER_SUBSCRIPTION:
+                this._widgets.push(new BuilderSubscriptionCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.BUILDER_ADDONS:
+                this._widgets.push(new BuilderAddonsCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.BUILDER_LOYALTY:
+                this._widgets.push(new BuilderLoyaltyCatalogWidget(window, this._catalog!));
                 break;
             case CatalogWidgetName.BUILDER:
                 this._widgets.push(new BuilderCatalogWidget(window, this._catalog!));

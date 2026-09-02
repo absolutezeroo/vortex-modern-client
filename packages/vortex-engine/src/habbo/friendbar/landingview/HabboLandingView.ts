@@ -702,6 +702,17 @@ export class HabboLandingView extends AbstractView implements IHabboLandingView
 
                 break;
             }
+
+            // The games icon opens the game centre over the landing view, so the landing view
+            // steps aside — but only when the centre is actually on. With
+            // `game.center.enabled` false the icon may still be in the toolbar (that is gated
+            // by its own `games_icon_enabled`) and clicking it must leave the view alone.
+            case 'HTIE_ICON_GAMES':
+            {
+                if(this.getBoolean('game.center.enabled')) this.disable();
+
+                break;
+            }
         }
     };
 }

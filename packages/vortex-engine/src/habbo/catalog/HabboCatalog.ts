@@ -257,6 +257,7 @@ import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
 import {PlaceObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PlaceObjectMessageComposer';
 import type {IDragAndDropDoneReceiver} from './viewer/IDragAndDropDoneReceiver';
 import {CatalogWidgetRoomChangedEvent} from './viewer/widgets/events/CatalogWidgetRoomChangedEvent';
+import {CatalogWidgetBuilderSubscriptionUpdatedEvent} from './viewer/widgets/events/CatalogWidgetBuilderSubscriptionUpdatedEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
 import type {RoomEngineObjectPlacedOnUserEvent} from '@habbo/room/events/RoomEngineObjectPlacedOnUserEvent';
@@ -1507,6 +1508,20 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         }
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::dispatchBuilderSubscriptionUpdatedToCatalogPages()
+    private dispatchBuilderSubscriptionUpdatedToCatalogPages(): void
+    {
+        if(this._catalogStates == null) return;
+
+        for(const state of this._catalogStates.values())
+        {
+            if(state != null && state.catalogViewer != null && state.catalogViewer.currentPage != null)
+            {
+                state.catalogViewer.currentPage.dispatchWidgetEvent(new CatalogWidgetBuilderSubscriptionUpdatedEvent());
+            }
+        }
+    }
+
     /**
      * The item landed somewhere in the room. AS3 immediately draws it locally at half alpha — the
      * ghost — and remembers where, so `itemAddedToInventory()` can turn it into the real placement
@@ -2590,6 +2605,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         this._builderMembershipUpdateTime = HabboCatalog.getTimer();
         this._builderSecondsLeftWithGrace = parser.secondsLeftWithGrace;
 
+        this.dispatchBuilderSubscriptionUpdatedToCatalogPages();
         this.refreshBuilderStatus();
     }
 
@@ -2601,6 +2617,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         if(!parser) return;
 
         this._builderFurniCount = parser.furniCount;
+
+        this.dispatchBuilderSubscriptionUpdatedToCatalogPages();
+        this.refreshBuilderStatus();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::getBuilderFurniPlaceableStatusForOffer()
