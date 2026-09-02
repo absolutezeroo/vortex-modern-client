@@ -88,12 +88,12 @@ export class CatalogPage implements ICatalogPage
     // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_layoutCode
     private _layoutCode: string;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_layout
-    // No counterpart: AS3 stores the raw XML between `assets.getAssetByName(...).content` and the
-    // immediately-following `windowManager.buildFromXML(_layout)` call in createWindow() — never
-    // read anywhere else, by this class or a subclass. This port's window manager builds directly
-    // from a compiled widget-layout registry (see createWindow() below), so there is no raw XML
-    // value to hold; `_window` already keeps the one thing `_layout` ever fed.
+    // DEVIATION: AS3 stores the raw XML between `assets.getAssetByName(...).content` and the
+    //   immediately-following `windowManager.buildFromXML(_layout)` call in createWindow() — never
+    //   read anywhere else, by this class or a subclass. This port's window manager builds directly
+    //   from a compiled widget-layout registry (see createWindow() below), so there is no raw XML
+    //   value to hold; `_window` already keeps the one thing `_layout` ever fed.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_layout
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_offers
     private _offers: IPurchasableOffer[];

@@ -21,6 +21,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 
 export interface IRoomEngineServices
 {
@@ -133,15 +134,15 @@ export interface IRoomEngineServices
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get windowManager()
     readonly windowManager: IHabboWindowManager | null;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get gameEngine()
-    // returns the game manager. `habbo/game` is 0/63 in this port — see RoomEngine.ts's own note.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get gameEngine()
+    readonly gameEngine: IHabboGameManager | null;
 
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::requestRoomAdImage()
     // forwards to the ad manager, which this port does not have — see RoomEngine's
     // handleObjectRoomAdEvent().
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getActiveRoomActiveCanvas()
-    // returns the active room's active rendering canvas. RoomEngine reaches its canvases through
-    // the renderer rather than exposing one, so declaring it here would oblige an accessor the
-    // port has no caller for.
+    // DEVIATION: returns the active room's active rendering canvas. RoomEngine reaches its canvases
+    //   through the renderer rather than exposing one, so declaring it here would oblige an accessor
+    //   the port has no caller for.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getActiveRoomActiveCanvas()
 }

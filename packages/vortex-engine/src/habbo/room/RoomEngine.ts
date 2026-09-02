@@ -40,6 +40,8 @@ import {IID_RoomManager} from '@iid/IIDRoomManager';
 import {IID_RoomRendererFactory} from '@iid/IIDRoomRendererFactory';
 import {IID_RoomSessionManager} from '@iid/IIDRoomSessionManager';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
+import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
 import {RoomObjectAvatarSelectedMessage} from './messages/RoomObjectAvatarSelectedMessage';
@@ -716,13 +718,76 @@ export class RoomEngine extends Component implements IRoomEngine,
             ),
             new ComponentDependency(
                 IID_RoomSessionManager,
-                (manager: IRoomSessionManager | null) => 
+                (manager: IRoomSessionManager | null) =>
                 {
                     this._roomSessionManager = manager;
                 },
                 false // Optional - needed to resolve isDecorateMode from the active room session
             ),
+            new ComponentDependency(
+                IID_HabboGameManager,
+                (manager: IHabboGameManager | null) =>
+                {
+                    this._gameManager = manager;
+                },
+                false // Optional - only read in game mode, to route clicks into the snow-war engine
+            ),
         ];
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_gameManager
+    private _gameManager: IHabboGameManager | null = null;
+
+    /**
+     * A click on an avatar, in game mode: a snow-war throw at that player. Outside game mode AS3
+     * does nothing here — the avatar's own selection happens on the way in, in the caller.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleClickOnAvatar()
+    private handleClickOnAvatar(objectId: number, event: RoomObjectMouseEvent): void
+    {
+        if(this.isDecorateMode) return;
+
+        if(this.isGameMode) this.gameEngine?.handleClickOnHuman(objectId, event.altKey, event.shiftKey);
+    }
+
+    /**
+     * The pointer entering an avatar, in game mode: the tile cursor is moved onto that avatar's own
+     * tile so the aim marker follows the target, and the engine is told who is under the pointer.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleMouseEnterAvatar()
+    private handleMouseEnterAvatar(objectId: number, event: RoomObjectMouseEvent): void
+    {
+        if(this.isDecorateMode) return;
+
+        if(!this.isGameMode) return;
+
+        const tileCursor = this.getTileCursor(this._activeRoomId);
+
+        if(tileCursor !== null && tileCursor.getEventHandler() !== null)
+        {
+            const avatar = this.getRoomObject(
+                this._activeRoomId,
+                objectId,
+                RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
+            ) as IRoomObjectController | null;
+
+            if(avatar !== null)
+            {
+                const location = avatar.getLocation();
+
+                tileCursor.getEventHandler()!.processUpdateMessage(
+                    new RoomObjectUpdateMessage(new Vector3d(location.x, location.y, location.z), null)
+                );
+            }
+        }
+
+        this.gameEngine?.handleMouseOverOnHuman(objectId, event.altKey, event.shiftKey);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get gameEngine()
+    get gameEngine(): IHabboGameManager | null
+    {
+        return this._gameManager;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::get useOffsetScrolling()
@@ -1055,12 +1120,8 @@ export class RoomEngine extends Component implements IRoomEngine,
      * of either category, which is why `addObjectUpdateCategory(202)` has to be called before the
      * first splash — an update category the room manager does not know about is not ticked.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/RoomObjectFactory.as:284-287
-     * still owes `SnowballLogic` and `_SafeCls_2258` plus their two visualizations, so
-     * `createRoomObject()` answers null for both types today and these four methods do nothing
-     * visible yet. They are ported now because `GameArenaView` calls them by name and the note that
-     * used to stand here — "habbo/game is 0/63, there is no game manager to return" — stopped being
-     * true on 2026-09-01.
+     * `SnowballLogic`, `SnowSplashLogic` and their two visualizations landed on 2026-09-01, so
+     * `createRoomObject()` answers both types and these four methods are live end to end.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectSnowWar()
     addObjectSnowWar(roomId: number, objectId: number, location: IVector3d, category: number): boolean
@@ -1124,20 +1185,22 @@ export class RoomEngine extends Component implements IRoomEngine,
         return (room?.createRoomObject(objectId, type, category) ?? null) as IRoomObjectController | null;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createRoomObjectEventHandlerInstance()
-    // is the hook AS3 leaves for a subclass to supply its own event handler. This port folded
-    // `_SafeCls_1821` into RoomEngine itself rather than keeping it a separate object, so there is
-    // no instance to create — see clickRoomObject() and the other handleRoomObject* members here.
+    // DEVIATION: the hook AS3 leaves for a subclass to supply its own event handler. This port
+    //   folded `_SafeCls_1821` into RoomEngine itself rather than keeping it a separate object — its
+    //   members are traced here, from `handleRoomObjectEvent()` down — so there is no instance to
+    //   create and nothing to override.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createRoomObjectEventHandlerInstance()
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::get roomEngine
-    // was `_SafeCls_1821`'s accessor onto the `_SafeCls_90` (RoomEngine) instance that owned it —
-    // every `roomEngine.foo()` call inside that class went through it. Folding `_SafeCls_1821`
-    // into RoomEngine itself collapses the accessor to `this`, which is not a meaningful member to
-    // expose; every former `roomEngine.x` call site in this class already reads `this.x` directly.
+    // DEVIATION: `_SafeCls_1821`'s accessor onto the `_SafeCls_90` (RoomEngine) instance that owned
+    //   it — every `roomEngine.foo()` call inside that class went through it. Folding the class in
+    //   collapses the accessor to `this`, which is not a member worth exposing; every former
+    //   `roomEngine.x` call site reads `this.x` directly.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::get roomEngine()
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::SETUP_WITHOUT_TOOLBAR
-    // and SETUP_WITHOUT_GAME_MANAGER are bit flags for a `setup()` overload this port does not
-    // have: the engine's dependencies are wired by the DI container, not by a flags argument.
+    // DEVIATION: two `uint` bit flags (1 and 4) that nothing in the primary tree reads — there is no
+    //   `setup()` in `_SafeCls_90.as` for them to be passed to, so they are dead in AS3 as well as
+    //   absent here. The engine's dependencies are wired by the DI container either way.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::SETUP_WITHOUT_TOOLBAR
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getIsPlayingGame()
     getIsPlayingGame(roomId: number): boolean
@@ -8401,12 +8464,33 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE_TO" case
                 this.confirmObjectMove(this._activeRoomId);
             }
-            else if(this._connection)
+            else
             {
+                // AS3: _SafeCls_1821.as::handleClickOnTile() — a spectator clicks nothing, and in
+                // game mode the click is a snow-war action rather than a walk: onto the player under
+                // the cursor if there is one, otherwise at the tile.
+                const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
+
+                if(session !== null && session.isSpectatorMode) return;
+
+                if(this.isGameMode)
+                {
+                    if(this._playerUnderCursor >= 0)
+                    {
+                        this.gameEngine?.handleClickOnHuman(this._playerUnderCursor, event.altKey, event.shiftKey);
+                    }
+                    else
+                    {
+                        this.gameEngine?.handleClickOnTile(event);
+                    }
+
+                    return;
+                }
+
                 // The floor plane's own height at that tile - the surface actually pointed at, which
                 // for a click on bare floor is the one the server should walk to even when a raised
                 // item shares the tile.
-                this._connection.send(new MoveAvatarMessageComposer(tileX, tileY, tileZ));
+                this._connection?.send(new MoveAvatarMessageComposer(tileX, tileY, tileZ));
             }
         }
     }
@@ -8652,6 +8736,11 @@ export class RoomEngine extends Component implements IRoomEngine,
             return;
         }
 
+        // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() line 738 — the `else` arm of the
+        // cat-100 modifier chain above. Does nothing outside game mode; in it, a click on an avatar
+        // is a snow-war throw at that player.
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) this.handleClickOnAvatar(objId, event);
+
         // AS3: _SafeCls_1821.as::handleRoomObjectMouseClick() — a plain (unmodified) furni click
         // notifies the server via ClickFurni (wired "click furni" triggers, click interactions),
         // then, in where-you-click-where-you-go mode, walks the avatar onto the furni if it is
@@ -8725,8 +8814,8 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseEnter()
-    // Emits REOE_MOUSE_ENTER so hover-driven UI can react. The AS3 category-100 (avatar) branch is
-    // game-mode only; the Turbo client has no games, so only the event dispatch is ported.
+    // Emits REOE_MOUSE_ENTER so hover-driven UI can react, and in game mode snaps the tile cursor
+    // onto the avatar and tells the snow-war engine who is under the pointer.
     private handleRoomObjectMouseEnter(event: RoomObjectMouseEvent): void
     {
         const obj = event.object;
@@ -8735,15 +8824,20 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const category = this.getRoomObjectCategory(obj.getType());
 
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) this.handleMouseEnterAvatar(obj.getId(), event);
+
         this.events.emit(
             RoomEngineObjectEvent.REOE_MOUSE_ENTER,
             new RoomEngineObjectEvent(RoomEngineObjectEvent.REOE_MOUSE_ENTER, this._activeRoomId, obj.getId(), category)
         );
     }
 
+    /**
+     * AS3's category-100 arm is *not* gated on game mode, unlike the enter side's: leaving an avatar
+     * always resets the tile cursor, which is what stops it from staying stuck under the last
+     * avatar the pointer crossed.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleRoomObjectMouseLeave()
-    // Emits REOE_MOUSE_LEAVE. The AS3 category-100 branch (clearing the game tile cursor) is
-    // game-mode only and omitted; only the event dispatch is ported.
     private handleRoomObjectMouseLeave(event: RoomObjectMouseEvent): void
     {
         const obj = event.object;
@@ -8751,6 +8845,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(obj === null) return;
 
         const category = this.getRoomObjectCategory(obj.getType());
+
+        if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER)
+        {
+            const tileCursor = this.getTileCursor(this._activeRoomId);
+
+            tileCursor?.getEventHandler()?.processUpdateMessage(new RoomObjectDataUpdateMessage(0, null));
+        }
 
         this.events.emit(
             RoomEngineObjectEvent.REOE_MOUSE_LEAVE,

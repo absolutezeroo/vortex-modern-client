@@ -84,12 +84,12 @@ export class CatalogWidget implements ICatalogWidget
     {
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/CatalogWidget.as::getAssetXML()
-    // No counterpart: AS3's only caller is attachWidgetView() below, as the intermediate
-    // `assets.getAssetByName(name).content as XML` step before `buildFromXML()`. This port's
-    // compiled window-layout registry builds a ready-to-use window directly via
-    // `buildWidgetLayout()` — same fusion as CatalogPage.createWindow() — so there is no raw-XML
-    // value to hand back; a subclass override would have nothing left to hook.
+    // DEVIATION: AS3's only caller is attachWidgetView() below, as the intermediate
+    //   `assets.getAssetByName(name).content as XML` step before `buildFromXML()`. This port's
+    //   compiled window-layout registry builds a ready-to-use window directly via
+    //   `buildWidgetLayout()` — same fusion as CatalogPage.createWindow() — so there is no raw-XML
+    //   value to hand back; a subclass override would have nothing left to hook.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/CatalogWidget.as::getAssetXML()
 
     // AS3 loads this via assets.getAssetByName(name).content + buildFromXML(); this port's
     // compiled window-layout registry builds ready-to-use windows directly instead (see

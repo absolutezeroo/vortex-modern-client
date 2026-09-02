@@ -517,11 +517,11 @@ export class ComponentContext extends Component implements IContext
     // InterfaceStructList, neither of which this port has — see Component.ts's own note on why
     // that storage is structured differently here.
 
-    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::_queuees,
-    // addQueueeForInterface(), hasQueueForInterface() and getQueueForInterface() are AS3's
-    // interface-queue storage. This port keeps the same information in `_interfaceQueues` (a Map
-    // keyed by IID) and reaches it through addToQueue() below, so these are a different shape of
-    // the same mechanism rather than missing behaviour.
+    // DEVIATION: `_queuees`, `addQueueeForInterface()`, `hasQueueForInterface()` and
+    //   `getQueueForInterface()` are AS3's interface-queue storage. This port keeps the same
+    //   information in `_interfaceQueues` (a Map keyed by IID) and reaches it through addToQueue()
+    //   below — a different shape of the same mechanism, not missing behaviour.
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::_queuees
 
     /**
 	 * Get all attached components

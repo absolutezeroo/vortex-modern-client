@@ -14,10 +14,11 @@ export class NftEmeraldConvertResultMessageEventParser implements IMessageParser
     // honestly, and both names below are DERIVED from that branch, not recovered:
     //   0 → handled as success (the handler returns without notifying)
     //   5 → "notification.nft.emerald_convert.not_in_collector"
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3525/_SafeCls_3524.as
-    // — values 1..4 are distinct failure codes with no readable identifier and no branch of their
+    // Values 1..4 are distinct failure codes with no readable identifier and no branch of their
     // own; AS3 folds all four into the generic "notification.nft.emerald_convert_failed" message,
-    // which is what the port does too. Name them if a tree ever turns up that has them.
+    // which is what the port does too — nothing is owed here, only the names are unrecoverable.
+    // Name them if a tree ever turns up that has them.
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3525/_SafeCls_3524.as
 
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_3525/_SafeCls_3524.as::_SafeStr_8683 (name derived, see above)
     static readonly RESULT_OK: number = 0;

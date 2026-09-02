@@ -152,14 +152,14 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 	 *
 	 * @see AS3 RoomObjectVisualizationFactory._habboAvatar
 	 */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::get dependencies()
-    // AS3's factory extends the Component base (_SafeCls_50) and overrides `dependencies` to
-    // declare its IIDAvatarRenderManager need, resolved by the DI container which then invokes
-    // the callback that assigns `_habboAvatar`. This port's factory is a plain class, not a DI
-    // Component (see the class-level @see above), so there is no `dependencies` getter to
-    // override. The same avatar-render-manager reference still reaches it — RoomEngine resolves
-    // its own IIDAvatarRenderManager dependency and pushes it in here directly
-    // (RoomEngine.ts, `this._visualizationFactory.avatarRenderManager = avatarRenderer`).
+    // DEVIATION: AS3's factory extends the Component base (_SafeCls_50) and overrides
+    //   `dependencies` to declare its IIDAvatarRenderManager need, resolved by the DI container
+    //   which then invokes the callback that assigns `_habboAvatar`. This port's factory is a plain
+    //   class, not a DI Component (see the class-level @see above), so there is no `dependencies`
+    //   getter to override. The same avatar-render-manager reference still reaches it — RoomEngine
+    //   resolves its own IIDAvatarRenderManager dependency and pushes it in here directly
+    //   (RoomEngine.ts, `this._visualizationFactory.avatarRenderManager = avatarRenderer`).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomObjectVisualizationFactory.as::get dependencies()
     set avatarRenderManager(value: IAvatarRenderManager | null)
     {
         this._avatarRenderManager = value;

@@ -59,11 +59,12 @@ import {WebCaptchaView} from './WebCaptchaView';
 
 const log = Logger.getLogger('client.login.LoginFlow');
 
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/login/LoginFlow.as declares four `[Embed]`
-// font classes — ubuntu_regular, ubuntu_bold, ubuntu_italic, ubuntu_bold_italic — the SWF's copy of
-// a font the player's machine may not have. Embedded classes have no TypeScript counterpart and the
-// browser resolves `font: 'Ubuntu'` from the page's @font-face, so they are deliberately not
-// reproduced. See the same note on LoaderUI.ts and OnBoardingHcFlow.ts, which declare the same four.
+// DEVIATION: the AS3 class declares four `[Embed]` font classes — ubuntu_regular, ubuntu_bold,
+//   ubuntu_italic, ubuntu_bold_italic — the SWF's copy of a font the player's machine may not have.
+//   Embedded classes have no TypeScript counterpart and the browser resolves `font: 'Ubuntu'` from
+//   the page's @font-face, so they are deliberately not reproduced. Same note on LoaderUI.ts and
+//   OnBoardingHcFlow.ts, which declare the same four.
+// AS3: sources/WIN63-202607011411-782849652/src/login/LoginFlow.as::ubuntu_regular
 export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
 {
     // AS3: LOGIN_FLOW_FINISHED_EVENT

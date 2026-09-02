@@ -35,11 +35,12 @@ import type {NameChangeDialog} from './NameChangeDialog';
 
 const log = Logger.getLogger('client.onBoardingHc.OnBoardingHcFlow');
 
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as
-// declares four `[Embed]` font classes — ubuntu_regular, ubuntu_bold, ubuntu_italic,
-// ubuntu_bold_italic — the SWF's copy of a font the player's machine may not have. Embedded classes
-// have no TypeScript counterpart and the browser resolves `font: 'Ubuntu'` from the page's
-// @font-face, so they are deliberately not reproduced. Same note on LoaderUI.ts and LoginFlow.ts.
+// DEVIATION: the AS3 class declares four `[Embed]` font classes — ubuntu_regular, ubuntu_bold,
+//   ubuntu_italic, ubuntu_bold_italic — the SWF's copy of a font the player's machine may not have.
+//   Embedded classes have no TypeScript counterpart and the browser resolves `font: 'Ubuntu'` from
+//   the page's @font-face, so they are deliberately not reproduced. Same note on LoaderUI.ts and
+//   LoginFlow.ts.
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHc/OnBoardingHcFlow.as::ubuntu_regular
 export class OnBoardingHcFlow extends Sprite implements IOnBoardingHcContext
 {
     // AS3: NEW_USER_FLOW_FINISHED_EVENT

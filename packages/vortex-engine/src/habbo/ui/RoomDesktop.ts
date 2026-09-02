@@ -888,14 +888,15 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         widget?.showGamePlayerName(objectId, name, color, fadeDelayMs);
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::initCameraLocation()
-    // reads camera_init_x/y/z off the room and hands them to RoomEngine.updateRoomCamera(), which
-    // this port does not expose — its cameras are driven from inside the engine's own update.
+    // DEVIATION: reads camera_init_x/y/z off the room and hands them to
+    //   `RoomEngine.updateRoomCamera()`, which this port does not expose — its cameras are driven
+    //   from inside the engine's own update.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::initCameraLocation()
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::addListenerToStage()
-    // and removeListenerFromStage() attach a weak listener to the Flash `stage` through the room
-    // canvas's DisplayObject. There is no stage here; the equivalent is the browser document, and
-    // nothing in the port asks RoomDesktop to reach it.
+    // DEVIATION: `addListenerToStage()` and `removeListenerFromStage()` attach a weak listener to
+    //   the Flash `stage` through the room canvas's DisplayObject. There is no stage here; the
+    //   equivalent is the browser document, and nothing in the port asks RoomDesktop to reach it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::addListenerToStage()
 
     // AS3: .../src/com/sulake/habbo/ui/RoomDesktop.as::getRoomViewRect()
     public getRoomViewRect(): { x: number; y: number; width: number; height: number } | null 

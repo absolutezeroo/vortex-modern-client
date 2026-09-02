@@ -70,11 +70,12 @@ export class RoomSessionManager extends Component implements IRoomSessionManager
     // room engine, which is the path the normal client actually takes. Porting the viewer mode is
     // its own task.
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::SETUP_WITHOUT_TRACKING
-    // Dead in AS3 itself: grepping the whole primary tree finds only the declaration (value 3) —
-    // no call site ever passes it to the constructor's `flags` parameter this port doesn't carry
-    // either (see the constructor below). The bit pattern it names (1|2) IS read, but only as the
-    // literal `flags & 3` in AS3's `get dependencies()`, never through this symbol.
+    // DEVIATION: dead in AS3 itself — grepping the whole primary tree finds only the declaration
+    //   (value 3); no call site ever passes it to the constructor's `flags` parameter, which this
+    //   port does not carry either (see the constructor below). The bit pattern it names (1|2) IS
+    //   read, but only as the literal `flags & 3` in AS3's `get dependencies()`, never through this
+    //   symbol.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/RoomSessionManager.as::SETUP_WITHOUT_TRACKING
 
     // AS3: .../src/com/sulake/habbo/session/RoomSessionManager.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
