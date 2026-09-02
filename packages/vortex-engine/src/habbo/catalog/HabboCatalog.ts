@@ -3528,8 +3528,16 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         super.dispose();
     }
 
-    protected override initComponent(): void 
+    protected override initComponent(): void
     {
+        // sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as
+        // ::onRoomExit() — deliberately not subscribed, and this note is here so the next
+        // unwired-code sweep stops re-flagging it as a missing registration.
+        //
+        // AS3 subscribes `CloseConnectionMessageEvent` (3404) to it and **the handler's body is
+        // empty** — two braces, no statements. Wiring it would add a subscription that does
+        // nothing. The message itself is ported and seven other modules subscribe to it for the
+        // work they really do on a room exit.
         this.addMessageEvent(new CreditBalanceEvent(this.onCreditBalance.bind(this)));
         this.addMessageEvent(new LtdRaffleResultMessageEvent(this.onLtdRaffleResult.bind(this)));
         this.addMessageEvent(new SilverBalanceMessageEvent(this.onSilverBalance.bind(this)));

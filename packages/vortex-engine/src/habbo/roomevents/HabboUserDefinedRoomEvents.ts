@@ -130,10 +130,12 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_incomingMessages
     private _incomingMessages: IncomingMessages | null = null;
 
-    // TODO(AS3): the UI helpers `refreshButton`/`prepareButton`/`getButtonImage`
-    // (HabboUserDefinedRoomEvents.as) are still absent — no ported code calls them yet, so they are
-    // one documented gap rather than a fan-out of stubs (same approach as HabboHelp's absent-members
-    // block). Every sub-controller AS3's constructor builds is now created in initComponent().
+    // TODO(AS3): the UI helpers `refreshButton`/`prepareButton` (HabboUserDefinedRoomEvents.as) are
+    // absent. Narrowed 2026-09-01: this note used to name `getButtonImage` too, which is ported
+    // below and is the *only* one of the three with a caller — `SourceTypeOption`. Nothing in any
+    // tree calls the room-events `refreshButton`; the `_friendList.refreshButton(...)` sites in
+    // habbo/friendlist are `HabboFriendList`'s own same-named member, a different class.
+    // Every sub-controller AS3's constructor builds is created in initComponent().
 
     /**
      * The asset library is not optional decoration: AS3's third constructor argument is forwarded
@@ -531,14 +533,34 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
         }
     }
 
+    /**
+     * 🐛 The `suffix` used to default to `'_png'` and be concatenated, exactly as AS3 writes it —
+     * and every lookup answered null. AS3 asks for `<name>_png` because that is the *field name* in
+     * the component's `*Com.as`; this port registers images under the bare file basename, so
+     * `icon_source_context_png` finds nothing where `icon_source_context` is on disk. The only
+     * caller is `SourceTypeOption`, so the wired input-source picker's four icons were blank, with
+     * no error and no log — the same suffix trap `HabboFriendList.getButtonImage()` and
+     * `HabboGroupsManager.getButtonImage()` already document.
+     *
+     * Resolved the way `HabboNavigator.getButtonImage()` already does it — bare name first, the
+     * suffixed one as a fallback — so a library that really does key an asset the AS3 way still
+     * works. The parameter keeps AS3's signature.
+     */
     // AS3: HabboUserDefinedRoomEvents.as::getButtonImage()
     getButtonImage(name: string, suffix: string = '_png'): ImageBitmap | null
     {
         // AS3 resolves a BitmapDataAsset and returns a clone() of its BitmapData; the port's image
         // assets are ImageBitmaps consumed read-only by the caller, so the content is returned directly.
-        const asset = this.assets?.getAssetByName(name + suffix);
+        const asset = this.assets?.getAssetByName(name) ?? this.assets?.getAssetByName(name + suffix) ?? null;
 
-        return (asset?.content as ImageBitmap | null) ?? null;
+        if(asset === null)
+        {
+            log.warn(`GETTING ASSET: ${name} (nor ${name}${suffix}) - not in the library`);
+
+            return null;
+        }
+
+        return (asset.content as ImageBitmap | null) ?? null;
     }
 
     // --- Event handlers ---

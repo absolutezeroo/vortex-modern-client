@@ -231,14 +231,38 @@ export class ResourceManager implements IResourceManager
         return name.startsWith('http://') || name.startsWith('https://') || (name.length > 1 && name.startsWith('/'));
     }
 
+    /**
+     * 🐛 The `_png` fallback is not AS3's, and it is here because AS3 does not need it. Flash asks
+     * for `<name>_png` because that is the *field name* in the component's `*Com.as`; this port
+     * registers images under the bare file basename, so every `assetUri = '..._png'` call site was
+     * asking for a name nothing had registered — `WiredErrorInfoView`'s type icon, `Projectile`'s
+     * directional-system image and the wired notification icons all resolved to the missing-image
+     * placeholder, each with one console warning nobody was reading.
+     *
+     * Fixed here rather than at the call sites because this is the one place every `assetUri` and
+     * every `retrieveAsset()` routes through. The as-given name is still tried **first**, so the
+     * assets that really did ship with `_png` in their basename
+     * (`icon_wired_variable_context_large_png.png` is one) keep resolving; only a name that would
+     * otherwise miss falls back.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/ResourceManager.as::resolveAssetName()
-    private resolveAssetName(uri: string): string 
+    private resolveAssetName(uri: string): string
     {
         const interpolatingManager = this._windowManager as unknown as {
             interpolate?: (value: string) => string
         };
+        const interpolated = interpolatingManager.interpolate?.(uri) ?? uri;
 
-        return interpolatingManager.interpolate?.(uri) ?? uri;
+        if(this._assets.has(interpolated) || this._assetUrls.has(interpolated)) return interpolated;
+
+        if(interpolated.endsWith('_png'))
+        {
+            const stripped = interpolated.slice(0, -4);
+
+            if(this._assets.has(stripped) || this._assetUrls.has(stripped)) return stripped;
+        }
+
+        return interpolated;
     }
 
     /**
