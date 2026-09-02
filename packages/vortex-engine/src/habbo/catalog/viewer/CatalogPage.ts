@@ -29,6 +29,8 @@ import {BuilderLoyaltyCatalogWidget} from './widgets/BuilderLoyaltyCatalogWidget
 import {BuilderSubscriptionCatalogWidget} from './widgets/BuilderSubscriptionCatalogWidget';
 import {RoomPreviewCatalogWidget} from './widgets/RoomPreviewCatalogWidget';
 import {TraxPreviewCatalogWidget} from './widgets/TraxPreviewCatalogWidget';
+import {TrophyCatalogWidget} from './widgets/TrophyCatalogWidget';
+import {UserBadgeSelectorCatalogWidget} from './widgets/UserBadgeSelectorCatalogWidget';
 import {SoldLtdItemsCatalogWidget} from './widgets/SoldLtdItemsCatalogWidget';
 import {MadMoneyCatalogWidget} from './widgets/MadMoneyCatalogWidget';
 import {AddOnBadgeViewCatalogWidget} from './widgets/AddOnBadgeViewCatalogWidget';
@@ -437,6 +439,12 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.FIRST_PRODUCT_AUTO_SELECTOR:
                 this._widgets.push(new FirstProductSelectorCatalogWidget(window));
+                break;
+            case CatalogWidgetName.TROPHY:
+                this._widgets.push(new TrophyCatalogWidget(window, this._catalog!));
+                break;
+            case CatalogWidgetName.USER_BADGE_SELECTOR:
+                this._widgets.push(new UserBadgeSelectorCatalogWidget(window, this._catalog!));
                 break;
             case CatalogWidgetName.TRAX_PREVIEW:
                 this._widgets.push(new TraxPreviewCatalogWidget(window, this._catalog!.soundManager));

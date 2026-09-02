@@ -501,6 +501,12 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_inventory
     private _inventory: IHabboInventory | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get inventory()
+    get inventory(): IHabboInventory | null
+    {
+        return this._inventory;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get sessionDataManager()
     get sessionDataManager(): ISessionDataManager | null 
     {
