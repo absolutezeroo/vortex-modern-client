@@ -27,6 +27,8 @@ import {BuilderCatalogWidget} from './widgets/BuilderCatalogWidget';
 import {BuilderAddonsCatalogWidget} from './widgets/BuilderAddonsCatalogWidget';
 import {BuilderLoyaltyCatalogWidget} from './widgets/BuilderLoyaltyCatalogWidget';
 import {BuilderSubscriptionCatalogWidget} from './widgets/BuilderSubscriptionCatalogWidget';
+import {RoomPreviewCatalogWidget} from './widgets/RoomPreviewCatalogWidget';
+import {TraxPreviewCatalogWidget} from './widgets/TraxPreviewCatalogWidget';
 import {SoldLtdItemsCatalogWidget} from './widgets/SoldLtdItemsCatalogWidget';
 import {MadMoneyCatalogWidget} from './widgets/MadMoneyCatalogWidget';
 import {AddOnBadgeViewCatalogWidget} from './widgets/AddOnBadgeViewCatalogWidget';
@@ -435,6 +437,12 @@ export class CatalogPage implements ICatalogPage
                 break;
             case CatalogWidgetName.FIRST_PRODUCT_AUTO_SELECTOR:
                 this._widgets.push(new FirstProductSelectorCatalogWidget(window));
+                break;
+            case CatalogWidgetName.TRAX_PREVIEW:
+                this._widgets.push(new TraxPreviewCatalogWidget(window, this._catalog!.soundManager));
+                break;
+            case CatalogWidgetName.ROOM_PREVIEW:
+                this._widgets.push(new RoomPreviewCatalogWidget(window));
                 break;
             case CatalogWidgetName.BUILDER_SUBSCRIPTION:
                 this._widgets.push(new BuilderSubscriptionCatalogWidget(window, this._catalog!));
