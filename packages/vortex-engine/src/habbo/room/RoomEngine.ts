@@ -1265,9 +1265,19 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_9481 (name derived: move blocked)
     private _moveBlocked: boolean = false;
 
-    isWhereYouClickWhereYouGo(): boolean 
+    /**
+     * AS3's flag is `private var … = true` and is written nowhere in the class, so the live half of
+     * the expression is the area-selection test: while a select-area drag is running, a click is
+     * part of the rectangle and must not also walk the avatar or move the walk cursor. The port
+     * returned a bare `true`, which is what let both happen.
+     */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_10330 (name derived from its one reader)
+    private _whereYouClickWhereYouGoEnabled: boolean = true;
+
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::isWhereYouClickWhereYouGo()
+    isWhereYouClickWhereYouGo(): boolean
     {
-        return true; // Default behavior
+        return this._whereYouClickWhereYouGoEnabled && !this.isAreaSelectionMode();
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::roomManagerInitialized()
@@ -8403,16 +8413,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             this._moveMouseEventCache = {tileEvent: {tileX, tileY}, wallEvent: null};
 
             const tileCursor = this.getTileCursor(this._activeRoomId);
+            const cursorUpdate = this.handleMouseOverTile(event, this._activeRoomId);
 
-            if(tileCursor && tileCursor.getEventHandler()) 
+            if(tileCursor && tileCursor.getEventHandler() && cursorUpdate !== null)
             {
-                const cursorUpdate = new RoomObjectTileCursorUpdateMessage(
-                    new Vector3d(tileX, tileY, tileZ),
-                    0,
-                    true,
-                    event.eventId
-                );
-
                 tileCursor.getEventHandler()!.processUpdateMessage(cursorUpdate);
             }
 
@@ -8794,6 +8798,62 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             tileCursor.getEventHandler()!.processUpdateMessage(cursorUpdate);
         }
+    }
+
+    /**
+     * Where the walk cursor goes for a hovered *tile*. With where-you-click-where-you-go on this is
+     * simply the tile itself, which is the only branch the port used to have — it built that message
+     * inline and never asked.
+     *
+     * The other branch matters over a variable-height furni (`furniture_is_variable_height`, the
+     * adjustable platforms): the cursor is lifted by the difference between the stacking height at
+     * that tile and the room's own floor height there, so it sits on the furni's surface instead of
+     * sinking into the floor under it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleMouseOverTile()
+    private handleMouseOverTile(event: RoomObjectTileMouseEvent, roomId: number): RoomObjectTileCursorUpdateMessage | null
+    {
+        const tileX = event.tileXAsInt;
+        const tileY = event.tileYAsInt;
+        const tileZ = event.tileZAsInt;
+
+        if(this.isWhereYouClickWhereYouGo())
+        {
+            return new RoomObjectTileCursorUpdateMessage(new Vector3d(tileX, tileY, tileZ), 0, true, event.eventId);
+        }
+
+        const tileCursor = this.getTileCursor(roomId);
+
+        if(tileCursor === null || tileCursor.getEventHandler() === null) return null;
+
+        if(this.getRoom(roomId) === null) return null;
+
+        const tileObjectMap = this.getTileObjectMap(roomId);
+
+        if(tileObjectMap === null) return null;
+
+        const stackingHeightMap = this.getFurniStackingHeightMap(roomId);
+
+        if(stackingHeightMap === null) return null;
+
+        const occupant = tileObjectMap.getObjectInTile(tileX, tileY);
+
+        const variableHeight = occupant?.getModel()?.getNumber(RoomObjectVariableEnum.FURNITURE_IS_VARIABLE_HEIGHT) ?? 0;
+
+        if(variableHeight > 0)
+        {
+            const stackingHeight = stackingHeightMap.getTileHeight(tileX, tileY);
+            const floorHeight = this.getLegacyGeometry(roomId)?.getTileHeight(tileX, tileY) ?? 0;
+
+            return new RoomObjectTileCursorUpdateMessage(
+                new Vector3d(tileX, tileY, tileZ),
+                stackingHeight - floorHeight,
+                true,
+                event.eventId
+            );
+        }
+
+        return new RoomObjectTileCursorUpdateMessage(new Vector3d(tileX, tileY, tileZ), 0, true, event.eventId);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleMouseOverObject()
