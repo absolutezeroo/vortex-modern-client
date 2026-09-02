@@ -308,9 +308,18 @@ export class OwnAvatarMenuView extends AvatarContextInfoButtonView
                     this._widget.messageListener?.processWidgetMessage(message);
                 }
                 else if(action === 'expressions' || action === 'dance_menu' || action === 'signs'
-                    || action === 'back' || action === 'more' || action === 'decorate' || action === 'change_looks')
+                    || action === 'back' || action === 'more')
                 {
+                    // Only the sub-menu arms clear the close flag in AS3 — they swap the menu's
+                    // contents in place, so removing the view would take the sub-menu with it.
                     close = false;
+                    this.handleViewAction(action);
+                }
+                else if(action === 'decorate' || action === 'change_looks')
+                {
+                    // AS3 leaves `_loc3_` true for these two: entering decorate mode and opening the
+                    // avatar editor both close the menu behind them. Clearing it here is what kept
+                    // the menu on screen over the "done decorating" button.
                     this.handleViewAction(action);
                 }
             }

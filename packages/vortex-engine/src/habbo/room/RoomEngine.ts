@@ -8466,9 +8466,13 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
             else
             {
-                // AS3: _SafeCls_1821.as::handleClickOnTile() — a spectator clicks nothing, and in
-                // game mode the click is a snow-war action rather than a walk: onto the player under
-                // the cursor if there is one, otherwise at the tile.
+                // AS3: _SafeCls_1821.as::handleClickOnTile() — in decorate mode the floor is not a
+                // walk target at all: clicks belong to the furniture being arranged. A spectator
+                // clicks nothing either, and in game mode the click is a snow-war action rather
+                // than a walk: onto the player under the cursor if there is one, otherwise at the
+                // tile.
+                if(this.isDecorateMode) return;
+
                 const session = this._roomSessionManager?.getSession(this._activeRoomId) ?? null;
 
                 if(session !== null && session.isSpectatorMode) return;
@@ -8486,6 +8490,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
                     return;
                 }
+
+                // The second of `isMoveBlocked()`'s two AS3 read sites — the area selector holds it
+                // for the length of a drag, and without this the click that ends the drag also
+                // walked the avatar to wherever the rectangle finished.
+                if(this.isMoveBlocked()) return;
 
                 // The floor plane's own height at that tile - the surface actually pointed at, which
                 // for a click on bare floor is the one the server should walk to even when a raised
