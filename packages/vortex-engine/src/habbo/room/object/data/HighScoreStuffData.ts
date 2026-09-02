@@ -12,6 +12,13 @@ import {RoomObjectVariableEnum} from '../RoomObjectVariableEnum';
 import type {IStuffData} from './IStuffData';
 import {StuffDataBase} from './StuffDataBase';
 
+/**
+ * One score row. AS3 gives this its own class with `score`/`users` accessors and an `addUser()`;
+ * the port keeps the two fields and lets callers push, since nothing outside the parse loops ever
+ * added a user.
+ */
+// DEVIATION: a plain shape rather than AS3's class, for the reason above.
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/data/HighScoreData.as
 export interface IHighScoreEntry
 {
     users: string[];

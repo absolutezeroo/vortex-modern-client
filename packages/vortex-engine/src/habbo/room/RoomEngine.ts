@@ -413,7 +413,17 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::_objectPlacementSource
     private _objectPlacementSource: string | null = '';
 
+    // DEVIATION: AS3 keys these by an `AssetCallbackInfo` holding `{id, listeners}` in a map of its
+    //   own; the port's map goes straight to the listener list, and the id lives in the counter
+    //   below.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/AssetCallbackInfo.as
     private _pendingThumbnailListeners: Map<string, IGetImageListener[]> = new Map();
+
+    // DEVIATION: AS3 draws these ids from a `NumberBank(1000)` — a reserve/free pool that hands back
+    //   -1 once exhausted, at which point `getGenericRoomObjectThumbnail()` gives up and returns no
+    //   image. The port counts up instead and never runs out, so the give-up branch has no
+    //   counterpart here.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/utils/NumberBank.as::reserveNumber()
     private _thumbnailIdCounter: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_7265
     private _pendingImageListeners: Map<number, IGetImageListener> = new Map();
