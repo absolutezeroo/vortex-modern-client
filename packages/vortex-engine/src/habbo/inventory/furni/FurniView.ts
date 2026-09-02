@@ -873,7 +873,7 @@ export class FurniView
 
         if(wallFloorFilter)
         {
-            wallFloorFilter.populateWithStrings([
+            wallFloorFilter.populateWithVector([
                 this._model.localization.getLocalization('inventory.filter.option.everything', 'Everything'),
                 this._model.localization.getLocalization('inventory.furni.tab.floor', 'Floor'),
                 this._model.localization.getLocalization('inventory.furni.tab.wall', 'Wall'),
@@ -885,7 +885,7 @@ export class FurniView
 
         if(placementFilter)
         {
-            placementFilter.populateWithStrings([
+            placementFilter.populateWithVector([
                 this._model.localization.getLocalization('inventory.placement.option.anywhere', 'Anywhere'),
                 this._model.localization.getLocalization('inventory.placement.option.inroom', 'In room'),
                 this._model.localization.getLocalization('inventory.placement.option.notinroom', 'Not in room'),

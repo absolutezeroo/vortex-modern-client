@@ -325,7 +325,7 @@ export class CollectiblesView implements IInventoryView, IAvatarImageListener
             captions.push(this.localizedProductType(productTypeId));
         }
 
-        options.populateWithStrings(captions);
+        options.populateWithVector(captions);
         options.selection = 0;
     }
 

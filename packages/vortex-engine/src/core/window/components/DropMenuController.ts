@@ -94,7 +94,8 @@ export class DropMenuController extends DropBaseController implements IDropMenuW
     /**
 	 * Populates the menu with a string array.
 	 */
-    public populateWithStrings(items: string[]): void
+    // AS3: .../src/com/sulake/core/window/components/DropMenuController.as::populateWithVector()
+    public populateWithVector(items: string[]): void
     {
         this._selection = -1;
         this._stringArray.length = 0;

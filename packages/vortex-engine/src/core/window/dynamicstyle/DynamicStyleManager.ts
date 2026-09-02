@@ -3,14 +3,17 @@ import {DynamicStyle} from './DynamicStyle';
 /**
  * Static registry of dynamic styles by name.
  *
- * Lazily initializes a table of built-in styles (lifted_hover,
- * brightness_and_shadow_under) and allows lookup by name.
+ * Lazily initializes the five built-in styles — lifted_hover, brightness_and_shadow_under,
+ * brightness_and_shadow_under_gentle, reward_track_item, button — and allows lookup by name.
  *
- * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as
+ * The class is `_SafeCls_2995` in the primary tree; the name `DynamicStyleManager` is RECOVERED
+ * from the 2016 tree, where the same class is unobfuscated.
+ *
+ * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/dynamicstyle/_SafeCls_2995.as
  */
 export class DynamicStyleManager
 {
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as::_styles
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/_SafeCls_2995.as::_styles
     private static _styles: Map<string, DynamicStyle> | null = null;
 
     /**
@@ -19,7 +22,7 @@ export class DynamicStyleManager
 	 * @param name - The style name
 	 * @returns The matching style, or a new empty DynamicStyle if not found
 	 */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as::getStyle()
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/_SafeCls_2995.as::getStyle()
     public static getStyle(name: string): DynamicStyle
     {
         if(!DynamicStyleManager._styles)
@@ -43,6 +46,7 @@ export class DynamicStyleManager
 	 * @param name - The style name
 	 * @param style - The dynamic style instance
 	 */
+    // TS-only: AS3's table is filled once and never added to; the port lets a caller register one.
     public static register(name: string, style: DynamicStyle): void
     {
         if(!DynamicStyleManager._styles)
@@ -59,6 +63,7 @@ export class DynamicStyleManager
 	 * @param name - The style name to look up
 	 * @returns True if the style exists
 	 */
+    // TS-only: AS3 has no such probe — `getStyle()` returns an empty style for an unknown name.
     public static hasStyle(name: string): boolean
     {
         if(!DynamicStyleManager._styles)
@@ -69,14 +74,14 @@ export class DynamicStyleManager
         return DynamicStyleManager._styles!.has(name);
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/dynamicstyle/DynamicStyleManager.as::fillStyleTable()
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/_SafeCls_2995.as::fillStyleTable()
     private static fillStyleTable(): void
     {
         DynamicStyleManager._styles = new Map();
 
         const liftedHover = new DynamicStyle('lifted_hover');
         liftedHover.defaultStyles = {};
-        liftedHover.pressedStyles = {
+        liftedHover.pressedSyles = {
             offsetX: 1,
             colorTransform: [1, 0.7, 0.7, 0.7, 0, 0, 0, 0],
         };
@@ -94,11 +99,11 @@ export class DynamicStyleManager
             etchingColor: 0x80000000,
             etchingPoint: [2, 2],
         };
-        liftedIcon.pressedStyles = {
+        liftedIcon.pressedSyles = {
             etchingColor: 0x48000000,
             etchingPoint: [-1, -1],
         };
-        liftedHover.setChildStyle('#icon', liftedIcon);
+        liftedHover.childDynamicStyles.set('#icon', liftedIcon);
 
         const brightnessAndShadow = new DynamicStyle('brightness_and_shadow_under');
         brightnessAndShadow.defaultStyles = {};
@@ -108,10 +113,10 @@ export class DynamicStyleManager
             etchingColor: 0x48000000,
             etchingPoint: [0, 1],
         };
-        bsIcon.pressedStyles = {
+        bsIcon.pressedSyles = {
             etchingColor: 0x80000000,
             etchingPoint: [0, -1],
-            offsetY: -1,
+            offsetY: 1,
             colorTransform: [0.7, 0.7, 0.7, 1, 0, 0, 0, 0],
         };
         bsIcon.hoverStyles = {
@@ -119,14 +124,14 @@ export class DynamicStyleManager
             etchingPoint: [0, 1],
             colorTransform: [1, 1, 1, 1, 77, 77, 77, 0],
         };
-        brightnessAndShadow.setChildStyle('#icon', bsIcon);
+        brightnessAndShadow.childDynamicStyles.set('#icon', bsIcon);
 
         const bsBg = new DynamicStyle();
         bsBg.defaultStyles = {
             etchingColor: 0x48000000,
             etchingPoint: [0, 1],
         };
-        bsBg.pressedStyles = {
+        bsBg.pressedSyles = {
             etchingColor: 0x80000000,
             etchingPoint: [0, 0],
             colorTransform: [0.9, 0.9, 0.9, 1, 0, 0, 0, 0],
@@ -139,7 +144,7 @@ export class DynamicStyleManager
         bsBg.disabledStyles = {
             colorTransform: [0.5, 0.5, 0.5, 0.7, 0, 0, 0, 0],
         };
-        brightnessAndShadow.setChildStyle('#bg', bsBg);
+        brightnessAndShadow.childDynamicStyles.set('#bg', bsBg);
 
         const brightnessAndShadowGentle = new DynamicStyle('brightness_and_shadow_under_gentle');
         brightnessAndShadowGentle.defaultStyles = {};
@@ -149,10 +154,10 @@ export class DynamicStyleManager
             etchingColor: 0x48000000,
             etchingPoint: [0, 1],
         };
-        bsgIcon.pressedStyles = {
+        bsgIcon.pressedSyles = {
             etchingColor: 0x80000000,
             etchingPoint: [0, -1],
-            offsetY: -1,
+            offsetY: 1,
             colorTransform: [0.8, 0.8, 0.8, 1, 0, 0, 0, 0],
         };
         bsgIcon.hoverStyles = {
@@ -160,7 +165,31 @@ export class DynamicStyleManager
             etchingPoint: [0, 1],
             colorTransform: [1.1, 1.1, 1.1, 1, 30, 30, 30, 0],
         };
-        brightnessAndShadowGentle.setChildStyle('#icon', bsgIcon);
+        brightnessAndShadowGentle.childDynamicStyles.set('#icon', bsgIcon);
+
+        const rewardTrackItem = new DynamicStyle('reward_track_item');
+        rewardTrackItem.defaultStyles = {};
+
+        const rewardIcon = new DynamicStyle();
+        rewardIcon.defaultStyles = {
+            etchingColor: 0x48000000,
+            etchingPoint: [0, 1],
+        };
+        rewardIcon.pressedSyles = {
+            etchingColor: 0x80000000,
+            etchingPoint: [0, -1],
+            offsetY: 1,
+            colorTransform: [0.8, 0.8, 0.8, 1, 0, 0, 0, 0],
+        };
+        rewardIcon.hoverStyles = {
+            etchingColor: 0x48000000,
+            etchingPoint: [0, 1],
+            colorTransform: [1.1, 1.1, 1.1, 1, 15, 15, 15, 0],
+        };
+        rewardIcon.disabledStyles = {
+            colorTransform: [0.75, 0.75, 0.75, 0.8, 0, 0, 0, 0],
+        };
+        rewardTrackItem.childDynamicStyles.set('#icon', rewardIcon);
 
         const button = new DynamicStyle('button');
         button.defaultStyles = {};
@@ -170,7 +199,7 @@ export class DynamicStyleManager
             etchingColor: 0x48000000,
             etchingPoint: [0, 0],
         };
-        btnIcon.pressedStyles = {
+        btnIcon.pressedSyles = {
             etchingColor: 0x80000000,
             etchingPoint: [0, 0],
             offsetY: 1,
@@ -181,11 +210,12 @@ export class DynamicStyleManager
             etchingPoint: [0, 0],
             colorTransform: [1.1, 1.1, 1.1, 1, 15, 15, 15, 0],
         };
-        button.setChildStyle('#icon', btnIcon);
+        button.childDynamicStyles.set('#icon', btnIcon);
 
         DynamicStyleManager._styles.set('lifted_hover', liftedHover);
         DynamicStyleManager._styles.set('brightness_and_shadow_under', brightnessAndShadow);
         DynamicStyleManager._styles.set('brightness_and_shadow_under_gentle', brightnessAndShadowGentle);
+        DynamicStyleManager._styles.set('reward_track_item', rewardTrackItem);
         DynamicStyleManager._styles.set('button', button);
     }
 }

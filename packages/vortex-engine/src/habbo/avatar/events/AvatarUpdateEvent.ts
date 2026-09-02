@@ -6,9 +6,8 @@
  */
 export class AvatarUpdateEvent
 {
-    // AS3: .../avatar/events/AvatarUpdateEvent.as::AVATAR_UPDATE
-    // Name DERIVED: the event type string AS3 passes to `super()`.
-    public static readonly AVATAR_UPDATE: string = 'AVATAR_UPDATE';
+    // AS3: .../avatar/events/AvatarUpdateEvent.as::AVATAR_FIGURE_UPDATED
+    public static readonly AVATAR_FIGURE_UPDATED: string = 'AVATAR_FIGURE_UPDATED';
 
     // AS3: .../avatar/events/AvatarUpdateEvent.as::_figure
     private readonly _figure: string;
@@ -22,7 +21,7 @@ export class AvatarUpdateEvent
     // TS-only: these events travel on an EventEmitter, which has no `type` of its own.
     public get type(): string
     {
-        return AvatarUpdateEvent.AVATAR_UPDATE;
+        return AvatarUpdateEvent.AVATAR_FIGURE_UPDATED;
     }
 
     // AS3: .../avatar/events/AvatarUpdateEvent.as::get figure()

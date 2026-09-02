@@ -244,7 +244,7 @@ export class WiredMenuSettingsTab extends WiredMenuDefaultTab
             }
         }
 
-        dropdown.populateWithStrings(ordered);
+        dropdown.populateWithVector(ordered);
 
         if(ordered.length > 0)
         {

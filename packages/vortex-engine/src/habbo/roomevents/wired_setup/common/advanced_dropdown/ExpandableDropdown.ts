@@ -11,8 +11,7 @@ import type {ExpandableDropdownOption} from './ExpandableDropdownOption';
  * the menu with the advanced options and re-opens it; collapsing without choosing an advanced option
  * folds the advanced options away again.
  *
- * The AS3 class wraps a `_SafeCls_2308` (IDropMenuWindow) and calls its `populateWithVector` — the
- * port renamed that method to `populateWithStrings` on DropMenuController, so this port calls that.
+ * The AS3 class wraps a `_SafeCls_2308` (IDropMenuWindow) and calls its `populateWithVector`.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/common/advanced_dropdown/ExpandableDropdown.as
  */
@@ -108,7 +107,7 @@ export class ExpandableDropdown implements IDisposable
         }
 
         this._ignoreNextCollapse = true;
-        this._dropdown.populateWithStrings(displayStrings);
+        this._dropdown.populateWithVector(displayStrings);
 
         if(selectedIndex !== -1)
         {

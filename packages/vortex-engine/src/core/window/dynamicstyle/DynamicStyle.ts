@@ -1,3 +1,5 @@
+import type {WindowController} from '../WindowController';
+
 /**
  * Represents a dynamic style with state-based visual properties.
  *
@@ -15,6 +17,11 @@ export class DynamicStyle
     public static readonly BRIGHTNESS_AND_SHADOW_UNDER: string = 'brightness_and_shadow_under';
     // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::BRIGHTNESS_AND_SHADOW_UNDER_GENTLE
     public static readonly BRIGHTNESS_AND_SHADOW_UNDER_GENTLE: string = 'brightness_and_shadow_under_gentle';
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::REWARD_TRACK_ITEM
+    public static readonly REWARD_TRACK_ITEM: string = 'reward_track_item';
+    // The AS3 constant is obfuscated (`_SafeStr_10357`) in every tree; `BUTTON` is DERIVED from its
+    // value, "button", not recovered.
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::_SafeStr_10357
     public static readonly BUTTON: string = 'button';
 
     // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::name
@@ -23,11 +30,15 @@ export class DynamicStyle
     public defaultStyles: Record<string, unknown> = {};
     // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::hoverStyles
     public hoverStyles: Record<string, unknown> = {};
-    public pressedStyles: Record<string, unknown> = {};
+    // Spelled `pressedSyles` in AS3 — the typo is the source's, and it is the name every style
+    // registry writes, so it is kept.
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::pressedSyles
+    public pressedSyles: Record<string, unknown> = {};
     // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::disabledStyles
-    public disabledStyles: Record<string, unknown> = {colorTransform: [1, 1, 1, 0.4, 0, 0, 0, 0]};
+    public disabledStyles: Record<string, unknown> = {colorTransform: [1, 1, 1, 0.5, 0, 0, 0, 0]};
 
-    private _childStyles: Map<string, DynamicStyle> = new Map();
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::childDynamicStyles
+    public childDynamicStyles: Map<string, DynamicStyle> = new Map();
 
     constructor(name: string = '')
     {
@@ -46,7 +57,7 @@ export class DynamicStyle
         switch(state)
         {
             case 16:
-                return this.pressedStyles;
+                return this.pressedSyles;
             case 4:
                 return this.hoverStyles;
             case 0:
@@ -63,12 +74,13 @@ export class DynamicStyle
 	 *
 	 * Tags beginning with "#" are checked against child style keys.
 	 *
-	 * @param tags - The tags to search for
+	 * @param window - The window whose tags to search
 	 * @returns The matching child style, or null
 	 */
-    public getChildStyleByTags(tags: string[]): DynamicStyle | null
+    // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getChildStyle()
+    public getChildStyle(window: WindowController): DynamicStyle | null
     {
-        for(const tag of tags)
+        for(const tag of window.tags)
         {
             if(tag.charAt(0) === '#')
             {
@@ -80,22 +92,15 @@ export class DynamicStyle
     }
 
     /**
-	 * Registers a child style under the given key.
-	 *
-	 * @param key - The child style key (e.g. "#icon")
-	 * @param style - The child dynamic style
-	 */
-    public setChildStyle(key: string, style: DynamicStyle): void
-    {
-        this._childStyles.set(key, style);
-    }
-
-    /**
 	 * Computes the color value for the given window state.
 	 *
 	 * @param state - The window state flag
 	 * @returns The computed color value, or 0 if no color transform
 	 */
+    // DEVIATION: AS3 concatenates `toString(16)` unpadded, so any channel below 0x10 contributes a
+    //   single digit and shifts every later nibble — 0x0A/0xFF/0xFF comes out as 0xAFFFF, not
+    //   0x0AFFFF. The port pads to two digits. Flash never surfaced it because the styles shipped
+    //   in the layouts have no dark channel.
     // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getColorValue()
     public getColorValue(state: number): number
     {
@@ -169,7 +174,7 @@ export class DynamicStyle
     // AS3: .../src/com/sulake/core/window/dynamicstyle/DynamicStyle.as::getChildDynamicStyleByKey()
     private getChildDynamicStyleByKey(key: string): DynamicStyle
     {
-        const child = this._childStyles.get(key);
+        const child = this.childDynamicStyles.get(key);
 
         if(child)
         {

@@ -19,6 +19,12 @@ import type {PropertyStruct} from '../utils/PropertyStruct';
  * we use a hidden HTML input element overlaid on the canvas to
  * capture user input, syncing text back to the window.
  *
+ * Three AS3 members are deliberately absent. `refreshAutoSize()` grows the window rect to the Flash
+ * TextField's measured size; there is no Flash field here, so `TextController.draw()` measures and
+ * resizes in one pass and this class has nothing left to refresh. `mouseCursorType` is an override
+ * whose setter is empty and whose getter returns 0 in every tree. `_filters` belongs to Flash's
+ * `DisplayObject.filters`, which the PixiJS side handles.
+ *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextFieldController.as
  */
 export class TextFieldController extends TextController implements ITextFieldWindow

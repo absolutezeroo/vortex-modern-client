@@ -8,7 +8,7 @@ import type {UserChangeMessageEventParser} from '@habbo/communication/messages/p
 import type {AvatarImageWidget as GenericAvatarImageWidget} from '@habbo/window/widgets/AvatarImageWidget';
 import {UserObjectMessageEvent} from '@habbo/communication/messages/incoming/handshake/UserObjectMessageEvent';
 import {UserChangeMessageEvent} from '@habbo/communication/messages/incoming/room/action/UserChangeMessageEvent';
-import type {AvatarUpdateEvent} from '@habbo/avatar/events/AvatarUpdateEvent';
+import {AvatarUpdateEvent} from '@habbo/avatar/events/AvatarUpdateEvent';
 
 /**
  * Renders the logged-in user's own avatar in a landing view slot. Refreshes
@@ -38,12 +38,7 @@ export class AvatarImageWidget implements ILandingViewWidget
         // AS3: .../landingview/widget/AvatarImageWidget.as:32 — refreshes the landing-view avatar
         // when the editor saves.
         //
-        // ⚠ AS3 listens for **"AVATAR_FIGURE_UPDATED"**, and `HabboAvatarEditor.saveCurrentSelection()`
-        // raises `AvatarUpdateEvent`, whose type is **"AVATAR_UPDATE"**. The two strings do not
-        // match in the source either, so this listener never fires in AS3 — the landing-view
-        // avatar is refreshed by the figure-update *packet* instead. Kept verbatim rather than
-        // "corrected": pointing it at AVATAR_UPDATE would add a redraw AS3 does not do.
-        landingView.avatarEditor?.events?.on('AVATAR_FIGURE_UPDATED', this.onAvatarFigureUpdated);
+        landingView.avatarEditor?.events?.on(AvatarUpdateEvent.AVATAR_FIGURE_UPDATED, this.onAvatarFigureUpdated);
     }
 
     // AS3: .../src/com/sulake/habbo/friendbar/landingview/widget/AvatarImageWidget.as::get container()
@@ -67,10 +62,7 @@ export class AvatarImageWidget implements ILandingViewWidget
             this._userChangeEvent = null;
         }
 
-        // AS3 removes the same AVATAR_FIGURE_UPDATED listener here — see the note where it is
-        // attached: the string does not match what the editor raises, so neither call does
-        // anything, but both are kept so the pair stays symmetric.
-        this._landingView?.avatarEditor?.events?.off('AVATAR_FIGURE_UPDATED', this.onAvatarFigureUpdated);
+        this._landingView?.avatarEditor?.events?.off(AvatarUpdateEvent.AVATAR_FIGURE_UPDATED, this.onAvatarFigureUpdated);
 
         this._landingView = null;
         this._container = null;

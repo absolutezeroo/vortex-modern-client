@@ -630,7 +630,7 @@ export class MarketPlaceOwnItemsCatalogWidget extends CatalogWidget implements I
         ];
 
         this._ignoreCategorySelectionEvents = true;
-        dropMenu.populateWithStrings(items);
+        dropMenu.populateWithVector(items);
         dropMenu.selection = this.getDropMenuSelectionForCategory(this._category);
         this._ignoreCategorySelectionEvents = false;
     }

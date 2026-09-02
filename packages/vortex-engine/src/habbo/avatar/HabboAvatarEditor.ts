@@ -490,7 +490,7 @@ export class HabboAvatarEditor implements ICategoryModelOwner
         // Saving a plain figure over an NFT outfit takes the NFT off.
         if(this.hasNftOutfit()) this._currentNftTokenId = null;
 
-        this._manager?.events?.emit(AvatarUpdateEvent.AVATAR_UPDATE, new AvatarUpdateEvent(figure));
+        this._manager?.events?.emit(AvatarUpdateEvent.AVATAR_FIGURE_UPDATED, new AvatarUpdateEvent(figure));
 
         if(this._effectChanged)
         {

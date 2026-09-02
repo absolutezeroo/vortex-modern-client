@@ -649,7 +649,7 @@ export class PetsView implements IGetImageListener
 
         try
         {
-            dropdown.populateWithStrings(labels);
+            dropdown.populateWithVector(labels);
             dropdown.selection = Math.max(0, this._typeFilterIds.indexOf(this._selectedTypeFilter));
         }
         finally
@@ -680,7 +680,7 @@ export class PetsView implements IGetImageListener
         try
         {
             const target = this.isRarityFilterEnabled() ? this._selectedRarityFilter : -1;
-            dropdown.populateWithStrings(labels);
+            dropdown.populateWithVector(labels);
             dropdown.selection = Math.max(0, this._rarityFilterIds.indexOf(target));
         }
         finally

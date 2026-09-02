@@ -4594,7 +4594,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
     {
         for(const child of children) 
         {
-            const childStyle = this._dynamicStyleInstance!.getChildStyleByTags(child.tags);
+            const childStyle = this._dynamicStyleInstance!.getChildStyle(child as WindowController);
 
             if(childStyle) 
             {

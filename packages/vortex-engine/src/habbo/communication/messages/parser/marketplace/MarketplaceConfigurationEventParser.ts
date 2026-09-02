@@ -58,6 +58,14 @@ export class MarketplaceConfigurationEventParser implements IMessageParser
         return this._tokenBatchSize;
     }
 
+    // A second getter over the same backing field as `tokenBatchSize` — AS3 declares both and both
+    // return `_SafeStr_8383`. Kept because callers exist for either spelling.
+    // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1990.as::get tokensBatchSize()
+    get tokensBatchSize(): number
+    {
+        return this._tokenBatchSize;
+    }
+
     // AS3: .../src/unknowns/_SafePkg_1932/_SafeCls_1990.as::get offerMinPrice()
     get offerMinPrice(): number
     {

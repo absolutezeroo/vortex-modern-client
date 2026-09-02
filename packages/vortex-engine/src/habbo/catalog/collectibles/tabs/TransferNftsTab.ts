@@ -272,7 +272,7 @@ export class TransferNftsTab implements IUpdateReceiver
     {
         const dropdown = this.transferWalletSelection;
 
-        dropdown?.populateWithStrings(wallets);
+        dropdown?.populateWithVector(wallets);
 
         this._wallets = wallets;
 

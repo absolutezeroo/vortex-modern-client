@@ -315,7 +315,7 @@ export class FurniDefinitionView
             ? [...FURNITURE_LOGICS]
             : [current, ...FURNITURE_LOGICS];
 
-        this._logicDrop.populateWithStrings(this._logicValues);
+        this._logicDrop.populateWithVector(this._logicValues);
 
         const index = this._logicValues.indexOf(current);
         this._logicDrop.selection = index >= 0 ? index : 0;
@@ -332,7 +332,7 @@ export class FurniDefinitionView
 
     private populateOptionDrop(drop: IDropMenuWindow | null, options: readonly IFurniOption[]): void
     {
-        drop?.populateWithStrings(options.map((option) => option.label));
+        drop?.populateWithVector(options.map((option) => option.label));
     }
 
     private selectOption(drop: IDropMenuWindow | null, options: readonly IFurniOption[], value: number): void

@@ -172,9 +172,7 @@ export class WiredChestUpgradeConfirmationView implements IGetImageListener
 
         if(selection)
         {
-            // AS3 calls this `populateWithVector` (it took a `Vector.<String>`); the port names the
-            // same member `populateWithStrings`.
-            selection.populateWithStrings(options);
+            selection.populateWithVector(options);
             selection.selection = 0;
 
             Util.disableSection(selection as unknown as IWindow, this._alreadyPurchased >= maxUpgrades);

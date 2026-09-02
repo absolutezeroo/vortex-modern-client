@@ -413,6 +413,8 @@ function main()
         // here" would drown the one that means "this is unported"), and get their own counters.
         const fileLevelOnly = entry.cited.size === 0;
 
+        let unmeasuredEntry = null;
+
         if(fileLevelOnly)
         {
             const readable = members.filter((member) => !member.isConstructor && !OBFUSCATED_RE.test(member.name));
@@ -422,7 +424,18 @@ function main()
 
             // Ranked by `--unmeasured`. The blind spot is not evenly spread: a handful of large
             // classes carry most of those members.
-            unmeasured.push({ path, typeName, count: readable.length, citedBy: [...entry.citedBy] });
+            // Ownership, not mere citation, is what makes an absent member a gap. A trace is often a
+            // cross-reference: `FurniIconImageManager.ts` cites one `getProperty()` off the config
+            // interface `_SafeCls_49.as`, and charging it with that interface's other six members
+            // invents six gaps. Only a TS file named after the AS3 type is answerable for its whole
+            // surface — and when the AS3 name is obfuscated there is no name to match on, so the
+            // sole citer is taken as the owner.
+            const owned = [...entry.citedBy].some((tsFile) =>
+                (typeName && basename(tsFile).replace(/\.ts$/, '') === typeName)
+                || (OBFUSCATED_RE.test(typeName ?? '') && entry.citedBy.size === 1));
+
+            unmeasuredEntry = { path, typeName, count: readable.length, citedBy: [...entry.citedBy], missingPublic: [], owned };
+            unmeasured.push(unmeasuredEntry);
         }
         else
         {
@@ -449,7 +462,7 @@ function main()
             {
                 if(inTypeScript) totals.fileLevelPresent++;
                 else if(isPrivate) totals.fileLevelMissingPrivate++;
-                else totals.fileLevelMissingPublic++;
+                else { totals.fileLevelMissingPublic++; if(unmeasuredEntry?.owned) unmeasuredEntry.missingPublic.push(member); }
             }
             else if(inTypeScript)
             {
@@ -505,6 +518,27 @@ function main()
         {
             console.log(`\n  ${String(item.count).padStart(4)} membres hors mesure  ${item.path}  (${item.typeName ?? ''})`);
             console.log(`      cité par : ${item.citedBy.join(', ')}`);
+        }
+
+        // The count above is a blind spot, not a gap. This is the gap: a public member the AS3
+        // declares and no TS file cited by that trace declares back.
+        const withGaps = unmeasured.filter((item) => item.missingPublic.length > 0)
+            .sort((a, b) => b.missingPublic.length - a.missingPublic.length);
+
+        if(withGaps.length > 0)
+        {
+            console.log(`\n  --- worklist : ${withGaps.length} fichier(s) avec au moins un public/protected ABSENT ---`);
+
+            for(const item of withGaps)
+            {
+                console.log(`\n  ${String(item.missingPublic.length).padStart(3)} absents  ${item.path}  (${item.typeName ?? ''})`);
+                console.log(`      cité par : ${item.citedBy.join(', ')}`);
+
+                for(const member of item.missingPublic)
+                {
+                    console.log(`      · ${member.visibility.padEnd(9)} ${member.accessor ? `${member.accessor} ` : ''}${member.name}`);
+                }
+            }
         }
     }
     console.log('');

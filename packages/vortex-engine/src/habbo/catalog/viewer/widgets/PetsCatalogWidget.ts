@@ -340,7 +340,7 @@ export class PetsCatalogWidget extends CatalogWidget implements IGetImageListene
 
         if(captions.length > 1)
         {
-            dropMenu.populateWithStrings(captions);
+            dropMenu.populateWithVector(captions);
             dropMenu.selection = 0;
             (dropMenu as unknown as IWindow).procedure = this.onDropMenuEvent;
             dropMenu.visible = true;

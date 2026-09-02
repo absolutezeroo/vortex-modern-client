@@ -13,6 +13,11 @@ import {CatalogWidget} from './CatalogWidget';
  * distinct from the "deal" grid item icon `BundleProductContainer` shows inline in a normal
  * item grid).
  *
+ * AS3 also declares `_SafeCls_2805` and `_SafeCls_2754` on this class, and the eight members that
+ * come with them — `initProductIcon`, `activate`, `products`, `firstProduct`, `view` (both
+ * accessors), `grid`, `setClubIconLevel` — are all empty bodies returning null. The port drops both
+ * interfaces rather than transcribe eight no-ops: nothing addresses this widget through either one.
+ *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/BundleGridViewCatalogWidget.as
  */
 export class BundleGridViewCatalogWidget extends CatalogWidget implements IItemGrid

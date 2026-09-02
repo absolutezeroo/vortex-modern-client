@@ -15,7 +15,8 @@ export interface IDropMenuWindow extends IInteractiveWindow
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/components/IDropMenuWindow.as::populate()
     populate(items: unknown[]): void;
 
-    populateWithStrings(items: string[]): void;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/_SafeCls_2308.as::populateWithVector()
+    populateWithVector(items: string[]): void;
 
     enumerateSelection(): string[];
 

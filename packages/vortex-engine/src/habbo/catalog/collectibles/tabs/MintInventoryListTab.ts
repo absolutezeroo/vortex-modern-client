@@ -320,7 +320,7 @@ export class MintInventoryListTab implements IUpdateReceiver
         const captions = this._tokenOffers.map((offer) => String(offer.amountTokens));
         const dropdown = this.stampsPurchaseDropdown;
 
-        dropdown?.populateWithStrings(captions);
+        dropdown?.populateWithVector(captions);
 
         if(captions.length > 0 && dropdown !== null)
         {

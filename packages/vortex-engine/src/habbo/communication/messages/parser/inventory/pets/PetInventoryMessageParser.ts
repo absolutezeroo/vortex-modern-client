@@ -52,6 +52,10 @@ export class PetInventoryMessageParser implements IMessageParser
 
     private _pets: IPetData[] = [];
 
+    // DEVIATION: AS3 hands back the fragment as a keyed collection (`_SafeCls_481`, id → pet); the
+    //   port returns the parsed array and lets the caller key it. Nothing in the port looks a pet up
+    //   by id off the parser — the inventory keys them itself once the fragments are merged.
+    // AS3: .../src/unknowns/_SafePkg_2554/_SafeCls_2926.as::get petListFragment()
     get pets(): IPetData[]
     {
         return this._pets;

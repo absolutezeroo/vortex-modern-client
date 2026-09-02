@@ -27,7 +27,7 @@ import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefine
  * IWindowContainer (border), `_SafeCls_1857`→ISelectableWindow (checkbox), `_SafeCls_2308`→
  * IDropMenuWindow (the string-populated drop MENU — not IDropListWindow, the IWindow-valued drop
  * LIST used by the catalog GuildSelector; both extend DropBaseController but only the menu carries
- * populateWithStrings/openMenu, which the wired ExpandableDropdown drives).
+ * populateWithVector/openMenu, which the wired ExpandableDropdown drives).
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/styles/WiredStyle.as
  */

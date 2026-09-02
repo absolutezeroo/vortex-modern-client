@@ -222,7 +222,7 @@ export class CollectionsTab implements IUpdateReceiver
 
         const stardust = this._view?.stardustWallet ?? '';
 
-        dropdown.populateWithStrings(
+        dropdown.populateWithVector(
             wallets.map((wallet) => wallet === stardust ? CollectiblesView.STARDUST_WALLET_DISPLAY_NAME : wallet)
         );
     }
@@ -232,7 +232,7 @@ export class CollectionsTab implements IUpdateReceiver
     {
         const localization = this._controller.localizationManager;
 
-        this.sortSelection?.populateWithStrings([
+        this.sortSelection?.populateWithVector([
             localization?.getLocalization('collectibles.sort.default', 'Default') ?? 'Default',
             localization?.getLocalization('collectibles.sort.progress', 'Progress') ?? 'Progress',
             localization?.getLocalization('collectibles.sort.score', 'Score') ?? 'Score',
