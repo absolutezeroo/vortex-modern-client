@@ -992,7 +992,21 @@ export class HabboNavigator extends Component implements IHabboNavigator
         }
     }
 
-    override dispose(): void 
+    /**
+     * The toolbar's navigator-button hover. Empty in every AS3 implementor — the toolbar drives
+     * its own hover — but part of the interface, so it is declared rather than missing.
+     */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showToolbarHover()
+    showToolbarHover(_point: { readonly x: number; readonly y: number } | number, _y: number = 0): void
+    {
+    }
+
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::hideToolbarHover()
+    hideToolbarHover(_immediate: boolean = false): void
+    {
+    }
+
+    override dispose(): void
     {
         if(this.disposed) return;
 

@@ -51,6 +51,8 @@ import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
+import {IID_HabboToolbar} from '@iid/IIDHabboToolbar';
+import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import {ManualNineSliceSprite} from './viewer/visualization/ManualNineSliceSprite';
 import {ChatBubbleFactory} from './viewer/ChatBubbleFactory';
@@ -233,10 +235,14 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
         return this._gameManager;
     }
 
-    // TODO(AS3): .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get toolbar() hands
-    // callers one more component this class holds as a dependency. It is not taken here — the
-    // bubbles are drawn onto the room canvas rather than into windows — so the accessor has no
-    // field to return.
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::_toolbar
+    private _toolbar: IHabboToolbar | null = null;
+
+    // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get toolbar()
+    get toolbar(): IHabboToolbar | null
+    {
+        return this._toolbar;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::get roomChatBorderLimited()
     get roomChatBorderLimited(): boolean
@@ -747,6 +753,18 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
                 (manager: IHabboLocalizationManager | null) =>
                 {
                     this._localizations = manager;
+                },
+                false
+            ),
+            // AS3 declares this optional too. Nothing in this class reads it — the bubbles are
+            // drawn onto the room canvas, not into toolbar windows — but `get toolbar()` is part
+            // of the class's surface and other components reach the toolbar through it.
+            // AS3: .../src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::dependencies (IIDHabboToolbar)
+            new ComponentDependency(
+                IID_HabboToolbar,
+                (toolbar: IHabboToolbar | null) =>
+                {
+                    this._toolbar = toolbar;
                 },
                 false
             ),

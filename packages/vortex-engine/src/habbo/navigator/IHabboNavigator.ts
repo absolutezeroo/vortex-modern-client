@@ -169,8 +169,15 @@ export interface IHabboNavigator
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/_SafeCls_93.as::get events()
     readonly events: EventEmitter;
 
-    // TODO(AS3): .../src/com/sulake/habbo/navigator/_SafeCls_93.as::showToolbarHover() and
-    // hideToolbarHover() are empty in every AS3 implementor — the toolbar drives its own hover.
-    // LegacyNavigator carries the pair because the transitional interface declares it; declaring
-    // it here too would oblige the component to grow two more no-ops.
+    /**
+	 * The toolbar's navigator-button hover, shown and hidden.
+	 *
+	 * Empty in every AS3 implementor — the toolbar drives its own hover — but declared on the
+	 * interface, so callers holding an `IHabboNavigator` can make the call the AS3 API offers.
+	 */
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_93.as::showToolbarHover()
+    showToolbarHover(point: { readonly x: number; readonly y: number } | number, y?: number): void;
+
+    // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_93.as::hideToolbarHover()
+    hideToolbarHover(immediate?: boolean): void;
 }

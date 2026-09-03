@@ -129,11 +129,18 @@ export class PooledChatBubble extends Container
         return this._chatFlow;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set component()
-    // Dead in AS3 itself: the constructor already assigns the same field
-    // (`_SafeStr_4617 = param1`) from its own `param1:HabboFreeFlowChat` argument (matched here by
-    // the `chatFlow` constructor parameter above), and no call site anywhere in the primary tree
-    // ever reassigns it afterwards - a redundant setter nothing uses.
+    /**
+     * A second way to set what the constructor already set.
+     *
+     * Dead in AS3 too: the constructor assigns the same field from its own argument and no call
+     * site in the primary tree ever reassigns it. Ported as a setter over `chatFlow`'s field so
+     * the two cannot drift, which is what the shared AS3 backing field guarantees.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::set component()
+    set component(value: IHabboFreeFlowChat | null)
+    {
+        this._chatFlow = value;
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/viewer/visualization/PooledChatBubble.as::get minHeight()
     get minHeight(): number

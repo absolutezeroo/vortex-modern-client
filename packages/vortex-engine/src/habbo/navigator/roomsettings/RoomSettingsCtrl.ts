@@ -336,11 +336,24 @@ export class RoomSettingsCtrl
         }
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::get linkPattern() / linkReceived()
-    // Dead in AS3 itself: the class implements ILinkEventTracker ("roomsettings/"), but neither
-    // HabboNavigator nor LegacyNavigator ever calls context.addLinkEventTracker() on the instance
-    // they construct (_SafeStr_6886) — only the navigator itself registers, under "navigator/".
-    // linkReceived()'s body is also empty in AS3, so even a registered call would be a no-op.
+    /**
+     * The link prefix this controller would answer to, if anything registered it.
+     *
+     * Dead in AS3 too: the class implements `ILinkEventTracker`, but neither HabboNavigator nor
+     * LegacyNavigator ever calls `addLinkEventTracker()` on the instance they construct — only
+     * the navigator registers, under `"navigator/"`. `linkReceived()` below is empty in AS3 as
+     * well, so even a registered call would do nothing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::get linkPattern()
+    get linkPattern(): string
+    {
+        return 'roomsettings/';
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::linkReceived()
+    linkReceived(_link: string): void
+    {
+    }
 
     // AS3: .../src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::dispose()
     dispose(): void
