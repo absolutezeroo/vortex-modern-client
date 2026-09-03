@@ -924,8 +924,8 @@ export class RoomChatInputView
 
     /**
      * Resets the view for widget-pool reuse (RoomChatInputWidget.release()) rather than tearing it
-     * fully down (that's dispose()). AS3 also resets a help-button hide timer that belongs to the
-     * unported help-button hover tooltip — see this file's header TODO(AS3).
+     * fully down (that's dispose()). `clearTimers()` covers the help-button hide timer AS3 resets
+     * here along with the other five.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/chatinput/RoomChatInputView.as::release()
     public release(): void

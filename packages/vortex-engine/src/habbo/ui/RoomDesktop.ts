@@ -103,6 +103,8 @@ import {FurnitureAreaHideWidgetHandler} from './handler/FurnitureAreaHideWidgetH
 import {ConversionPointWidgetHandler} from './handler/ConversionPointWidgetHandler';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
+import type {IAdManager} from '@habbo/advertisement/IAdManager';
 import type {IHabboAvatarEditor} from '@habbo/avatar/IHabboAvatarEditor';
 import type {IHabboMessenger} from '@habbo/messenger/IHabboMessenger';
 import {ExternalImageWidgetHandler} from './handler/ExternalImageWidgetHandler';
@@ -868,10 +870,41 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         container.dispose();
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get gameManager(),
-    // set gameManager(), set adManager() and requestInterstitial() all reach a game or ad manager.
-    // `habbo/game` is 0/63 here and there is no ad manager at all — see RoomEngine's
-    // handleObjectRoomAdEvent() for the other half of the same gap.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::_gameManager
+    private _gameManager: IHabboGameManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::get gameManager()
+    public get gameManager(): IHabboGameManager | null
+    {
+        return this._gameManager;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::set gameManager()
+    public set gameManager(value: IHabboGameManager | null)
+    {
+        this._gameManager = value;
+    }
+
+    /** Write-only in AS3 too: the desktop holds it solely to answer `requestInterstitial()`. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::_adManager
+    private _adManager: IAdManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::set adManager()
+    public set adManager(value: IAdManager | null)
+    {
+        this._adManager = value;
+    }
+
+    /**
+	 * Asks the ad manager to run a full-screen interstitial.
+	 *
+	 * Does nothing without one, as AS3 does — a hotel with no ad subsystem simply never shows one.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomDesktop.as::requestInterstitial()
+    public requestInterstitial(): void
+    {
+        this._adManager?.showInterstitial();
+    }
 
     /**
 	 * Shows the name bubble over a game NPC or player

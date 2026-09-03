@@ -825,10 +825,22 @@ export class ChatInputWidgetHandler implements IRoomWidgetHandler
                 return true;
             }
 
-            // TODO(AS3): `gameManager.generateChecksumMismatch()` — the container exposes no game
-            // manager. Staff-only debug command; consumed rather than spoken, as AS3 does for staff.
+            /**
+             * Staff-only snowwar debug command: forces the next state fold to disagree with the
+             * server's checksum, so the desync-recovery path can be exercised on demand.
+             *
+             * Consumed rather than spoken for staff either way — the guard returns true before
+             * ever reaching the game manager, so a staff member with no game running says
+             * nothing rather than saying ":csmm" out loud.
+             */
+            // AS3: .../src/com/sulake/habbo/ui/handler/ChatInputWidgetHandler.as::processChatMessage()
             case ':csmm':
-                if(sessionData?.hasSecurity(ChatInputWidgetHandler.SECURITY_STAFF)) return true;
+                if(sessionData?.hasSecurity(ChatInputWidgetHandler.SECURITY_STAFF))
+                {
+                    this.container?.gameManager?.generateChecksumMismatch();
+
+                    return true;
+                }
 
                 return false;
 

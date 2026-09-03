@@ -2,9 +2,6 @@
  * RoomChatInputWidget
  *
  * @see sources/win63_version/habbo/ui/widget/chatinput/RoomChatInputWidget.as
- *
- * TODO(AS3): see RoomChatInputView.ts header for scope cuts (chat styles, NUX
- * reminder, dimmer effect, help tooltip).
  */
 import type {EventEmitter} from 'eventemitter3';
 import type {IWindow} from '@core/window/IWindow';

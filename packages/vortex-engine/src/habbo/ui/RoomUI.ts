@@ -33,6 +33,10 @@ import {IID_HabboFriendBarView} from '@iid/IIDHabboFriendBarView';
 import {IID_HabboFishing} from '@iid/IIDHabboFishing';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 import {IID_HabboQuestEngine} from '@iid/IIDHabboQuestEngine';
+import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
+import {IID_HabboAdManager} from '@iid/IIDHabboAdManager';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
+import type {IAdManager} from '@habbo/advertisement/IAdManager';
 import type {IHabboQuestEngine} from '@habbo/quest/IHabboQuestEngine';
 import {IID_HabboMessenger} from '@iid/IIDHabboMessenger';
 import {IID_HabboAvatarEditor} from '@iid/IIDHabboAvatarEditor';
@@ -243,6 +247,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
     // Needed by the me-menu's achievements button.
     private _questEngine: IHabboQuestEngine | null = null;
 
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_gameManager
+    private _gameManager: IHabboGameManager | null = null;
+
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_adManager
+    private _adManager: IAdManager | null = null;
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_soundManager
     // Needed by the me-menu's settings tab.
     private _soundManager: IHabboSoundManager | null = null;
@@ -391,9 +401,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
 
     /**
      * Routes a HideRoomWidgetEvent to the current desktop's widget handlers. AS3's sole consumer
-     * (ChatInputWidgetHandler) does not yet declare HIDE_ROOM_WIDGET in getProcessedEvents() on
-     * this port — see that handler's own TODO(AS3) — so this currently reaches no handler, exactly
-     * like the un-dispatched AS3 event would if nothing had wired the call.
+     * is `ChatInputWidgetHandler`, which declares HIDE_ROOM_WIDGET in `getProcessedEvents()` and
+     * handles it in `handleHideWidgetEvent()`.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::hideWidget()
     public hideWidget(widgetType: string): void
@@ -683,6 +692,36 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
              * friend bar from ever building — and the room UI must come up whether or not sound
              * and the console are present.
              */
+            // Both optional, as AS3 declares them. The game manager drives snowwar's in-room UI;
+            // the ad manager only ever answers `RoomDesktop.requestInterstitial()`.
+            // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::dependencies (IIDHabboGameManager)
+            new ComponentDependency(
+                IID_HabboGameManager,
+                (gameManager: IHabboGameManager | null) =>
+                {
+                    this._gameManager = gameManager;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.gameManager = gameManager;
+                    }
+                },
+                false
+            ),
+            // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::dependencies (IIDHabboAdManager)
+            new ComponentDependency(
+                IID_HabboAdManager,
+                (adManager: IAdManager | null) =>
+                {
+                    this._adManager = adManager;
+
+                    for(const desktop of this._desktops.values())
+                    {
+                        desktop.adManager = adManager;
+                    }
+                },
+                false
+            ),
             new ComponentDependency(
                 IID_HabboQuestEngine,
                 (questEngine: IHabboQuestEngine | null) =>
@@ -920,6 +959,8 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         desktop.freeFlowChat = this._freeFlowChat;
         desktop.navigator = this._navigator;
         desktop.communicationManager = this._communicationManager;
+        desktop.gameManager = this._gameManager;
+        desktop.adManager = this._adManager;
 
         // Set the layout
         desktop.layout = 'room_desktop_layout_xml';

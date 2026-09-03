@@ -19,8 +19,8 @@ import {AvatarEditorIdEnum} from '@habbo/avatar/enum/AvatarEditorIdEnum';
  *
  * The automatic trigger is wired now: a friend walking into the room gets one from
  * `AvatarInfoWidgetHandler`'s RSUDUE arm, and `updatePeerUserView()` drops it again in favour of the
- * full menu on click. `showGamePlayerName()` itself is still not reachable end-to-end — see
- * RoomDesktop.ts's and IRoomUI.ts's own TODO(AS3) at their (currently absent) `showGamePlayerName()`.
+ * full menu on click. `showGamePlayerName()` is reachable end-to-end too, on AS3's own path:
+ * `SnowWarEngine` -> `IRoomUI` -> `RoomDesktop` -> here.
  *
  * Every AS3 sibling view is ported now, the two conditional stand-ins for the own-avatar menu
  * included: DecorateModeView (`isUserDecorating`) and NewUserHelpView (`RoomEnterEffect.isRunning()`).
@@ -285,15 +285,15 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         return this.widgetHandler as AvatarInfoWidgetHandler;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::get component()
-    // AS3 returns the raw `Component`/IContext the widget was constructed with, used internally
-    // for registerUpdateReceiver()/removeUpdateReceiver() and externally (RentableBotMenuView.as)
-    // as `widget.component.context.createLinkEvent(...)`. This port's RoomWidgetBase carries no
-    // such reference: register/removeUpdateReceiver already go through `windowManager` (see
-    // this.windowManager.registerUpdateReceiver() below), and the one external caller reaches the
-    // link bus through the room engine's context instead — see RentableBotMenuView.ts's
-    // createLinkEvent() header note. No standalone `component` accessor is added: it would return
-    // an object no code here actually models.
+    // DEVIATION: not exposed. AS3 returns the raw `Component`/IContext the widget was constructed
+    //   with, used internally for registerUpdateReceiver()/removeUpdateReceiver() and externally
+    //   (RentableBotMenuView.as) as `widget.component.context.createLinkEvent(...)`. This port's
+    //   RoomWidgetBase carries no such reference: register/removeUpdateReceiver already go through
+    //   `windowManager` (see this.windowManager.registerUpdateReceiver() below), and the one
+    //   external caller reaches the link bus through the room engine's context instead — see
+    //   RentableBotMenuView.ts's createLinkEvent() header note. An accessor here would have to
+    //   return an object no code in this port actually models.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::get component()
 
     /**
 	 * A friend walked into view — put their name bubble up
@@ -355,9 +355,8 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     }
 
     /**
-     * The avatar-name bubble shown over a game NPC/player — RoomUI.showGamePlayerName()'s
-     * eventual forwarding target via RoomDesktop (see that member's own TODO(AS3) in
-     * RoomDesktop.ts and IRoomUI.ts; neither is wired to call this yet).
+     * The avatar-name bubble shown over a game NPC/player — the end of the chain
+     * `SnowWarEngine` -> `RoomUI.showGamePlayerName()` -> `RoomDesktop` -> here.
      */
     // AS3: AvatarInfoWidget.as::showGamePlayerName()
     public showGamePlayerName(objectId: number, name: string, color: number, fadeDelayMs: number): void
@@ -1563,17 +1562,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         for(const view of this._breedPetBubbles.values()) this.positionView(view, deltaTime);
     }
 
-    // AS3: AvatarInfoWidget.as::update() — the per-view body of the four loops.
-    // AS3 asks the room engine for the view's object through RWGOI_MESSAGE_GET_OBJECT_LOCATION
-    // with the view's own userId/userType; this port reads the bounding rectangle directly, which
-    // needs the room index. The menu bubbles carry it; the use-product/breed bubbles are set up
-    // with -1 (they only know the pet's webID), so it is resolved here.
-    //
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::update()
-    // — route this through `ObjectLocationRequestHandler`, which is now ported and registered for
-    // both RWGOI_ message types. It is deliberately *not* done in the same change as the handler:
     /**
-     * Asks the engine where an object is and hands the answer to the view.
+     * The per-view body of `update()`'s four loops: asks the engine where an object is and hands
+     * the answer to the view.
      *
      * **This asks; it does not work it out.** AS3's `update()` sends
      * `RWGOI_MESSAGE_GET_OBJECT_LOCATION` (or the `_GAME_` variant for a game-room nametag) and
