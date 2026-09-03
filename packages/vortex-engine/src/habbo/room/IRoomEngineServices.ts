@@ -137,9 +137,14 @@ export interface IRoomEngineServices
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::get gameEngine()
     readonly gameEngine: IHabboGameManager | null;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::requestRoomAdImage()
-    // forwards to the ad manager, which this port does not have — see RoomEngine's
-    // handleObjectRoomAdEvent().
+    /**
+	 * Asks the ad manager for a billboard's picture.
+	 *
+	 * The answer is asynchronous and does not come back through this call: it arrives on the
+	 * object's own event handler as a `RoomObjectRoomAdUpdateMessage`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::requestRoomAdImage()
+    requestRoomAdImage(roomId: number, objectId: number, objectCategory: number, imageURL: string, clickURL: string): void;
 
     // DEVIATION: returns the active room's active rendering canvas. RoomEngine reaches its canvases
     //   through the renderer rather than exposing one, so declaring it here would oblige an accessor

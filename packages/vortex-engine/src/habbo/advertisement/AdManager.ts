@@ -161,9 +161,18 @@ export class AdManager extends Component implements IAdManager
             const blob = await response.blob();
             const imageBitmap = await createImageBitmap(blob);
 
+            // A 1x1 is the tracking pixel an ad server answers with when it has nothing to show;
+            // anything larger is a real billboard. The decoded bitmap has to travel with the
+            // event — RoomEngine registers it as a graphic asset under the URL, and without it
+            // the billboard renders blank however well the rest of the flow works.
             if(imageBitmap.width > 1 || imageBitmap.height > 1)
             {
-                this.onBillboardImageReady(imageURL);
+                this.onBillboardImageReady(imageURL, imageBitmap);
+            }
+            else
+            {
+                imageBitmap.close();
+                this.onBillboardImageLoadError(imageURL);
             }
         }
         catch
@@ -176,7 +185,7 @@ export class AdManager extends Component implements IAdManager
 	 * Billboard image loaded successfully
 	 */
     // AS3: .../src/com/sulake/habbo/advertisement/AdManager.as::onBillboardImageReady()
-    private onBillboardImageReady(imageURL: string): void
+    private onBillboardImageReady(imageURL: string, image: ImageBitmap): void
     {
         const requests = this._billboardImageLoaders.get(imageURL);
         this._billboardImageLoaders.delete(imageURL);
@@ -188,8 +197,11 @@ export class AdManager extends Component implements IAdManager
             this._adEvents.emit(AdEvent.ROOM_AD_IMAGE_LOADED, new AdEvent(
                 AdEvent.ROOM_AD_IMAGE_LOADED,
                 req.roomId,
+                image,
                 req.imageURL,
                 req.clickURL,
+                null,
+                null,
                 req.objectId,
                 req.objectCategory
             ));
@@ -212,8 +224,11 @@ export class AdManager extends Component implements IAdManager
             this._adEvents.emit(AdEvent.ROOM_AD_IMAGE_LOADING_FAILED, new AdEvent(
                 AdEvent.ROOM_AD_IMAGE_LOADING_FAILED,
                 req.roomId,
+                null,
                 req.imageURL,
                 req.clickURL,
+                null,
+                null,
                 req.objectId,
                 req.objectCategory
             ));

@@ -111,6 +111,10 @@ import {RoomVisualizationData} from './object/visualization/room/RoomVisualizati
 import type {IAssetRoomVisualizationData} from './object/visualization/room/rasterizer/basic/PlaneRasterizerTypes';
 import type {NitroAsset} from '@core/assets/NitroAsset';
 import {IID_HabboConfigurationManager} from '@iid/IIDHabboConfigurationManager';
+import {IID_HabboAdManager} from '@iid/IIDHabboAdManager';
+import type {IAdManager} from '@habbo/advertisement/IAdManager';
+import {AdEvent} from '@habbo/advertisement/events/AdEvent';
+import {RoomObjectRoomAdUpdateMessage} from './messages/RoomObjectRoomAdUpdateMessage';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
@@ -687,11 +691,26 @@ export class RoomEngine extends Component implements IRoomEngine,
             ),
             new ComponentDependency(
                 IID_AvatarRenderManager,
-                (avatarRenderer: IAvatarRenderManager | null) => 
+                (avatarRenderer: IAvatarRenderManager | null) =>
                 {
                     this._visualizationFactory.avatarRenderManager = avatarRenderer;
                 },
                 false // Optional - needed for avatar visualization
+            ),
+            // Optional in AS3 too. AS3 attaches its three listeners through the dependency's own
+            // event-descriptor array; this port's ComponentDependency has no such array, so they
+            // are attached in the setter instead — same three events, same callbacks.
+            // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::dependencies (IIDHabboAdManager)
+            new ComponentDependency(
+                IID_HabboAdManager,
+                (adManager: IAdManager | null) =>
+                {
+                    this._adManager = adManager;
+
+                    adManager?.adEvents.on(AdEvent.ROOM_AD_IMAGE_LOADED, this.onRoomAdImageLoaded);
+                    adManager?.adEvents.on(AdEvent.ROOM_AD_IMAGE_LOADING_FAILED, this.onRoomAdImageLoaded);
+                },
+                false
             ),
             new ComponentDependency(
                 IID_HabboToolbar,
@@ -738,6 +757,10 @@ export class RoomEngine extends Component implements IRoomEngine,
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_gameManager
     private _gameManager: IHabboGameManager | null = null;
+
+    /** Null in a hotel with no ad subsystem, which is why every use of it is guarded. */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::_adManager
+    private _adManager: IAdManager | null = null;
 
     /**
      * A click on an avatar, in game mode: a snow-war throw at that player. Outside game mode AS3
@@ -7176,8 +7199,64 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
+    /**
+     * Asks the ad manager for a billboard's picture.
+     *
+     * Silently does nothing without an ad manager, as AS3 does: room ads are an optional
+     * subsystem and a hotel without one simply shows blank billboards.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::requestRoomAdImage()
+    requestRoomAdImage(roomId: number, objectId: number, objectCategory: number, imageURL: string, clickURL: string): void
+    {
+        this._adManager?.loadRoomAdImage(roomId, objectId, objectCategory, imageURL, clickURL);
+    }
+
+    /**
+     * The picture came back — register it, then tell the billboard to use it.
+     *
+     * The asset is registered under the *image URL*, which is the name the visualization looks
+     * the sprite up by, and it goes in before the update message so the lookup cannot miss.
+     * A failure takes the same path with a null image: the billboard needs telling either way.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::onRoomAdImageLoaded()
+    private onRoomAdImageLoaded = (event: AdEvent): void =>
+    {
+        const room = this.getRoomInstance(event.roomId);
+
+        if(room === null) return;
+
+        const object = room.getObject(
+            event.objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) as IRoomObjectController | null;
+        const eventHandler = object?.getEventHandler() ?? null;
+
+        if(object == null || eventHandler === null) return;
+
+        if(event.image !== null)
+        {
+            this._contentLoader.addGraphicAsset(object.getType(), event.imageUrl, Texture.from(event.image), true);
+        }
+
+        let messageType: string | null = null;
+
+        switch(event.type)
+        {
+            case AdEvent.ROOM_AD_IMAGE_LOADED:
+                messageType = RoomObjectRoomAdUpdateMessage.ROOM_BILLBOARD_IMAGE_LOADED;
+                break;
+
+            case AdEvent.ROOM_AD_IMAGE_LOADING_FAILED:
+                messageType = RoomObjectRoomAdUpdateMessage.ROOM_BILLBOARD_LOADING_FAILED;
+                break;
+        }
+
+        if(messageType === null) return;
+
+        eventHandler.processUpdateMessage(new RoomObjectRoomAdUpdateMessage(
+            messageType, event.imageUrl, event.clickUrl, event.objectId, event.image));
+    };
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getRoomInstanceData()
-    private getRoomInstanceData(roomId: number): IRoomEngineRoomInstanceData 
+    private getRoomInstanceData(roomId: number): IRoomEngineRoomInstanceData
     {
         let data = this._roomInstanceData.get(roomId);
 
@@ -7926,11 +8005,13 @@ export class RoomEngine extends Component implements IRoomEngine,
                     engineType = RoomEngineRoomAdEvent.TOOLTIP_HIDE;
                     break;
 
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectRoomAdEvent()'s
-                // RORAE_ROOM_AD_LOAD_IMAGE case calls RoomEngine.requestRoomAdImage(), which
-                // forwards to the ad manager (`_adManager`). This port has no ad manager at all,
-                // so the image half of room ads cannot be served yet — the four interaction
-                // cases above are independent of it and work without one.
+                // The only case with no engine event of its own: it starts a load instead, and
+                // the answer comes back through onRoomAdImageLoaded().
+                // AS3: .../src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectRoomAdEvent()
+                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_LOAD_IMAGE:
+                    this.requestRoomAdImage(
+                        this._activeRoomId, event.objectId, category, event.imageUrl ?? '', event.clickUrl ?? '');
+                    break;
             }
 
             if(engineType !== null)
