@@ -143,11 +143,13 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         return isRoomViewerMode(this.flags);
     }
 
-    // DEVIATION: not ported, and it would do nothing if it were. AS3 sends a username/password
-    //   login straight down the socket, but its composer is neutered in this build —
-    //   `_SafeCls_1711.getMessageArray()` returns an empty array — so the packet carries no
-    //   credentials in the original client either. Porting it would add a dev-only credential
-    //   path that provably transmits nothing; SSO (`setSSOTicket()` below) is the live route.
+    // DEVIATION: not ported, and it is unreachable twice over in the original client. AS3 sends a
+    //   username/password login straight down the socket, but (1) the composer is neutered —
+    //   `_SafeCls_1711.getMessageArray()` returns an empty array, so no credentials travel — and
+    //   (2) `_SafeCls_1711` has no entry in the message registry at all: `_SafeCls_2046.as` maps
+    //   581 composers to headers and this is not one of them, so the packet has no header to be
+    //   serialised under. Porting it would add a dev-only credential path that cannot reach the
+    //   wire. SSO (`setSSOTicket()` below) is the live route.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::sendTryLoginDevelopmentOnly()
 
     // DEVIATION: not ported. AS3 auto-selects a developer account from the returned avatar list

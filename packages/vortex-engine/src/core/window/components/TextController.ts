@@ -916,11 +916,19 @@ export class TextController extends WindowController implements ITextWindow
         };
     }
 
-    // DEVIATION: AS3 hands back the DisplayObject an `<img>` in HTML text was loaded into, so the
-    //   caller can size or replace it. This renderer draws those inline onto the same canvas as
-    //   the glyphs and keeps no per-id handle, so there is nothing to hand back — the method is
-    //   kept, returning null, rather than dropped from the interface.
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
+    /**
+     * Always null — correcting an earlier note here that claimed this renderer draws `<img>`
+     * inline. It does not render inline images at all.
+     *
+     * AS3's body is one line, `_field.getImageReference(id)`, a pass-through to Flash's
+     * `TextField`. There is no TextField here and no inline-image support to hand a handle out
+     * of, so answering honestly would mean building that support first — and nothing wants it:
+     * no shipped layout or localisation string contains an `<img>`, and AS3's own method has no
+     * caller in any tree either.
+     */
+    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
+    //   returns a real handle once inline `<img>` rendering exists. Reopen this with that feature,
+    //   not before — a handle to an image nobody draws is worth nothing.
     public getImageReference(_id: string): unknown
     {
         return null;

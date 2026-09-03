@@ -8,6 +8,7 @@ import {AvatarImagePartContainer} from './AvatarImagePartContainer';
 import {AvatarDirectionAngle} from './enum/AvatarDirectionAngle';
 import {AvatarModelGeometry} from './geometry/AvatarModelGeometry';
 import type {IAssetLibrary} from '@core/assets';
+import type {IAvatarRenderManager} from './IAvatarRenderManager';
 import type {IAvatarFigureContainer} from './IAvatarFigureContainer';
 import type {IAvatarImage} from './IAvatarImage';
 import {AnimationData} from './structure/AnimationData';
@@ -36,8 +37,10 @@ export class AvatarStructure
     private _defaultLayAction: ActionDefinition | null = null;
     private _mandatorySetTypeCache: Map<string, Map<number, string[]>>;
 
-    constructor()
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::AvatarStructure()
+    constructor(renderManager: IAvatarRenderManager | null = null)
     {
+        this._renderManager = renderManager;
         this._figureSetData = new FigureSetData();
         this._partSetsData = new PartSetsData();
         this._animationData = new AnimationData();
@@ -53,15 +56,23 @@ export class AvatarStructure
         return this._animationManager;
     }
 
-    // DEVIATION: AS3 stores the owning AvatarRenderManager (constructor param
-    //   `param1:_SafeCls_582`) and exposes it back so AvatarAssetDownloadManager and
-    //   EffectAssetDownloadManager can reach `.renderManager.isReady` and listen for
-    //   `AVATAR_RENDER_READY`. This port injects `renderReadyProvider` /
-    //   `mandatoryLibrariesReadyCallback` straight into AvatarAssetDownloadManager's constructor
-    //   instead (see its `() => this._isReady` / `() => this.onMandatoryLibrariesReady()`
-    //   arguments) — the same two reads, without the structure holding a back-reference to its
-    //   own owner.
+    // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::_renderManager
+    private _renderManager: IAvatarRenderManager | null;
+
+    /**
+     * The render manager that owns this structure.
+     *
+     * AS3's asset download managers reach `.renderManager.isReady` and listen for
+     * `AVATAR_RENDER_READY` through it. This port already hands those two reads to
+     * `AvatarAssetDownloadManager` as callbacks (`renderReadyProvider` /
+     * `mandatoryLibrariesReadyCallback`), so nothing here needs the back-reference — but it is a
+     * real public member and AS3's constructor takes it, so it is carried.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::get renderManager()
+    public get renderManager(): IAvatarRenderManager | null
+    {
+        return this._renderManager;
+    }
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::get figureData()
     public get figureData(): IFigureData

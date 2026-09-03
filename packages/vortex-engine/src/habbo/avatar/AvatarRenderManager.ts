@@ -82,7 +82,7 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     {
         super(context);
 
-        this._structure = new AvatarStructure();
+        this._structure = new AvatarStructure(this);
         this._aliasCollection = new AssetAliasCollection();
     }
 

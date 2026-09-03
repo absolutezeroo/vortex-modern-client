@@ -500,22 +500,43 @@ export class ComponentContext extends Component implements IContext
         return this.assets?.loadFromResource(manifest, resourceData) ?? false;
     }
 
-    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::get displayObjectContainer() returns
-    // the `Sprite` every component in the context draws into. There is no Flash display list here —
-    // the port renders through PixiJS off the window system — so there is nothing honest to return.
+    // DEVIATION: not exposed. AS3 returns the `Sprite` every component in the context draws into.
+    //   There is no Flash display list here — the port renders through PixiJS off the window
+    //   system — so an accessor would have to invent something to return.
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::get displayObjectContainer()
 
-    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::loadFromFile(),
-    // loadReadyHandler(), loadErrorHandler(), loadDebugHandler(), removeLibraryLoader() and
-    // prepareComponent() load a component out of a SWF through `flash.display.Loader` and an
-    // `ApplicationDomain`, then read its `[Component]` metadata to register it, keeping the open
-    // loaders in `_SafeCls_56.as::_loaders`. This port has no runtime code loading at all:
-    // components are imported and registered by `Vortex.bootstrap()`, so the whole path — the
-    // field included — has no counterpart rather than being unfinished.
+    // DEVIATION: none of these exist here, because runtime code loading does not. AS3's
+    //   loadFromFile(), loadReadyHandler(), loadErrorHandler(), loadDebugHandler(),
+    //   removeLibraryLoader() and prepareComponent() pull a component out of a SWF through
+    //   `flash.display.Loader` and an `ApplicationDomain`, read its `[Component]` metadata to
+    //   register it, and keep the open loaders in `_loaders`. This port's components are imported
+    //   and registered by `Vortex.bootstrap()`; there is no SWF and no loader to track.
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::loadFromFile()
 
-    // TODO(AS3): .../src/com/sulake/core/runtime/_SafeCls_56.as::toXMLString() dumps the context's
-    // interface registrations as XML for debugging. It reads `_queuees` and each component's
-    // InterfaceStructList, neither of which this port has — see Component.ts's own note on why
-    // that storage is structured differently here.
+    /**
+     * The whole context as an XML fragment: its own interfaces, then every attached component's.
+     *
+     * AS3 reads its interfaces out of `getInterfaceStructList(this).mapStructsByImplementor()`.
+     * The context is a Component here too, so `super.toXMLString()` produces exactly that half —
+     * and it walks `_attachedComponents` for the rest, skipping itself as AS3 does.
+     */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_56.as::toXMLString()
+    override toXMLString(indent: number = 0): string
+    {
+        const pad = '\t'.repeat(indent);
+
+        let xml = `${pad}<context class="${this.constructor.name}">\n`;
+
+        // The context's own interfaces, in the <component> wrapper the base emits.
+        xml += super.toXMLString(indent + 1);
+
+        for(const component of this._attachedComponents)
+        {
+            if(component !== (this as unknown as Component)) xml += component.toXMLString(indent + 1);
+        }
+
+        return `${xml}${pad}</context>\n`;
+    }
 
     // DEVIATION: `_queuees`, `addQueueeForInterface()`, `hasQueueForInterface()` and
     //   `getQueueForInterface()` are AS3's interface-queue storage. This port keeps the same

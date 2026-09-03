@@ -28,8 +28,8 @@ export type InterfaceCallback<T = unknown> = (iid: IID<T>, instance: T) => void;
  * docs/IMPLEMENTATION_STATUS.md → the FakeContext entry.
  *
  * Four members of `_SafeCls_54` are out: `loadFromFile`, `get displayObjectContainer`,
- * `toXMLString` and `prepareComponent`, all Flash display-list or file-system entry points, each
- * carrying its own `TODO(AS3)` on `ComponentContext`.
+ * `toXMLString` and `prepareComponent`, all Flash display-list or SWF-loading entry points, each
+ * carrying its own `DEVIATION:` on `ComponentContext`.
  *
  * The other four used to be listed here too, on the grounds that `Logger` owns the message history.
  * That was wrong twice over: `ComponentContext` implements all four anyway, and AS3 declares them
