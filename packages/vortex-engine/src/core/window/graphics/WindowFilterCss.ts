@@ -16,17 +16,29 @@
 // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter()
 export interface IWindowDropShadowFilter
 {
+    // TS-only: the discriminant. AS3 has a real `DropShadowFilter` class and tests with `is`.
     type: 'DropShadowFilter';
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`distance`)
     distance: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`angle`)
     angle: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`color`)
     color: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`alpha`)
     alpha: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`blurX`)
     blurX: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`blurY`)
     blurY: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`strength`)
     strength: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`quality`)
     quality: number;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`inner`)
     inner: boolean;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`knockout`)
     knockout: boolean;
+    // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter() (`hideObject`)
     hideObject: boolean;
 }
 
