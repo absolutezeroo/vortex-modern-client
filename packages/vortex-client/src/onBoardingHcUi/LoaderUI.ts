@@ -21,10 +21,11 @@ import {NineSplitSprite} from './NineSplitSprite';
 // DEVIATION: the AS3 class declares four `[Embed]` font classes — ubuntu_regular, ubuntu_bold,
 //   ubuntu_italic, ubuntu_bold_italic. They are the SWF's copy of a font the player's machine may
 //   not have; LoginFlow.as, OnBoardingHcFlow.as and HabboWindowManagerCom.as each declare the same
-//   four, and the manifest lists them as `application/x-font-truetype` assets. Embedded classes have
-//   no TypeScript counterpart, and the browser resolves `font: 'Ubuntu'` from the page's own
-//   @font-face, so all four are deliberately not reproduced here or in the three other classes that
-//   declare them.
+//   four, and the manifest lists them as `application/x-font-truetype` assets. The port embeds
+//   them once rather than four times: `App.ts`'s `WEBFONT_FACES` has an entry per face and
+//   `loadWebFonts()` reads their bytes out of the asset bundle and registers each through the
+//   `FontFace` API — the browser equivalent of `[Embed]`, down to taking the same bytes from the
+//   same bundle. See LoginFlow.ts's fuller note.
 // AS3: sources/WIN63-202607011411-782849652/src/onBoardingHcUi/LoaderUI.as::ubuntu_regular
 export class LoaderUI
 {

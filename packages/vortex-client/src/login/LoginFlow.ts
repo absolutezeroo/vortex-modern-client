@@ -60,10 +60,13 @@ import {WebCaptchaView} from './WebCaptchaView';
 const log = Logger.getLogger('client.login.LoginFlow');
 
 // DEVIATION: the AS3 class declares four `[Embed]` font classes — ubuntu_regular, ubuntu_bold,
-//   ubuntu_italic, ubuntu_bold_italic — the SWF's copy of a font the player's machine may not have.
-//   Embedded classes have no TypeScript counterpart and the browser resolves `font: 'Ubuntu'` from
-//   the page's @font-face, so they are deliberately not reproduced. Same note on LoaderUI.ts and
-//   OnBoardingHcFlow.ts, which declare the same four.
+//   ubuntu_italic, ubuntu_bold_italic — the SWF's copy of a font the player's machine may not
+//   have. The port embeds them too, once for the whole client rather than once per class that
+//   needs them: `App.ts`'s `WEBFONT_FACES` table has an entry per face (Ubuntu.ttf, -b, -i, -ib)
+//   and `loadWebFonts()` reads their bytes out of the asset bundle and registers each through the
+//   `FontFace` API. Same bytes, same origin, same guarantee — a player without Ubuntu installed
+//   still gets Ubuntu. Four per-class references would register the same four faces four times.
+//   Same note on LoaderUI.ts and OnBoardingHcFlow.ts, which declare the same four.
 // AS3: sources/WIN63-202607011411-782849652/src/login/LoginFlow.as::ubuntu_regular
 export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
 {
