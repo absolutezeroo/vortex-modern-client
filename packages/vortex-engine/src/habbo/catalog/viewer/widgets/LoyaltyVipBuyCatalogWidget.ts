@@ -110,10 +110,20 @@ export class LoyaltyVipBuyCatalogWidget extends CatalogWidget implements IVipBuy
         this.initLinks();
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::fixFormatting()
-    // Same pre-existing ITextFormat align/leading gap as VipBuyCatalogWidget.ts's own note.
-    private fixFormatting(_field: ITextWindow | null, _leading: number = 0): void
+    /**
+     * Inert for the same reason as `VipBuyCatalogWidget.fixFormatting()` — see the note there.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::fixFormatting()
+    private fixFormatting(field: ITextWindow | null, leading: number = 0): void
     {
+        if(field === null) return;
+
+        const format = field.getTextFormat();
+
+        format.align = 'center';
+        format.leading = leading;
+
+        field.setTextFormat(format);
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/LoyaltyVipBuyCatalogWidget.as::initLinks()

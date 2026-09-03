@@ -101,12 +101,14 @@ export class CatalogPage implements ICatalogPage
     // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_localization
     private _localization: IPageLocalization;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/CatalogPage.as::createWidget()
-    // The switch now covers 39 of the 48 names CatalogWidgetName declares. Still without a case:
-    // BUILDER_ADDONS, BUILDER_LOYALTY, BUILDER_SUBSCRIPTION, ROOM_ADS_CATALOG, ROOM_PREVIEW,
-    // SONG_DISK_PRODUCT_VIEW, TRAX_PREVIEW, TROPHY, USER_BADGE_SELECTOR - a page naming one of
-    // those renders its layout with that slot inert (no default case, so an unmatched name is
-    // silently skipped).
+    /**
+     * Every widget this page built, in the order `createWidgetsRecursion()` walked the layout.
+     *
+     * `createWidget()`'s switch covers all 48 names `CatalogWidgetName` declares, which is the
+     * same 48 the AS3 switch has. There is no default case in either: a layout naming something
+     * else leaves that slot inert rather than throwing.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_widgets
     private _widgets: ICatalogWidget[] = [];
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/CatalogPage.as::_widgetEvents

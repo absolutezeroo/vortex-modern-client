@@ -1226,6 +1226,7 @@ export class TextController extends WindowController implements ITextWindow
             bold: this._bold,
             italic: this._italic,
             underline: this._underline,
+            leading: this._leading,
         };
     }
 

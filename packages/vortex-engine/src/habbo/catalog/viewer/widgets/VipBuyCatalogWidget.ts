@@ -113,12 +113,27 @@ export class VipBuyCatalogWidget extends CatalogWidget implements IVipBuyCatalog
         this.initLinks();
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::fixFormatting()
-    // ITextFormat (ITextWindow.ts) doesn't carry align/leading yet - documented pre-existing gap
-    // ("not threaded through here since no current caller needs them"); this is now a real caller,
-    // but extending the shared per-range text-format type is out of scope for this widget.
-    private fixFormatting(_field: ITextWindow | null, _leading: number = 0): void
+    /**
+     * Centres a label and gives it the requested leading — or would, in a Flash that took the
+     * call.
+     *
+     * Inert in AS3 as well, and deliberately ported that way: `TextController.setTextFormat()`
+     * guards on `beginIndex >= 0 && endIndex > beginIndex && endIndex < length` before touching
+     * the field, and this passes no range at all, so the mutated copy is dropped on the floor.
+     * The round-trip is kept rather than emptied so the next reader sees what AS3 asks for and
+     * why nothing happens, instead of a stub that looks like an unported member.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::fixFormatting()
+    private fixFormatting(field: ITextWindow | null, leading: number = 0): void
     {
+        if(field === null) return;
+
+        const format = field.getTextFormat();
+
+        format.align = 'center';
+        format.leading = leading;
+
+        field.setTextFormat(format);
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/VipBuyCatalogWidget.as::initLinks()

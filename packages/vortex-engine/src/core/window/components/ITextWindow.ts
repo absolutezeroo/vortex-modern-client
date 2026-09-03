@@ -25,6 +25,19 @@ export interface ITextFormat
     italic?: boolean | null;
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get underline()
     underline?: boolean | null;
+
+    /**
+	 * Paragraph alignment — `"left"`, `"center"` or `"right"`.
+	 *
+	 * `TextController` tracks no alignment of its own, so `getTextFormat()` never fills this in;
+	 * it exists because callers build a format to hand back to `setTextFormat()` and AS3's
+	 * `flash.text.TextFormat` carries it.
+	 */
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextFormatting() (`_loc3_.align`)
+    align?: string | null;
+
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::get leading()
+    leading?: number | null;
 }
 
 /**
