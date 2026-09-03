@@ -256,13 +256,62 @@ interface IRoomEngineRoomInstanceData {
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::get mouseButtonCursorOwners()
     mouseButtonCursorOwners: string[];
 
-    // TODO(AS3): .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::addFurnitureData(),
-    // getFurnitureData(), getFurnitureDataWithId(), addWallItemData() and getWallItemDataWithId()
-    // are two keyed queues of furniture data waiting for its object to exist. Note the getters are
-    // *takes*, not reads — each one calls remove() and hands the entry over. This port drains the
-    // same wait differently: RoomMessageHandler applies furniture data as it arrives and
-    // `_pendingRoomObjectUpdates` holds what arrives too early, so there is no per-room queue on
-    // the instance data to accessorise.
+    /**
+	 * Furniture the server has announced but which has not been built yet.
+	 *
+	 * `addObjectFurniture()` pushes here rather than creating: a room with three hundred items
+	 * would otherwise build all three hundred inside one message handler. `createRoomFurniture()`
+	 * drains it a few at a time, on a frame budget.
+	 *
+	 * DEVIATION: AS3's two accessor pairs (`getFurnitureData()`/`getFurnitureDataWithId()`) are
+	 *   *takes* — each removes the entry it returns — over a keyed collection. A plain array
+	 *   shifted from the front is the same queue with the same take semantics, and the by-id
+	 *   lookup only ever runs from `addObjectFurnitureFromData()`'s null branch, which this port
+	 *   reaches with the data already in hand.
+	 */
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::addFurnitureData()
+    furnitureQueue: IPendingFurnitureData[];
+
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::addWallItemData()
+    wallItemQueue: IPendingWallItemData[];
+}
+
+/**
+ * One queued floor item, holding exactly the arguments `addObjectFurniture()` was handed.
+ */
+// AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as
+export interface IPendingFurnitureData {
+    id: number;
+    typeId: number;
+    className: string | null;
+    location: IVector3d;
+    direction: IVector3d;
+    state: number;
+    data: IStuffData | null;
+    extra: number;
+    expiryTime: number;
+    usagePolicy: number;
+    ownerId: number;
+    ownerName: string;
+    synchronized: boolean;
+}
+
+/**
+ * One queued wall item. Its `data` is a string where the floor item's is an `IStuffData` — the
+ * wall message carries the legacy blob, not a parsed one.
+ */
+// AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as
+export interface IPendingWallItemData {
+    id: number;
+    typeId: number;
+    location: IVector3d;
+    direction: IVector3d;
+    state: number;
+    data: string;
+    usagePolicy: number;
+    ownerId: number;
+    ownerName: string;
+    secondsToExpiration: number;
 }
 
 export interface IRoomEngineRectangle {
@@ -3619,13 +3668,105 @@ export class RoomEngine extends Component implements IRoomEngine,
         return true;
     }
 
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::update()
-    update(time: number): void 
+    /**
+     * How many queued items to build between clock reads.
+     *
+     * AS3 checks the elapsed time every fourth item rather than every item, because reading the
+     * clock is not free either.
+     */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::createRoomFurniture() (`_loc4_ % 4`)
+    private static readonly FURNITURE_BUILD_BATCH: number = 4;
+
+    /** The frame budget the drain gives itself before leaving the rest for the next one. */
+    // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::createRoomFurniture() (`>= 30`)
+    private static readonly FURNITURE_BUILD_BUDGET_MS: number = 30;
+
+    /**
+     * Builds queued furniture, floor first then walls, for as long as the frame budget allows.
+     *
+     * Game mode drains without a budget: AS3 skips the time check there because a game room has
+     * to be whole before the first frame, not merely soon.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::createRoomFurniture()
+    private createRoomFurniture(): void
     {
-        if(this._roomManager) 
+        const startedAt = performance.now();
+
+        for(const [roomId, instanceData] of this._roomInstanceData)
         {
-            // TODO(AS3): RoomEngine.as::createRoomFurniture() — deferred furniture
-            // queue processing at the top of update() is not ported yet.
+            let built = 0;
+            let outOfTime = false;
+
+            while(instanceData.furnitureQueue.length > 0)
+            {
+                const data = instanceData.furnitureQueue.shift()!;
+
+                if(data.className !== null)
+                {
+                    this.addObjectFurnitureByNameFromData(
+                        roomId, data.id, data.className, data.location, data.direction, data.state);
+                }
+                else
+                {
+                    this.addRoomObjectFurniture(
+                        roomId, data.id, data.typeId, data.location, data.direction, data.state,
+                        data.extra.toString(), data.expiryTime, data.usagePolicy, data.ownerId,
+                        data.ownerName, data.synchronized, data.data);
+                }
+
+                if(++built % RoomEngine.FURNITURE_BUILD_BATCH === 0
+                    && !this._isGameMode
+                    && performance.now() - startedAt >= RoomEngine.FURNITURE_BUILD_BUDGET_MS)
+                {
+                    outOfTime = true;
+                    break;
+                }
+            }
+
+            while(!outOfTime && instanceData.wallItemQueue.length > 0)
+            {
+                const data = instanceData.wallItemQueue.shift()!;
+
+                this.addObjectWallItemFromData(
+                    roomId, data.id, data.typeId, data.location, data.direction, data.state,
+                    data.data, data.usagePolicy, data.ownerId, data.ownerName, data.secondsToExpiration);
+
+                if(++built % RoomEngine.FURNITURE_BUILD_BATCH === 0
+                    && !this._isGameMode
+                    && performance.now() - startedAt >= RoomEngine.FURNITURE_BUILD_BUDGET_MS)
+                {
+                    outOfTime = true;
+                    break;
+                }
+            }
+
+            // AS3 returns rather than continuing to the next room: the budget is for the whole
+            // pass, not per room, so a room that used it up ends the pass.
+            if(outOfTime) return;
+        }
+    }
+
+    /**
+     * TS-only: the safety net under the queue.
+     *
+     * `update()` is what drains the queue in AS3, and nothing calls `update()` here — the port
+     * runs off a PixiJS ticker instead (see `setTicker()`). Anything that builds a room without
+     * ever attaching one, `RoomPreviewer` included, would otherwise queue furniture that is
+     * never built. With no ticker the queue is drained on the spot, which is exactly the
+     * behaviour this port had before the queue existed.
+     */
+    private drainFurnitureQueuesIfUnticked(): void
+    {
+        if(this._ticker === null) this.createRoomFurniture();
+    }
+
+    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/RoomEngine.as::update()
+    update(time: number): void
+    {
+        if(this._roomManager)
+        {
+            // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::update() calls this first.
+            this.createRoomFurniture();
             this._roomManager.update(time);
 
             // AS3 iterates ALL room instances and updates each renderer —
@@ -4108,6 +4249,16 @@ export class RoomEngine extends Component implements IRoomEngine,
         this.events.emit(RoomEngineEvent.REE_INITIALIZED, new RoomEngineEvent(RoomEngineEvent.REE_INITIALIZED, roomId));
     }
 
+    /**
+     * Queues one floor item; it is built later, by `createRoomFurniture()`.
+     *
+     * This does not create anything, and AS3's does not either — it returns `true` for a queued
+     * item, not a built one. The pacing is the whole point: a full room announces every item in
+     * a single message, and building them all inside that handler is what makes room entry
+     * stall. `_pendingRoomObjectUpdates` still covers the *other* wait, updates that arrive
+     * before their object; this covers the object itself.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectFurniture()
     addObjectFurniture(
         roomId: number,
         id: number,
@@ -4124,23 +4275,16 @@ export class RoomEngine extends Component implements IRoomEngine,
         synchronized: boolean,
         _refresh: boolean,
         _sizeZ: number
-    ): boolean 
+    ): boolean
     {
-        return this.addRoomObjectFurniture(
-            roomId,
-            id,
-            typeId,
-            location,
-            direction,
-            state,
-            extra.toString(),
-            expiryTime,
-            usagePolicy,
-            ownerId,
-            ownerName,
-            synchronized,
-            data
-        );
+        this.getRoomInstanceData(roomId).furnitureQueue.push({
+            id, typeId, className: null, location, direction, state, data, extra,
+            expiryTime, usagePolicy, ownerId, ownerName, synchronized
+        });
+
+        this.drainFurnitureQueuesIfUnticked();
+
+        return true;
     }
 
     addObjectFurnitureByName(
@@ -4150,20 +4294,46 @@ export class RoomEngine extends Component implements IRoomEngine,
         location: IVector3d,
         direction: IVector3d,
         state: number,
-        _data: IStuffData | null,
-        _extra: number
-    ): boolean 
+        data: IStuffData | null,
+        extra: number
+    ): boolean
+    {
+        this.getRoomInstanceData(roomId).furnitureQueue.push({
+            id, typeId: 0, className, location, direction, state, data, extra,
+            expiryTime: 0, usagePolicy: 0, ownerId: 0, ownerName: '', synchronized: true
+        });
+
+        this.drainFurnitureQueuesIfUnticked();
+
+        return true;
+    }
+
+    /**
+     * Builds one queued floor item, by class name rather than type id.
+     *
+     * The name path is what the server uses for fixed furniture (the room's own fittings), and
+     * it carries none of the owner/expiry metadata the numeric path does.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectFurnitureFromData()
+    private addObjectFurnitureByNameFromData(
+        roomId: number,
+        id: number,
+        className: string,
+        location: IVector3d,
+        direction: IVector3d,
+        state: number
+    ): boolean
     {
         const room = this.getRoomInstance(roomId);
 
-        if(!room) 
+        if(!room)
         {
             return false;
         }
 
         const object = room.createRoomObject(id, className, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
 
-        if(!object) 
+        if(!object)
         {
             return false;
         }
@@ -4523,7 +4693,36 @@ export class RoomEngine extends Component implements IRoomEngine,
         if(icon.data !== null) toolbar.createTransitionToIcon(HabboToolbarIconEnum.INVENTORY, icon.data, startX, startY);
     }
 
+    /**
+     * Queues one wall item. Same reasoning as `addObjectFurniture()` — see the note there.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectWallItem()
     addObjectWallItem(
+        roomId: number,
+        id: number,
+        typeId: number,
+        location: IVector3d,
+        direction: IVector3d,
+        state: number,
+        data: string,
+        usagePolicy: number,
+        ownerId: number,
+        ownerName: string,
+        secondsToExpiration: number
+    ): boolean
+    {
+        this.getRoomInstanceData(roomId).wallItemQueue.push({
+            id, typeId, location, direction, state, data,
+            usagePolicy, ownerId, ownerName, secondsToExpiration
+        });
+
+        this.drainFurnitureQueuesIfUnticked();
+
+        return true;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::addObjectWallItemFromData()
+    private addObjectWallItemFromData(
         roomId: number,
         id: number,
         typeId: number,
@@ -7270,7 +7469,9 @@ export class RoomEngine extends Component implements IRoomEngine,
                 worldType: null,
                 selectedObjectData: null,
                 placedObjectData: null,
-                mouseButtonCursorOwners: []
+                mouseButtonCursorOwners: [],
+                furnitureQueue: [],
+                wallItemQueue: []
             };
 
             data.roomCamera.activateFollowing(this.cameraFollowDuration);
@@ -7489,9 +7690,15 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
-    private onTickerUpdate = (): void => 
+    private onTickerUpdate = (): void =>
     {
-        for(const callback of this._canvasSyncCallbacks) 
+        // AS3 drains the furniture queue at the top of update(). This ticker is the only thing
+        // running per frame in this port, so it is where that has to happen — see
+        // drainFurnitureQueuesIfUnticked() for what covers the no-ticker case.
+        // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::update()
+        this.createRoomFurniture();
+
+        for(const callback of this._canvasSyncCallbacks)
         {
             callback();
         }

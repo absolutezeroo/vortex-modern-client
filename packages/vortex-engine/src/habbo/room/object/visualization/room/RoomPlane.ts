@@ -74,6 +74,18 @@ export class RoomPlane
     private _outputCanvas: HTMLCanvasElement | null = null;
     private _bitmapMasks: IRoomPlaneBitmapMask[] = [];
     private _rectangleMasks: IRoomPlaneRectangleMask[] = [];
+
+    /**
+     * The mask sets the cached texture was actually rendered with.
+     *
+     * Snapshotted at render time so `updateMaskChangeStatus()` can tell a mask set that merely
+     * churned — removed and re-added in the same frame — from one that genuinely differs.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_previousBitmapMasks
+    private _previousBitmapMasks: IRoomPlaneBitmapMask[] = [];
+
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_previousRectangleMasks
+    private _previousRectangleMasks: IRoomPlaneRectangleMask[] = [];
     private _maskChanged: boolean = false;
     private _graphics: Graphics;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_bitmapData
@@ -175,14 +187,14 @@ export class RoomPlane
     // from real assets. Wiring the real asset-driven pipeline in is a larger visual-fidelity
     // change, not a mechanical port of this one setter.
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::getDrawingDatas()
-    // AS3 walks the rasterizer's layers/material-cell-matrix here and returns PlaneDrawingData
-    // (asset-name columns) for an external renderer to composite. This port instead lets the
-    // rasterizer paint straight to a canvas: FloorRasterizer/WallRasterizer's render() delegates
-    // to FloorPlane/WallPlane.render(), which resolves the same layer/material/column data
-    // internally and returns a finished bitmap — the equivalent of getDrawingDatas() is folded
-    // into that render() the same way _SafeCls_1821 is folded into RoomEngine. No separate
-    // drawing-data step exists to port.
+    // DEVIATION: AS3 walks the rasterizer's layers/material-cell-matrix here and returns
+    //   PlaneDrawingData (asset-name columns) for an external renderer to composite. This port
+    //   lets the rasterizer paint straight to a canvas instead: FloorRasterizer/WallRasterizer's
+    //   render() delegates to FloorPlane/WallPlane.render(), which resolves the same
+    //   layer/material/column data internally and returns a finished bitmap. The drawing-data
+    //   step is folded into that render(), the same way _SafeCls_1821 is folded into RoomEngine,
+    //   so there is no separate one to expose.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::getDrawingDatas()
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_disposed
     private _disposed: boolean = false;
@@ -682,15 +694,56 @@ export class RoomPlane
 	 * is no cached bitmap yet, if door/window masks changed, or if the cached
 	 * bitmap predates a floor-hole update.
 	 *
-	 * TODO(AS3): sources/win63_version/habbo/room/object/visualization/room/RoomPlane.as::updateMaskChangeStatus()
-	 * AS3 also rolls _maskChanged back to false when the current mask set is
-	 * identical to the previous one (e.g. removed then re-added in the same
-	 * frame), avoiding one redundant recompute. Not ported — requires snapshotting
-	 * the previous mask arrays, which don't otherwise exist in this port.
+	 * `updateMaskChangeStatus()` runs first, so a mask set that changed and changed back inside
+	 * one frame does not force the recompute.
 	 */
+    /**
+     * Clears `_maskChanged` again when the current mask set matches the one already rendered.
+     *
+     * A door mask removed and re-added in the same frame leaves the flag set with nothing to
+     * show for it, and the recompute it forces is the expensive one — the whole point of the
+     * cached texture. Bitmap masks are compared unordered (AS3 searches the previous list for
+     * each current one); rectangle masks only by count, and only in one direction, because AS3
+     * gives up as soon as there are more of them than were rendered.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::updateMaskChangeStatus()
+    private updateMaskChangeStatus(): void
+    {
+        if(!this._maskChanged) return;
+
+        let unchanged = true;
+
+        if(this._bitmapMasks.length === this._previousBitmapMasks.length)
+        {
+            for(const mask of this._bitmapMasks)
+            {
+                const found = this._previousBitmapMasks.some(previous =>
+                    previous.type === mask.type
+                    && previous.leftSideLoc === mask.leftSideLoc
+                    && previous.rightSideLoc === mask.rightSideLoc);
+
+                if(!found)
+                {
+                    unchanged = false;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            unchanged = false;
+        }
+
+        if(this._rectangleMasks.length > this._previousRectangleMasks.length) unchanged = false;
+
+        if(unchanged) this._maskChanged = false;
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::needsNewTexture()
     private needsNewTexture(time: number): boolean
     {
+        this.updateMaskChangeStatus();
+
         if(!this._canBeVisible)
         {
             return false;
@@ -759,6 +812,13 @@ export class RoomPlane
         {
             return this._cachedTextureBitmap ?? this._textureCache.get(identifier) ?? null;
         }
+
+        // The snapshot is taken here, at the point of no return: everything below renders with
+        // exactly these two sets, so this is what "the masks the cached texture has" means. AS3
+        // takes it inside updateMask() for the same reason.
+        // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::updateMask()
+        this._previousBitmapMasks = this._bitmapMasks.slice();
+        this._previousRectangleMasks = this._rectangleMasks.slice();
 
         const id = this._id ?? 'default';
         const leftLen = this._leftSide.length * scale;
