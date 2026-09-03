@@ -259,11 +259,16 @@ export class BadgeImageWidget implements IBadgeImageWidget
     // GlowFilter(color, 0.7*t, 4+4t, 4+4t, 1+1.2t, quality 2), an inner
     // GlowFilter(color, 0.22*t, 2+2t, 2+2t, 0.8+0.6t, quality 1, inner), and a
     // ColorMatrixFilter mixing 0.48*t of the tint with an 80*t offset, `t` following
-    // `easeInOutCubic`. None of that can render here yet: `GraphicContext.filters` stores
-    // the array and the window renderer never reads it, and the engine has no Flash filter
-    // value objects (the only ones in the port are the client-side CSS stand-ins under
-    // `onBoardingHcUi/display/Filters.ts`). Only the colour is kept, so `glowColor` reads
-    // back what was asked for.
+    // `easeInOutCubic`.
+    //
+    // Blocked on one missing capability, re-verified 2026-09-03: **window filters are stored and
+    // never rendered.** `WindowController.filters` writes them onto the graphic context and
+    // `WindowComposite` never reads `getGraphicContext().filters` back — it sets `ctx.filter`
+    // only for the modal darken and the dynamic-style colour transform. That `ctFilter`
+    // assignment in `compositeWindow()` is the entry point: reading the window's own filter list
+    // there and translating each to a CSS filter string (a glow becomes `drop-shadow`) is what
+    // this widget is waiting for, and it would light up every other window filter at once.
+    // Until then only the colour is kept, so `glowColor` reads back what was asked for.
     public playGlow(color: number, _durationMs: number = 500, _scale: number = 1.04): void
     {
         if(this._disposed || this._bitmap === null || this._widgetWindow === null) return;

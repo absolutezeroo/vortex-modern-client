@@ -15,9 +15,15 @@ import {Color, defaultFilterVert, Filter, GlProgram} from 'pixi.js';
  * Gaussian passes: every call site in this port passes `quality` 1, and at the 2-6px radii they
  * use the visible difference is nil.
  *
- * TODO(AS3): `quality` and `knockout` are accepted for signature parity with
- * `flash.filters.GlowFilter` and ignored — no call site in the port passes anything but 1 and
- * false. `knockout` in particular would change what is drawn, so it must not be passed silently.
+ * `knockout` is applied: it drops the source and keeps the glow alone. Every one of the ten
+ * `new GlowFilter(...)` constructions in the primary AS3 tree passes `false`, so nothing exercises
+ * it today — it is implemented rather than ignored because a silently-dropped argument changes
+ * what is drawn.
+ *
+ * TODO(AS3): `quality` is accepted and ignored. Flash runs the blur `quality` times; this runs one
+ * 5x5 box. Nine of the ten AS3 constructions pass 1, where the difference is nil at their 2-6px
+ * radii. The tenth is `BadgeImageWidget.createOuterGlowFilter()`, which passes 2 — and that widget
+ * cannot render a filter at all yet (see its own marker), so nothing is waiting on this.
  *
  * The shader is GLSL only. The port never sets `preference` on `Application.init()`, so PixiJS
  * picks its WebGL default; a WGSL twin would have to be added before that changes.
@@ -48,6 +54,7 @@ uniform float uGlowAlpha;
 uniform float uStrength;
 uniform vec2 uBlur;
 uniform float uInner;
+uniform float uKnockout;
 
 void main(void)
 {
@@ -77,7 +84,15 @@ void main(void)
     float innerA = clamp((1.0 - blurred) * uStrength, 0.0, 1.0) * uGlowAlpha * src.a;
     vec4 inner = vec4(mix(src.rgb, uGlowColor * src.a, innerA), src.a);
 
-    finalColor = mix(outer, inner, uInner);
+    vec4 composited = mix(outer, inner, uInner);
+
+    // Knockout drops the source and keeps only the glow. Flash describes it as making the
+    // source transparent, which for an outer glow is the halo alone and for an inner glow is
+    // the part of the halo that fell inside the shape.
+    float knockoutA = mix(outerA, innerA, uInner);
+    vec4 knockedOut = vec4(uGlowColor * knockoutA, knockoutA);
+
+    finalColor = mix(composited, knockedOut, uKnockout);
 }
 `;
 
@@ -111,7 +126,8 @@ void main(void)
                     uGlowAlpha: {value: alpha, type: 'f32'},
                     uStrength: {value: strength, type: 'f32'},
                     uBlur: {value: new Float32Array([blurX, blurY]), type: 'vec2<f32>'},
-                    uInner: {value: inner ? 1 : 0, type: 'f32'}
+                    uInner: {value: inner ? 1 : 0, type: 'f32'},
+                    uKnockout: {value: knockout ? 1 : 0, type: 'f32'}
                 }
             },
             // Without this the glow is clipped to the sprite's own bounds.
@@ -122,19 +138,19 @@ void main(void)
         this._knockout = knockout;
     }
 
-    // TS-only: kept only so a caller can read back what it passed; see the class TODO.
+    // TS-only: kept so a caller can read back what it passed; see the class TODO on `quality`.
     private _quality: number;
 
-    // TS-only: kept only so a caller can read back what it passed; see the class TODO.
+    // TS-only: mirrors the uniform, so a caller can read back what it passed.
     private _knockout: boolean;
 
-    // TS-only: accepted for signature parity, not applied.
+    // TS-only: accepted for signature parity, not applied — see the class TODO.
     get quality(): number
     {
         return this._quality;
     }
 
-    // TS-only: accepted for signature parity, not applied.
+    // TS-only: `flash.filters.GlowFilter.knockout`, applied through the `uKnockout` uniform.
     get knockout(): boolean
     {
         return this._knockout;
