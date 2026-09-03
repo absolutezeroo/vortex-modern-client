@@ -223,10 +223,15 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
         if(existing)
         {
             existing.initialize(width, height);
-            // TODO(AS3): sources/win63_version/room/renderer/class_2019.as createCanvas()
-            // updates the existing RoomGeometry.scale to param4. Do not call
-            // IRoomRenderingCanvas.setScale() here: AS3 class_3523.setScale()
-            // is display zoom, not geometry scale.
+
+            // A re-created canvas takes the new scale on its *geometry*, not through
+            // `setScale()` — that one is display zoom, a different number. `win63_version`
+            // decompiles this line as `null.scale = param4`, the captured-reference bug; the
+            // primary tree has `_loc6_.scale = param4` and settles it.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_2253.as::createCanvas()
+            const geometry = existing.geometry as {scale: number} | null;
+
+            if(geometry !== null) geometry.scale = scale;
 
             return existing;
         }
@@ -292,12 +297,13 @@ export class RoomRenderer implements IRoomRenderer, IRoomSpriteCanvasContainer
 	 * @see AS3 class_3447 lines 183-186
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_2253.as::createCanvasInstance()
-    // TODO(AS3): AS3's base class is concrete here - it returns a real canvas instance
-    // (`_SafeCls_3074`), not an abstract hook. There is no engine-layer (non-Habbo) canvas
-    // implementation to construct in this port's architecture (`room/` never imports from
-    // `habbo/room/`, where the only concrete canvas - RoomRenderingCanvas - lives), so a throw
-    // stands in for AS3's concrete default. Harmless today: HabboRoomRenderer always overrides
-    // this, the same way AS3's own callers only ever use the Habbo-specific renderer subclass.
+    // DEVIATION: AS3's base is concrete here — it returns a real canvas instance — where this is
+    //   an abstract hook that throws. The reason is the layering rule the port is built on:
+    //   `room/` never imports from `habbo/room/`, and the only concrete canvas
+    //   (`RoomRenderingCanvas`) lives there. Returning one would invert the dependency the whole
+    //   engine/client split rests on. Harmless in practice: `HabboRoomRenderer` overrides this,
+    //   the same way AS3's own callers only ever use the Habbo-specific renderer subclass.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_2253.as::createCanvasInstance()
     protected createCanvasInstance(_id: number, _width: number, _height: number, _scale: number): IRoomRenderingCanvas
     {
         throw new Error('[RoomRenderer] createCanvasInstance must be overridden');

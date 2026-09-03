@@ -419,29 +419,23 @@ export class RoomManager extends Component implements IRoomManager, IRoomInstanc
     // resolvePendingImageListeners(), which fires on content *load* - so the first request worked
     // (the .nitro was loading anyway) and every later one hung forever against already-cached
     // content, i.e. the image appeared once and never came back.
-    // TODO(AS3): sources/win63_version/room/RoomManager.as::isContentAvailable() answers
-    // `getGraphicAssetCollection(type) != null`; this port answers hasInternalContent(type), a
-    // different question that is false for every furniture/pet type.
+    // This answered `hasInternalContent(type)` for a while, which is a different question ("is
+    // this type handled internally", true for user/bot and never for furniture or pets). Every pet
+    // therefore read as unavailable, RoomEngine.getGenericRoomObjectImage() always parked its
+    // listener in _pendingImageListeners, and that queue only drains on content *load* — so a
+    // catalog pet preview appeared once and never again against cached content.
     //
-    // Known consequence, reproducible: RoomEngine.getGenericRoomObjectImage() therefore always
-    // takes its `!isRoomObjectContentAvailable(type)` path and parks the listener in
-    // _pendingImageListeners, a queue drained only by resolvePendingImageListeners() on content
-    // *load*. So an offscreen image renders on first open (the .nitro was loading anyway) and never
-    // again against cached content - the catalog pet preview is blank on every revisit and does not
-    // refresh on colour change.
+    // Returning AS3's bare `getGraphicAssetCollection(type) != null` was worse: createRoomObject()
+    // built the object against the *place-holder* library while this method, re-asked a few lines
+    // later against a browser-cached .nitro, already answered "available". The two guards
+    // disagreed about the same instant and getImage() drew nothing at all.
     //
-    // Do not "fix" this by returning the AS3 expression, with or without `&& isLoaded(type)`. Both
-    // were tried and both are worse - no image renders at all, ever. The reason is a race this
-    // method cannot see: createRoomObject() decides content is not ready and builds the object
-    // against the *place-holder* library; getGenericRoomObjectImage() then re-asks a few lines
-    // later, and once the .nitro is browser-cached the answer has flipped to "available", so it
-    // takes the immediate path and calls getImage() on an object still holding place-holder
-    // content, which draws nothing. The two guards disagree about the same instant.
-    //
-    // The real fix is upstream: the object must be re-initialised when its content arrives
-    // (RoomManager.createRoomObject() sets initialized=false and comments that
-    // updateObjectContents() is meant to re-run for exactly this case). Verify that path before
-    // touching this method again.
+    // Both guards now ask the same two-part question — the collection exists *and* isLoaded() —
+    // and createRoomObject() marks the object uninitialised on the same condition, so
+    // updateObjectContents() re-initialises it when the content actually lands
+    // (processLoadedContentTypes() -> updateObjectContents()). Keep the two in step: changing one
+    // without the other is what produced both failures above.
+    // AS3: sources/win63_version/room/RoomManager.as::isContentAvailable()
     isContentAvailable(type: string): boolean
     {
         if(this._contentLoader)
