@@ -5,10 +5,12 @@ import {NftStorePurchaseOffer} from '@habbo/catalog/collectibles/tabs/NftStorePu
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
+import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -35,12 +37,9 @@ const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog'
  * The catalog's "Confirm purchase" dialog: product preview, localized product name, quantity,
  * price and the buy/cancel pair, built from the `purchase_confirmation` layout.
  *
- * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as
- * is ~1770 lines; this ports the base "confirm and buy" path only. Still missing, each blocked on
- * a type this port does not have yet:
- * - the gift flow (`showGiftDialog()` and everything under it: the `gift_wrapping` layout, receiver
- *   name lookup with suggestions, box/ribbon selectors, `giveGift()`). `isGift` is accepted and
- *   remembered but only ever takes the plain purchase path.
+ * `turnIntoGifting()` swaps the buy button over to the gift path, which replaces this window with
+ * the `gift_wrapping` layout: receiver name with friend-name suggestions, box/colour/ribbon
+ * selectors previewed through the room engine, an optional message, and `giveGift()`.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as
  */
@@ -106,6 +105,52 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     // request id, matched against imageReady()'s.
     private _pendingImageId: number = 0;
 
+    /** Friend names the receiver field autocompletes against; empty when no friend list is up. */
+    // AS3: PurchaseConfirmationDialog.as::_friendNames
+    private _friendNames: string[] = [];
+
+    /** A receiver the caller already knows, which skips straight past the name field. */
+    // AS3: PurchaseConfirmationDialog.as::_userName
+    private _userName: string | null = null;
+
+    // AS3: PurchaseConfirmationDialog.as::_receiverName
+    private _receiverName: string = '';
+
+    // AS3: PurchaseConfirmationDialog.as::_highlightIndex
+    private _highlightIndex: number = 0;
+
+    // AS3: PurchaseConfirmationDialog.as::_suggestionContainer
+    private _suggestionContainer: IWindowContainer | null = null;
+
+    // AS3: PurchaseConfirmationDialog.as::_suggestionItemTemplate
+    private _suggestionItemTemplate: IWindowContainer | null = null;
+
+    // AS3: PurchaseConfirmationDialog.as::_stuffTypes
+    private _stuffTypes: number[] = [];
+
+    // AS3: PurchaseConfirmationDialog.as::_boxTypes
+    private _boxTypes: number[] = [];
+
+    // AS3: PurchaseConfirmationDialog.as::_ribbonTypes
+    private _ribbonTypes: number[] = [];
+
+    /** The free "default" box, drawn at random from the configuration's default set. */
+    // AS3: PurchaseConfirmationDialog.as::_defaultStuffType
+    private _defaultStuffType: number = 0;
+
+    // AS3: PurchaseConfirmationDialog.as::_selectedStuffType
+    private _selectedStuffType: number = 0;
+
+    // AS3: PurchaseConfirmationDialog.as::_selectedRibbonIndex
+    private _selectedRibbonIndex: number = 0;
+
+    // AS3: PurchaseConfirmationDialog.as::_selectedBoxIndex
+    private _selectedBoxIndex: number = 0;
+
+    /** True once `turnIntoGifting()` has repointed the buy button at the gift dialog. */
+    // AS3: PurchaseConfirmationDialog.as::_isGifting
+    private _isGifting: boolean = false;
+
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::_disposed
     private _disposed: boolean = false;
 
@@ -151,13 +196,54 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         return (holder?.widget as unknown as ProductImageWidget | null) ?? null;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getAvatarFaceBitmap()
-    // Only called from updateGiftDialogAvatarImage(), part of the gift flow (showGiftDialog() and
-    // everything under it) this class's header documents as unported.
+    /**
+     * The sender's head, for the "from" corner of the gift card.
+     *
+     * Cropped to `"head"` rather than rendered full: the card shows a face, not an avatar.
+     *
+     * DEVIATION: AS3 returns the BitmapData synchronously. Here the render lands on a PixiJS
+     *   `Texture` and reaching pixels is asynchronous, so this returns a promise and the two
+     *   callers await it — the same bridge `renderBotImage()` already uses.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getAvatarFaceBitmap()
+    async getAvatarFaceBitmap(figure: string): Promise<ImageBitmap | null>
+    {
+        const renderManager = this._catalog?.avatarRenderManager ?? null;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::turnIntoGifting()
-    // Swaps the buy button/window caption over to the gift variant — part of the gift flow this
-    // class's header documents as unported; nothing currently calls into a gift confirmation state.
+        if(renderManager === null) return null;
+
+        const avatarImage = renderManager.createAvatarImage(figure, 'h', null, this, null);
+
+        if(avatarImage === null) return null;
+
+        const texture = avatarImage.getCroppedImage('head');
+        const image = texture === null ? null : await textureToBitmap(texture);
+
+        avatarImage.dispose();
+
+        return image;
+    }
+
+    /**
+     * Repoints the buy button at the gift dialog.
+     *
+     * Called by `HabboCatalog.showPurchaseConfirmation()` right after `showOffer()`, so the
+     * listener this removes is the one that method has just attached.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::turnIntoGifting()
+    turnIntoGifting(): void
+    {
+        const buyButton = this._window?.findChildByName('buy_button') ?? null;
+
+        if(buyButton === null || this._window === null) return;
+
+        this._isGifting = true;
+
+        buyButton.removeEventListener(WindowMouseEvent.CLICK, this._onBuyButtonClick);
+        buyButton.addEventListener(WindowMouseEvent.CLICK, this._onGiftButtonClick);
+        buyButton.caption = '${catalog.purchase_confirmation.gift}';
+        this._window.caption = '${catalog.purchase_confirmation.gift.title}';
+    }
 
     /**
      * AS3: PurchaseConfirmationDialog.as::showOffer()
@@ -175,11 +261,15 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         quantity: number,
         stuffData: IStuffData | null,
         isGift: boolean,
-        previewImage: ImageBitmap | null = null
+        previewImage: ImageBitmap | null = null,
+        friendNames: string[] = [],
+        userName: string | null = null
     ): void
     {
         if(!this._catalog) return;
 
+        this._friendNames = friendNames;
+        this._userName = userName;
         this._offerId = offer.offerId;
         this._pageId = pageId;
         this._extraParam = extraParam;
@@ -450,14 +540,20 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * The figure's assets have arrived; AS3 re-renders the preview from them, whatever figure it
      * was — the dialog only ever asks for one.
      *
-     * TODO(AS3): AS3 also calls `updateGiftDialogAvatarImage()` when the ready figure is the
-     * player's own. The gift flow is unported (see the class doc), so that half has nothing to
-     * refresh yet.
+     * The player's own figure arriving means the gift card's sender face can be drawn, which is a
+     * different picture from the offer preview — hence the two branches rather than one.
      */
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::avatarImageReady()
     avatarImageReady(figureString: string): void
     {
         if(this._catalog === null || this._window === null || this._window.disposed || this.disposed) return;
+
+        if(figureString === this._catalog.sessionDataManager?.figure)
+        {
+            this.updateGiftDialogAvatarImage();
+
+            return;
+        }
 
         void this.renderBotImage(figureString);
     }
@@ -748,15 +844,15 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * purchase leaves them dead on purpose and the close button is the way out - which is why the
      * one call that matters in the non-gift path is the `header_button_close` re-enable.
      *
-     * TODO(AS3): AS3 additionally selects `use_free_checkbox` here, which belongs to the unported
-     * gift flow. `enableGiftButton(true)` was on that list too and is no longer: the button is an
-     * ordinary window child and `safeEnable()` already existed.
+     * The `use_free_checkbox` re-select puts the gift dialog back on the free default box, which
+     * is the one choice a rejected purchase can still afford.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::notEnoughCredits()
     notEnoughCredits(): void
     {
         if(this._disposed || this._window == null) return;
 
+        (this._window.findChildByName('use_free_checkbox') as unknown as ISelectableWindow | null)?.select();
         this.enableGiftButton(true);
         this.safeEnable('header_button_close');
     }
@@ -785,6 +881,851 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
     }
 
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::dispose()
+    /**
+     * Replaces the confirmation window with the gift-wrapping one.
+     *
+     * The old window is disposed first — this is a replacement, not a second dialog — so
+     * everything below re-resolves its children against the new `gift_wrapping` layout.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showGiftDialog()
+    showGiftDialog(): void
+    {
+        const catalog = this._catalog;
+
+        if(catalog === null) return;
+
+        this._window?.dispose();
+
+        const configuration = catalog.giftWrappingConfiguration;
+        const window = catalog.utils.createWindow('gift_wrapping') as IWindowContainer | null;
+
+        if(window === null || configuration === null) return;
+
+        this._window = window;
+        this._suggestionContainer = null;
+        window.center();
+
+        this.addClickListener('give_gift_button', this._onGiveGiftButtonClick);
+        this.addClickListener('cancel_link_region', this._onCancelGift);
+        this.addClickListener('header_button_close', this._onCancelGift);
+
+        const nameInput = window.findChildByName('name_input');
+
+        if(nameInput !== null)
+        {
+            if(this._userName !== null) this.setReceiverName(this._userName);
+            else this.focusNameField();
+
+            this.updateNameHint();
+            nameInput.addEventListener(WindowEvent.WE_CHANGE, this._onNameInputChange);
+            nameInput.addEventListener(WindowMouseEvent.DOWN, this._onNameInputMouseDown);
+            nameInput.addEventListener(WindowKeyboardEvent.KEY_UP, this._onNameInputKeyUp);
+            nameInput.addEventListener(WindowEvent.WE_FOCUSED, this._onNameInputFocus);
+            nameInput.addEventListener(WindowEvent.WE_UNFOCUSED, this._onNameInputUnfocus);
+        }
+
+        // The card art is fetched over HTTP rather than out of the asset library, which is why
+        // this is an `assetUri` and not a `bitmap`; an empty property leaves the slot as authored.
+        const giftCard = window.findChildByName('gift_card') as unknown as {assetUri?: string} | null;
+        const cardName = catalog.getProperty('catalog.gift_wrapping_new.gift_card');
+
+        if(giftCard !== null && cardName !== '')
+        {
+            giftCard.assetUri = `\${image.library.url}Giftcards/${cardName}.png`;
+        }
+
+        // Only a moderator may send anonymously, so only a moderator gets the checkbox — for
+        // everyone else `isShowPurchaserName()` answers true unconditionally.
+        const showFaceCheckbox = window.findChildByName('show_face_checkbox') as unknown as ISelectableWindow | null;
+        const isModerator = this.isModerator();
+
+        if(showFaceCheckbox !== null)
+        {
+            const asWindow = showFaceCheckbox as unknown as IWindow;
+
+            asWindow.visible = isModerator;
+
+            if(isModerator)
+            {
+                showFaceCheckbox.select();
+                asWindow.addEventListener(WindowEvent.WE_SELECT, this._onShowFaceSelected);
+                asWindow.addEventListener(WindowEvent.WE_UNSELECT, this._onShowFaceUnselected);
+            }
+        }
+
+        const showFaceTitle = window.findChildByName('show_face_checkbox_title');
+
+        if(showFaceTitle !== null && !isModerator) showFaceTitle.visible = false;
+
+        this.updateGiftDialogAvatarImage();
+
+        const messageInput = window.findChildByName('message_input');
+
+        if(messageInput !== null)
+        {
+            this.updateMessageHint();
+            messageInput.addEventListener(WindowEvent.WE_CHANGE, this._onMessageInputChange);
+            messageInput.addEventListener(WindowEvent.WE_FOCUSED, this._onMessageInputFocus);
+            messageInput.addEventListener(WindowEvent.WE_UNFOCUSED, this._onMessageInputUnfocus);
+        }
+
+        const messageFrom = window.findChildByName('message_from');
+
+        if(messageFrom !== null)
+        {
+            const senderName = catalog.sessionDataManager?.userName ?? '';
+            const key = 'catalog.gift_wrapping_new.message_from';
+
+            this._windowManager?.registerLocalizationParameter(key, 'name', senderName);
+            messageFrom.caption = catalog.localization?.getLocalization(key, senderName) ?? senderName;
+        }
+
+        this.addClickListener('ribbon_prev', this._onPreviousGiftWrap);
+        this.addClickListener('ribbon_next', this._onNextGiftWrap);
+        this.addClickListener('box_prev', this._onPreviousGiftBox);
+        this.addClickListener('box_next', this._onNextGiftBox);
+
+        this._windowManager?.registerLocalizationParameter(
+            'catalog.gift_wrapping_new.price', 'price', configuration.price.toString());
+
+        // The free box is picked at random per dialog, so two openings in a row are not
+        // necessarily offered the same one.
+        if(configuration.defaultStuffTypes.length > 0)
+        {
+            const index = Math.floor(Math.random() * configuration.defaultStuffTypes.length);
+
+            this._defaultStuffType = configuration.defaultStuffTypes[index]!;
+        }
+
+        this._stuffTypes = configuration.stuffTypes;
+        this._boxTypes = this._boxTypes.concat(configuration.boxTypes);
+        this._boxTypes.push(this._defaultStuffType);
+        this._ribbonTypes = configuration.ribbonTypes;
+        this._selectedStuffType = this._stuffTypes[0] ?? 0;
+        this._selectedRibbonIndex = 0;
+        this._selectedBoxIndex = catalog.getInteger('catalog.purchase.gift_wrapping.default_box_index', 0);
+
+        if(this._selectedBoxIndex < 0 || this._selectedBoxIndex > this._boxTypes.length - 1)
+        {
+            this._selectedBoxIndex = 0;
+        }
+
+        this.initColorGrid();
+        this.updateColorGrid();
+        this.updatePreview();
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::isModerator()
+    private isModerator(): boolean
+    {
+        return this._catalog?.sessionDataManager?.hasSecurity(5) ?? false;
+    }
+
+    /** The free box is the one appended past the configuration's own list. */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::isDefaultBoxSelected()
+    private isDefaultBoxSelected(): boolean
+    {
+        return this._boxTypes[this._selectedBoxIndex] === this._defaultStuffType;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::isValentinesBox()
+    private static isValentinesBox(boxType: number): boolean
+    {
+        return boxType === 8;
+    }
+
+    /**
+     * Re-renders the wrapped preview and re-enables whichever selectors the current box allows.
+     *
+     * Both indices wrap rather than clamp, which is what makes prev/next cycle. Three boxes take
+     * away choices: the free one has no wrapping at all, the valentines box forces ribbon 10, and
+     * boxes 3-6 fix their own colour.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updatePreview()
+    private updatePreview(): void
+    {
+        if(this._selectedRibbonIndex < 0) this._selectedRibbonIndex = this._ribbonTypes.length - 1;
+        if(this._selectedRibbonIndex > this._ribbonTypes.length - 1) this._selectedRibbonIndex = 0;
+        if(this._selectedBoxIndex < 0) this._selectedBoxIndex = this._boxTypes.length - 1;
+        if(this._selectedBoxIndex > this._boxTypes.length - 1) this._selectedBoxIndex = 0;
+
+        const boxType = this._boxTypes[this._selectedBoxIndex] ?? 0;
+
+        if(PurchaseConfirmationDialog.isValentinesBox(boxType))
+        {
+            this._selectedRibbonIndex = 10;
+
+            if(this._selectedRibbonIndex > this._ribbonTypes.length - 1) this._selectedRibbonIndex = 0;
+        }
+
+        const roomEngine = this._catalog?.roomEngine ?? null;
+
+        if(this._window === null || roomEngine === null) return;
+
+        const isDefaultBox = this.isDefaultBoxSelected();
+        let extra = (boxType * 1000 + (this._ribbonTypes[this._selectedRibbonIndex] ?? 0)).toString();
+        let stuffType = this._selectedStuffType;
+
+        if(isDefaultBox)
+        {
+            this.enableBoxColorAndRibbonSelectors(false);
+            stuffType = this._defaultStuffType;
+            extra = '';
+        }
+        else if(PurchaseConfirmationDialog.isValentinesBox(boxType))
+        {
+            this.enableBoxColorAndRibbonSelectors(false);
+        }
+        else
+        {
+            this.enableBoxColorAndRibbonSelectors(true);
+
+            if(boxType >= 3 && boxType <= 6) this.enableBoxColorSelectors(false);
+        }
+
+        const result = roomEngine.getFurnitureImage(stuffType, new Vector3d(180), 64, this, 0, extra);
+
+        if(result === null) return;
+
+        this._pendingImageId = result.id;
+        this.setImage(result.data);
+        this.showSuggestions(false);
+        this.updateGiftDialogLabels();
+    }
+
+    /** One clickable swatch per stuff type, tinted from the furniture's own first colour. */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::initColorGrid()
+    private initColorGrid(): void
+    {
+        if(this._window === null) return;
+
+        const grid = this._window.findChildByName('color_grid') as unknown as IItemGridWindow | null;
+
+        if(grid === null) return;
+
+        grid.destroyGridItems();
+
+        const template = this._catalog?.utils.createWindow('gift_palette_item') as IWindowContainer | null;
+
+        if(template == null) return;
+
+        for(const stuffType of this._stuffTypes)
+        {
+            const furnitureData = this._catalog?.getFurnitureData(stuffType, 's') ?? null;
+            const item = template.clone() as IWindowContainer | null;
+
+            if(furnitureData === null || item == null) continue;
+
+            item.addEventListener(WindowMouseEvent.CLICK, this._onColorItemClick);
+
+            const colorChild = item.findChildByName('color');
+
+            if(colorChild !== null) colorChild.color = furnitureData.colours?.[0] ?? 0;
+
+            item.id = stuffType;
+            grid.addGridItem(item as unknown as IWindow);
+        }
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateColorGrid()
+    private updateColorGrid(): void
+    {
+        if(this._window === null) return;
+
+        const grid = this._window.findChildByName('color_grid') as unknown as IItemGridWindow | null;
+
+        if(grid === null) return;
+
+        for(let i = 0; i < grid.numGridItems; i++)
+        {
+            const item = grid.getGridItemAt(i) as unknown as IWindowContainer | null;
+            const selection = item?.findChildByName('selection') ?? null;
+
+            if(item != null && selection !== null) selection.visible = item.id === this._selectedStuffType;
+        }
+    }
+
+    /**
+     * Sends the purchase.
+     *
+     * The free box sends zeroes for the box and ribbon rather than the selected indices — the
+     * server reads that triple as "unwrapped", so passing the greyed-out selectors' values would
+     * charge for wrapping that was never offered.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::giveGift()
+    private giveGift(): void
+    {
+        const nameInput = this._window?.findChildByName('name_input') ?? null;
+
+        if(nameInput === null) return;
+
+        const messageInput = this._window?.findChildByName('message_input') ?? null;
+        const isDefaultBox = this.isDefaultBoxSelected();
+
+        this._catalog?.purchaseProductAsGift(
+            this._pageId,
+            this._offerId,
+            this._extraParam,
+            nameInput.caption,
+            messageInput?.caption ?? null,
+            isDefaultBox ? this._defaultStuffType : this._selectedStuffType,
+            isDefaultBox ? 0 : (this._boxTypes[this._selectedBoxIndex] ?? 0),
+            isDefaultBox ? 0 : (this._ribbonTypes[this._selectedRibbonIndex] ?? 0),
+            this.isShowPurchaserName()
+        );
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::isShowPurchaserName()
+    private isShowPurchaserName(): boolean
+    {
+        if(!this.isModerator()) return true;
+
+        const checkbox = this._window?.findChildByName('show_face_checkbox') as unknown as ISelectableWindow | null;
+
+        return checkbox?.isSelected ?? false;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableBoxColorAndRibbonSelectors()
+    private enableBoxColorAndRibbonSelectors(enabled: boolean): void
+    {
+        this.enableBoxColorSelectors(enabled);
+        this.enableRibbonSelectors(enabled);
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableBoxColorSelectors()
+    private enableBoxColorSelectors(enabled: boolean): void
+    {
+        if(this._window === null) return;
+
+        this.enableWindow(this._window.findChildByName('box_color_title'), enabled);
+        this.enableWindow(this._window.findChildByName('color_picker_container'), enabled);
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableRibbonSelectors()
+    private enableRibbonSelectors(enabled: boolean): void
+    {
+        if(this._window === null) return;
+
+        this.enableWindow(this._window.findChildByName('ribbon_prev'), enabled);
+        this.enableWindow(this._window.findChildByName('ribbon_next'), enabled);
+        this.enableWindow(this._window.findChildByName('pick_ribbon_title'), enabled);
+    }
+
+    /** Enable/disable a window and, when it has children, each of them too. */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableWindow()
+    private enableWindow(window: IWindow | null, enabled: boolean): void
+    {
+        if(window === null) return;
+
+        if(enabled) window.enable();
+        else window.disable();
+
+        const children = (window as unknown as {iterator?: IWindow[]}).iterator;
+
+        if(children === undefined) return;
+
+        for(const child of children)
+        {
+            if(child != null) this.enableWindow(child, enabled);
+        }
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateGiftDialogLabels()
+    private updateGiftDialogLabels(): void
+    {
+        const window = this._window;
+
+        if(window === null || window.disposed) return;
+
+        const isDefaultBox = this.isDefaultBoxSelected();
+
+        this.setLabelFromKey('pick_box_title', isDefaultBox
+            ? 'catalog.gift_wrapping_new.box.default'
+            : `catalog.gift_wrapping_new.box.${this._boxTypes[this._selectedBoxIndex]}`);
+
+        this.setLabelFromKey('pick_box_price_title', isDefaultBox
+            ? 'catalog.gift_wrapping_new.freeprice'
+            : 'catalog.gift_wrapping_new.price');
+
+        // The coin icon comes and goes with the price, and the list has to re-arrange because
+        // removing it from view leaves a hole otherwise.
+        const priceContainer = window.findChildByName('price_box_container') as unknown as IItemListWindow | null;
+        const coin = priceContainer?.getListItemByName('small_coin') ?? null;
+
+        if(priceContainer != null && coin !== null)
+        {
+            coin.visible = !isDefaultBox;
+            priceContainer.arrangeListItems();
+        }
+
+        this.setLabelFromKey('pick_ribbon_title', `catalog.gift_wrapping_new.ribbon.${this._selectedRibbonIndex}`);
+    }
+
+    /**
+     * TS-only: AS3 repeats this getLocalizationRaw/fall-back-to-the-key block three times inside
+     * `updateGiftDialogLabels()`. The behaviour is AS3's — an unknown key shows as itself.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateGiftDialogLabels()
+    private setLabelFromKey(childName: string, key: string): void
+    {
+        const label = this._window?.findChildByName(childName) as unknown as ITextWindow | null;
+
+        if(label == null) return;
+
+        label.text = this._catalog?.localization?.getLocalizationRaw(key)?.value ?? key;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateGiftDialogAvatarImage()
+    private updateGiftDialogAvatarImage(): void
+    {
+        const figure = this._catalog?.sessionDataManager?.figure ?? null;
+
+        if(figure === null) return;
+
+        void this.getAvatarFaceBitmap(figure).then(image => this.updateAvatarImage(image));
+    }
+
+    /** The anonymous sender's placeholder, used when a moderator unticks "show face". */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateUnknownSenderAvatarImage()
+    private updateUnknownSenderAvatarImage(): void
+    {
+        const asset = this._catalog?.assets?.getAssetByName('gift_incognito') ?? null;
+
+        this.updateAvatarImage((asset?.content as ImageBitmap | null) ?? null);
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateAvatarImage()
+    private updateAvatarImage(image: ImageBitmap | null): void
+    {
+        if(image === null) return;
+
+        const target = this._window?.findChildByName('avatar_image') as (IWindow & {bitmap: ImageBitmap | null}) | null;
+
+        if(target === null) return;
+
+        target.bitmap = image;
+        target.width = image.width;
+        target.height = image.height;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableGiftDialogAvatarImage()
+    private enableGiftDialogAvatarImage(enabled: boolean): void
+    {
+        if(this._window?.findChildByName('avatar_image') != null)
+        {
+            if(enabled) this.updateGiftDialogAvatarImage();
+            else this.updateUnknownSenderAvatarImage();
+        }
+
+        const messageFrom = this._window?.findChildByName('message_from') ?? null;
+
+        if(messageFrom !== null) messageFrom.visible = enabled;
+    }
+
+    // ── Receiver name field and its suggestion list ──────────────────────────────────────────
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::setReceiverName()
+    private setReceiverName(name: string): void
+    {
+        const nameInput = this._window?.findChildByName('name_input') ?? null;
+
+        if(nameInput === null) return;
+
+        nameInput.caption = name;
+        this.updateNameHint();
+        this.focusMessageField();
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::focusNameField()
+    private focusNameField(): void
+    {
+        this.focusField('name_input');
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::focusMessageField()
+    private focusMessageField(): void
+    {
+        this.focusField('message_input');
+    }
+
+    // TS-only: focusNameField() and focusMessageField() are the same three lines in AS3.
+    private focusField(childName: string): void
+    {
+        const field = this._window?.findChildByName(childName) as unknown as (IWindow & {focus: () => void}) | null;
+
+        if(field == null) return;
+
+        field.visible = true;
+        field.focus();
+    }
+
+    /** Alternating row tint; the highlighted row overrides it with the selection colour. */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getColor()
+    private static getColor(index: number): number
+    {
+        return (index % 2 === 0) ? 4293848814 : 4294967295;
+    }
+
+    /**
+     * Rebuilds the suggestion list, bolding the part of each name the player has typed.
+     *
+     * `showMessageInput(names.length < 2)` is AS3's: one suggestion leaves room for the message
+     * field below, more than one covers it.
+     */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateSuggestions()
+    private updateSuggestions(names: string[]): void
+    {
+        if(this._suggestionContainer === null)
+        {
+            this._suggestionContainer = this._window?.findChildByName('suggestion_container') as IWindowContainer | null;
+        }
+
+        if(this._suggestionItemTemplate === null)
+        {
+            this._suggestionItemTemplate =
+                this._catalog?.utils.createWindow('suggestion_list_item_new') as IWindowContainer | null;
+        }
+
+        if(this._suggestionContainer == null || this._suggestionItemTemplate == null) return;
+
+        const list = this._suggestionContainer.findChildByName('suggestion_list') as unknown as IItemListWindow | null;
+
+        if(list == null) return;
+
+        list.removeListItems();
+
+        if(names.length === 0)
+        {
+            this.showSuggestions(false);
+
+            return;
+        }
+
+        this.showSuggestions(true);
+
+        let index = 0;
+
+        for(const name of names)
+        {
+            const item = this._suggestionItemTemplate.clone() as IWindowContainer | null;
+
+            if(item == null) continue;
+
+            item.addEventListener(WindowMouseEvent.CLICK, this._onSuggestionsClick);
+            item.addEventListener(WindowMouseEvent.OVER, this._onSuggestionsMouseOver);
+
+            const nameText = item.findChildByName('name_text') as unknown as ITextWindow | null;
+
+            if(nameText == null) continue;
+
+            nameText.text = name;
+
+            const typedLength = this._receiverName.length;
+
+            if(typedLength > 0)
+            {
+                const start = name.toLowerCase().search(this._receiverName.toLowerCase());
+
+                if(start !== -1)
+                {
+                    const format = nameText.getTextFormat();
+
+                    format.bold = true;
+                    nameText.setTextFormat(format, start, Math.min(start + typedLength, name.length));
+                }
+            }
+
+            list.addListItem(item as unknown as IWindow);
+            item.color = PurchaseConfirmationDialog.getColor(index);
+            index++;
+        }
+
+        this.showMessageInput(names.length < 2);
+        this.highlightSuggestion(0);
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::highlightSuggestion()
+    private highlightSuggestion(index: number): void
+    {
+        const list = this._suggestionContainer?.findChildByName('suggestion_list') as unknown as IItemListWindow | null;
+
+        if(list == null) return;
+
+        const previous = list.getListItemAt(this._highlightIndex) as unknown as IWindow | null;
+
+        if(previous != null) previous.color = PurchaseConfirmationDialog.getColor(this._highlightIndex);
+
+        this._highlightIndex = index;
+
+        if(this._highlightIndex < 0) this._highlightIndex = list.numListItems - 1;
+        if(this._highlightIndex >= list.numListItems) this._highlightIndex = 0;
+
+        const current = list.getListItemAt(this._highlightIndex) as unknown as IWindow | null;
+
+        if(current != null) current.color = 4291613146;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::selectHighlighted()
+    private selectHighlighted(): void
+    {
+        if(this._suggestionContainer === null || !this._suggestionContainer.visible) return;
+
+        const list = this._suggestionContainer.findChildByName('suggestion_list') as unknown as IItemListWindow | null;
+        const item = list?.getListItemAt(this._highlightIndex) as unknown as IWindowContainer | null;
+        const nameText = item?.findChildByName('name_text') ?? null;
+
+        if(nameText === null) return;
+
+        this.setReceiverName(nameText.caption);
+        this.showSuggestions(false);
+    }
+
+    /** Every friend, capped at ten — what the down arrow opens on an empty field. */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showAllFriendSuggestions()
+    private showAllFriendSuggestions(): boolean
+    {
+        if(this._friendNames.length === 0) return false;
+
+        this.updateSuggestions(this._friendNames.slice(0, 10));
+        this.showSuggestions(true);
+
+        return true;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showSuggestions()
+    private showSuggestions(visible: boolean): void
+    {
+        if(this._suggestionContainer === null) return;
+
+        this._suggestionContainer.visible = visible;
+
+        if(!visible) this.showMessageInput(true);
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::showMessageInput()
+    private showMessageInput(visible: boolean): void
+    {
+        const messageInput = this._window?.findChildByName('message_input') ?? null;
+
+        if(messageInput !== null) messageInput.visible = visible;
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateNameHint()
+    private updateNameHint(): void
+    {
+        const nameInput = this._window?.findChildByName('name_input') ?? null;
+
+        if(nameInput === null) return;
+
+        this.enableHint(nameInput.caption.length === 0, 'name_input_hint', 'catalog.gift_wrapping_new.name_hint');
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::updateMessageHint()
+    private updateMessageHint(): void
+    {
+        const messageInput = this._window?.findChildByName('message_input') ?? null;
+
+        if(messageInput === null) return;
+
+        this.enableHint(messageInput.caption.length === 0, 'message_input_hint', 'catalog.gift_wrapping_new.message_hint');
+    }
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::enableHint()
+    private enableHint(visible: boolean, childName: string, localizationKey: string): void
+    {
+        const hint = this._window?.findChildByName(childName) as unknown as ITextWindow | null;
+
+        if(hint == null) return;
+
+        hint.text = this._catalog?.localization?.getLocalization(localizationKey) ?? localizationKey;
+        (hint as unknown as IWindow).visible = visible;
+    }
+
+    // ── Gift dialog event handlers ──────────────────────────────────────────────────────────
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onGiftButtonClick()
+    private _onGiftButtonClick = (): void =>
+    {
+        this.showGiftDialog();
+        // DEVIATION: AS3 reaches tracking through a HabboTracking.getInstance() singleton; the port
+        //   has none by design, and exposes it on the catalog's DI dependency instead.
+        this._catalog?.tracking?.trackEventLog('Catalog', 'clickConfirm', 'client.buy_as_gift.clicked');
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onGiveGiftButtonClick()
+    private _onGiveGiftButtonClick = (): void =>
+    {
+        this.giveGift();
+        this.enableGiftButton(false);
+
+        if(this._catalog !== null) this._catalog.giftReceiver = '';
+
+        this._catalog?.resetPlacedOfferData();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onCancelGift()
+    private _onCancelGift = (): void =>
+    {
+        this._catalog?.resetPlacedOfferData();
+        this.dispose();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onPreviousGiftWrap()
+    private _onPreviousGiftWrap = (): void =>
+    {
+        this._selectedRibbonIndex--;
+        this.updatePreview();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNextGiftWrap()
+    private _onNextGiftWrap = (): void =>
+    {
+        this._selectedRibbonIndex++;
+        this.updatePreview();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onPreviousGiftBox()
+    private _onPreviousGiftBox = (): void =>
+    {
+        this._selectedBoxIndex--;
+        this.updatePreview();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNextGiftBox()
+    private _onNextGiftBox = (): void =>
+    {
+        this._selectedBoxIndex++;
+        this.updatePreview();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onColorItemClick()
+    private _onColorItemClick = (event: WindowEvent): void =>
+    {
+        this._selectedStuffType = event.target?.id ?? 0;
+        this.updateColorGrid();
+        this.updatePreview();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onShowFaceSelected()
+    private _onShowFaceSelected = (): void =>
+    {
+        this.enableGiftDialogAvatarImage(true);
+        this.updateGiftDialogAvatarImage();
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onShowFaceUnselected()
+    private _onShowFaceUnselected = (): void =>
+    {
+        this.enableGiftDialogAvatarImage(false);
+    };
+
+    /** Filters the friend list to at most ten names containing what has been typed. */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNameInputChange()
+    private _onNameInputChange = (event: WindowEvent): void =>
+    {
+        const target = event.target;
+
+        if(target === null) return;
+
+        this.updateNameHint();
+
+        if(this._receiverName === target.caption) return;
+
+        const typed = target.caption.toLowerCase();
+        const matches: string[] = [];
+
+        for(const name of this._friendNames)
+        {
+            if(name.toLowerCase().search(typed) !== -1) matches.push(name);
+            if(matches.length >= 10) break;
+        }
+
+        this._receiverName = target.caption;
+        this.updateSuggestions(matches);
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNameInputMouseDown()
+    private _onNameInputMouseDown = (): void =>
+    {
+        this.showSuggestions(false);
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNameInputKeyUp()
+    private _onNameInputKeyUp = (event: WindowEvent): void =>
+    {
+        const keyCode = (event as WindowKeyboardEvent).keyCode;
+
+        switch(keyCode)
+        {
+            case 38:
+                this.highlightSuggestion(this._highlightIndex - 1);
+                break;
+
+            case 40:
+                this.highlightSuggestion(this._highlightIndex + 1);
+
+                // Down on an empty field with the list closed opens the whole friend list.
+                if((event.target?.caption.length ?? 0) === 0
+                    && (this._suggestionContainer === null || !this._suggestionContainer.visible)
+                    && this.showAllFriendSuggestions())
+                {
+                    this.highlightSuggestion(0);
+                }
+
+                break;
+
+            case 13:
+                this.selectHighlighted();
+                break;
+
+            case 9:
+                this.focusMessageField();
+                break;
+        }
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNameInputFocus()
+    private _onNameInputFocus = (): void => this.updateNameHint();
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onNameInputUnfocus()
+    private _onNameInputUnfocus = (): void => this.updateNameHint();
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onMessageInputChange()
+    private _onMessageInputChange = (): void => this.updateMessageHint();
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onMessageInputFocus()
+    private _onMessageInputFocus = (): void =>
+    {
+        this.updateMessageHint();
+        this.showSuggestions(false);
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onMessageInputUnfocus()
+    private _onMessageInputUnfocus = (): void => this.updateMessageHint();
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onSuggestionsClick()
+    private _onSuggestionsClick = (event: WindowEvent): void =>
+    {
+        const item = event.target as unknown as IWindowContainer | null;
+        const nameText = item?.findChildByName('name_text') ?? null;
+
+        if(nameText == null) return;
+
+        this.setReceiverName(nameText.caption);
+        this.showSuggestions(false);
+    };
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::onSuggestionsMouseOver()
+    private _onSuggestionsMouseOver = (event: WindowEvent): void =>
+    {
+        const item = event.target;
+        const list = this._suggestionContainer?.findChildByName('suggestion_list') as unknown as IItemListWindow | null;
+
+        if(item === null || list == null) return;
+
+        this.highlightSuggestion(list.getListItemIndex(item));
+    };
+
     dispose(): void
     {
         if(this._disposed) return;
@@ -808,6 +1749,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         this._extraParam = '';
         this._stuffData = null;
         this._pendingImageId = 0;
+        this._friendNames = [];
+        this._userName = null;
+        this._receiverName = '';
+        this._suggestionContainer = null;
+        this._suggestionItemTemplate?.dispose();
+        this._suggestionItemTemplate = null;
+        this._stuffTypes = [];
+        this._boxTypes = [];
+        this._ribbonTypes = [];
+        this._isGifting = false;
         this._window?.dispose();
         this._window = null;
     }

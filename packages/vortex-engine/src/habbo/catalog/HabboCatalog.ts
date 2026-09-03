@@ -34,6 +34,8 @@ import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
+import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
+import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import {IID_AvatarRenderManager} from '@iid/IIDAvatarRenderManager';
@@ -604,6 +606,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         return this._utils;
     }
 
+    // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::_friendList
+    private _friendList: IHabboFriendList | null = null;
+
     private _giftReceiver: string = '';
 
     get giftReceiver(): string 
@@ -926,6 +931,18 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 (manager: ISessionDataManager | null) =>
                 {
                     this._sessionDataManager = manager;
+                },
+                false
+            ),
+            // Optional in AS3 too, and it has to stay that way: it is only read to seed the gift
+            // dialog's name suggestions, and a hard dependency on an IID nothing has provided yet
+            // locks the component with no log at all.
+            // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::dependencies (IIDHabboFriendList)
+            new ComponentDependency(
+                IID_HabboFriendList,
+                (manager: IHabboFriendList | null) =>
+                {
+                    this._friendList = manager;
                 },
                 false
             ),
@@ -1834,7 +1851,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         extraParam: string = '',
         quantity: number = 1,
         stuffData: IStuffData | null = null,
-        _giftMessage: string | null = null,
+        receiverName: string | null = null,
         _showConfirmation: boolean = true,
         previewImage: ImageBitmap | null = null
     ): void
@@ -1913,8 +1930,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
                 this._purchaseConfirmationDialog = new PurchaseConfirmationDialog(this, this._windowManager!);
             }
 
+            // The friend names seed the gift dialog's receiver suggestions, and the receiver name
+            // comes from the caller when it has one — the "gift to this user" entry points pass
+            // it — otherwise from whatever `giftReceiver` was last set to.
             this._purchaseConfirmationDialog.showOffer(
-                offer, pageId, extraParam, quantity, stuffData, this._purchaseWillBeGift, previewImage
+                offer, pageId, extraParam, quantity, stuffData, this._purchaseWillBeGift, previewImage,
+                this._friendList?.getFriendNames() ?? [],
+                receiverName ?? (this._giftReceiver !== '' ? this._giftReceiver : null)
             );
         }
         else if(offer instanceof ClubBuyOfferData)
@@ -1935,14 +1957,13 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
             }
         }
 
+        // The flag is consumed here, not in the dialog: it is set by `purchaseAsGift()` just
+        // before this call, and left standing it would make every later purchase on this instance
+        // read as a gift too.
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::showPurchaseConfirmation()
-        // TODO(AS3): AS3 also calls _purchaseConfirmationDialog.turnIntoGifting() here - the
-        // minimal dialog this port has doesn't support the gift flow yet (see this method's
-        // header TODO), so only the flag reset is restored. Without it, _purchaseWillBeGift stays
-        // true forever after the first gift purchase and every later purchase on this instance
-        // would be misread as a gift too, once the gift flow exists to observe it.
         if(this._purchaseWillBeGift)
         {
+            this._purchaseConfirmationDialog?.turnIntoGifting();
             this._purchaseWillBeGift = false;
         }
     }
