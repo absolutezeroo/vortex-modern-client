@@ -30,7 +30,9 @@ export class ProductImageUtility implements IGetImageListener
      */
     // AS3: ProductImageUtility.as::tempCategoryMapping()
     private static readonly TYPE_ID_WALLPAPER: number = 3001;
+    // AS3: ProductImageUtility.as::tempCategoryMapping()
     private static readonly TYPE_ID_FLOOR: number = 3002;
+    // AS3: ProductImageUtility.as::tempCategoryMapping()
     private static readonly TYPE_ID_LANDSCAPE: number = 4057;
 
     // AS3: ProductImageUtility.as::_roomEngine
@@ -103,6 +105,7 @@ export class ProductImageUtility implements IGetImageListener
      * The `_png` suffix AS3's asset names carry is dropped: this port's asset keys are the
      * shipped filename without it.
      */
+    // TS-only: no AS3 counterpart; the three-times-repeated lookup AS3 writes out per case.
     private getLibraryIcon(assetName: string): ImageBitmap | null
     {
         // AS3 casts to the Component base here too (`_inventory as _SafeCls_50`), because
