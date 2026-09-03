@@ -313,8 +313,12 @@ export class NewFeatureNotification implements IDisposable
         return (this._toolbar as unknown as Component | null)?.getProperty(key) ?? '';
     }
 
-    // TODO(AS3): .../notifications/singular/NewFeatureNotification.as::getBoolean() reads the same
-    // property store as a boolean. It is private and nothing in the class calls it.
+    /** The same property store as `getString()`, read as a boolean. Private and uncalled in AS3 too. */
+    // AS3: .../notifications/singular/NewFeatureNotification.as::getBoolean()
+    private getBoolean(key: string): boolean
+    {
+        return (this._toolbar as unknown as Component | null)?.getBoolean(key) ?? false;
+    }
 
     // AS3: .../notifications/singular/NewFeatureNotification.as::eventHandler()
     private eventHandler = (event: WindowEvent, target: IWindow): void =>

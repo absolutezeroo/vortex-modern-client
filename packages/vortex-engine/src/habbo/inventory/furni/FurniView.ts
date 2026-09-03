@@ -123,18 +123,44 @@ export class FurniView
         }
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::update()
-    // AS3 implements IUpdateReceiver and registers itself (priority 1) purely to call
-    // `_roomPreviewer.updatePreviewRoomView()` every tick. RoomPreviewer.ts already re-runs
-    // updatePreviewRoomView() every frame on its own — its constructor calls
-    // `roomEngine.registerCanvasSyncCallback(this.updatePreviewRoomViewBound)` (see that file's
-    // "TS deviation" comment) — so a second registerUpdateReceiver() here would only call the
-    // same method a second time per tick with no behavioural difference.
+    // DEVIATION: AS3 implements IUpdateReceiver and registers itself at priority 1 purely to call
+    //   `_roomPreviewer.updatePreviewRoomView()` every tick. `RoomPreviewer` already re-runs that
+    //   every frame here, through `roomEngine.registerCanvasSyncCallback()` in its own
+    //   constructor, so registering a second receiver would call the same method twice a tick to
+    //   the same effect.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::update()
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::displayItemInfo()
-    // Dead in AS3 itself: its only caller, FurniModel.as::displayItemInfo(), has zero call sites
-    // anywhere in the primary tree either - both ends of this forward are unreachable in the
-    // shipped client. (FurniModel.ts already carries the matching note on its own dead forwarder.)
+    /**
+     * Drops the given group's item into the preview room and greys out the two offer buttons.
+     *
+     * Dead at both ends in AS3: its only caller, `FurniModel.displayItemInfo()`, has no call site
+     * anywhere in the primary tree either. Ported so neither end is a hole.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::displayItemInfo()
+    displayItemInfo(groupItem: GroupItem): void
+    {
+        // AS3 also guards on the previewer being disposed; `RoomPreviewer` here exposes no such
+        // flag, and a null previewer is the only state this view can actually be in without one.
+        const previewer = this._roomPreviewer;
+
+        if(previewer === null) return;
+
+        const item = groupItem.peek();
+
+        if(item === null) return;
+
+        if(item.isWallItem)
+        {
+            previewer.addWallItemIntoRoom(item.type, new Vector3d(90, 0, 0), item.stuffData?.getLegacyString() ?? '');
+        }
+        else
+        {
+            previewer.addFurnitureIntoRoom(item.type, new Vector3d(90, 0, 0), item.stuffData);
+        }
+
+        this._placeInRoomButton?.disable();
+        this._offerInTradingButton?.disable();
+    }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniView.as::getWindowContainer()
     getWindowContainer(): IWindowContainer | null

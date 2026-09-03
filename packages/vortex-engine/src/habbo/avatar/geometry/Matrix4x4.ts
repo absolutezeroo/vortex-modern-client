@@ -136,12 +136,26 @@ export class Matrix4x4
         );
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/Matrix4x4.as::skew()
-    // Empty body in AS3 itself (no parameters, no statements) and no call site anywhere in the
-    // primary tree - dead code left behind, not a feature to port.
+    /**
+     * Empty in AS3 too — no parameters, no statements, and no call site in any tree. Ported as
+     * the no-op it is rather than left out, so the class has the shape AS3 declares.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/Matrix4x4.as::skew()
+    public skew(): void
+    {
+    }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/Matrix4x4.as::equals()
-    // Unconditionally `return false` in AS3 regardless of the argument - dead code with a body
-    // that would be wrong to port faithfully (an equality check that never equals) and no call
-    // site anywhere in the primary tree to confirm intended behaviour either way.
+    /**
+     * Always false, whatever it is handed — AS3's body is `return false` with the argument
+     * unread, and no call site anywhere confirms what it was meant to do.
+     *
+     * Ported literally on purpose: a real element-wise comparison would be a different method
+     * wearing this one's name, and any caller that turns up is relying on AS3's answer, not on
+     * the answer the name suggests.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/geometry/Matrix4x4.as::equals()
+    public equals(_other: Matrix4x4): boolean
+    {
+        return false;
+    }
 }

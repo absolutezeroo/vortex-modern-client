@@ -610,9 +610,18 @@ export class WiredTradingView implements IWiredTradingView, IInventoryView
         return (this._window?.findChildByName('item_grid_0') as unknown as IItemGridWindow | null) ?? null;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/WiredTradingView.as::yourItemGridBorder()
-    // `yourItemGrid.getChildByID(id) as _SafeCls_2254` (a grid-item border widget lookup) - dead
-    // code in AS3 itself, no call site anywhere in the primary tree or win63_version.
+    /**
+     * One of your offer's grid items, by id.
+     *
+     * Dead in AS3 too — no call site in the primary tree or in `win63_version`. AS3's return type
+     * `_SafeCls_2254` is an empty marker interface extending `IWindowContainer`, so it adds no
+     * members and the port returns the container itself.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/WiredTradingView.as::yourItemGridBorder()
+    public yourItemGridBorder(id: number): IWindowContainer | null
+    {
+        return (this.yourItemGrid as unknown as IWindowContainer | null)?.getChildByID(id) as IWindowContainer | null ?? null;
+    }
 
     // AS3: WiredTradingView.as::get yourItemCountText()
     private get yourItemCountText(): ITextWindow | null
@@ -650,9 +659,12 @@ export class WiredTradingView implements IWiredTradingView, IInventoryView
         return (this._window?.findChildByName('item_grid_1') as unknown as IItemGridWindow | null) ?? null;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/WiredTradingView.as::wiredItemGridBorder()
-    // `wiredItemGrid.getChildByID(id) as _SafeCls_2254` - dead code in AS3 itself, same as
-    // yourItemGridBorder() above: no call site anywhere in the primary tree or win63_version.
+    /** The wired side's counterpart — see `yourItemGridBorder()`; dead in AS3 for the same reason. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/wired_trading/WiredTradingView.as::wiredItemGridBorder()
+    public wiredItemGridBorder(id: number): IWindowContainer | null
+    {
+        return (this.wiredItemGrid as unknown as IWindowContainer | null)?.getChildByID(id) as IWindowContainer | null ?? null;
+    }
 
     // AS3: WiredTradingView.as::get wiredItemCountText()
     private get wiredItemCountText(): ITextWindow | null

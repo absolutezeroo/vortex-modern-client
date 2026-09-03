@@ -20,6 +20,7 @@ import type {IHabboInventory} from '@habbo/inventory/IHabboInventory';
 import type {IHabboFriendList} from '@habbo/friendlist/IHabboFriendList';
 import type {IRoomEngine} from '@habbo/room';
 import {PetImageUtility} from './utils/PetImageUtility';
+import {ProductImageUtility} from './utils/ProductImageUtility';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboHelp} from '@habbo/help/IHabboHelp';
@@ -222,17 +223,36 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return this._petImageUtility;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get feedController()
-    // Dead in AS3 itself: the backing field (_SafeStr_6523) is declared and read only by this
-    // getter, and never assigned anywhere in either tree — `notification.feed.enabled`'s
-    // addFeedItem() branch would null-reference the moment it fired. See
-    // NotificationMessageHandler.onModMessageEvent()/onModCautionEvent() for the call sites this
-    // blocks, both faithfully ported minus that dead branch.
+    /**
+     * The notification feed's controller — always null.
+     *
+     * Dead in AS3 too: the backing field is declared and read only by this getter, and assigned
+     * nowhere in either tree, so `notification.feed.enabled`'s `addFeedItem()` branch would
+     * null-reference the moment it fired. The getter is ported, returning what AS3's returns, so
+     * `NotificationMessageHandler`'s guarded call sites read as the guards they are.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get feedController()
+    get feedController(): null
+    {
+        return null;
+    }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get productImageUtility()
-    // No ProductImageUtility port exists (nothing in this port references one) — the one caller,
-    // _SafeCls_1951.as::onClubGiftSelected(), ships without its product icon; see
-    // NotificationMessageHandler.onClubGiftSelected() for the documented gap.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::_productImageUtility
+    private _productImageUtility: ProductImageUtility | null = null;
+
+    /** Built on first use, as `petImageUtility` above is, and for the same reason. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get productImageUtility()
+    get productImageUtility(): ProductImageUtility | null
+    {
+        if(!this._roomEngine) return null;
+
+        if(!this._productImageUtility)
+        {
+            this._productImageUtility = new ProductImageUtility(this._roomEngine, this._inventory);
+        }
+
+        return this._productImageUtility;
+    }
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/notifications/HabboNotifications.as::_disabled
     private _disabled: boolean = false;

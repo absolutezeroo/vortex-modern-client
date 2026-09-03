@@ -786,13 +786,8 @@ export class NotificationMessageHandler implements IAvatarImageListener
     }
 
     /**
-	 * Handle club gift selected — the bubble confirming which gift was claimed.
-	 *
-	 * TODO(AS3): AS3 illustrates the bubble with
-	 * `productImageUtility.getProductImage(product.productType, product.furniClassId,
-	 * product.extraParam)`. There is no product-image utility in this port (nothing
-	 * references `productImageUtility` anywhere), so the bubble goes out without its
-	 * icon. Everything else — the products guard and the localisation key — is faithful.
+	 * Handle club gift selected — the bubble confirming which gift was claimed, illustrated with
+	 * the product's own icon.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/_SafeCls_1951.as::onClubGiftSelected()
     private onClubGiftSelected(event: IMessageEvent): void
@@ -812,8 +807,10 @@ export class NotificationMessageHandler implements IAvatarImageListener
         if(!product) return;
 
         const message = this._notifications.localizationManager.getLocalization('notifications.text.club_gift.received');
+        const image = this._notifications.productImageUtility?.getProductImage(
+            product.productType, product.furniClassId, product.extraParam) ?? null;
 
-        this._notifications.singularController?.addItem(message, 'info', null);
+        this._notifications.singularController?.addItem(message, 'info', image);
     }
 
     /**

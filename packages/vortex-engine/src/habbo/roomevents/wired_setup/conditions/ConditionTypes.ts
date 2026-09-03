@@ -87,11 +87,18 @@ export class ConditionTypes implements IWiredTypeHolder
         new DateMatches()
     ];
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as::get types()
-    // Not part of the shared IWiredTypeHolder contract (_SafeCls_2661 declares only
-    // getElementByCode()/getKey()/acceptTriggerable()) and no call site anywhere in the primary
-    // tree ever reads `.types` off a ConditionTypes instance - dead code, only getByCode() below
-    // iterates `_types` internally.
+    /**
+     * Every condition type, in registration order.
+     *
+     * Not part of the shared `IWiredTypeHolder` contract — which declares only
+     * `getElementByCode()`/`getKey()`/`acceptTriggerable()` — and no call site in the primary
+     * tree reads it. Ported because it is a real public member of the class.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/conditions/ConditionTypes.as::get types()
+    get types(): IWiredElement[]
+    {
+        return this._types;
+    }
 
     // AS3: ConditionTypes.as::getByCode()
     getByCode(code: number): IWiredElement | null

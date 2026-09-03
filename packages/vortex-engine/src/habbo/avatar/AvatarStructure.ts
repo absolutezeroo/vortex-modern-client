@@ -53,15 +53,15 @@ export class AvatarStructure
         return this._animationManager;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::get renderManager()
-    // AS3 stores the owning AvatarRenderManager (constructor param `param1:_SafeCls_582`) and
-    // exposes it back so AvatarAssetDownloadManager/EffectAssetDownloadManager can reach
-    // `.renderManager.isReady` and listen for `AVATAR_RENDER_READY`. This port's AvatarStructure
-    // has no such back-reference; AvatarRenderManager.ts instead injects `renderReadyProvider`/
-    // `mandatoryLibrariesReadyCallback` callbacks directly into AvatarAssetDownloadManager's
-    // constructor (see its `() => this._isReady` / `() => this.onMandatoryLibrariesReady()`
-    // arguments), which is the same behaviour without the circular reference. Adding this getter
-    // would require changing AvatarStructure's constructor signature for no behavioural gain.
+    // DEVIATION: AS3 stores the owning AvatarRenderManager (constructor param
+    //   `param1:_SafeCls_582`) and exposes it back so AvatarAssetDownloadManager and
+    //   EffectAssetDownloadManager can reach `.renderManager.isReady` and listen for
+    //   `AVATAR_RENDER_READY`. This port injects `renderReadyProvider` /
+    //   `mandatoryLibrariesReadyCallback` straight into AvatarAssetDownloadManager's constructor
+    //   instead (see its `() => this._isReady` / `() => this.onMandatoryLibrariesReady()`
+    //   arguments) — the same two reads, without the structure holding a back-reference to its
+    //   own owner.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::get renderManager()
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::get figureData()
     public get figureData(): IFigureData
@@ -149,12 +149,27 @@ export class AvatarStructure
         this._figureSetData.injectXML(data);
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::registerAnimations()
-    // Dead in AS3 itself: no call site anywhere in the primary tree (nor win63_version) invokes
-    // it. It would probe an AssetLibraryCollection for "fx0".."fx199" and call registerAnimation()
-    // on each hit; the port's actual fx-animation registration (AvatarRenderManager.
-    // registerBuiltInAnimations(), EffectAssetDownloadManager.onLibraryComplete()) already calls
-    // registerAnimation() per already-resolved asset without needing this probe loop.
+    /**
+     * Probes a library for `"<prefix>0"` .. `"<prefix>N-1"` and registers each animation it finds.
+     *
+     * Dead in AS3 too — no call site in the primary tree or in `win63_version`. The port's real
+     * fx registration (`AvatarRenderManager.registerBuiltInAnimations()`,
+     * `EffectAssetDownloadManager.onLibraryComplete()`) registers per resolved asset and never
+     * needs the probe loop. Ported so the member exists with AS3's behaviour, including the
+     * blunt "try 200 names" shape.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::registerAnimations()
+    public registerAnimations(library: IAssetLibrary, prefix: string = 'fx', count: number = 200): void
+    {
+        for(let i = 0; i < count; i++)
+        {
+            const name = prefix + i;
+
+            if(!library.hasAsset(name)) continue;
+
+            this.registerAnimation(library.getAssetByName(name)?.content);
+        }
+    }
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::registerAnimation()
     public registerAnimation(data: any): void
