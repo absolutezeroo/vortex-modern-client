@@ -2,6 +2,7 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
 import type {IGraphicContext} from './IGraphicContext';
+import {windowFiltersToCss} from './WindowFilterCss';
 import {WindowType} from '../enum/WindowType';
 import {WindowParam} from '../enum/WindowParam';
 
@@ -116,6 +117,23 @@ export class WindowComposite
         }
 
         return this._compositeBuffer;
+    }
+
+    /**
+     * A window's own filter list, or null.
+     *
+     * `IWindow` does not declare `getGraphicContext()` — it is on `WindowController` — so this
+     * takes the same cast `drawRedrawRegionOverlay()` below does. `createIfMissing` is false: a
+     * window with no context has no filters either, and building one to ask would allocate a
+     * draw buffer per window per frame.
+     */
+    // TS-only: AS3 reads `window.filters` straight off the DisplayObject.
+    private getWindowFilters(window: IWindow): readonly unknown[] | null
+    {
+        const controller = window as unknown as
+            { getGraphicContext?(createIfMissing: boolean): IGraphicContext | null };
+
+        return controller.getGraphicContext?.(false)?.filters ?? null;
     }
 
     /**
@@ -419,9 +437,18 @@ export class WindowComposite
         // to blit — running the approximation over it would apply it twice.
         const ctFilter = isBitmapWrapper ? '' : this.buildColorTransformFilter(window.dynamicStyleColor);
 
-        if(ctFilter)
+        // The window's own Flash filter list, which 225 shipped layouts declare and nothing has
+        // ever rendered: WindowController.filters writes them onto the graphic context and this
+        // was the only place that could read them back. Concatenated with the colour transform
+        // because ctx.filter takes one string and applies the whole chain left to right — the
+        // same order Flash composites them in.
+        // AS3: .../src/com/sulake/core/window/utils/WindowParser.as::buildBitmapFilter()
+        const windowFilter = windowFiltersToCss(this.getWindowFilters(window));
+        const combined = [ctFilter, windowFilter].filter(part => part.length > 0).join(' ');
+
+        if(combined)
         {
-            ctx.filter = ctFilter;
+            ctx.filter = combined;
         }
 
         // Draw background fill if the window has one
