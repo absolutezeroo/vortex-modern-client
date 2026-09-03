@@ -1570,6 +1570,27 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
+**2026-09-03, the `--stale` sweep — 159 → 146 TODO, stale candidates 15 → 1.** Of the 15 markers
+whose cited blocker looked lifted, **14 were wrong**, which is the highest false rate any sweep has
+returned. Three shapes recur, and all three are worth recognising before trusting a marker:
+
+- *The blocker was never true.* `BlockedAvatarImage` "is a whole view" — `diff
+  PlaceholderAvatarImage.as BlockedAvatarImage.as` is three lines. `Juggler.removeTweens` "cannot
+  ask a member what it is animating" — AS3's juggler holds the same `IAnimatable` vector and
+  downcasts. `FurniModel`'s icons "need `IHabboWindowManager.assets`" — they ship, and the sibling
+  method two lines above already reads them from the inventory's own library.
+- *The blocker was lifted and nobody went back.* `PresetManager`'s "~80 `create*` added as their
+  preset is ported" — all 69 are there. `initializeRoomForGettingImage`'s "`initialize()` contract
+  isn't confirmed" — `RoomLogic.ts:64` documents it. `RoomChatInputView`'s three "not ported"
+  features had `RoomEnterEffect`, the hint-window API and `isNoob` all present.
+- *The marker rotted in place.* `IRoomEngine.getSelectedObjectData`'s "always returns null" was
+  false, glued above the wrong member, and cut off mid-sentence.
+
+The sweep's real find was not a marker at all: `blocked` and `figure_alpha_multiplier` were both
+**write-only** — `AvatarLogic`/`RoomEngine` set them, nothing read them — so a blocked user
+rendered as their real avatar. See "Ported but never wired"; a `--stale` pass is a good place to
+catch that, because a marker sitting on the reader is what points at the orphaned writer.
+
 **2026-08-13, at the full re-measure — 380 TODO in `packages/*/src` (323 `TODO(AS3)`, 57 plain),
 29 flagged stale.** Flat against 2026-08-11 while the engine gained ~1,000 files, which is the same
 effect as below one more time: `habbo/ui`'s +217 files and the message tree's +473 closed whole
