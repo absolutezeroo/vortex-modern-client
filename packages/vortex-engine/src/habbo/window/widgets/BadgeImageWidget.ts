@@ -77,6 +77,27 @@ export class BadgeImageWidget implements IBadgeImageWidget
     private _groupId: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_glowColor
     private _glowColor: number = BadgeImageWidget.NO_GLOW_COLOR;
+
+    /** One step every 16ms, which is AS3's `new Timer(16, ...)` — roughly a frame at 60Hz. */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::startGlowAnimation()
+    private static readonly GLOW_TICK_MS: number = 16;
+
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_glowTimer
+    private _glowTimer: ReturnType<typeof setInterval> | null = null;
+
+    /** The filters the window had before the glow, put back by `clearGlow()`. */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_glowRestoreFilters
+    private _glowRestoreFilters: unknown[] | null = null;
+
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_glowActive
+    private _glowActive: boolean = false;
+
+    // TS-only: AS3 reads these off its Timer's `currentCount`/`repeatCount`; setInterval has
+    // neither, so the count is kept here.
+    private _glowTicks: number = 0;
+
+    // TS-only: see `_glowTicks`.
+    private _glowTotalTicks: number = 1;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_groupDetailsChangedMessageEvent
     private _groupDetailsEvent: IMessageEvent | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::_habboGroupBadgesMessageEvent
@@ -252,38 +273,136 @@ export class BadgeImageWidget implements IBadgeImageWidget
 	 * Plays the one-shot glow animation over the badge.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::playGlow()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as
-    // ::playGlow()/receiveAsset()/startGlowAnimation()/applyGlowStrength()/cancelPendingGlow()
-    // — AS3 pre-fetches the badge asset (5s timeout timer), then runs a 16ms timer for
-    // `durationMs`, and on each tick writes three filters onto the widget window:
-    // GlowFilter(color, 0.7*t, 4+4t, 4+4t, 1+1.2t, quality 2), an inner
-    // GlowFilter(color, 0.22*t, 2+2t, 2+2t, 0.8+0.6t, quality 1, inner), and a
-    // ColorMatrixFilter mixing 0.48*t of the tint with an 80*t offset, `t` following
-    // `easeInOutCubic`.
-    //
-    // Blocked on one missing capability, re-verified 2026-09-03: **window filters are stored and
-    // never rendered.** `WindowController.filters` writes them onto the graphic context and
-    // `WindowComposite` never reads `getGraphicContext().filters` back — it sets `ctx.filter`
-    // only for the modal darken and the dynamic-style colour transform. That `ctFilter`
-    // assignment in `compositeWindow()` is the entry point: reading the window's own filter list
-    // there and translating each to a CSS filter string (a glow becomes `drop-shadow`) is what
-    // this widget is waiting for, and it would light up every other window filter at once.
-    // Until then only the colour is kept, so `glowColor` reads back what was asked for.
-    public playGlow(color: number, _durationMs: number = 500, _scale: number = 1.04): void
+    /**
+     * DEVIATION: AS3 pre-fetches the badge asset through `resourceManager.retrieveAsset()` behind
+     *   a 5s timeout timer and starts the animation from `receiveAsset()`. The bitmap this widget
+     *   glows is already resolved by the time anything calls `playGlow()` — `assetUri` is set and
+     *   the image is in the library — so the fetch, its timeout and `receiveAsset()` collapse
+     *   into starting the animation here. `cancelPendingGlow()` goes with them.
+     *
+     * TODO(AS3): the *inner* glow of AS3's three filters is not drawn. `windowFiltersToCss()`
+     *   skips `inner`, because Canvas2D has no inset shadow and an inner glow drawn outside is a
+     *   different effect rather than a rougher one. The outer glow and the colour tint render.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::playGlow()
+    public playGlow(color: number, durationMs: number = 500, _scale: number = 1.04): void
     {
         if(this._disposed || this._bitmap === null || this._widgetWindow === null) return;
 
         this._glowColor = color & 0xFFFFFF;
+
+        this.clearGlow();
+        this.startGlowAnimation(this._glowColor, durationMs > 0 ? durationMs : 1000);
+    }
+
+    /**
+     * Ramps the glow from nothing to full over `durationMs`, one step every 16ms.
+     *
+     * The filters the widget already had are snapshotted first and put back by `clearGlow()`,
+     * which is what makes the glow additive rather than destructive.
+     */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::startGlowAnimation()
+    private startGlowAnimation(color: number, durationMs: number): void
+    {
+        const window = this._widgetWindow as unknown as {filters: unknown[]} | null;
+
+        if(window === null) return;
+
+        this._glowColor = color & 0xFFFFFF;
+        this._glowRestoreFilters = window.filters.slice();
+        this._glowActive = true;
+        this._glowTicks = 0;
+        this._glowTotalTicks = Math.max(1, Math.trunc(durationMs / BadgeImageWidget.GLOW_TICK_MS));
+
+        this.applyGlowStrength(0);
+
+        this._glowTimer = setInterval(this.onGlowTick, BadgeImageWidget.GLOW_TICK_MS);
+    }
+
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::onGlowTick()
+    private onGlowTick = (): void =>
+    {
+        this._glowTicks++;
+
+        this.applyGlowStrength(
+            BadgeImageWidget.easeInOutCubic(this._glowTicks, 0, 1, this._glowTotalTicks));
+
+        // AS3's Timer carries its own repeat count and raises `timerComplete`; setInterval has
+        // no such thing, so the last tick ends the run itself.
+        if(this._glowTicks >= this._glowTotalTicks) this.clearGlow();
+    };
+
+    /**
+     * Writes the glow at strength `t` (0..1) onto the widget window.
+     *
+     * The restore list is copied first, so each step replaces the previous step's filters rather
+     * than stacking on them — AS3 rebuilds the array the same way every tick.
+     */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::applyGlowStrength()
+    private applyGlowStrength(strength: number): void
+    {
+        const window = this._widgetWindow as unknown as {filters: unknown[]} | null;
+
+        if(window === null) return;
+
+        const t = Math.min(1, Math.max(0, strength));
+        const filters = (this._glowRestoreFilters ?? []).slice();
+
+        if(t > 0.001 && this._glowColor >= 0)
+        {
+            // AS3: createOuterGlowFilter() / createInnerGlowFilter(), coefficients and all.
+            filters.push({
+                type: 'GlowFilter', color: this._glowColor, alpha: 0.7 * t,
+                blurX: 4 + t * 4, blurY: 4 + t * 4, strength: 1 + t * 1.2, inner: false
+            });
+            filters.push({
+                type: 'GlowFilter', color: this._glowColor, alpha: 0.22 * t,
+                blurX: 2 + t * 2, blurY: 2 + t * 2, strength: 0.8 + t * 0.6, inner: true
+            });
+        }
+
+        window.filters = filters;
+        this.refresh();
+    }
+
+    /**
+     * AS3's easing for the ramp: slow at both ends, fastest in the middle.
+     */
+    // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::easeInOutCubic()
+    private static easeInOutCubic(time: number, start: number, change: number, duration: number): number
+    {
+        let t = time / (duration / 2);
+
+        if(t < 1) return (change / 2) * t * t * t + start;
+
+        t -= 2;
+
+        return (change / 2) * (t * t * t + 2) + start;
     }
 
     /**
 	 * Stops the glow animation and restores the filters the widget had before it.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::clearGlow()
-    // TODO(AS3): stops the two timers, restores `_glowRestoreFilters` onto the widget window
-    // and calls `refresh()`. Nothing to stop or restore while `playGlow()` is the stub above.
     public clearGlow(): void
     {
+        if(this._glowTimer !== null)
+        {
+            clearInterval(this._glowTimer);
+            this._glowTimer = null;
+        }
+
+        // AS3 returns here when no glow is running, so a stray clearGlow() cannot wipe the
+        // filters a layout put on the window.
+        if(!this._glowActive) return;
+
+        const window = this._widgetWindow as unknown as {filters: unknown[]} | null;
+
+        if(window !== null) window.filters = this._glowRestoreFilters ?? [];
+
+        this.refresh();
+        this._glowActive = false;
+        this._glowRestoreFilters = null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::refresh()

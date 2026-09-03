@@ -43,6 +43,31 @@ export interface IWindowDropShadowFilter
 }
 
 /**
+ * A glow, which Flash models as a shadow with no offset.
+ *
+ * `WindowParser` never builds one — no shipped layout declares `<GlowFilter>` — but
+ * `BadgeImageWidget` builds them from code, which is what this exists for.
+ */
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::createOuterGlowFilter()
+export interface IWindowGlowFilter
+{
+    // TS-only: the discriminant; AS3 has a real `flash.filters.GlowFilter` and tests with `is`.
+    type: 'GlowFilter';
+    // AS3: .../widgets/BadgeImageWidget.as::createOuterGlowFilter() (`param1`)
+    color: number;
+    // AS3: .../widgets/BadgeImageWidget.as::createOuterGlowFilter() (`0.7 * param2`)
+    alpha: number;
+    // AS3: .../widgets/BadgeImageWidget.as::createOuterGlowFilter() (`4 + param2 * 4`)
+    blurX: number;
+    // AS3: .../widgets/BadgeImageWidget.as::createOuterGlowFilter() (`4 + param2 * 4`)
+    blurY: number;
+    // AS3: .../widgets/BadgeImageWidget.as::createOuterGlowFilter() (`1 + param2 * 1.2`)
+    strength: number;
+    // AS3: .../widgets/BadgeImageWidget.as::createInnerGlowFilter() (`true`)
+    inner: boolean;
+}
+
+/**
  * How many times `drop-shadow()` is repeated to approximate Flash's `strength`.
  *
  * Flash multiplies the shadow's alpha by `strength` and clamps; CSS has no such knob, and
@@ -57,9 +82,13 @@ const MAX_STRENGTH_PASSES = 3;
  * Returns `''` rather than `'none'` so the caller can test it as a boolean and leave
  * `ctx.filter` untouched, which is cheaper than assigning a no-op filter per window.
  *
+ * A `GlowFilter` is a shadow with no offset — Flash models it exactly that way — so it takes the
+ * same path with `distance` absent and reading as zero.
+ *
  * `inner` and `knockout` have no Canvas2D equivalent and are skipped rather than approximated:
  * an inner shadow drawn as an outer one is not a worse version of the effect, it is a different
- * effect in a different place. No shipped layout sets either.
+ * effect in a different place. No shipped layout sets either, and `BadgeImageWidget`'s inner
+ * glow is the one filter of its three that goes unrendered as a result.
  */
 export function windowFiltersToCss(filters: readonly unknown[] | null): string
 {
@@ -69,9 +98,12 @@ export function windowFiltersToCss(filters: readonly unknown[] | null): string
 
     for(const entry of filters)
     {
-        const filter = entry as Partial<IWindowDropShadowFilter> | null;
+        // Read structurally rather than as `A & B`: the two discriminants exclude each other, so
+        // the intersection is `never` and every field read off it fails.
+        const filter = entry as Partial<Omit<IWindowDropShadowFilter, 'type'>> & {type?: string} | null;
 
-        if(filter == null || filter.type !== 'DropShadowFilter') continue;
+        if(filter == null) continue;
+        if(filter.type !== 'DropShadowFilter' && filter.type !== 'GlowFilter') continue;
         if(filter.inner === true || filter.knockout === true) continue;
 
         const alpha = filter.alpha ?? 1;
@@ -88,6 +120,10 @@ export function windowFiltersToCss(filters: readonly unknown[] | null): string
         // CSS takes one blur radius where Flash takes two. The larger of the pair keeps a
         // deliberately-wide shadow wide; averaging would quietly shrink it.
         const blur = Math.max(filter.blurX ?? 0, filter.blurY ?? 0);
+
+        // No blur and no offset means the shadow lands exactly behind the source and is never
+        // seen — a filter pass for nothing. Flash draws it too; skipping is the cheaper identity.
+        if(blur === 0 && offsetX === 0 && offsetY === 0) continue;
 
         const color = filter.color ?? 0;
         const r = (color >> 16) & 0xFF;
