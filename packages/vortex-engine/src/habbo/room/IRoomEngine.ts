@@ -175,13 +175,8 @@ export interface IRoomEngine extends IDisposable {
         backgroundColor?: number
     ): ImageResult;
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/IRoomEngine.as::getSelectedObjectData()
-    // TODO(AS3): the concrete RoomEngine.as (obfuscated class_34.as) implementation of this
-    // covers full room-object selection (placement AND already-placed objects being moved/
-    // inspected) and isn't ported - only initializeRoomObjectInsert()'s pending-placement state
-    // is tracked here. This always returns null until that's ported, which callers (e.g.
     // `forceImmediate` is TS-only (no AS3 equivalent) - see RoomEngine.ts's implementation comment.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectImage()
     getGenericRoomObjectImage(
         type: string | null,
         param: string,

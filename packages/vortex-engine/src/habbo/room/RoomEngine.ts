@@ -103,7 +103,8 @@ import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelCont
 import {SelectedRoomObjectData} from './utils/SelectedRoomObjectData';
 import {TileObjectMap} from './utils/TileObjectMap';
 import {LegacyWallGeometry} from './utils/LegacyWallGeometry';
-import type {RoomPlaneParser} from './object/RoomPlaneParser';
+// Imported as a value, not a type: initializeRoomForGettingImage() constructs one.
+import {RoomPlaneParser} from './object/RoomPlaneParser';
 import {RoomData} from './utils/RoomData';
 import {Logger} from "@core";
 import {RoomVisualizationData} from './object/visualization/room/RoomVisualizationData';
@@ -2877,17 +2878,28 @@ export class RoomEngine extends Component implements IRoomEngine,
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:3046
-            // AS3 writes only the numeric FURNITURE_EXTRA here (its DTO's `extra` is a Number), not
-            // the string FURNITURE_EXTRAS. This port flattened the DTO into parameters and typed
-            // `extra` as string, then built its own FURNITURE_EXTRAS convention that RoomEngine
-            // reads back at :828 and :3953. Aligning means changing this signature to a number and
-            // following it through IRoomEngine/RoomPreviewer — out of scope here. Currently
-            // harmless: the only AS3 reader of FURNITURE_EXTRA is the custom-stack-height widget
-            // handler (_SafeCls_3852.as:98), which is not ported.
+            // Both variables are real and AS3 writes both, in different places: the numeric
+            // `furniture_extra` here (_SafeCls_90.as:3046, from a DTO whose `extra` is a Number),
+            // and the string `furniture_extras` at _SafeCls_1722.as:327 / RoomPreviewer.as:174 /
+            // _SafeCls_90.as:4277. This port flattened the DTO and typed `extra` as string, so it
+            // had only ever written the string one — leaving the numeric variable unset for its
+            // one reader, the custom-stack-height widget handler's `getNumber("furniture_extra")
+            // == 1` test (_SafeCls_3852.as:98). Writing both keeps the port's own FURNITURE_EXTRAS
+            // readers (:2272, :4459) working without changing this signature.
             if(extra)
             {
+                // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::addObjectFurnitureFromData()
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
+
+                const extraValue = Number(extra);
+
+                // AS3's `extra` is a Number and cannot be non-numeric; this port's string can be,
+                // and setNumber(NaN) would poison the `== 1` test with a value that fails every
+                // comparison instead of simply reading as absent.
+                if(!isNaN(extraValue))
+                {
+                    model.setNumber(RoomObjectVariableEnum.FURNITURE_EXTRA, extraValue);
+                }
             }
         }
 
@@ -2973,17 +2985,28 @@ export class RoomEngine extends Component implements IRoomEngine,
                 model.setString(RoomObjectVariableEnum.FURNITURE_OWNER_NAME, ownerName);
             }
 
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as:3046
-            // AS3 writes only the numeric FURNITURE_EXTRA here (its DTO's `extra` is a Number), not
-            // the string FURNITURE_EXTRAS. This port flattened the DTO into parameters and typed
-            // `extra` as string, then built its own FURNITURE_EXTRAS convention that RoomEngine
-            // reads back at :828 and :3953. Aligning means changing this signature to a number and
-            // following it through IRoomEngine/RoomPreviewer — out of scope here. Currently
-            // harmless: the only AS3 reader of FURNITURE_EXTRA is the custom-stack-height widget
-            // handler (_SafeCls_3852.as:98), which is not ported.
+            // Both variables are real and AS3 writes both, in different places: the numeric
+            // `furniture_extra` here (_SafeCls_90.as:3046, from a DTO whose `extra` is a Number),
+            // and the string `furniture_extras` at _SafeCls_1722.as:327 / RoomPreviewer.as:174 /
+            // _SafeCls_90.as:4277. This port flattened the DTO and typed `extra` as string, so it
+            // had only ever written the string one — leaving the numeric variable unset for its
+            // one reader, the custom-stack-height widget handler's `getNumber("furniture_extra")
+            // == 1` test (_SafeCls_3852.as:98). Writing both keeps the port's own FURNITURE_EXTRAS
+            // readers (:2272, :4459) working without changing this signature.
             if(extra)
             {
+                // AS3: .../src/com/sulake/habbo/room/_SafeCls_90.as::addObjectFurnitureFromData()
                 model.setString(RoomObjectVariableEnum.FURNITURE_EXTRAS, extra);
+
+                const extraValue = Number(extra);
+
+                // AS3's `extra` is a Number and cannot be non-numeric; this port's string can be,
+                // and setNumber(NaN) would poison the `== 1` test with a value that fails every
+                // comparison instead of simply reading as absent.
+                if(!isNaN(extraValue))
+                {
+                    model.setNumber(RoomObjectVariableEnum.FURNITURE_EXTRA, extraValue);
+                }
             }
         }
 
@@ -7089,15 +7112,18 @@ export class RoomEngine extends Component implements IRoomEngine,
         return result;
     }
 
+    /**
+     * Builds the throwaway 6x6 flat room `getRoomImage()` renders its materials onto.
+     *
+     * DEVIATION: AS3 serialises the parser to XML, hands the XML to `initialize()` and disposes
+     *   the parser. This port's `RoomLogic.initialize()` takes the parser instance itself (see
+     *   its own comment: `RoomPlaneParser` has no XML serialiser here and `RoomVisualization`
+     *   reads the instance back out of `ROOM_PLANE_PARSER`), so the instance is stored rather
+     *   than disposed — disposing it would empty the model the visualization is about to read.
+     *   The geometry it describes is AS3's, tile for tile.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initializeRoomForGettingImage()
-    // TODO(AS3): the tile-height/geometry init (AS3 builds a RoomPlaneParser XML and feeds it to
-    // eventHandler.initialize()) isn't ported - the RoomVisualization event handler's initialize()
-    // data-shape contract for a "room" object isn't confirmed on this port (RoomPreviewer's own
-    // room setup goes through the higher-level IRoomEngine.initializeRoom(), a different path that
-    // doesn't apply to a single free-standing "room" object). Floor/wall/landscape type + the door
-    // mask are wired for real below; the room's tile geometry is not, so getRoomImage() output will
-    // have the right materials but not necessarily the right shape until this is filled in.
-    private initializeRoomForGettingImage(object: IRoomObjectController, payload: string | null): void 
+    private initializeRoomForGettingImage(object: IRoomObjectController, payload: string | null): void
     {
         if(payload === null) return;
 
@@ -7109,6 +7135,29 @@ export class RoomEngine extends Component implements IRoomEngine,
         const wallType = parts[1];
         const landscapeType = parts[2];
         const extra = parts.length > 3 ? parts[3] : null;
+
+        // AS3's `_loc11_ = 6`: a 6x6 floor inside an 8x8 tile map, so the ring of border tiles
+        // stays at its default height and the walls have something to stand on.
+        const size = 6;
+        const planeParser = new RoomPlaneParser();
+
+        planeParser.initializeTileMap(size + 2, size + 2);
+
+        for(let y = 1; y < 1 + size; y++)
+        {
+            for(let x = 1; x < 1 + size; x++)
+            {
+                planeParser.setTileHeight(x, y, 0);
+            }
+        }
+
+        planeParser.wallHeight = size;
+        planeParser.initializeFromTileData();
+
+        const model = object.getModelController();
+
+        model.setObject(RoomObjectVariableEnum.ROOM_PLANE_PARSER, planeParser);
+        object.getEventHandler()?.initialize(planeParser);
 
         object.getModelController().setString('room_floor_type', floorType);
         object.getModelController().setString('room_wall_type', wallType);

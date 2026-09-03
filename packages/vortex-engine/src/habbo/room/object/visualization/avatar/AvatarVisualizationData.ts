@@ -56,34 +56,32 @@ export class AvatarVisualizationData implements IRoomObjectVisualizationData
      * @param gender - The avatar gender
      * @param listener - Optional image load listener
      * @param effectListener - Optional effect load listener
+     * @param blocked - True when this client is blocking the user, in which case the real
+     *   figure is never rendered and a silhouette is returned instead
      * @returns The created avatar image, or null if the renderer is unavailable
      */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualizationData.as::getAvatar()
     createAvatarImage(
         figure: string,
         scale: number,
         gender: string | null = null,
         listener: IAvatarImageListener | null = null,
-        effectListener: IAvatarEffectListener | null = null
-    ): IAvatarImage | null 
+        effectListener: IAvatarEffectListener | null = null,
+        blocked: boolean = false
+    ): IAvatarImage | null
     {
-        if(this._avatarRenderer != null) 
+        if(this._avatarRenderer != null)
         {
-            let avatarImage: IAvatarImage | null;
+            const scaleType = (scale > 48) ? AvatarScaleType.LARGE : AvatarScaleType.SMALL;
 
-            if(scale > 48) 
+            if(blocked)
             {
-                avatarImage = this._avatarRenderer.createAvatarImage(
-                    figure, AvatarScaleType.LARGE, gender ?? '', listener, effectListener
-                );
-            }
-            else 
-            {
-                avatarImage = this._avatarRenderer.createAvatarImage(
-                    figure, AvatarScaleType.SMALL, gender ?? '', listener, effectListener
-                );
+                return this._avatarRenderer.createBlockedAvatarImage(figure, scaleType);
             }
 
-            return avatarImage;
+            return this._avatarRenderer.createAvatarImage(
+                figure, scaleType, gender ?? '', listener, effectListener
+            );
         }
 
         return null;

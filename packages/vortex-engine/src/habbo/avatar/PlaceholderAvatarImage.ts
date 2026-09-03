@@ -84,6 +84,7 @@ export class PlaceholderAvatarImage extends AvatarImage
             case AvatarAction.CARRY_OBJECT:
             case AvatarAction.USE_OBJECT:
             case AvatarAction.EXPRESSION_BLOW_A_KISS:
+            case AvatarAction.EXPRESSION_67:
                 this.addActionData(actionType, (args.length > 0) ? String(args[0]) : '');
                 break;
 

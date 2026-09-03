@@ -89,9 +89,41 @@ export class ClubGiftNotification
         return this._isCancelled;
     }
 
-    // TODO(AS3): .../notifications/singular/ClubGiftNotification.as::setImage() draws a BitmapData
-    // into a named child at 2x through a Matrix. It is private and nothing in the class calls it,
-    // so it is left unported rather than guessed at against this port's bitmap wrapper.
+    /**
+     * Draws an image into a named bitmap child, scaled 2x and centred.
+     *
+     * The offsets AS3 computes are `dest/2 - src`, using the *unscaled* source size — which is
+     * centring, once you account for the `Matrix(2,0,0,2)`: `dest/2 - (2*src)/2`. Smoothing stays
+     * off, as everywhere else in this port, so the pixel art doubles cleanly.
+     *
+     * Private and uncalled in AS3 too, but a real member of the class, so it is ported rather
+     * than left as a hole.
+     */
+    // AS3: .../notifications/singular/ClubGiftNotification.as::setImage()
+    private setImage(childName: string, image: ImageBitmap): void
+    {
+        if(this._window === null) return;
+
+        const target = this._window.findChildByName(childName) as (IWindow & { bitmap: ImageBitmap | null }) | null;
+
+        if(target === null) return;
+
+        const canvas = new OffscreenCanvas(Math.max(1, target.width), Math.max(1, target.height));
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(
+            image,
+            Math.trunc(canvas.width * 0.5 - image.width),
+            Math.trunc(canvas.height * 0.5 - image.height),
+            image.width * 2,
+            image.height * 2
+        );
+
+        target.bitmap = canvas.transferToImageBitmap();
+    }
 
     // AS3: .../notifications/singular/ClubGiftNotification.as::setClubIcon()
     private setClubIcon(style: number): void

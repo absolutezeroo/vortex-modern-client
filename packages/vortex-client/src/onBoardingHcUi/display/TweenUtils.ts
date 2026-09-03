@@ -87,6 +87,12 @@ export class Tween implements IAnimatable
         this._endValues.push(endValue);
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Tween.as::get target()
+    public get target(): DisplayObject
+    {
+        return this._target;
+    }
+
     // TS-only: whether the juggler should drop this tween — AS3 dispatches an event instead.
     public get finished(): boolean
     {
@@ -118,12 +124,6 @@ export class Tween implements IAnimatable
 /**
  * AS3: Juggler — advances everything added to it.
  */
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Juggler.as
-// declares removeTweens(target) and containsTweens(target) — "drop / ask about every tween animating
-// this object", which is how AS3 keeps a second animation on the same object from overlapping the
-// first. Not ported because this juggler holds IAnimatable, not Tween, so it cannot ask a member
-// what it is animating; the login fade tweens each illustration once and never re-tweens one. Both
-// become necessary the moment a second caller shares this juggler.
 export class Juggler
 {
     // AS3: _objects
@@ -147,6 +147,37 @@ export class Juggler
         {
             this._objects.splice(index, 1);
         }
+    }
+
+    /**
+	 * Drops every tween animating `target`.
+	 *
+	 * This is what keeps a second animation on the same object from fighting the first: the
+	 * caller removes what is running before adding its own. AS3 downcasts each member with
+	 * `as Tween` and skips whatever is not one — a null in AS3, `instanceof` here — so a
+	 * DelayedCall sharing the juggler is left alone.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Juggler.as::removeTweens()
+    public removeTweens(target: DisplayObject | null): void
+    {
+        if(target === null) return;
+
+        this._objects = this._objects.filter(
+            animatable => !(animatable instanceof Tween && animatable.target === target)
+        );
+    }
+
+    /**
+	 * Whether any tween is currently animating `target`.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/animation/Juggler.as::containsTweens()
+    public containsTweens(target: DisplayObject | null): boolean
+    {
+        if(target === null) return false;
+
+        return this._objects.some(
+            animatable => animatable instanceof Tween && animatable.target === target
+        );
     }
 
     // AS3: advanceTime(_arg_1:Number)

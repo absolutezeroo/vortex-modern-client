@@ -866,12 +866,21 @@ export class ItemGridController extends ItemListController implements IItemGridW
         // No-op per AS3
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemGridController.as::listItemEventHandler() —
-    // not ported. It would remove a grid item on its "WE_DESTROYED" event, but it is dead in AS3
-    // itself: declared `protected`, never `override`s anything from ItemListController, and never
-    // passed to addEventListener() anywhere - grepping `listItemEventHandler` across WIN63,
-    // win63_version and PRODUCTION (declaration + OriginalClassNames.txt) finds no caller in any
-    // of the three.
+    /**
+	 * Drops a grid item that has destroyed itself.
+	 *
+	 * Dead in AS3: declared `protected`, overriding nothing from ItemListController, and passed
+	 * to no `addEventListener()` in any of the three trees. Ported anyway so a subclass that
+	 * does wire it gets the AS3 behaviour rather than an empty hook.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemGridController.as::listItemEventHandler()
+    protected listItemEventHandler(event: WindowEvent): void
+    {
+        if(event.type === 'WE_DESTROYED')
+        {
+            this.removeGridItem(event.target as IWindow);
+        }
+    }
 
     /**
 	 * Shifts grid items forwards to make room at the given index.

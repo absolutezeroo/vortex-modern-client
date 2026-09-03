@@ -106,12 +106,6 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE (and siblings, l.65-79)
     // ADDITION_ID_HABBICON_BUBBLE (8) is declared there too; nothing in this port reads it yet.
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get habbiconFacingDirection()
-    // Maps `_avatarImage.getDirection()` to the reduced direction set HabbiconBubble's sprites
-    // use. Its one and only caller in the primary tree is
-    // .../avatar/additions/HabbiconBubble.as, the in-room habbicon-bubble addition — which is
-    // not ported (no HabbiconBubble.ts/addition id 8 wiring here, unlike the catalog/messenger
-    // habbicon data subsystem, which is). No consumer to feed, so nothing to port yet.
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE
     private static readonly ADDITION_ID_IDLE_BUBBLE: number = 1;
 
@@ -149,6 +143,16 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private _figure: string = '';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_gender
     private _gender: string = '';
+    /** True while this client is blocking the user, so a silhouette renders in their place. */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_blocked
+    private _blocked: boolean = false;
+
+    /**
+     * Scales every alpha this visualization writes. Defaults to 1, and AS3 restores that default
+     * whenever the model has no `figure_alpha_multiplier` — `getNumber()` returns NaN there, not 0.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_alphaMultiplier
+    private _alphaMultiplier: number = 1;
     private _pendingFrameUpdates: number = 0;
     private _shadowAssetName: string | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_currentHeadAngleDeg
@@ -431,13 +435,17 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
                 const avatarSprite = this.getSprite(0);
 
-                if(avatarSprite && this._activeAvatarImage && this._activeAvatarImage.isPlaceholder()) 
+                if(avatarSprite && this._activeAvatarImage
+                    && (this._activeAvatarImage.isPlaceholder() || this._activeAvatarImage.isBlocked()))
                 {
-                    avatarSprite.alpha = 150;
+                    avatarSprite.alpha = 150 * this._alphaMultiplier;
+                    // The blocked silhouette is greyed out; the placeholder keeps its own colours.
+                    avatarSprite.color = this._activeAvatarImage.isBlocked() ? 0x666666 : 0xFFFFFF;
                 }
-                else if(avatarSprite) 
+                else if(avatarSprite)
                 {
                     avatarSprite.alpha = 255;
+                    avatarSprite.color = 0xFFFFFF;
                 }
             }
 
@@ -784,8 +792,19 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
                 changed = true;
             }
 
+            // Alpha multiplier
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_ALPHA_MULTIPLIER);
+
+            if(isNaN(numValue)) numValue = 1;
+
+            if(numValue !== this._alphaMultiplier)
+            {
+                this._alphaMultiplier = numValue;
+                changed = true;
+            }
+
             // Use object synchronization with carry object
-            if(this._carryObjectType > 0 && model.getNumber(RoomObjectVariableEnum.AVATAR_USE_OBJECT) > 0) 
+            if(this._carryObjectType > 0 && model.getNumber(RoomObjectVariableEnum.AVATAR_USE_OBJECT) > 0)
             {
                 if(this._useObjectType !== this._carryObjectType) 
                 {
@@ -981,6 +1000,15 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
                 }
             }
 
+            // Blocked
+            if(model.hasNumber(RoomObjectVariableEnum.AVATAR_BLOCKED))
+            {
+                if(this.updateBlocked(model.getNumber(RoomObjectVariableEnum.AVATAR_BLOCKED) > 0))
+                {
+                    changed = true;
+                }
+            }
+
             // Highlight enable
             boolValue = model.getNumber(RoomObjectVariableEnum.AVATAR_HIGHLIGHT_ENABLE) > 0;
 
@@ -1031,6 +1059,63 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
         if(this._figure !== figure) 
         {
             this._figure = figure;
+            this.resetImages();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Which way the habbicon bubble should face: 1 (right), -1 (left) or 0 (neither).
+     *
+     * The eight avatar directions collapse to three, because the bubble's sprites only exist
+     * facing left and right. AS3's caller is `additions/HabbiconBubble.as`, which this port does
+     * not yet have — the accessor is public and self-contained, so it ships ahead of it rather
+     * than leaving the addition with nothing to read when it lands.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get habbiconFacingDirection()
+    public get habbiconFacingDirection(): number
+    {
+        if(this._activeAvatarImage === null) return 0;
+
+        return AvatarVisualization.resolveHabbiconFacingDirection(this._activeAvatarImage.getDirection());
+    }
+
+    /**
+     * Folds one of the eight avatar directions onto the habbicon bubble's three.
+     *
+     * The modulo is doubled because AS3's `%` keeps the sign of a negative direction, exactly as
+     * TypeScript's does — `(d % 8 + 8) % 8` is what makes -1 read as 7.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::resolveHabbiconFacingDirection()
+    private static resolveHabbiconFacingDirection(direction: number): number
+    {
+        const normalized = (direction % 8 + 8) % 8;
+
+        if(normalized <= 2) return 1;
+
+        if(normalized >= 4 && normalized <= 6) return -1;
+
+        return 0;
+    }
+
+    /**
+     * Switches between the real avatar and the blocked silhouette.
+     *
+     * The cached images have to go: they were built by whichever branch was in force, and the
+     * two are different classes — keeping them would leave the user's real figure on screen
+     * after a block, and the silhouette on screen after an unblock.
+     *
+     * @returns True when the flag actually changed, so the caller re-renders.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::updateBlocked()
+    private updateBlocked(blocked: boolean): boolean
+    {
+        if(this._blocked !== blocked)
+        {
+            this._blocked = blocked;
             this.resetImages();
 
             return true;
@@ -1142,7 +1227,9 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
         if(image == null) 
         {
-            image = this._visualizationData!.createAvatarImage(this._figure, scale, this._gender, this, this);
+            image = this._visualizationData!.createAvatarImage(
+                this._figure, scale, this._gender, this, this, this._blocked
+            );
 
             if(image != null) 
             {

@@ -1485,21 +1485,81 @@ export class FurniModel implements IFurniModel
         return new CreditTradingItem(this, this._habboInventory.assets, creditValue);
     }
 
+    /**
+	 * The furniture types whose preview sits on the tile rather than centred in its cell.
+	 *
+	 * DEVIATION: AS3 reads `catalog.preview.alignment.bottom` once in the constructor. Here the
+	 *   configuration is not loaded yet at that point and `getProperty()` answers `''` rather
+	 *   than throwing, which would freeze an empty list in for the session — so it is read on
+	 *   first use and cached from the first non-empty answer.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::_bottomAlignedTypes
+    private _bottomAlignedTypes: string[] | null = null;
+
+    // TS-only: the lazy half of the deviation documented on `_bottomAlignedTypes`.
+    private getBottomAlignedTypes(): string[]
+    {
+        if(this._bottomAlignedTypes !== null) return this._bottomAlignedTypes;
+
+        const property = this._habboInventory.getProperty('catalog.preview.alignment.bottom');
+
+        if(property === '') return [];
+
+        this._bottomAlignedTypes = property.split(',');
+
+        return this._bottomAlignedTypes;
+    }
+
+    /**
+	 * Builds one inventory group — the tile that stands for every copy of a furni type.
+	 *
+	 * Wallpaper, floor and landscape get a fixed icon instead of a rendered preview, because
+	 * there is no room object to render: they are room materials, not furniture.
+	 *
+	 * DEVIATION: AS3 clones the icon's BitmapData, which Flash needs because the bitmap is
+	 *   mutable and its consumer disposes it. `GroupItem` here only ever hands the image to
+	 *   `setFinalImage()` and never closes it, so the library's own `ImageBitmap` is shared.
+	 *
+	 * TODO(AS3): still always auto-requests icons instead of AS3's `isInitializing`-gated
+	 *   deferral — `FurniModel.initListImages()`'s paced loader is not ported.
+	 *
+	 * AS3 declares this public — the inventory's trading handler calls it to build the group
+	 * items for both sides' offers (`_SafeCls_1951.populateItemGroups()`).
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::createGroupItem()
-    // TODO(AS3): skips the fixed wallpaper/floor/landscape icon lookup (needs
-    // IHabboWindowManager.assets, not exposed) and the bottom-alignment list
-    // (catalog.preview.alignment.bottom) — both fall back to sensible defaults
-    // and get a real icon anyway via GroupItem's normal getFurnitureIcon() path.
-    // Also always auto-requests icons instead of AS3's isInitializing-gated
-    // deferral (FurniModel.initListImages()'s paced loader isn't ported yet).
-    // AS3 declares this public — the inventory's trading handler calls it to build the group
-    // items for both sides' offers (`_SafeCls_1951.populateItemGroups()`).
     createGroupItem(type: number, category: number, stuffData: IStuffData | null, extra: number): GroupItem
     {
+        let iconName: string | null = null;
+
+        switch(category)
+        {
+            case FurnitureCategory.WALL_PAPER:
+                iconName = 'inventory_furni_icon_wallpaper';
+                break;
+            case FurnitureCategory.FLOOR:
+                iconName = 'inventory_furni_icon_floor';
+                break;
+            case FurnitureCategory.LANDSCAPE:
+                iconName = 'inventory_furni_icon_landscape';
+                break;
+        }
+
+        let icon: ImageBitmap | null = null;
+
+        if(iconName !== null)
+        {
+            icon = (this._habboInventory.assets?.getAssetByName(iconName)?.content as ImageBitmap | null) ?? null;
+        }
+
+        const furnitureType = this._roomEngine.getFurnitureType(type);
+        const alignment = (furnitureType !== null && this.getBottomAlignedTypes().indexOf(furnitureType) > -1)
+            ? 'bottom'
+            : 'center';
+
         // A group built while the machine is running starts with its recycle badge already on;
         // otherwise items added mid-run would be the only ones in the grid without one.
         return new GroupItem(
-            this, type, category, stuffData, extra, null, false, 'center',
+            this, type, category, stuffData, extra, icon, false, alignment,
             this._habboInventory.recyclerModel?.running ?? false
         );
     }

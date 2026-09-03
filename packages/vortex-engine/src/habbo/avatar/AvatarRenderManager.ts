@@ -16,6 +16,7 @@ import {AssetAliasCollection} from './alias/AssetAliasCollection';
 import {AvatarFigureContainer} from './AvatarFigureContainer';
 import {AvatarImage} from './AvatarImage';
 import {PlaceholderAvatarImage} from './PlaceholderAvatarImage';
+import {BlockedAvatarImage} from './BlockedAvatarImage';
 import {AvatarAssetDownloadManager} from './AvatarAssetDownloadManager';
 import type {AnimationManager} from './animation/AnimationManager';
 import {EffectAssetDownloadManager} from './EffectAssetDownloadManager';
@@ -58,6 +59,8 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/AvatarRenderManager.as::_effectAssetDownloadManager
     private _effectAssetDownloadManager: EffectAssetDownloadManager | null = null;
     private _placeholderFigure: AvatarFigureContainer | null = null;
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::_blockedFigure
+    private _blockedFigure: AvatarFigureContainer | null = null;
     private _pendingFigureDownloads: [IAvatarFigureContainer, IAvatarImageListener | null][] = [];
     private _configuration: IHabboConfigurationManager | null = null;
     private _assetLibrary: IAssetLibrary | null = null;
@@ -263,10 +266,30 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         this._mode = value;
     }
 
-    // TODO(AS3): .../src/com/sulake/habbo/avatar/_SafeCls_582.as::createBlockedAvatarImage() builds a
-    // BlockedAvatarImage over the fixed figure "hd-99999-99999" — the silhouette shown in place of
-    // a blocked user. That subclass of AvatarImage is not ported, so there is nothing to construct;
-    // it is a whole view, not a missing accessor.
+    /**
+     * The silhouette shown in place of a user this client is blocking.
+     *
+     * `figureString` is taken and discarded, exactly as in AS3: the image always renders the
+     * fixed `hd-99999-99999` figure, so the blocked user's real look never reaches the screen.
+     * The container is built once and shared, and the result is deliberately *not* pushed onto
+     * `_activeImages` — like a placeholder, it holds one figure no cache reset needs to walk.
+     */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_582.as::createBlockedAvatarImage()
+    public createBlockedAvatarImage(_figureString: string, scale: string): IAvatarImage
+    {
+        if(this._blockedFigure === null)
+        {
+            this._blockedFigure = new AvatarFigureContainer(AvatarRenderManager.AVATAR_PLACEHOLDER_FIGURE);
+        }
+
+        return new BlockedAvatarImage(
+            this._structure,
+            this._aliasCollection,
+            this._blockedFigure,
+            scale,
+            this._effectAssetDownloadManager
+        );
+    }
 
     /**
      * Throws away every live avatar's render cache.

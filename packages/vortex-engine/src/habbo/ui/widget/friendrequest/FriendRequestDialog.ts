@@ -3,6 +3,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
+import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import type {IRoomEngineRectangle} from '@habbo/room/RoomEngine';
 import {Logger} from '@core/utils/Logger';
 import type {FriendRequestWidget} from './FriendRequestWidget';
@@ -85,10 +86,41 @@ export class FriendRequestDialog
         return this._userId;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/friendrequest/FriendRequestDialog.as::setImageAsset()
-    // Dead in AS3 itself: a repo-wide grep finds no caller for this class's copy (only
-    // ContextInfoView's differently-signed setImageAsset(), invoked from ButtonMenuView, is ever
-    // called). Not ported.
+    /**
+     * Paints one named asset onto a bitmap window, at the window's size and at (0,0).
+     *
+     * Unlike `ContextInfoView`'s two-argument sibling this one never centres: AS3 allocates a
+     * bitmap the size of the target and `draw()`s the asset straight into its corner, so an
+     * asset smaller than the window sits top-left, not in the middle.
+     *
+     * Dead in AS3 itself — a repo-wide grep finds no caller for this class's copy, only for
+     * ContextInfoView's differently-signed one — but it is a real member of the class, so it is
+     * ported rather than left as a hole.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/friendrequest/FriendRequestDialog.as::setImageAsset()
+    setImageAsset(target: IWindow | null, assetName: string): void
+    {
+        if(!target || !this._widget?.assets) return;
+
+        const asset = this._widget.assets.getAssetByName(assetName) as BitmapDataAsset | null;
+        const content = asset?.content as ImageBitmap | null;
+
+        if(!content) return;
+
+        const bitmapTarget = target as IWindow & { bitmap: ImageBitmap | null };
+
+        bitmapTarget.bitmap?.close();
+
+        const canvas = new OffscreenCanvas(Math.max(1, target.width), Math.max(1, target.height));
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(content, 0, 0);
+
+        bitmapTarget.bitmap = canvas.transferToImageBitmap();
+    }
 
     // AS3: .../widget/friendrequest/FriendRequestDialog.as::show()
     show(): void

@@ -122,6 +122,12 @@ export interface IAvatarRenderManager
     // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::set mode()
     set mode(value: string);
 
-    // TODO(AS3): .../src/com/sulake/habbo/avatar/_SafeCls_581.as::createBlockedAvatarImage() —
-    // see AvatarRenderManager.ts, the BlockedAvatarImage view it returns is not ported.
+    /**
+	 * The silhouette shown in place of a user this client is blocking.
+	 *
+	 * The figure string is accepted and discarded — the image always renders `hd-99999-99999`,
+	 * so a blocked user's real look never reaches the screen.
+	 */
+    // AS3: .../src/com/sulake/habbo/avatar/_SafeCls_581.as::createBlockedAvatarImage()
+    createBlockedAvatarImage(figureString: string, scale: string): IAvatarImage;
 }

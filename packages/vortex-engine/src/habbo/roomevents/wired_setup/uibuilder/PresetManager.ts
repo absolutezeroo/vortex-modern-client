@@ -104,13 +104,9 @@ import type {WiredVariable} from '@habbo/communication/messages/incoming/userdef
  * inputs, sections, layouts…), always threading the current wired style. It also caches parsed XML
  * window templates (`createLayout`) so repeated widgets clone from one parse.
  *
- * TODO(AS3): this is the load-bearing core of the factory — the constructor, the `wiredStyle`
- * accessor and `createLayout`. The ~80 `create*` factory methods (createButton, createText,
- * createSection, createFramePreset, …) each instantiate a concrete preset from
- * `wired_setup/uibuilder/presets/**` and are added here as their preset is ported (Bloc D leaves).
- * Do not treat the absence of a `create*` method as intentional — it means that preset is not ported
- * yet. Full surface:
- * sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/PresetManager.as
+ * All 69 of the AS3 `create*` factory methods are ported, each instantiating its concrete preset
+ * from `wired_setup/uibuilder/presets/**`. If one ever goes missing that is a regression, not a
+ * deliberate omission.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/uibuilder/PresetManager.as
  */
