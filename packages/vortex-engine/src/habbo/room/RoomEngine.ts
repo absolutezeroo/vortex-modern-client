@@ -281,18 +281,31 @@ interface IRoomEngineRoomInstanceData {
  */
 // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as
 export interface IPendingFurnitureData {
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get id()
     id: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get typeId()
     typeId: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get className()
     className: string | null;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get location()
     location: IVector3d;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get direction()
     direction: IVector3d;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get state()
     state: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get data()
     data: IStuffData | null;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get extra()
     extra: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get expiryTime()
     expiryTime: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get usagePolicy()
     usagePolicy: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get ownerId()
     ownerId: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get ownerName()
     ownerName: string;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get synchronized()
     synchronized: boolean;
 }
 
@@ -302,15 +315,27 @@ export interface IPendingFurnitureData {
  */
 // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as
 export interface IPendingWallItemData {
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get id()
     id: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get typeId()
     typeId: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get location()
     location: IVector3d;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get direction()
     direction: IVector3d;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get state()
     state: number;
+    // DEVIATION: the wall message carries the legacy blob rather than a parsed IStuffData, so
+    //   this is a string where the floor item's `data` is an object.
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get data()
     data: string;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get usagePolicy()
     usagePolicy: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get ownerId()
     ownerId: number;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get ownerName()
     ownerName: string;
+    // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2114.as::get expiryTime()
     secondsToExpiration: number;
 }
 
