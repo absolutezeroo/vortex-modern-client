@@ -1570,6 +1570,34 @@ node scripts/todo-inventory.mjs --json
 `packages/*/dist` is excluded: it is gitignored build output carrying a duplicate of every `.d.ts`
 marker, which inflates a naive `grep -c` by ~90.
 
+**2026-09-03, the full sweep — 159 → 70 TODO in one pass, and 58 deviations audited.** The
+`--stale` pass below opened it; what the rest of the day found is that the markers were the
+smaller half of the problem.
+
+Three defects hid behind correct-looking comments, none of them reported by any measure:
+
+- **`blocked` and `figure_alpha_multiplier` were write-only.** `AvatarLogic`/`RoomEngine` set
+  them, nothing read them, so a blocked user rendered as their real avatar.
+- **`AdManager` decoded the billboard image and threw it away.** The event it emitted carried
+  only the URL, so room ads could never have shown a picture even once wired.
+- **`addObjectFurniture()` built every item synchronously.** AS3 queues and drains four at a
+  time on a 30ms frame budget; a room announcing three hundred items built all three hundred
+  inside one message handler.
+
+Whole features were present and unreachable: the catalog gift flow (seven markers, every
+composer/parser/layout already shipped), room-ad images (`AdManager` constructed in
+`VortexMain.ts:788` and resolved by nobody), `showGamePlayerName()` (the chain was complete and
+two markers said it was not), and `habbo/game`, which a marker called "0/63" while it stood at
+62/63.
+
+**Then the deviations.** `DEVIATION:` reads as settled, so it is the most durable way to hide
+unfinished work here. All 58 were re-checked; six were not deviations at all —
+`Component.requiredDependencyIids`, both `toXMLString()`s, `AvatarStructure.renderManager`,
+`NumberBank` (its absence meant thumbnail ids were never recycled) and
+`getActiveRoomActiveCanvas()` (three call sites were spelling the lookup out inline). One of the
+comments was factually wrong about its own code. `.claude/rules/30-as3-traceability.md` gained
+"A deviation must cite a check, not an impression" as a result.
+
 **2026-09-03, the `--stale` sweep — 159 → 146 TODO, stale candidates 15 → 1.** Of the 15 markers
 whose cited blocker looked lifted, **14 were wrong**, which is the highest false rate any sweep has
 returned. Three shapes recur, and all three are worth recognising before trusting a marker:
