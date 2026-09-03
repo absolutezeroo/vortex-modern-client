@@ -3,6 +3,7 @@ import {LogLevel, Logger} from '@core/utils/Logger';
 import {OrderedMap} from '@core/utils/OrderedMap';
 
 import {QuickRandom} from '../utils/QuickRandom';
+import {HumanGameObject} from '../gameobjects/HumanGameObject';
 import {DefaultGameStage} from './DefaultGameStage';
 import type {ISynchronizedGameObject} from './ISynchronizedGameObject';
 
@@ -189,12 +190,12 @@ export class SynchronizedGameStage extends DefaultGameStage
         {
             if(gameObject.isGhost)
             {
-                // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/arena/_SafeCls_2603.as::calculateChecksum()
-                //   AS3 gates on `obj is HumanGameObject` and calls `addGhostLocation(turn)`,
-                //   recording where the prediction put the player on this turn so it can be
-                //   reconciled when the server's copy of the same input arrives.
-                //   `gameobjects/HumanGameObject` is the next slice. What matters for the checksum
-                //   is already right: a ghost contributes nothing, whatever its class.
+                // A ghost contributes nothing to the checksum, but a *human* ghost records where
+                // the prediction put it this turn, so the server's copy of the same input can be
+                // reconciled against it later.
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/game/snowwar/arena/_SafeCls_2603.as::calculateChecksum()
+                if(gameObject instanceof HumanGameObject) gameObject.addGhostLocation(turn);
+
                 continue;
             }
 

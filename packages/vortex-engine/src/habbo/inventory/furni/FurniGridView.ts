@@ -136,18 +136,18 @@ export class FurniGridView
         }
     }
 
+    // DEVIATION: `setFilter()`/`passFilter()` here replace AS3's category-string filter system
+    //   (MAIN_FILTER_IDS all/floor_items/wall_items/room_layout, plus a type list keyed off the
+    //   main selection, fed through passMainFilter()/passTypeFilter()) with a numeric floor/wall
+    //   plus placement model — `_placementFilter`, PLACEMENT_ANYWHERE/IN_ROOM/NOT_IN_ROOM — which
+    //   answers "is this item currently in a room", a question AS3's filters cannot ask.
+    //
     // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilterByWired()
-    // AS3's real caller (FurniView.as's updateGridFiltersWired()) reads the SAME two category-string
-    // dropdowns updateGridFiltersNormal() does (MAIN_FILTER_IDS: all/floor_items/wall_items/
-    // room_layout; a type filter list keyed off the main selection: any/sittable/layable/wired/
-    // credit_furni/clothes/.../tradable/...) and feeds them through passMainFilter()/
-    // passTypeFilter(). This port's setFilter()/passFilter() already replaced that whole
-    // category-string system with a numeric floor/wall + "is currently placed in a room" model
-    // (_placementFilter, PLACEMENT_ANYWHERE/IN_ROOM/NOT_IN_ROOM) that has no AS3 counterpart and no
-    // slot for AS3's WiredTradeRequirementsModel.canOfferFurni() gate. Porting setFilterByWired()
-    // faithfully means first restoring passMainFilter()/passTypeFilter() and their id lists - out
-    // of scope for a single-member fix; wiring it to the numeric model instead would just invent
-    // wrong behaviour for whichever category picks the wired mode maps onto.
+    //   is blocked on that substitution, not merely absent. Its caller reads the same two
+    //   dropdowns as the normal path and adds AS3's `WiredTradeRequirementsModel.canOfferFurni()`
+    //   gate, and the numeric model has no slot for either. Restoring
+    //   passMainFilter()/passTypeFilter() and their id lists comes first; mapping the wired mode
+    //   onto a numeric category instead would invent behaviour rather than port it.
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::itemsWereUpdated()
     itemsWereUpdated(items: GroupItem[]): void
