@@ -39,7 +39,6 @@ export {ResetUnseenItemIdsComposer} from './ResetUnseenItemIdsComposer';
 export {ResetUnseenItemsComposer} from './ResetUnseenItemsComposer';
 
 // Star Gems
-export {GiveStarGemToUserMessageComposer} from './GiveStarGemToUserMessageComposer';
 
 // Credit Vault
 export {CreditVaultStatusMessageComposer} from './CreditVaultStatusMessageComposer';

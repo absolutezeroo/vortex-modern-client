@@ -13,13 +13,17 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  *
  * @see sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1891/_SafeCls_2978.as
  */
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3300.as::get badgeIndex()
-// The raw 1-based wire value `slotIndex` (above) converts from. No AS3 caller anywhere in the
-// primary tree reads `badgeIndex` directly - only `slotIndex`'s own `- 1` computation touches it -
-// so there is nothing for a `badgeIndex` accessor here to serve; `parse()` below applies the same
-// `- 1` inline instead of exposing the pre-conversion value.
 export interface ISelectedBadge
 {
+    /**
+	 * The raw 1-based slot number, exactly as the wire carries it.
+	 *
+	 * Nothing in the primary tree reads it — only `slotIndex`'s own `- 1` touches it — but it is
+	 * a real member of the AS3 DTO and the value `slotId` is derived from, so both are carried
+	 * rather than only the converted one.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3300.as::get badgeIndex()
+    badgeIndex: number;
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3300.as::get slotIndex()
     slotId: number;
     // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_1731/_SafeCls_3300.as::get badgeCode()
@@ -99,12 +103,13 @@ export class HabboUserBadgesMessageParser implements IMessageParser
             // raw value straight through, as this used to, put every equipped badge one slot off
             // and silently dropped whichever badge occupied wire slot 5 (5 > the [0,4] bounds
             // check).
-            const slotId = wrapper.readInt() - 1;
+            const badgeIndex = wrapper.readInt();
+            const slotId = badgeIndex - 1;
             const badgeCode = wrapper.readString();
             const ownerCount = wrapper.readInt();
             const badgeRarityId = wrapper.readInt();
 
-            this._selectedBadges.push({slotId, badgeCode, ownerCount, badgeRarityId});
+            this._selectedBadges.push({badgeIndex, slotId, badgeCode, ownerCount, badgeRarityId});
         }
 
         return true;

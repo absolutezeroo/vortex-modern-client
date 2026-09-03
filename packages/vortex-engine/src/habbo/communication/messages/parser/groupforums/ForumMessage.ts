@@ -11,13 +11,34 @@ import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDat
  */
 export class ForumMessage
 {
-    // TODO(AS3): _SafeCls_3561.as also declares a `MessageId` accessor pair (capital M) over the
-    // same backing field as `messageId` below — a duplicate the original never reads — and a
-    // `creationTime` pair over a field `readFromMessage()` never writes and nothing reads. The
-    // wire value is `creationTimeAsSecondsAgo`; both extras are dead in AS3 itself.
-
     // AS3: _SafeCls_3561.as::messageId
     messageId: number = 0;
+
+    /**
+     * A second name for `messageId`, capital M and all.
+     *
+     * AS3 declares both accessor pairs over the same `_SafeStr_7387`, and never reads this one.
+     * Kept as an accessor rather than a field so the two cannot drift apart, which is the one
+     * thing the AS3 shape guarantees and a duplicated field would not.
+     */
+    // AS3: _SafeCls_3561.as::get MessageId()
+    get MessageId(): number
+    {
+        return this.messageId;
+    }
+
+    // AS3: _SafeCls_3561.as::set MessageId()
+    set MessageId(value: number)
+    {
+        this.messageId = value;
+    }
+
+    /**
+     * Dead in AS3 too: `readFromMessage()` never writes it and nothing reads it. The value the
+     * wire actually carries is `creationTimeAsSecondsAgo`, below.
+     */
+    // AS3: _SafeCls_3561.as::creationTime
+    creationTime: number = 0;
 
     // AS3: _SafeCls_3561.as::messageIndex
     messageIndex: number = 0;

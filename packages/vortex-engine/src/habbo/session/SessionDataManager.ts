@@ -157,9 +157,6 @@ import {RespectPetMessageComposer} from '../communication/messages/outgoing/room
 import {ChatMessageComposer} from '../communication/messages/outgoing/room/chat/ChatMessageComposer';
 import {SetUIFlagsMessageComposer} from '../communication/messages/outgoing/preferences/SetUIFlagsMessageComposer';
 import {
-    GiveStarGemToUserMessageComposer
-} from '../communication/messages/outgoing/inventory/GiveStarGemToUserMessageComposer';
-import {
     CreditVaultStatusMessageComposer
 } from '../communication/messages/outgoing/inventory/CreditVaultStatusMessageComposer';
 import {
@@ -965,19 +962,6 @@ export class SessionDataManager extends Component implements ISessionDataManager
     isAccountSafetyLocked(): boolean
     {
         return this._accountSafetyLocked;
-    }
-
-    /**
-	 * Give a star gem to a user.
-	 *
-	 * @see sources/win63_version/habbo/session/SessionDataManager.as giveStarGem()
-	 */
-    giveStarGem(userId: number): void
-    {
-        if(userId >= 0)
-        {
-            this.send(new GiveStarGemToUserMessageComposer(userId));
-        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/SessionDataManager.as::getFurniIconImage()

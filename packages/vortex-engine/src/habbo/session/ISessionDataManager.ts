@@ -165,8 +165,6 @@ export interface ISessionDataManager extends IDisposable
     // AS3: .../src/com/sulake/habbo/session/ISessionDataManager.as::replenishRespect()
     replenishRespect(): void;
 
-    giveStarGem(userId: number): void;
-
     // UI preferences
     // AS3: .../src/com/sulake/habbo/session/ISessionDataManager.as::setRoomCameraFollowDisabled()
     setRoomCameraFollowDisabled(disabled: boolean): void;

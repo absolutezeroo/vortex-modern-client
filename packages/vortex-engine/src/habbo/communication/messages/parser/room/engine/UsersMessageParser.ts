@@ -20,9 +20,48 @@ export class UsersMessageParser implements IMessageParser
         return this._users.length;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::convertOldPetFigure()
-    // Static legacy-figure-string converter with zero call sites anywhere in the primary tree
-    // (nor in win63_version) - dead code left over from an old pet figure format migration.
+    /**
+     * The 56-colour palette the legacy pet figure format indexed into.
+     *
+     * Read only by `convertOldPetFigure()`, which is itself dead — kept beside it rather than
+     * inlined so the method reads as AS3 writes it.
+     */
+    // AS3: .../src/unknowns/_SafePkg_2184/_SafeCls_2309.as::convertOldPetFigure() (`_loc10_`)
+    private static readonly OLD_PET_FIGURE_COLOURS: string[] = [
+        'FF7B3A', 'FF9763', 'FFCDB3', 'F59500', 'FBBD5C', 'FEE4B2', 'EDD400', 'F5E759',
+        'FBF8B1', '84A95F', 'B0C993', 'DBEFC7', '65B197', '91C7B5', 'C5EDDE', '7F89B2',
+        '98A1C5', 'CAD2EC', 'A47FB8', 'C09ED5', 'DBC7E9', 'BD7E9D', 'DA9DBD', 'ECC6DB',
+        'DD7B7D', 'F08B90', 'F9BABF', 'ABABAB', 'D4D4D4', 'FFFFFF', 'D98961', 'DFA281',
+        'F1D2C2', 'D5B35F', 'DAC480', 'FCFAD3', 'EAA7AF', '86BC40', 'E8CE25', '8E8839',
+        '888F67', '5E9414', '84CE84', '96E75A', '88E70D', 'B99105', 'C8D71D', '838851',
+        'C08337', '83A785', 'E6AF26', 'ECFF99', '94FFF9', 'ABC8E5', 'F2E5CC', 'D2FF00'
+    ];
+
+    /**
+     * Rewrites a pre-migration pet figure (`"<type> <breed> <hexColour>"`) as a modern one.
+     *
+     * Dead in AS3 as well — no call site in the primary tree or in `win63_version` — but a real
+     * static member of the parser, so it is ported rather than left as a hole. Note the two
+     * off-by-one adjustments are AS3's own: the breed is read `+ 1`, and a colour the palette
+     * does not contain yields index 0 through `indexOf(...) + 1`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2184/_SafeCls_2309.as::convertOldPetFigure()
+    static convertOldPetFigure(figure: string): string
+    {
+        const parts = figure.split(' ');
+
+        if(parts.length < 3) return '';
+
+        const type = parseInt(parts[0]!, 10);
+        const breed = parseInt(parts[1]!, 10) + 1;
+        const colour = parts[2]!.substr(parts[2]!.length - 6, 6);
+
+        // Types above 1 all collapse onto 64: the old format only ever had two.
+        const setId = (type <= 1) ? (25 * type + breed) : 64;
+        const colourId = UsersMessageParser.OLD_PET_FIGURE_COLOURS.indexOf(colour.toUpperCase()) + 1;
+
+        return `phd-${setId}-${colourId}.pbd-${setId}-${colourId}.ptl-${setId}-${colourId}`;
+    }
 
     getUser(index: number): RoomUserData | null
     {

@@ -143,15 +143,19 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         return isRoomViewerMode(this.flags);
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::sendTryLoginDevelopmentOnly()
-    // sends a username/password login straight down the socket. Its composer is neutered in this
-    // build — `_SafeCls_1711.getMessageArray()` returns an empty array — so the message carries no
-    // credentials even in the original client, and porting it would send an empty packet.
+    // DEVIATION: not ported, and it would do nothing if it were. AS3 sends a username/password
+    //   login straight down the socket, but its composer is neutered in this build —
+    //   `_SafeCls_1711.getMessageArray()` returns an empty array — so the packet carries no
+    //   credentials in the original client either. Porting it would add a dev-only credential
+    //   path that provably transmits nothing; SSO (`setSSOTicket()` below) is the live route.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::sendTryLoginDevelopmentOnly()
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::onUserList()
-    // auto-selects a developer account from the returned avatar list, matching it against a
-    // "useruniqueid" read out of a Flash local shared object and then firing the login on a 500ms
-    // Timer. Both halves are development-only, and the SOL it keys off does not exist here.
+    // DEVIATION: not ported. AS3 auto-selects a developer account from the returned avatar list
+    //   by matching it against a "useruniqueid" read out of a Flash local shared object, then
+    //   fires `sendTryLoginDevelopmentOnly()` on a 500ms Timer. Both halves are development-only:
+    //   the SOL has no counterpart here, and the login it would fire is the neutered one above.
+    //   The non-auto branch hands the list to a character-list view this port does not have.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::onUserList()
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::setSSOTicket()
     setSSOTicket(ticket: string): void

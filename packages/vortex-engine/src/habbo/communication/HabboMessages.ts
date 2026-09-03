@@ -3868,14 +3868,13 @@ export class HabboMessages implements IMessageConfiguration
         this._composers.set(3707, GetNowPlayingMessageComposer);
         this._composers.set(3633, GetSoundMachinePlayListMessageComposer);
 
-        // === INVENTORY - STAR GEMS / VAULT / REWARD ===
-        // TODO(AS3): GiveStarGemToUserMessageComposer has no entry in the authoritative revision
-        // (sources/WIN63-202607011411-782849652) - no registry entry traceable, no construction
-        // call site, and SessionDataManager.as there has no giveStarGem() at all (the TS port's
-        // trace comment points at a win63_version member that does not exist either). Left
-        // unregistered so sending it warns-and-drops instead of colliding with
-        // ScrGetKickbackInfoMessageComposer's real header (1111).
-        // this._composers.set(1111, GiveStarGemToUserMessageComposer);
+        // === INVENTORY - VAULT / REWARD ===
+        // GiveStarGemToUserMessageComposer removed 2026-09-03, the same way
+        // GetHeightMapMessageComposer went on 2026-08-27: it is in no AS3 tree at all. It came
+        // from `sources/NITRO`, an unrelated TypeScript client, and its `@see` cited a
+        // `win63_version` member that does not exist. Its only caller was
+        // `SessionDataManager.giveStarGem()`, which nothing called; both are gone. 1111 belongs
+        // to ScrGetKickbackInfoMessageComposer.
         this._composers.set(1645, CreditVaultStatusMessageComposer);
         this._composers.set(1105, WithdrawCreditVaultMessageComposer);
         this._composers.set(3417, IncomeRewardStatusMessageComposer);

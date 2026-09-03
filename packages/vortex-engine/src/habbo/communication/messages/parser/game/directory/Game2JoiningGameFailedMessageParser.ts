@@ -5,19 +5,31 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  * Why the join was refused. `_SafeCls_1951.onJoiningGameFailed()` maps three of the eight values to
  * a localisation key and everything else to the generic error.
  *
- * TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_4164/Game2JoiningGameFailedMessageParser.as
- * declares eight public reason constants (1..8) whose identifiers are obfuscated in all three trees
- * (`_SafeStr_*` here, `const_*` in win63_version, PRODUCTION obfuscates the file whole). Only the
- * three the handler acts on have a recoverable meaning, and those are the three declared below;
- * naming 1, 3, 5 and 7 would be invention.
+ * All eight of AS3's reason constants are declared. Only the ones the handler acts on have a
+ * recoverable meaning; 1, 3, 4 and 5 are obfuscated in all three trees (`_SafeStr_*` here,
+ * `const_*` in win63_version, PRODUCTION obfuscates the file whole) and no call site distinguishes
+ * them, so they keep placeholder names that say so rather than invented ones.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_4164/Game2JoiningGameFailedMessageParser.as
  */
 export class Game2JoiningGameFailedMessageParser implements IMessageParser
 {
+    // AS3: Game2JoiningGameFailedMessageParser.as::_SafeStr_11422 — obfuscated in every tree; the
+    //   handler takes the generic-error branch for it, so nothing names it.
+    public static readonly REASON_UNNAMED_1: number = 1;
+
     /** Derived name — `_SafeStr_11238`; the handler answers it with `snowwar.error.duplicate_machineid`. */
     // AS3: Game2JoiningGameFailedMessageParser.as::_SafeStr_11238
     public static readonly REASON_DUPLICATE_MACHINE_ID: number = 2;
+
+    // AS3: Game2JoiningGameFailedMessageParser.as::_SafeStr_11326 — obfuscated, generic branch.
+    public static readonly REASON_UNNAMED_3: number = 3;
+
+    // AS3: Game2JoiningGameFailedMessageParser.as::_SafeStr_10854 — obfuscated, generic branch.
+    public static readonly REASON_UNNAMED_4: number = 4;
+
+    // AS3: Game2JoiningGameFailedMessageParser.as::_SafeStr_11091 — obfuscated, generic branch.
+    public static readonly REASON_UNNAMED_5: number = 5;
 
     /**
      * Derived names — `_SafeStr_11742` and `_SafeStr_10845`; the handler answers *both* with

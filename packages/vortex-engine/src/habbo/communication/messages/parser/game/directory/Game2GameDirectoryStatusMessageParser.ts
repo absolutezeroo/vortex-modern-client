@@ -7,13 +7,12 @@ import type {IMessageParser} from '@core/communication/messages/IMessageParser';
  * `blockLength` is a temporary ban from starting games; -1 in `freeGamesLeft` is the unlimited flag,
  * the same convention as `Game2AccountGameStatusMessageParser`.
  *
- * TODO(AS3): sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_4164/Game2GameDirectoryStatusMessageParser.as
- * declares four public status constants (0..3) whose identifiers are obfuscated in *all three*
- * trees — `_SafeStr_11578`/`_SafeStr_11239`/`_SafeStr_11102`/`_SafeStr_11663` here, `const_661`/
- * `const_950`/`const_850`/`const_518` in win63_version, and PRODUCTION obfuscates this file whole.
- * Only 0 has a recoverable meaning (`_SafeCls_1951.onGameDirectoryStatus()` treats it as "open" and
- * everything else as unavailable), so only that one is declared below. Naming the other three would
- * be invention, not recovery.
+ * All four of AS3's status constants are declared. Only 0 has a recoverable meaning —
+ * `_SafeCls_1951.onGameDirectoryStatus()` treats it as "open" and everything else as unavailable —
+ * and the other three are obfuscated in *all three* trees (`_SafeStr_11239`/`_SafeStr_11102`/
+ * `_SafeStr_11663` here, `const_950`/`const_850`/`const_518` in win63_version, PRODUCTION
+ * obfuscates the file whole). They keep placeholder names that say so rather than invented ones:
+ * the value is the wire contract, and a caller switching on it is unaffected by the name.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_4164/Game2GameDirectoryStatusMessageParser.as
  */
@@ -25,6 +24,16 @@ export class Game2GameDirectoryStatusMessageParser implements IMessageParser
      */
     // AS3: Game2GameDirectoryStatusMessageParser.as::_SafeStr_11578
     public static readonly STATUS_AVAILABLE: number = 0;
+
+    // AS3: Game2GameDirectoryStatusMessageParser.as::_SafeStr_11239 — obfuscated in every tree
+    //   (`const_950` in win63_version); no call site distinguishes it.
+    public static readonly STATUS_UNNAMED_1: number = 1;
+
+    // AS3: Game2GameDirectoryStatusMessageParser.as::_SafeStr_11102 — obfuscated (`const_850`).
+    public static readonly STATUS_UNNAMED_2: number = 2;
+
+    // AS3: Game2GameDirectoryStatusMessageParser.as::_SafeStr_11663 — obfuscated (`const_518`).
+    public static readonly STATUS_UNNAMED_3: number = 3;
 
     // AS3: Game2GameDirectoryStatusMessageParser.as::_status
     private _status: number = -1;
