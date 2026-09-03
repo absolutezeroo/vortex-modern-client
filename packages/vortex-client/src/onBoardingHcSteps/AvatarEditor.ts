@@ -17,6 +17,7 @@
  */
 import {Texture} from 'pixi.js';
 import {Logger} from '@core/utils/Logger';
+import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {AvatarFigurePartType} from '@habbo/avatar/enum/AvatarFigurePartType';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
@@ -468,13 +469,29 @@ export class AvatarEditor extends Sprite implements IAvatarImageListener
         }
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::returnFromPayment()
-    // Dead in AS3 itself: no call site anywhere in the primary tree or win63_version, and never
-    // registered as an ExternalInterface.addCallback() target either (unlike checkForHcMembership,
-    // which the web side calls back into via the flow's own JS bridge). It would call
-    // HabboWebTools.closeWebPageAndRestoreClient() and, through Flash's ExternalInterface, invoke
-    // the page's `NewUserReception.newUserCheckHcMembership` - both Flash-era JS-interop calls with
-    // nothing left in AS3 to trigger them.
+    /**
+     * Comes back from the HC payment page: restores the client, then asks the hosting page to
+     * re-check membership — which answers through `checkForHcMembership()` above.
+     *
+     * Dead in AS3 too: no call site in the primary tree or in `win63_version`, and never
+     * registered as an `ExternalInterface.addCallback()` target either, unlike
+     * `checkForHcMembership()` which the web side does call into.
+     *
+     * DEVIATION: AS3 reaches the page through `ExternalInterface.call(...)`. The browser
+     *   equivalent is the global of that name on `window`, which is where habbo-web's
+     *   `NewUserReception` lives; a page that does not define it is simply not the HC flow's
+     *   host, and the call is skipped rather than throwing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/friendbar/onBoardingHcSteps/AvatarEditor.as::returnFromPayment()
+    public returnFromPayment(): void
+    {
+        HabboWebTools.closeWebPageAndRestoreClient();
+
+        const reception = (window as unknown as
+            {NewUserReception?: {newUserCheckHcMembership?: () => void}}).NewUserReception;
+
+        reception?.newUserCheckHcMembership?.();
+    }
 
     // AS3: onAddedToStage(_arg_1:Event)
     private _onAddedToStage = (): void =>

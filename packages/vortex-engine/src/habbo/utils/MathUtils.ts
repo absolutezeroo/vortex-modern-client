@@ -9,6 +9,8 @@
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/_SafeCls_2916.as
  */
+import {Matrix} from 'pixi.js';
+
 export class MathUtils
 {
     /**
@@ -69,8 +71,26 @@ export class MathUtils
         return MathUtils.lerp(MathUtils.normalize(value, inMin, inMax), outMin, outMax);
     }
 
-    // TODO(AS3): .../src/com/sulake/habbo/utils/_SafeCls_2916.as::rectangleTransformMatrix() builds
-    // the `flash.geom.Matrix` that maps one rectangle onto another. Nothing in this port draws
-    // through a Flash matrix — the equivalent scaling happens on the PixiJS transform — so there is
-    // no matrix type to return.
+    /**
+     * The transform that maps `from` onto `to`.
+     *
+     * Axis-aligned only: AS3 sets `a`/`d`/`tx`/`ty` and leaves `b`/`c` at zero, so this scales
+     * and translates but never rotates or skews. A zero-width or zero-height source divides by
+     * zero in AS3 too, and the result is `Infinity` there as here — guarding it would answer a
+     * different question than the one the caller asked.
+     *
+     * DEVIATION: AS3 returns a `flash.geom.Matrix`. PixiJS's `Matrix` is the same six numbers in
+     *   the same order and is what this port draws through, so it is what comes back.
+     */
+    // AS3: .../src/com/sulake/habbo/utils/_SafeCls_2916.as::rectangleTransformMatrix()
+    static rectangleTransformMatrix(
+        from: {x: number; y: number; width: number; height: number},
+        to: {x: number; y: number; width: number; height: number}
+    ): Matrix
+    {
+        const a = to.width / from.width;
+        const d = to.height / from.height;
+
+        return new Matrix(a, 0, 0, d, to.x - from.x * a, to.y - from.y * d);
+    }
 }

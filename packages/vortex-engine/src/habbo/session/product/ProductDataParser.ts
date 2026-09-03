@@ -9,11 +9,15 @@ const log = Logger.getLogger('habbo.session.product.ProductDataParser');
 /**
  * Events emitted by ProductDataParser
  */
-// TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::READY
-// Dead in AS3 itself: `dispatchEvent(new Event("PDP_product_data_ready"))` and
-// `SessionDataManager`'s (add|remove)EventListener calls all use the literal string, never the
-// `READY` constant — so this port matches AS3's actual (odd) behaviour by using the same literal
-// as the event-map key below rather than porting an unused symbol.
+/**
+ * The event name the parser raises once product data is in.
+ *
+ * Unread in AS3 — every dispatch and listener spells the literal out — but a real public constant
+ * of the class, and the same string. See `FURNITURE_DATA_PARSER_READY` for the twin.
+ */
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::READY
+export const PRODUCT_DATA_PARSER_READY = 'PDP_product_data_ready';
+
 export interface IProductDataParserEvents
 {
     PDP_product_data_ready: [];
