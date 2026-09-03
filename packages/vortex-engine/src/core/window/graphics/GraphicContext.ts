@@ -418,12 +418,11 @@ export class GraphicContext implements IGraphicContext
      * AS3 draws straight into the context's own `graphics` — a green box around
      * the context and a blue one around the dirty region. There is no display
      * list to draw into here, so the region is stored and
-     * {@link redrawRegion} exposes it.
+     * `WindowComposite.drawRedrawRegionOverlay()` strokes both boxes at
+     * composite time, which is where the desktop-wide canvas lives.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::showRedrawRegion() —
-     * nothing renders the stored region yet; `WindowComposite` would have to
-     * stroke `getDrawRegion()` in 0xFF00FF00 and `redrawRegion` in 0xFF0000FF
-     * for the overlay to actually appear.
+     * Nothing calls this, in this port or in AS3 — it is a debug hook with no
+     * caller in any tree. Passing null turns the overlay off again.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::showRedrawRegion()
     public showRedrawRegion(rect: { x: number; y: number; width: number; height: number } | null): void

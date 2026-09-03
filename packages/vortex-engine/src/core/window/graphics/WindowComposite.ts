@@ -1,6 +1,7 @@
 import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
+import type {IGraphicContext} from './IGraphicContext';
 import {WindowType} from '../enum/WindowType';
 import {WindowParam} from '../enum/WindowParam';
 
@@ -110,9 +111,41 @@ export class WindowComposite
                     this.compositeWindow(ctx, child, 0, 0, null);
                 }
             }
+
+            this.drawRedrawRegionOverlay(ctx, contexts[i]);
         }
 
         return this._compositeBuffer;
+    }
+
+    /**
+     * The debug overlay `GraphicContext.showRedrawRegion()` arms: a green box around the context
+     * and a blue one around the dirty region inside it.
+     *
+     * Off unless something has called `showRedrawRegion()`, which nothing does — in AS3 either,
+     * where the method has no caller in any tree. AS3 strokes into the context's own `graphics`;
+     * there is no display list here, so the stroke happens at composite time instead, which is
+     * the only place that has a canvas covering the whole desktop.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::showRedrawRegion()
+    private drawRedrawRegionOverlay(ctx: OffscreenCanvasRenderingContext2D, context: IWindowContext): void
+    {
+        const desktop = context.getDesktopWindow() as unknown as
+            { getGraphicContext(createIfMissing: boolean): IGraphicContext | null } | null;
+        const graphicContext = desktop?.getGraphicContext(false) ?? null;
+        const region = graphicContext?.redrawRegion ?? null;
+
+        if(graphicContext == null || region === null) return;
+
+        const bounds = graphicContext.getDrawRegion();
+
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = '#00FF00';
+        ctx.strokeRect(bounds.x + 0.5, bounds.y + 0.5, bounds.width - 1, bounds.height - 1);
+        ctx.strokeStyle = '#0000FF';
+        ctx.strokeRect(region.x + 0.5, region.y + 0.5, region.width - 1, region.height - 1);
+        ctx.restore();
     }
 
     public findWindowAtPoint(contexts: IWindowContext[], x: number, y: number): IWindow | null

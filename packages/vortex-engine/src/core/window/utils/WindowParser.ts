@@ -52,11 +52,12 @@ export class WindowParser implements IWindowParser
     // to read `.context` off of.
     private readonly _context: IWindowContext;
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::_parsedLayoutCache —
-    // not ported. AS3 allocates one in the constructor and disposes it in dispose(), but never
-    // reads or writes it in between: parseAndConstruct()'s own variable set (param3) is always a
-    // freshly-created instance when null, never this field. It is dead weight in AS3 itself, not
-    // an actual cache.
+    // DEVIATION: AS3 declares a `_parsedLayoutCache`, allocates it in the constructor and disposes
+    //   it in dispose(), and never reads or writes it in between — `parseAndConstruct()`'s
+    //   variable set (param3) is a freshly-created instance when null, never this field. It is an
+    //   allocation and a disposal around nothing, so the port omits it rather than carrying a
+    //   field whose only behaviour is to exist. The name suggests a cache; there is no cache.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::_parsedLayoutCache
     public constructor(context: IWindowContext)
     {
         this._context = context;

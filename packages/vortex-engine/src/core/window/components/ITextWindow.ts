@@ -7,10 +7,11 @@ import type {IMargins} from '../utils/IMargins';
  * `flash.text.TextFormat` that WindowComposite's Canvas2D text renderer can
  * actually apply per-range (see getTextFormat()/setTextFormat() below).
  *
- * TODO(AS3): AS3's TextFormat also has font/size/align/leftMargin/
- * rightMargin/indent/leading/url/target - not threaded through here since
- * no current caller (chat-message links, the only setTextFormat() consumer)
- * needs them, and the renderer only supports one font/size per text window.
+ * Every field `flash.text.TextFormat` carries is declared, so a caller can build the format AS3
+ * builds. What the renderer *applies* per range is narrower: it paints one font and size per text
+ * window, so `font`/`size` set here take effect only through the controller's own properties, and
+ * `align`/`leftMargin`/`rightMargin`/`indent`/`leading` are whole-window settings rather than
+ * per-range ones. `getTextFormat()` fills in only what the controller actually tracks.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getTextFormat()
  */
@@ -38,6 +39,22 @@ export interface ITextFormat
 
     // AS3: .../src/com/sulake/core/window/components/TextController.as::get leading()
     leading?: number | null;
+
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextFormatting() (`_loc3_.leftMargin`)
+    leftMargin?: number | null;
+
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextFormatting() (`_loc3_.rightMargin`)
+    rightMargin?: number | null;
+
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextFormatting() (`_loc3_.indent`)
+    indent?: number | null;
+
+    /** The href an `<a>` range links to; `target` is its window, as in HTML. */
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextFormatting() (`_loc3_.url`)
+    url?: string | null;
+
+    // AS3: .../src/com/sulake/core/window/components/TextController.as::setTextFormatting() (`_loc3_.target`)
+    target?: string | null;
 }
 
 /**

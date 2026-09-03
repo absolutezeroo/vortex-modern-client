@@ -10,6 +10,8 @@ import type {TextStyle} from '../utils/TextStyle';
 import {TextMargins} from '../utils/TextMargins';
 import {quoteFontFamilyList, measureFontLineHeight} from '../utils/CanvasFontString';
 import {GlyphAtlas} from '../utils/GlyphAtlas';
+import {OrderedMap} from '@core/utils/OrderedMap';
+import {XMLVariableParser} from '@core/utils/XMLVariableParser';
 
 type MeasureContext = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
@@ -914,9 +916,11 @@ export class TextController extends WindowController implements ITextWindow
         };
     }
 
+    // DEVIATION: AS3 hands back the DisplayObject an `<img>` in HTML text was loaded into, so the
+    //   caller can size or replace it. This renderer draws those inline onto the same canvas as
+    //   the glyphs and keeps no per-id handle, so there is nothing to hand back — the method is
+    //   kept, returning null, rather than dropped from the interface.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference() hands back the DisplayObject an `<img>` in HTML text was
-    // loaded into. The port renders those inline and keeps no per-id handle.
     public getImageReference(_id: string): unknown
     {
         return null;
@@ -1309,12 +1313,38 @@ export class TextController extends WindowController implements ITextWindow
         return props;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::parseVariableSet() —
-    // not ported. It parses an XML <var> node through the same _propertySetters-style lookup
-    // this set properties() below uses for the array form, but it is dead in AS3 itself: it is
-    // `protected`, never called from TextController, never overridden or called by any
-    // subclass, and grepping `parseVariableSet` across WIN63, win63_version and PRODUCTION
-    // finds only this one declaration in each tree, no caller.
+    /**
+     * Applies a `<var>` set from a layout node, through the same setter table `properties` uses.
+     *
+     * The XML form of the array `properties` takes below — same lookup, same `_drawing` latch so
+     * the whole set lands in one redraw rather than one per key.
+     *
+     * Dead in AS3 too: `protected`, never called from `TextController`, and grepping
+     * `parseVariableSet` across all three trees finds only the declaration. Ported anyway so a
+     * subclass that does call it gets the AS3 behaviour rather than a missing member.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::parseVariableSet()
+    protected parseVariableSet(node: Element | null): void
+    {
+        if(node === null) return;
+
+        const entries = new OrderedMap<string, unknown>();
+
+        XMLVariableParser.parseVariableList(node.children, entries);
+
+        this._drawing = true;
+
+        for(let i = 0; i < entries.length; i++)
+        {
+            const key = entries.getKey(i);
+            const setter = (key === null) ? undefined : TextController._propertySetters[key];
+
+            if(setter) setter(this, entries.getValueByIndex(i));
+        }
+
+        this._drawing = false;
+    }
+
     public override set properties(value: unknown[])
     {
         this._drawing = true;

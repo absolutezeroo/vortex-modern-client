@@ -67,6 +67,11 @@ export interface IGraphicContext extends IDisposable
     // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::showRedrawRegion()
     showRedrawRegion(rect: { x: number; y: number; width: number; height: number } | null): void;
 
+    // TS-only: AS3 strokes the region into its own `graphics` inside showRedrawRegion() and keeps
+    // no accessor. This port has no display list there, so the region is read back at composite
+    // time instead — see `WindowComposite.drawRedrawRegionOverlay()`.
+    readonly redrawRegion: { x: number; y: number; width: number; height: number } | null;
+
     // AS3: .../src/com/sulake/core/window/graphics/IGraphicContext.as::addChildContext()
     addChildContext(context: IGraphicContext): IGraphicContext;
 
