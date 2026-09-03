@@ -277,6 +277,7 @@ import type {
     HabboAchievementNotificationMessageEventParser
 } from '@habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser';
 import {HabboInventoryEffectsEvent} from './events/HabboInventoryEffectsEvent';
+import {HabboInventoryFurniListParsedEvent} from './events/HabboInventoryFurniListParsedEvent';
 import {Effect} from './effects/Effect';
 
 const log = Logger.getLogger('habbo.inventory.HabboInventory');
@@ -3079,6 +3080,14 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
 
         this._furniListFragments.clear();
         this._furniModel?.insertFurniture(items);
+
+        // AS3 raises this at the tail of onFurniList(), once the last fragment has been folded
+        // in and handed over. `CraftingWidgetHandler` listens for it.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/_SafeCls_1951.as::onFurniList()
+        this.events.emit(
+            HabboInventoryFurniListParsedEvent.HFLPE_FURNI_LIST_PARSED,
+            new HabboInventoryFurniListParsedEvent('furni')
+        );
     };
 
     // Named `onFurniListAddOrUpdate` here for symmetry with its sibling handlers

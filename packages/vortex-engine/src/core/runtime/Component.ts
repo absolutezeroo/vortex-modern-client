@@ -290,8 +290,8 @@ export class Component implements IDisposable
 	 * is no error to search for. This is the read side of the boot-time report in
 	 * `ComponentContext.describeLockedComponents()`, which turns that silence into a warning.
 	 *
-	 * Not AS3's `requiredDependencyIids`: that getter returns the fixed declared list, this set
-	 * depletes as each dependency resolves — see the TODO(AS3) on `_pendingDependencies`.
+	 * The same names `requiredDependencyIids` holds, in a Set rather than an array. Both are
+	 * carried because AS3 declares that one and callers may hold either.
 	 */
     // TS-only: no AS3 counterpart; diagnostic read of `_pendingDependencies`.
     get pendingDependencyIids(): string[]

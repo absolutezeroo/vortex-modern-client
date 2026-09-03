@@ -1,4 +1,5 @@
 import type {IAssetLibrary} from '@core/assets';
+import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
@@ -32,12 +33,9 @@ export class Token implements IDisposable
     // AS3: .../tokens/Token.as::_ASSETS
     protected static _assets: IAssetLibrary | null = null;
 
-    /**
-     * TODO(AS3): typed `_SafeCls_60` (`IHabboGames`) in AS3; `habbo/game` is 0/63 in
-     * this port, so there is no interface to point at yet.
-     */
+    /** AS3 types this `_SafeCls_60`, which is `IHabboGameManager` — 62 of its 63 files ported. */
     // AS3: .../tokens/Token.as::_GAMES
-    protected static _games: unknown | null = null;
+    protected static _games: IHabboGameManager | null = null;
 
     // AS3: .../tokens/Token.as::TITLE
     protected static readonly TITLE: string = 'title';
@@ -61,7 +59,7 @@ export class Token implements IDisposable
     }
 
     // AS3: .../tokens/Token.as::set GAMES()
-    static set GAMES(value: unknown | null)
+    static set GAMES(value: IHabboGameManager | null)
     {
         Token._games = value;
     }

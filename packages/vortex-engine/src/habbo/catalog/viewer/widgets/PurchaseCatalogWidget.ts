@@ -340,9 +340,11 @@ export class PurchaseCatalogWidget extends CatalogWidget
         }
     };
 
+    /**
+     * Wired to nothing, here and in AS3: the handler exists but no `addEventListener` for it does,
+     * in either tree. Kept so the member is present if a layout ever grows the button.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::onBuyClub()
-    // TODO(AS3): not wired to any button in the ported layouts (matches AS3 - onBuyClub exists
-    // but this.window.findChildByName(...).addEventListener(..., onBuyClub) is absent there too).
     private onBuyClub = (_event: WindowMouseEvent): void =>
     {
         this._catalog!.rememberPageDuringVipPurchase(this.page.pageId);

@@ -829,10 +829,11 @@ export class RoomSettingsCtrl
             const chatScrollEl = this._window.findChildByName('chat_scroll_speed') as unknown as IPopulatable | null;
             if(chatScrollEl) chatScrollEl.selection = data.chatSettings.scrollSpeed;
 
-            // TODO(AS3): this revision dropped `fullHearRange` from the room-settings chat
-            // block - `_SafeCls_1709.as` carries only mode, bubble width, scroll speed and
-            // flood sensitivity, and RoomSettingsCtrl.as:851 reads flood sensitivity alone.
-            // The field is left undrawn rather than filled with an invented value.
+            // No `fullHearRange` control: this revision dropped the field. `_SafeCls_1709.as`
+            // carries mode, bubble width, scroll speed and flood sensitivity and nothing else,
+            // and RoomSettingsCtrl.as:851 reads flood sensitivity straight after scroll speed —
+            // so the four drawn here are the four that exist.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/roomsettings/RoomSettingsCtrl.as::populate()
 
             const floodEl = this._window.findChildByName('chat_flood_sensitivity') as unknown as IPopulatable | null;
             if(floodEl) floodEl.selection = data.chatSettings.floodSensitivity;

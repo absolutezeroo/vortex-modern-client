@@ -1,10 +1,8 @@
 /**
  * Dispatched on HabboInventory's event emitter once a furni-list category finishes parsing.
  *
- * TODO(AS3): `HabboInventory.ts` does not yet emit `HFLPE_FURNI_LIST_PARSED` anywhere (a pre-existing
- * gap, not introduced here — see also `HabboInventoryCategoryInitializeEvent`, which is equally
- * unemitted). `CraftingWidgetHandler` still listens for it, matching AS3 exactly, so it starts
- * firing the moment that emission is wired up.
+ * Raised by `HabboInventory.onFurniList()` once the last fragment is folded in and handed to the
+ * furni model — the same point AS3 raises it. `CraftingWidgetHandler` listens for it.
  *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/events/HabboInventoryFurniListParsedEvent.as
  */

@@ -87,10 +87,12 @@ export class ExtraInfoViewManager implements IUpdateReceiver
         this.render();
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::addItem()
-    // AS3's switch has no case for ExtraInfoItemData.TYPE_RESET_MESSAGE (5) - and neither
-    // BundlePurchaseExtraInfoWidget nor anything else in this module ever constructs that type,
-    // so it's dead in the original client too, not a porting gap.
+    /**
+     * The switch below has no case for `TYPE_RESET_MESSAGE` (5) because AS3's has none either,
+     * and nothing in this module — `BundlePurchaseExtraInfoWidget` included — ever constructs
+     * that type. Matching the original exactly, not a gap.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/bundlepurchaseinfodisplay/ExtraInfoViewManager.as::addItem()
     addItem(data: ExtraInfoItemData): number
     {
         const id = this._nextId++;
