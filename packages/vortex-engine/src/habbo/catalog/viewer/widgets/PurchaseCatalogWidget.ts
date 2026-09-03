@@ -20,12 +20,13 @@ import {CatalogWidget} from './CatalogWidget';
  * The buy/gift button bar for the currently selected offer.
  *
  * TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::
- * - purchaseWidgetBuyVipStub (a club-upsell stub UI shown for non-club-eligible offers) isn't
- *   ported - attachStub()/_stub always stay null, so enableBuyButton()/enableGiftButton() always
- *   run the normal (non-stub) path.
- * - sendRoomAdPurchaseInitiatedEvent()/roomAdPurchaseData room-ad checks resolve through
- *   HabboCatalog stubs that are always false/null (see that class's own TODOs).
- * - onBuyClub() isn't wired to any button, matching AS3 (see its own note).
+ *   `purchaseWidgetBuyVipStub` — the club-upsell UI shown in place of the buy button for an offer
+ *   the player is not club-eligible for. `attachStub()`/`_stub` stay null here, so
+ *   `enableBuyButton()`/`enableGiftButton()` always take the normal path and a non-eligible offer
+ *   simply shows a disabled button instead of the upsell.
+ *
+ * The room-ad half is no longer a gap: `HabboCatalog.roomAdPurchaseData` is a real accessor and is
+ * what switches `purchaseProduct()` over to `PurchaseRoomAdMessageComposer`.
  *
  * @see sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as
  */

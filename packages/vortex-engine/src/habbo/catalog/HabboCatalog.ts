@@ -685,9 +685,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
      * The collectibles hub, built in the constructor above.
      *
      * Its *hub* half is real — product naming, the reward-box messages, the send/subscribe
-     * plumbing. Its *view* half is not: the collectibles catalog tab is ~4,200 lines that
-     * `CollectiblesController` marks TODO at each entry point. Callers still get honest names,
-     * which is what they were falling back on product codes for.
+     * plumbing. Its *view* half is not: the collectibles catalog tab is roughly 4,200 lines that
+     * `CollectiblesController` still marks as owed at each entry point. Callers get honest names
+     * regardless, which is what they were falling back on product codes for.
      */
     // AS3: .../src/com/sulake/habbo/catalog/HabboCatalog.as::get collectorHub()
     get collectorHub(): ICollectorHub | null

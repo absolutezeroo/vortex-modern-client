@@ -427,9 +427,12 @@ export class IlluminaBorderWidget implements IIlluminaBorderWidget
 	 *
 	 * Border drawing is handled by the CSS layer in the TypeScript port.
 	 */
+    // DEVIATION: AS3 redraws the border into the widget's own bitmap here. This port's borders are
+    //   drawn by the skin CSS the window system generates (see `skins-to-css`), which repaints on
+    //   its own whenever the window invalidates — so there is nothing for this to redraw. Kept as
+    //   the call site AS3 declares rather than dropped, so a future bitmap-drawn border has a home.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/IlluminaBorderWidget.as::refresh()
     private refresh(): void
     {
-        // TODO: Border drawing stub - CSS layer handles it
     }
 }

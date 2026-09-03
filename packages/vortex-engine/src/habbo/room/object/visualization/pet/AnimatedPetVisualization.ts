@@ -133,7 +133,14 @@ export class AnimatedPetVisualization extends AnimatedFurnitureVisualization
 
         this._petData = data;
 
-        // TODO: Load experience bubble asset from commonAssets
+        // The bubble's artwork comes out of the pet library's common assets, not its own — every
+        // pet shares one. AS3 clones the BitmapData because Flash's is mutable; nothing here
+        // takes ownership of the canvas, so the library's own is used.
+        // AS3: .../src/com/sulake/habbo/room/object/visualization/pet/AnimatedPetVisualization.as::initialize()
+        const asset = data.commonAssets?.getAssetByName('pet_experience_bubble') ?? null;
+        const image = (asset?.content as HTMLCanvasElement | null) ?? null;
+
+        if(image !== null) this._experienceData = new ExperienceData(image);
 
         return super.initialize(data);
     }
