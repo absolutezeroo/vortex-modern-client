@@ -15,7 +15,9 @@ import {Component, ComponentDependency, type IContext, type IUpdateReceiver} fro
 import {Vortex} from '../../Vortex';
 import {SpriteDataCollector} from './utils/SpriteDataCollector';
 import {RenderRoomMessageComposer} from '@habbo/communication/messages/outgoing/camera/RenderRoomMessageComposer';
-import {RenderRoomThumbnailMessageComposer} from '@habbo/communication/messages/outgoing/camera/RenderRoomThumbnailMessageComposer';
+import {
+    RenderRoomThumbnailMessageComposer
+} from '@habbo/communication/messages/outgoing/camera/RenderRoomThumbnailMessageComposer';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomEngine} from './IRoomEngine';
@@ -50,7 +52,7 @@ import {RoomObjectVisibilityUpdateMessage} from './messages/RoomObjectVisibility
 import {LookToMessageComposer} from '@habbo/communication/messages/outgoing/room/avatar/LookToMessageComposer';
 import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents';
 import type {IHabboUserDefinedRoomEvents} from '@habbo/roomevents/IHabboUserDefinedRoomEvents';
-import {RoomObjectUserTypes, getUserTypeName} from './object/RoomObjectUserTypes';
+import {getUserTypeName, RoomObjectUserTypes} from './object/RoomObjectUserTypes';
 import {RoomObjectVariableEnum} from './object/RoomObjectVariableEnum';
 import {StuffDataFactory} from './object/data/StuffDataFactory';
 import {RoomEngineEvent} from './events/RoomEngineEvent';
@@ -103,8 +105,8 @@ import type {IRoomObjectModelController} from '@room/object/IRoomObjectModelCont
 import {SelectedRoomObjectData} from './utils/SelectedRoomObjectData';
 import {TileObjectMap} from './utils/TileObjectMap';
 import {LegacyWallGeometry} from './utils/LegacyWallGeometry';
-// Imported as a value, not a type: initializeRoomForGettingImage() constructs one.
 import {RoomPlaneParser} from './object/RoomPlaneParser';
+import {NumberBank} from '@room/utils/NumberBank';
 import {RoomData} from './utils/RoomData';
 import {Logger} from "@core";
 import {RoomVisualizationData} from './object/visualization/room/RoomVisualizationData';
@@ -159,7 +161,9 @@ import {
 } from '@habbo/communication/messages/outgoing/room/furniture/UseWallItemMessageComposer';
 import {PlacePetComposer} from '@habbo/communication/messages/outgoing/room/pet/PlacePetComposer';
 import {PlaceBotMessageComposer} from '@habbo/communication/messages/outgoing/room/bot/PlaceBotMessageComposer';
-import {PlacePostItMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/PlacePostItMessageComposer';
+import {
+    PlacePostItMessageComposer
+} from '@habbo/communication/messages/outgoing/room/engine/PlacePostItMessageComposer';
 import {
     RemoveBotFromFlatMessageComposer
 } from '@habbo/communication/messages/outgoing/room/bot/RemoveBotFromFlatMessageComposer';
@@ -168,7 +172,9 @@ import {MovePetMessageComposer} from '@habbo/communication/messages/outgoing/roo
 import {
     GetGuildFurniContextMenuInfoMessageComposer
 } from '@habbo/communication/messages/outgoing/room/furniture/GetGuildFurniContextMenuInfoMessageComposer';
-import {GetResolutionAchievementsMessageComposer} from '@habbo/communication/messages/outgoing/quest/GetResolutionAchievementsMessageComposer';
+import {
+    GetResolutionAchievementsMessageComposer
+} from '@habbo/communication/messages/outgoing/quest/GetResolutionAchievementsMessageComposer';
 import {MoveObjectMessageComposer} from '@habbo/communication/messages/outgoing/room/engine/MoveObjectMessageComposer';
 import {
     MoveWallItemMessageComposer
@@ -378,6 +384,10 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::ROOM_TEMP_ID
     private static readonly ROOM_TEMP_ID: string = 'temporary_room';
 
+    /** How many thumbnail requests may be outstanding at once — AS3's `new NumberBank(1000)`. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_thumbnailIdBank
+    private static readonly THUMBNAIL_ID_POOL_SIZE: number = 1000;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_ROOM
     public static readonly OBJECT_ID_ROOM: number = -1;
 
@@ -500,12 +510,17 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/AssetCallbackInfo.as
     private _pendingThumbnailListeners: Map<string, IGetImageListener[]> = new Map();
 
-    // DEVIATION: AS3 draws these ids from a `NumberBank(1000)` — a reserve/free pool that hands back
-    //   -1 once exhausted, at which point `getGenericRoomObjectThumbnail()` gives up and returns no
-    //   image. The port counts up instead and never runs out, so the give-up branch has no
-    //   counterpart here.
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/utils/NumberBank.as::reserveNumber()
-    private _thumbnailIdCounter: number = 0;
+    /**
+     * The thumbnail-request id pool.
+     *
+     * A bounded pool rather than a counter, as AS3 has it: ids come back through
+     * `freeNumber()` when a request resolves, and `reserveNumber()` answers -1 once a thousand
+     * are outstanding — which is the signal `getGenericRoomObjectThumbnail()` gives up on. A
+     * counter that only ever grows cannot say "too many in flight", so the give-up branch had
+     * nothing to fire on and a leak had nothing to show for itself.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_thumbnailIdBank
+    private readonly _thumbnailIdBank: NumberBank = new NumberBank(RoomEngine.THUMBNAIL_ID_POOL_SIZE);
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_7265
     private _pendingImageListeners: Map<number, IGetImageListener> = new Map();
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_6137
@@ -5839,14 +5854,24 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
     }
 
+    /**
+     * The canvas the player is actually looking at.
+     *
+     * AS3 reads `getRoomCanvas(activeRoomId, activeCanvasId)`. This port has no separate
+     * active-canvas id: canvases are keyed `roomId * 1000 + canvasId` and the main room view is
+     * always canvasId 1, which is `getRenderingCanvas()`'s default. Every caller that used to
+     * spell this lookup out inline now comes through here.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getActiveRoomActiveCanvas()
+    getActiveRoomActiveCanvas(): RoomRenderingCanvas | null
+    {
+        return this.getRenderingCanvas(this._activeRoomId);
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::setFpsCounterEnabled()
     setFpsCounterEnabled(enabled: boolean): void
     {
-        // AS3 getActiveRoomActiveCanvas() returns the active room's active canvas
-        // (getRoomCanvas(activeRoomId, activeCanvasId)); the port keys canvases by
-        // roomId*1000+canvasId and the main room view is canvasId 1 (getRenderingCanvas
-        // default), so it stands in for the active canvas here.
-        const canvas = this.getRenderingCanvas(this._activeRoomId);
+        const canvas = this.getActiveRoomActiveCanvas();
 
         if(canvas)
         {
@@ -6333,11 +6358,16 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     // See ImageResult.ts for why this is always asynchronous, unlike AS3.
-    private deliverIconTexture(id: number, texture: Texture | null, listeners: IGetImageListener[]): void 
+    private deliverIconTexture(id: number, texture: Texture | null, listeners: IGetImageListener[]): void
     {
-        if(texture === null) 
+        // Every path below ends the request, so the id goes back to the pool on each of them —
+        // this is the only funnel a thumbnail request can leave through. `freeNumber()` ignores
+        // an id it never lent, which is what makes it safe to call for the image-id path too.
+        if(texture === null)
         {
             log.warn(`deliverIconTexture(${id}): no texture (asset missing or load failed)`);
+
+            this._thumbnailIdBank.freeNumber(id);
 
             for(const listener of listeners) listener.imageFailed(id);
 
@@ -6346,9 +6376,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const canvas = this.pixiTextureToCanvas(texture);
 
-        if(canvas === null) 
+        if(canvas === null)
         {
             log.warn(`deliverIconTexture(${id}): pixiTextureToCanvas() returned null`);
+
+            this._thumbnailIdBank.freeNumber(id);
 
             for(const listener of listeners) listener.imageFailed(id);
 
@@ -6361,7 +6393,9 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // Each listener gets its own ImageBitmap instance (matching AS3's
                 // BitmapData.clone() per-listener) so one owner closing its bitmap
                 // doesn't invalidate another listener's copy.
-                for(let i = 0; i < listeners.length; i++) 
+                this._thumbnailIdBank.freeNumber(id);
+
+                for(let i = 0; i < listeners.length; i++)
                 {
                     const copy = i === listeners.length - 1 ? bitmap : this.cloneImageBitmap(bitmap);
 
@@ -6369,9 +6403,11 @@ export class RoomEngine extends Component implements IRoomEngine,
                     else listeners[i].imageFailed(id);
                 }
             })
-            .catch((error) => 
+            .catch((error) =>
             {
                 log.warn(`deliverIconTexture(${id}): createImageBitmap() failed`, error);
+
+                this._thumbnailIdBank.freeNumber(id);
 
                 for(const listener of listeners) listener.imageFailed(id);
             });
@@ -7318,11 +7354,18 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const assetName = [type, param].join('_');
 
-        if(!this.assets.hasAsset(assetName)) 
+        if(!this.assets.hasAsset(assetName))
         {
-            this._thumbnailIdCounter++;
+            const id = this._thumbnailIdBank.reserveNumber();
 
-            const id = this._thumbnailIdCounter;
+            // -1 means a thousand requests are already outstanding. AS3 gives up here and hands
+            // back the untouched result, whose id is already -1.
+            if(id < 0)
+            {
+                log.warn('getGenericRoomObjectThumbnail: thumbnail id pool exhausted');
+
+                return result;
+            }
 
             result.id = id;
             result.data = null;
@@ -7343,9 +7386,14 @@ export class RoomEngine extends Component implements IRoomEngine,
             // TS deviation: AS3 returns the bitmap synchronously here (id=0).
             // Texture->ImageBitmap conversion is async in the browser, so this
             // path also resolves via the id>0 pending callback (see ImageResult.ts).
-            this._thumbnailIdCounter++;
+            const id = this._thumbnailIdBank.reserveNumber();
 
-            const id = this._thumbnailIdCounter;
+            if(id < 0)
+            {
+                log.warn('getGenericRoomObjectThumbnail: thumbnail id pool exhausted');
+
+                return result;
+            }
 
             result.id = id;
             result.data = null;

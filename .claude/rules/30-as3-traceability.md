@@ -58,6 +58,33 @@ Pick the marker by what the AS3 side says, not by how new the code feels:
 decision you have already made, and the comment must say what the AS3 did and why the port does
 not. If you cannot write that sentence, it is a TODO.
 
+### A deviation must cite a check, not an impression
+
+The failure mode is writing `DEVIATION:` because implementing the member looked awkward, and
+then never revisiting it — the marker reads as settled and nobody asks again. A 2026-09-03 audit
+of all 58 deviations in the port found **six that were nothing of the sort**, each closed in
+minutes once someone actually looked:
+
+- `Component.requiredDependencyIids` — "would need re-architecting". The names were already in
+  `_pendingDependencies`; the getter is four lines.
+- `Component.toXMLString()` / `ComponentContext.toXMLString()` — "reads internals this port does
+  not have". Both read `_interfaces`, which holds exactly the iid/refs pairs AS3 dumps.
+- `AvatarStructure.renderManager` — "would require changing the constructor signature". It is a
+  constructor parameter and a getter; the one caller passes `this`.
+- `RoomEngine`'s thumbnail ids — "the port counts up instead and never runs out, so the give-up
+  branch has no counterpart". `NumberBank` is fifty readable lines, and its absence meant ids
+  were never recycled and the exhaustion guard could never fire.
+- `IRoomEngineServices.getActiveRoomActiveCanvas()` — "the port has no caller for it". Three
+  call sites were spelling the same lookup out inline, each with its own apologetic comment.
+
+So: before writing `DEVIATION:`, open the AS3 member and count its lines. If the answer is "this
+is fifty lines of readable code and the port has the pieces", it is not a deviation, it is
+unfinished work. The comment must name the specific thing that makes the port's shape different —
+a Flash type with no counterpart, a field AS3 never increments, an architecture the port
+deliberately replaced — and that claim must be one a reader can check. "There is no caller" is
+not such a claim; callers arrive. "`_SafeCls_1711` has no entry in the registry, which maps 581
+composers" is.
+
 Incomplete members still require a compatible TypeScript signature and a `TODO(AS3)` comment with source path, class/member name, and exact remaining behavior. Never silently omit an AS3 member because it is currently unused; incomplete behavior must be visible as a TODO/stub, not missing from the interface.
 
 ## A faithful line is not a faithful port

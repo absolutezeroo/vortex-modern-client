@@ -8,6 +8,7 @@
 import type {EventEmitter} from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IRoomInstance} from '@room/IRoomInstance';
+import type {IRoomRenderingCanvas} from '@room/renderer/IRoomRenderingCanvas';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 import type {IVector3d} from '@room/utils/IVector3d';
@@ -146,8 +147,11 @@ export interface IRoomEngineServices
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::requestRoomAdImage()
     requestRoomAdImage(roomId: number, objectId: number, objectCategory: number, imageURL: string, clickURL: string): void;
 
-    // DEVIATION: returns the active room's active rendering canvas. RoomEngine reaches its canvases
-    //   through the renderer rather than exposing one, so declaring it here would oblige an accessor
-    //   the port has no caller for.
+    /**
+	 * The canvas the player is looking at — `getRoomCanvas(activeRoomId, activeCanvasId)` in AS3.
+	 *
+	 * Null before a room is open, which AS3's three call sites all guard for.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_87.as::getActiveRoomActiveCanvas()
+    getActiveRoomActiveCanvas(): IRoomRenderingCanvas | null;
 }
