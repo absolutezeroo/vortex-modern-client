@@ -17,6 +17,7 @@ import type {BadgeImageWidget} from './BadgeImageWidget';
 import type {PetImageWidget} from './PetImageWidget';
 import type {IIterator} from '@core/window/utils/IIterator';
 import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
+import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
 
 const log = Logger.getLogger('habbo.window.widgets.ProductIconWidget');
 
@@ -291,6 +292,10 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         if(pet) pet.visible = false;
         if(unknown) unknown.visible = false;
         if(icon) icon.visible = false;
+
+        // Showing anything else cancels the pending habbicon repaint — AS3 detaches here too, and
+        // the listener is one-shot on the manager's side, not on the widget's.
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
     }
 
     private setImageResult(result: ImageResult | null): void
@@ -408,13 +413,60 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
         icon.fitToSize();
     }
 
+    /**
+	 * The spritesheet may not be down yet, and there is no request to make: the manager loads once
+	 * for the whole client. So a miss paints a plain grey square the size of a habbicon and
+	 * subscribes to the one-shot load event, which repaints it in place.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::set habbiconResult()
-    // TODO(AS3): HabbiconAssetManager (habbicon preview bitmap cache + "habbicon_assets_loaded"
-    // event) is not ported yet. Until it exists, habbicon products fall back to unknown.
-    private setHabbiconResult(_habbiconId: number): void
+    private setHabbiconResult(habbiconId: number): void
     {
-        this.setUnknownImage();
+        this.clearPreviewer();
+
+        const bitmap = HabbiconAssetManager.getPreviewBitmap(habbiconId, false);
+
+        if(bitmap === null)
+        {
+            HabbiconAssetManager.addEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+            this.setPreviewImage(ProductIconWidget.createHabbiconPlaceholder());
+
+            return;
+        }
+
+        this.setPreviewImage(bitmap);
     }
+
+    /**
+	 * AS3: `new BitmapData(40,40,false,9408399)` — 0x8F8F8F, disposed immediately after
+	 * `setPreviewImage()` copies it. TS-only helper: Flash constructs a filled BitmapData in one
+	 * expression where this port needs a canvas.
+	 */
+    private static createHabbiconPlaceholder(): ImageBitmap | null
+    {
+        const canvas = new OffscreenCanvas(40, 40);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.fillStyle = '#8f8f8f';
+        context.fillRect(0, 0, 40, 40);
+
+        return canvas.transferToImageBitmap();
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::onHabbiconAssetsLoaded()
+    private onHabbiconAssetsLoaded = (): void =>
+    {
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+
+        if(this._productInfo === null || this._productInfo.productTypeId !== 12) return;
+
+        const bitmap = HabbiconAssetManager.getPreviewBitmap(parseInt(this._productInfo.itemTypeId, 10), false);
+
+        if(bitmap === null) return;
+
+        this.setPreviewImage(bitmap);
+    };
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/ProductIconWidget.as::imageReady()
     public imageReady(id: number, data: ImageBitmap | null): void

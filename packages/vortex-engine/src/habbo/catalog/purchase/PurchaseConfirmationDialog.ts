@@ -30,6 +30,7 @@ import {RenderableShopNftItem} from '../collectibles/RenderableShopNftItem';
 import {ClubBuyOfferData} from '../club/ClubBuyOfferData';
 import {RentUtils} from '../viewer/widgets/utils/RentUtils';
 import {CatalogWidgetEvent} from '../viewer/widgets/events/CatalogWidgetEvent';
+import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
 
 const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog');
 
@@ -83,6 +84,10 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::extraParam
     private _extraParam: string = '';
+
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::_SafeStr_6120
+    // (name derived: the habbicon id, read off `product.extraParam` for `habbicon` offers only)
+    private _habbiconId: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::quantity
     private _quantity: number = 1;
@@ -280,6 +285,9 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         if(offer instanceof Offer && offer.product != null)
         {
             this._productType = offer.product.productType;
+            this._habbiconId = this._productType === 'habbicon'
+                ? (parseInt(offer.product.extraParam, 10) || 0)
+                : 0;
         }
         else if(offer instanceof ClubBuyOfferData || HabboCatalogUtils.buildersClub(offer.localizationId))
         {
@@ -522,10 +530,16 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
                 image = catalog.freeFlowChat?.chatStyleLibrary?.getStyle(parseInt(extraParam))?.selectorPreview ?? null;
 
                 break;
+            case 'habbicon':
+                // Same fallback as `ProductIconWidget`: a plain 40×40 0x8F8F8F square while the
+                // spritesheet is still coming down. This dialog does not subscribe to
+                // `habbicon_assets_loaded` — AS3 does not either, because by the time a purchase
+                // confirmation is open the catalog has long since triggered the load.
+                image = PurchaseConfirmationDialog.getHabbiconPreviewBitmap(extraParam)
+                    ?? PurchaseConfirmationDialog.createHabbiconPlaceholder();
+
+                break;
             default:
-                // TODO(AS3): AS3 also renders "habbicon" here, via
-                // HabbiconAssetManager.getPreviewBitmap(). The habbicon subsystem has no port —
-                // the same gap HabboCatalog.isHabbiconOfferOwned() documents.
                 log.warn(`No purchase-confirmation preview for product type "${this.productType}"`);
         }
 
@@ -543,6 +557,34 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * The player's own figure arriving means the gift card's sender face can be drawn, which is a
      * different picture from the offer preview — hence the two branches rather than one.
      */
+    /**
+	 * AS3 clones the manager's bitmap because assigning a BitmapData transfers ownership; the
+	 * port's window wrapper does not take it, so the cached `ImageBitmap` is handed over as-is —
+	 * the same call the chat-style branch above makes.
+	 */
+    // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getHabbiconPreviewBitmap()
+    private static getHabbiconPreviewBitmap(habbiconId: string): ImageBitmap | null
+    {
+        return HabbiconAssetManager.getPreviewBitmap(parseInt(habbiconId, 10) || 0, false);
+    }
+
+    /**
+	 * AS3: `new BitmapData(40,40,false,9408399)` — 0x8F8F8F. TS-only helper: Flash fills a
+	 * BitmapData in its constructor where this port needs a canvas.
+	 */
+    private static createHabbiconPlaceholder(): ImageBitmap | null
+    {
+        const canvas = new OffscreenCanvas(40, 40);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.fillStyle = '#8f8f8f';
+        context.fillRect(0, 0, 40, 40);
+
+        return canvas.transferToImageBitmap();
+    }
+
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::avatarImageReady()
     avatarImageReady(figureString: string): void
     {
@@ -745,6 +787,17 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         const catalog = this._catalog;
 
         if(!catalog) return;
+
+        // Both habbicon guards return *before* the buttons are disabled, so the dialog stays
+        // usable: the feature-flag one silently does nothing, the owned one puts up an alert.
+        if(this._productType === 'habbicon' && !catalog.getBoolean('habbicons.enabled')) return;
+
+        if(this._productType === 'habbicon' && catalog.isHabbiconOwned(this._habbiconId))
+        {
+            catalog.showHabbiconAlreadyOwnedAlert();
+
+            return;
+        }
 
         // AS3 disables all three before sending, so a second click cannot double-buy while the
         // server answer is in flight. `publish_check` belongs to the room-ad variant of the layout.

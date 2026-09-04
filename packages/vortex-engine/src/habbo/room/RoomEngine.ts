@@ -5283,6 +5283,10 @@ export class RoomEngine extends Component implements IRoomEngine,
             // **Sized and deliberately not started**: the one caller, `RoomUI.onRoomUseHabbicon()`,
             // is gated on `habbicons.enabled`, which this hotel's external variables do not set,
             // and the emulator declares no habbicon header at all — so none of it could run today.
+            // Both blockers re-checked 2026-09-04: `grep -c habbicon` is 0 against the live
+            // `external_variables.json` and 0 against `Revision20260701/Headers.cs`. The
+            // catalog-side half is complete and does run — `HabbiconAssetManager`,
+            // `ProductIconWidget.setHabbiconResult()` and the purchase dialog all landed that day.
             // It reached this method before and wrote `figure_habbicon` onto a model nothing reads,
             // which is why this warns where it used to be silent.
             default:
