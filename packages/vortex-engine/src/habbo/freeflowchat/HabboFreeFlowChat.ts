@@ -1137,9 +1137,15 @@ export class HabboFreeFlowChat extends Component implements IHabboFreeFlowChat
 	 * Called when all required dependencies have been injected.
 	 * Creates the chat event handler and room session event handler.
 	 *
-	 * In the AS3 version, initialization is deferred until onPerkAllowances fires.
-	 * Here, we initialize immediately when dependencies resolve, since the perk
-	 * system can be checked later.
+	 * DEVIATION: AS3 builds these four lazily, from `onPerkAllowances()` — a fifth subscription
+	 *   (`PerkAllowancesMessageEvent`, 1535) this port deliberately does not register. The check
+	 *   that makes it a deviation and not a gap is in the AS3 body itself: `_SafeStr_6406` (the
+	 *   latch that gates `roomEntered()`, `addChat()` and the history pulldown) is assigned `true`
+	 *   and nothing else, ever, so the handler's `else if(_loc2_ && !_SafeStr_6406)` disposal branch
+	 *   is unreachable. What the message actually does is delay construction until the first perk
+	 *   packet; the end state is identical, and building eagerly means chat is not dead if the
+	 *   server ever stops sending it. `PerkManager` reads 1535 for the allowances themselves.
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/freeflowchat/HabboFreeFlowChat.as::onPerkAllowances()
 	 */
     protected override initComponent(): void
     {

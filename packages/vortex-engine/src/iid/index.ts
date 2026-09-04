@@ -12,6 +12,7 @@ export {IID_HabboCatalog} from './IIDHabboCatalog';
 export {IID_HabboClubCenter} from './IIDHabboClubCenter';
 export {IID_HabboCommunicationManager} from './IIDHabboCommunicationManager';
 export {IID_HabboConfigurationManager} from './IIDHabboConfigurationManager';
+export {IID_HabboDiscordManager} from './IIDHabboDiscordManager';
 export {IID_HabboEpicPopupView} from './IIDHabboEpicPopupView';
 export {IID_HabboFreeFlowChat} from './IIDHabboFreeFlowChat';
 export {IID_HabboFriendBar} from './IIDHabboFriendBar';

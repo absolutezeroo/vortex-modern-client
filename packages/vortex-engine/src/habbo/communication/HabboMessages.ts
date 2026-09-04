@@ -1162,6 +1162,9 @@ import {
     ModifyCustomFilterResultMessageEvent
 } from './messages/incoming/preferences';
 
+// Incoming Events - Discord
+import {DiscordPreferencesMessageEvent} from './messages/incoming/discord';
+
 // Incoming Events - Perk
 import {PerkAllowancesMessageEvent} from './messages/incoming/perk';
 
@@ -1384,6 +1387,12 @@ import {
 
 // Outgoing Composers - Room (root)
 import {RespectPetMessageComposer, RespectUserMessageComposer,} from './messages/outgoing/room';
+
+// Outgoing Composers - Discord
+import {
+    GetDiscordPreferencesMessageComposer,
+    UpdateDiscordPreferencesMessageComposer,
+} from './messages/outgoing/discord';
 
 // Outgoing Composers - Preferences
 import {
@@ -2584,6 +2593,11 @@ export class HabboMessages implements IMessageConfiguration
         // === PREFERENCES ===
         this._events.set(724, AccountPreferencesEvent);
 
+        // === DISCORD ===
+        // `_SafeStr_4546[2767] = _SafeCls_2938` in WIN63's registry. The emulator has no Discord
+        // feature at all, so nothing sends this today and `wire-coverage.mjs` counts neither side.
+        this._events.set(2767, DiscordPreferencesMessageEvent);
+
         // === PERK ===
         this._events.set(1535, PerkAllowancesMessageEvent);
 
@@ -3488,6 +3502,12 @@ export class HabboMessages implements IMessageConfiguration
         // corroborated by vortex-emulator Vortex.Revisions/Revision20260701/Headers.cs
         // (SetIgnoreRoomInvitesMessageEvent = 1332, SetRoomCameraPreferencesMessageEvent = 3917,
         // ResetPhoneNumberStateMessageEvent = 2056).
+        // === DISCORD ===
+        // `_composers[2883] = _SafeCls_2988` (the request) and `_composers[2304] = _SafeCls_3638`
+        // (the write-back) in WIN63's registry. No emulator counterpart yet.
+        this._composers.set(2883, GetDiscordPreferencesMessageComposer);
+        this._composers.set(2304, UpdateDiscordPreferencesMessageComposer);
+
         this._composers.set(1332, SetIgnoreRoomInvitesMessageComposer);
         this._composers.set(3917, SetRoomCameraPreferencesMessageComposer);
         this._composers.set(2056, ResetPhoneNumberStateMessageComposer);

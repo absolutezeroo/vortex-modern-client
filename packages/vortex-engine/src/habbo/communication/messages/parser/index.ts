@@ -8,6 +8,7 @@ export * from './avatar';
 export * from './campaign';
 export * from './competition';
 export * from './catalog';
+export * from './discord';
 export * from './error';
 export * from './friendlist';
 export * from './game';

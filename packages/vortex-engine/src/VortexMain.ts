@@ -11,6 +11,7 @@ import {HabboClubCenter} from '@habbo/catalog/clubcenter/HabboClubCenter';
 import {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 import {HabboFishing} from '@habbo/vortex/fishing/HabboFishing';
 import {HabboGameManager} from '@habbo/game/HabboGameManager';
+import {HabboDiscordManager} from '@habbo/discord/HabboDiscordManager';
 import {HabboFurniEditor} from '@habbo/vortex/furnieditor/HabboFurniEditor';
 import type {IHabboFurniEditor} from '@habbo/vortex/furnieditor/IHabboFurniEditor';
 import {RoomEngine, RoomMessageHandler} from '@habbo/room';
@@ -97,6 +98,7 @@ import {IID_HabboUserDefinedRoomEvents} from '@iid/IIDHabboUserDefinedRoomEvents
 import {IID_HabboFurniEditor} from '@iid/IIDHabboFurniEditor';
 import {IID_HabboFishing} from '@iid/IIDHabboFishing';
 import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
+import {IID_HabboDiscordManager} from '@iid/IIDHabboDiscordManager';
 import {IID_HabboTracking} from '@iid/IIDHabboTracking';
 import {IID_HabboFriendBar} from '@iid/IIDHabboFriendBar';
 import {IID_HabboFriendList} from '@iid/IIDHabboFriendList';
@@ -205,6 +207,7 @@ export class VortexMain implements IVortexMain
     private _nuxDialogs: HabboNuxDialogs | null = null;
 
     private _phoneNumber: HabboPhoneNumber | null = null;
+    private _discordManager: HabboDiscordManager | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_adManager
     private _adManager: AdManager | null = null;
     private _tracking: HabboTracking | null = null;
@@ -895,6 +898,17 @@ export class VortexMain implements IVortexMain
         // window, the lobby, the arena HUD and the leaderboard all build nothing, silently.
         this._gameManager = new HabboGameManager(ctx, 0, this._assets);
         ctx.attachComponent(this._gameManager, [IID_HabboGameManager]);
+
+        // 12s. Discord Rich Presence. AS3 attaches this from its own SWF bootstrap
+        // (`HabboDiscordManagerBootstrap`, listed in `HabboDiscordCom.requiredClasses`), which this
+        // port replaces with a direct construction — the same treatment `AdManager` gets above.
+        // It goes last on purpose: its constructor builds `HabboActivityDetection`, which queues
+        // eight interfaces including the toolbar, the wired component, free-flow chat and the room
+        // engine, all attached above.
+        // The asset library is what `DiscordSettingsView` reads `discord_settings_xml` out of;
+        // without one the settings window builds nothing and only warns.
+        this._discordManager = new HabboDiscordManager(ctx, 0, this._assets);
+        ctx.attachComponent(this._discordManager, [IID_HabboDiscordManager]);
 
         // Set PixiJS stage on room engine for rendering
         this._roomEngine.setStage(this._application!.stage);
