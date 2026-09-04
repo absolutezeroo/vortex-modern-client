@@ -91,6 +91,9 @@ import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomEngineToWidgetEvent} from '@habbo/room/events/RoomEngineToWidgetEvent';
 import {RoomEngineUseProductEvent} from '@habbo/room/events/RoomEngineUseProductEvent';
+import {RoomEngineRoomAdEvent} from '@habbo/room/events/RoomEngineRoomAdEvent';
+import {RoomEngineAreaHideStateWidgetEvent} from '@habbo/room/events/RoomEngineAreaHideStateWidgetEvent';
+import {RoomEngineSoundMachineEvent} from '@habbo/room/events/RoomEngineSoundMachineEvent';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
 import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
@@ -152,6 +155,77 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         'RSDPE_PRESETS',
         'RSFRE_FRIEND_REQUEST',
         'RSDE_DANCE',
+    ];
+
+    /**
+     * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as — the entries of
+     * the IIDRoomEngine listener table whose callback is roomObjectEventHandler, in the source's
+     * own order.
+     *
+     * This list is the fifth wiring a furni widget needs, on top of the four in
+     * `RoomDesktop.createWidget()` / `RoomWidgetFactory` / the logic's `get widget()`: the engine
+     * emits `RETWE_*` into `engine.events`, and with nobody subscribed the event dies in the
+     * emitter with no throw and no log. It was hand-written and had drifted to 15 of AS3's 43
+     * entries, which left eleven engine→widget routes dead while every other file involved looked
+     * correctly wired — clothing change (the fball_gate report), presents, the dimmer, the
+     * mannequin, area hide, room link, internal link, the high-score display, the playlist
+     * editor's jukebox-dispose, the friend-furni engraving and REOE_PLACED. Keep it a transcription
+     * of the AS3 table, not a list of what is currently consumed: a handler's
+     * `getProcessedEvents()` can only be honoured for a type that arrives here first.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/RoomUI.as::get dependencies()
+    private static readonly ROOM_OBJECT_ENGINE_EVENTS: readonly string[] = [
+        RoomEngineObjectEvent.REOE_SELECTED,
+        RoomEngineObjectEvent.REOE_DESELECTED,
+        RoomEngineObjectEvent.REOE_ADDED,
+        RoomEngineObjectEvent.REOE_REMOVED,
+        RoomEngineObjectEvent.REOE_PLACED,
+        // The furniture-manipulation requests dispatched on a modifier-held click
+        // (SHIFT=rotate, CTRL=pickup, ALT-drag=move).
+        RoomEngineObjectEvent.REOE_REQUEST_MOVE,
+        RoomEngineObjectEvent.REOE_REQUEST_ROTATE,
+        RoomEngineObjectEvent.REOE_REQUEST_PICKUP,
+        RoomEngineObjectEvent.REOE_MOUSE_ENTER,
+        RoomEngineObjectEvent.REOE_MOUSE_LEAVE,
+        // The generic open/close pair every widget whose logic names a widget rides on
+        // (crafting table, rentable space, fishing spot).
+        RoomEngineToWidgetEvent.REQUEST_OPEN_WIDGET,
+        RoomEngineToWidgetEvent.REQUEST_CLOSE_WIDGET,
+        RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU,
+        RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU,
+        RoomEngineToWidgetEvent.REQUEST_CREDITFURNI,
+        RoomEngineToWidgetEvent.REQUEST_STICKIE,
+        RoomEngineToWidgetEvent.REQUEST_PRESENT,
+        RoomEngineToWidgetEvent.REQUEST_TROPHY,
+        RoomEngineToWidgetEvent.REQUEST_TEASER,
+        RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX,
+        RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER,
+        RoomEngineToWidgetEvent.REQUEST_DIMMER,
+        RoomEngineRoomAdEvent.FURNI_CLICK,
+        RoomEngineRoomAdEvent.FURNI_DOUBLE_CLICK,
+        RoomEngineRoomAdEvent.TOOLTIP_SHOW,
+        RoomEngineRoomAdEvent.TOOLTIP_HIDE,
+        RoomEngineToWidgetEvent.REMOVE_DIMMER,
+        RoomEngineToWidgetEvent.REQUEST_CLOTHING_CHANGE,
+        RoomEngineToWidgetEvent.REQUEST_PLAYLIST_EDITOR,
+        RoomEngineToWidgetEvent.REQUEST_MANNEQUIN,
+        RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR,
+        RoomEngineToWidgetEvent.REQUEST_AREA_HIDE,
+        RoomEngineAreaHideStateWidgetEvent.UPDATE_STATE_AREA_HIDE,
+        // Not RETWE_* — the engine dispatches these itself, and AvatarInfoWidgetHandler declares
+        // both in getProcessedEvents(), so this is the only hop to the "use this product on…"
+        // bubbles.
+        RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY,
+        RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM,
+        RoomEngineSoundMachineEvent.JUKEBOX_DISPOSE,
+        RoomEngineToWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_ENGRAVING,
+        RoomEngineToWidgetEvent.REQUEST_BADGE_DISPLAY_ENGRAVING,
+        RoomEngineToWidgetEvent.REQUEST_ACHIEVEMENT_RESOLUTION_FAILED,
+        RoomEngineToWidgetEvent.REQUEST_FRIEND_FURNITURE_ENGRAVING,
+        RoomEngineToWidgetEvent.REQUEST_HIGH_SCORE_DISPLAY,
+        RoomEngineToWidgetEvent.REQUEST_HIDE_HIGH_SCORE_DISPLAY,
+        RoomEngineToWidgetEvent.REQUEST_INTERNAL_LINK,
+        RoomEngineToWidgetEvent.REQUEST_ROOM_LINK,
     ];
 
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::_roomEngine
@@ -466,50 +540,12 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on('RERCE_ROOM_COLOR', this.roomEventHandler, this);
                         engine.events.on('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
                         engine.events.on('REE_ROOM_ZOOM', this.roomEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_SELECTED, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_DESELECTED, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_ADDED, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_REMOVED, this.roomObjectEventHandler, this);
-                        // AS3: RoomDesktop listens for the furniture-manipulation requests dispatched
-                        // by RoomObjectEventHandler on a modifier-held click (SHIFT=rotate, CTRL=pickup,
-                        // ALT-drag=move) and applies them via checkFurniManipulationRights/modifyRoomObject.
-                        engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_ROTATE, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_PICKUP, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineObjectEvent.REOE_REQUEST_MOVE, this.roomObjectEventHandler, this);
-                        // AS3: RoomUI.as:231-235 — the generic open/close pair, on the same
-                        // handler as every RETWE_REQUEST_* below.
-                        //
-                        // These two were missing, and they are the ones every *generic* furni widget
-                        // rides on: a logic that names a widget (crafting table, rentable space,
-                        // fishing spot) makes RoomEngine emit RETWE_OPEN_WIDGET, and with nobody
-                        // subscribed the event died in the emitter. RoomDesktop registers handlers
-                        // for exactly these two ids and was never handed one — which is why the
-                        // furni looked wired from every angle and still did nothing. The named
-                        // requests below (trophy, stickie, …) each have their own event, so they
-                        // worked and hid the hole.
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_OPEN_WIDGET, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CLOSE_WIDGET, this.roomObjectEventHandler, this);
-                        // AS3: RoomUI.as:252 — the same roomObjectEventHandler is registered for
-                        // the RETWE_REQUEST_* furni-widget requests. Without this the engine's
-                        // new bridge would emit into nothing.
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_TROPHY, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_STICKIE, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_PLACEHOLDER, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_BACKGROUND_COLOR, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CREDITFURNI, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_ECOTRONBOX, this.roomObjectEventHandler, this);
-                        // The furniture context menu reaches its handler through the desktop's
-                        // per-event handler map, so the bubble only ever opens if these two are
-                        // forwarded like the widget requests above.
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_OPEN_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineToWidgetEvent.REQUEST_CLOSE_FURNI_CONTEXT_MENU, this.roomObjectEventHandler, this);
-                        // AS3: RoomUI.as:299-304 registers the same handler for the two
-                        // use-product events. They are not RETWE_* — the engine dispatches them
-                        // itself — and AvatarInfoWidgetHandler declares both in
-                        // getProcessedEvents(), so this is the only hop between the engine and the
-                        // per-pet "use this product on…" bubbles.
-                        engine.events.on(RoomEngineUseProductEvent.USE_PRODUCT_FROM_INVENTORY, this.roomObjectEventHandler, this);
-                        engine.events.on(RoomEngineUseProductEvent.USE_PRODUCT_FROM_ROOM, this.roomObjectEventHandler, this);
+                        // AS3: RoomUI.as:200-333 — every entry of the same table routed to
+                        // roomObjectEventHandler.
+                        for(const type of RoomUI.ROOM_OBJECT_ENGINE_EVENTS)
+                        {
+                            engine.events.on(type, this.roomObjectEventHandler, this);
+                        }
                     }
                 },
                 true
@@ -1086,6 +1122,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._roomEngine.events.off('RERCE_ROOM_COLOR', this.roomEventHandler, this);
             this._roomEngine.events.off('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
             this._roomEngine.events.off('REE_ROOM_ZOOM', this.roomEventHandler, this);
+
+            for(const type of RoomUI.ROOM_OBJECT_ENGINE_EVENTS)
+            {
+                this._roomEngine.events.off(type, this.roomObjectEventHandler, this);
+            }
         }
 
         if(this._roomSessionManager) 

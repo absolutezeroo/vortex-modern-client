@@ -2578,7 +2578,7 @@ the packet is sent, the server reads it as something else, and nothing errors.
 The distinction is not academic: 117 of 515 handlers are empty stubs, and reading the filename
 instead of the body is what made camera and crafting look ready (see the camera section above).
 
-**A furni widget needs four things wired, and a port routinely has three.** Found 2026-08-27 while
+**A furni widget needs five things wired, and a port routinely has four.** Found 2026-08-27 while
 wiring video, and it had silently deadened five features:
 
 1. `RoomUI` must call `desktop.createWidget('RWE_X')` at room entry (AS3 `RoomUI.as:924-978`) —
@@ -2592,6 +2592,16 @@ wiring video, and it had silently deadened five features:
    space); AS3 is genuinely inconsistent here, but only for `get contextMenu()` — every
    `get widget()` in the primary tree is prefixed. Re-check with:
    `grep -rn "get widget()" -A4 packages/vortex-engine/src/habbo/room/object/logic/ | grep "return '"`
+5. **`RoomUI` must subscribe the engine event on `IIDRoomEngine`** — added 2026-09-04, the fifth
+   and last one. `RoomEngine` emits `RETWE_*` into `engine.events`; with no listener the event
+   dies in the emitter, no throw, no log, and all four wirings above still read as correct. The
+   hand-written subscription list had drifted to 15 of AS3's 44 entries, leaving eleven routes
+   dead: clothing change (the `fball_gate` report that found it), presents, the dimmer and its
+   removal, the mannequin, area hide + its state update, room link, internal link, the high-score
+   display and its hide, the friend-furni engraving, the playlist editor's jukebox-dispose, the
+   three achievement/badge engravings and `REOE_PLACED`. It is now the static
+   `RoomUI.ROOM_OBJECT_ENGINE_EVENTS`, transcribed from the AS3 table, and
+   `node scripts/check-roomui-listeners.mjs` fails on any further drift.
 
 | Family                    | Send | Recv | Server | Client-side state                                        |
 |---------------------------|------|------|--------|-----------------------------------------------------------|
