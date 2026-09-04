@@ -189,10 +189,11 @@ export class FurniModel implements IFurniModel
         this._habboInventory.closeView();
     }
 
-    // TODO(AS3): .../src/com/sulake/habbo/inventory/furni/FurniModel.as::createItemWindow() keeps a
-    // per-layout template window and hands out clones of it. This port builds each thumbnail
-    // through `windowManager.buildWidgetLayout()` instead — same layout, same result per window,
-    // the cache lives one layer down. See GroupItem.createWindow().
+    // DEVIATION: `createItemWindow()` keeps a per-layout template window and hands out clones of
+    //   it. This port builds each thumbnail through `windowManager.buildWidgetLayout()` instead —
+    //   same layout, same window per call, with the caching one layer down in the window manager's
+    //   own layout registry rather than in a field here. See `GroupItem.createWindow()`.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::createItemWindow()
 
     // Not ported, and not a gap: `FurniModel.as::displayItemInfo()` forwards to
     // `FurniView.displayItemInfo()`, and BOTH are dead in AS3 itself — a repo-wide grep finds zero
@@ -1114,28 +1115,49 @@ export class FurniModel implements IFurniModel
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
-    // TODO(AS3): trading/empty subcategory NFT-tab toggle (_showingNfts flip + updateGridFilters())
-    // depends on the web3tradeEnabled flow, not ported here yet.
+    /**
+	 * **NFTs are hidden for the duration of a trade and come back when it ends.** They cannot be
+	 * traded through the normal window, so opening one flips `_showingNfts` off and re-filters the
+	 * grid; going back to `empty` — no sub-view, i.e. the trade closed — flips it back. Both are
+	 * gated on `web3tradeEnabled`, so a hotel without the feature never hides anything.
+	 *
+	 * Only the wired branch resets the filter option: a plain trade shows the same inventory the
+	 * player was just browsing, while a wired contract is about specific items a leftover filter
+	 * may be hiding.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::subCategorySwitch()
     subCategorySwitch(category: string): void
     {
-        if(category === 'wired_trading' || category === 'trading')
+        switch(category)
         {
-            this.cancelFurniInMover();
-        }
+            case 'wired_trading':
+                this.cancelFurniInMover();
+                this._view.resetFilterOption();
+                this._view.updateActionView();
+                break;
+            case 'trading':
+                this.cancelFurniInMover();
 
-        // Only the wired branch resets the filters: a plain trade shows the same inventory the
-        // player was just browsing, while a wired contract is about specific items a leftover
-        // filter may be hiding.
-        if(category === 'wired_trading')
-        {
-            this._view.resetFilterOption();
-        }
-        else if(category === 'empty')
-        {
-            this.removeAllLocks();
-        }
+                if(this._showingNfts && this.controller.web3tradeEnabled)
+                {
+                    this._showingNfts = false;
+                    this._view.updateGridFilters();
+                }
 
-        this._view.updateActionView();
+                this._view.updateActionView();
+                break;
+            case 'empty':
+                this.removeAllLocks();
+
+                if(!this._showingNfts && this.controller.web3tradeEnabled)
+                {
+                    this._showingNfts = true;
+                    this._view.updateGridFilters();
+                }
+
+                this._view.updateActionView();
+                break;
+        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::closingInventoryView()

@@ -60,20 +60,29 @@ export class SpriteDataCollector
 	 * The furniture and avatar sprites, as a JSON array.
 	 *
 	 * AS3 first walks the room's category-100 objects and merges any sprite the canvas culled back
-	 * into the list, offsetting each by the object's screen location. That pass needs
-	 * `IRoomEngine.getRoomObjects()` and `IRoomObjectSpriteVisualization.getSpriteList()`, neither
-	 * of which this port has — see the TODO below. What the canvas *did* draw is complete and is
-	 * what this returns, which for a room the player is looking at is the same set minus objects
-	 * scrolled off screen.
+	 * into the list, offsetting each by the object's screen location — see the TODO below for why
+	 * that pass is not here. What the canvas *did* draw is complete and is what this returns, which
+	 * for a room the player is looking at is the same set minus objects scrolled off screen.
 	 */
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::getFurniData()
     getFurniData(viewPort: IRoomEngineRectangle, canvas: RoomRenderingCanvas, skipObjectId: number): string
     {
         // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1840.as::getFurniData()
         // The culled-avatar merge pass described above, plus `addMannequinSprites()`, which
-        // re-parents a boutique mannequin's own sprite list onto the mannequin's position with the
-        // MANNEQUIN_MAGIC_X/Y offsets. Both need `IRoomEngine.getRoomObjects(roomId, category)` and
-        // `IRoomObjectSpriteVisualization.getSpriteList()`.
+        // re-parents a boutique mannequin's own sprite list onto the mannequin's position (`+width/2
+        // + 1` and `+height - 16`, literals in AS3, not named constants).
+        //
+        // Blockers restated 2026-09-04, because the two this used to name are not the ones. Both
+        // `RoomEngine.getRoomObjects(roomId, category)` and
+        // `IRoomObjectSpriteVisualization.getSpriteList()` exist here. What does not line up is the
+        // sprite type: AS3 pushes `IRoomObjectSprite`s straight into the `RoomObjectSpriteData`
+        // vector because its sprite carries `.x/.y/.z/.name` and the two are duck-compatible; this
+        // port's `IRoomObjectSprite` carries `offsetX`/`offsetY`/`relativeDepth` instead, so each
+        // merged sprite needs wrapping in a `SortableSprite` — and AS3's `+=` mutates the live
+        // room sprite, which here would move the object on screen rather than only in the payload.
+        //
+        // It also cannot be exercised: `RenderRoomMessageHandler.cs` in the emulator is an
+        // 18-line accept-and-drop stub, so nothing consumes this JSON.
         const sprites = [...canvas.getSortableSpriteList()];
 
         sprites.sort(SpriteDataCollector.sortSpriteDataObjects);

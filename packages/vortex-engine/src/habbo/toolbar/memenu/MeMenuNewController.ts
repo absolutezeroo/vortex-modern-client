@@ -194,8 +194,9 @@ export class MeMenuNewController extends AbstractSubMenuController
                 break;
             }
             case 'settings':
-                // TODO(AS3): MeMenuSettingsMenuView itself is still a data-only stub
-                // (no real window), so opening it here would do nothing visible yet.
+                // Empty in AS3 too — `case "settings":` is the last label of the switch and has no
+                // statements at all (MeMenuNewController.as:75). Not an owed port: the live
+                // settings window is reached from the toolbar's own extension strip, not here.
                 break;
             case 'achievements':
                 this.toolbar?.questEngine?.showAchievements();

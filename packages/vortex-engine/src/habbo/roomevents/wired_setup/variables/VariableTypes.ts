@@ -17,9 +17,11 @@ import {UserVariable} from './UserVariable';
  * VariableTypes — the wired variable registry (IWiredTypeHolder): instantiates every variable type and
  * resolves one by its server code.
  *
- * PORT GAP: AS3 registers the full set; this port omits the not-yet-ported types — TODO(AS3) the
- * ChooseVariable-blocked generic variable (_4356) (and the ECHO_VARIABLE which has no dedicated type
- * here). getElementByCode returns null for their codes. (ReferenceVariable is now ported.)
+ * The set is complete: nine types here, nine in AS3's constructor. This note used to say the
+ * "ChooseVariable-blocked generic variable (_4356)" and the ECHO_VARIABLE were missing — they are
+ * the same class, `_SafeCls_4356` is what `EchoVariable` ports (its `code` returns
+ * `VariableCodes.ECHO_VARIABLE`), and `createChooseVariableSection()` it was said to be blocked on
+ * is what its `buildInputs()` calls.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/wired_setup/variables/VariableTypes.as
  */

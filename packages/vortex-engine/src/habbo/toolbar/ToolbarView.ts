@@ -54,12 +54,15 @@ export class ToolbarView
     private _position = {...ToolbarView.DEFAULT_LOCATION};
     private _visible: boolean = true;
 
-    // TODO(AS3): .../src/com/sulake/habbo/toolbar/ToolbarView.as::onCatalogEvent(), setIconBitmap(),
-    // getIconLocation(), getUnseenItemCounter() and animateToIcon() are the five members that need
-    // the toolbar *window*. AS3 declares each of them twice — once here and once on BottomBarLeft,
-    // the two bar variants — and this port builds only BottomBarLeft, so all five live there with
-    // traces to `BottomBarLeft.as`. Duplicating them here would give this class a window it does
-    // not own.
+    // DEVIATION: `onCatalogEvent()`, `setIconBitmap()`, `getIconLocation()`,
+    //   `getUnseenItemCounter()` and `animateToIcon()` are the five members that need the toolbar
+    //   *window*. AS3 declares each of them twice — once here and once on `BottomBarLeft`, the two
+    //   bar variants — and this port builds only `BottomBarLeft`, where all five live with traces
+    //   to `BottomBarLeft.as`. The check: `grep -n "getUnseenItemCounter\|animateToIcon"
+    //   BottomBarLeft.ts` finds them, and nothing constructs `ToolbarView` in either tree.
+    //   Duplicating them here would give this class a window it does not own, and a second
+    //   `_unseenItemCounters` map competing with the live one.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/ToolbarView.as::getUnseenItemCounter()
 
     constructor(toolbar: HabboToolbar)
     {
