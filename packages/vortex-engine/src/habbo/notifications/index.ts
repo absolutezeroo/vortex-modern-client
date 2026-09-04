@@ -4,6 +4,7 @@
 export {FeedVisibilityEnum} from './FeedVisibilityEnum';
 export {HabboNotifications} from './HabboNotifications';
 export {NotificationMessageHandler} from './NotificationMessageHandler';
+export {NotificationPopup} from './NotificationPopup';
 export {NotificationType} from './NotificationType';
 export * from './feed';
 export * from './singular';

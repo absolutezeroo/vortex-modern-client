@@ -28,6 +28,7 @@ import type {IHabboFreeFlowChat} from '@habbo/freeflowchat/IHabboFreeFlowChat';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IHabboNotifications} from './IHabboNotifications';
 import {SingularNotificationController} from './singular/SingularNotificationController';
+import {NotificationPopup} from './NotificationPopup';
 import {NotificationMessageHandler} from './NotificationMessageHandler';
 import {Logger} from '@core/utils/Logger';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
@@ -528,7 +529,13 @@ export class HabboNotifications extends Component implements IHabboNotifications
         }
         else
         {
-            // Emit event for UI layer to show notification popup
+            // AS3 constructs the popup here and keeps no reference to it — it disposes itself from
+            // its own close button. This port used to emit a `'showNotification'` event instead,
+            // "for the UI layer", and nothing ever listened: every non-BUBBLE notification the
+            // server sent was dropped on the floor. The event is still emitted for the ported
+            // consumers that subscribe to `notificationEvents`, but it is no longer what draws it.
+            new NotificationPopup(this, type, params);
+
             this._notificationEvents.emit('showNotification', type, params);
         }
     }
