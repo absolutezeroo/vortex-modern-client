@@ -356,29 +356,10 @@ export class FurnitureVisualization extends RoomObjectSpriteVisualization
 
             zOffset *= FurnitureVisualization.Z_MULTIPLIER;
 
-            // DEVIATION: a positive layer offset sinks a sprite *behind* what shares its tile.
-            //   Floor furni rely on it - classic3_floor2 carries z=4, so 4*sqrt(0.5)=2.828 - so a
-            //   rug does not cover the chair standing on it. Once the item is stacked on something
-            //   that rule is backwards: measured on hc_exe_s_table, the table sorted at z=1.458 and
-            //   the rug resting on it at z=4.279, i.e. behind the thing holding it up.
-            //
-            //   Altitude cannot arbitrate, and that is deliberate in the AS3: the canvas builds its
-            //   geometry with the view at 30 degrees but the depth axis at 0.5 (RoomGeometry's 4th
-            //   argument, _SafeCls_3073.as:175), giving depth=(-0.7071,-0.7071,-0.0087). A step of
-            //   one tile is worth 0.7071 of depth; a whole unit of height is worth 0.0087 - 1.2% of
-            //   it. So Habbo sorts on floor position alone and shows this same bug. Biasing depth by
-            //   height instead would have to beat 2.828, which is eleven tiles of depth, and would
-            //   throw a raised item in front of everything near the camera.
-            //
-            //   So above the floor, drop the backward offset. Being pulled forward *past* the
-            //   support's own layers is the other half, and it is not done here: it has to apply to
-            //   avatars too, so it lives on the object's base depth in RoomRenderingCanvas.
-            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/furniture/FurnitureVisualization.as::updateSprites()
-            if(zOffset > 0 && (this.object?.getLocation().z ?? 0) > 0)
-            {
-                zOffset = 0;
-            }
-
+            // The stacked-on-furniture correction that used to sit here moved to
+            // `RoomRenderingCanvas.renderObject()`: it keyed on `getLocation().z > 0`, which is true
+            // for anything on a raised floor tile as well, and only the canvas can reach the floor's
+            // own altitude at the tile to tell the two apart. It also has to apply to avatars.
             sprite.relativeDepth = zOffset;
             sprite.assetName = asset.assetName;
             sprite.libraryAssetName = this.getLibraryAssetNameForSprite(asset, sprite);

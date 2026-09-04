@@ -289,9 +289,21 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     // AS3: sources/win63_version/room/renderer/class_3523.as::_geometry
     private _geometry: RoomGeometry;
 
-    // TS-only: no AS3 counterpart - AS3 applies no stacking correction at all, which is the bug the
-    //   DEVIATION in renderObject() departs from. Depth pulled forward per unit of height.
-    private static readonly STACK_LIFT: number = 2.0;
+    /**
+     * How far above its tile's floor an object has to sit before it counts as resting on furniture
+     * rather than on the ground. Same tolerance `RoomEngine.fixedUserLocation()` uses to decide the
+     * same question.
+     */
+    // TS-only: see the DEVIATION in renderObject().
+    private static readonly STACK_EPSILON: number = 0.02;
+
+    /**
+     * The floor's own altitude at a tile, excluding anything stacked on it — `RoomEngine` wires this
+     * to the room's `LegacyWallGeometry`. Null on a canvas with no room behind it (previews,
+     * thumbnails), where every object then sorts exactly as the AS3 does.
+     */
+    // TS-only: no AS3 counterpart; feeds the DEVIATION in renderObject().
+    public floorHeightAt: ((x: number, y: number) => number | null) | null = null;
 
     // The depth z AS3 passes to setDepthVector() while rotating. Literal in both call sites there.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3074.as::doMagic()
@@ -1226,33 +1238,7 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         // Base Z with sub-pixel offset (AS3: 1.2E-7 * x)
         let baseZ = screenPos.z;
 
-        // DEVIATION: pull anything resting above the floor forward, so it outranks the layers of
-        //   whatever holds it up. AS3 cannot do this on its own: the canvas builds its geometry
-        //   with the view at 30 degrees but the depth axis at 0.5 (RoomGeometry's 4th argument,
-        //   _SafeCls_3073.as:175), giving depth=(-0.7071,-0.7071,-0.0087). A tile step is worth
-        //   0.7071 of depth and a whole unit of height 0.0087 - 1.2% of it - so height never
-        //   arbitrates and Habbo shows the bug this fixes: measured, hc_exe_s_table spanned
-        //   z=[3.574 .. 5.700] and the rug resting on it sat at 4.986, sandwiched between the
-        //   table's own layers and cut in half by them.
-        //
-        //   It belongs here rather than in FurnitureVisualization because avatars need it too:
-        //   lifting only furniture makes a raised rug draw over the player standing on it.
-        //
-        //   ponytail: STACK_LIFT is a flat 2.0 per unit of height. One scalar sort key cannot both
-        //   outrank another object's layers (which reach +/-3) and stay inside its own tile (worth
-        //   0.7071) - the two demands are incompatible, so no constant is universally safe. 2.0
-        //   clears the offsets furni actually ship. Ceiling: a support whose top layer sits below
-        //   -2.0 still cuts, and a raised object can outrank furniture up to ~2.8 tiles nearer the
-        //   camera. Doing this properly needs a per-tile stack order, not one depth scalar.
-        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::renderObject()
-        const elevation = object.getLocation().z;
-
-        if(elevation > 0)
-        {
-            baseZ -= RoomRenderingCanvas.STACK_LIFT * elevation;
-        }
-
-        if(screenPos.x > 0) 
+        if(screenPos.x > 0)
         {
             baseZ += screenPos.x * 1.2e-7;
         }
@@ -1281,6 +1267,40 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         cache.screenX = screenX;
         cache.screenY = screenY;
         cache.screenZ = baseZ;
+
+        // DEVIATION: an object resting on furniture drops the *backward* half of its layer offsets,
+        //   so it outranks the thing holding it up. A positive layer offset sinks a sprite behind
+        //   what shares its tile - classic3_floor2 carries z=4, so 4*sqrt(0.5)=2.828 - which is what
+        //   keeps a rug under the chair standing on it. Correct on the ground, backwards once the
+        //   item is stacked: measured, hc_exe_s_table spanned z=[3.574 .. 5.700] across its nine
+        //   layers and the rug resting on it sat at 4.986, sandwiched between them and cut in half.
+        //
+        //   Altitude cannot arbitrate instead, and that is deliberate in the AS3: the canvas builds
+        //   its geometry with the view at 30 degrees but the depth axis at 0.5 (RoomGeometry's 4th
+        //   argument, _SafeCls_3073.as:175), giving depth=(-0.7071,-0.7071,-0.0087). A tile step is
+        //   worth 0.7071 of depth and a whole unit of height 0.0087 - 1.2% of it. So Habbo sorts on
+        //   floor position alone and shows this bug.
+        //
+        //   Resting on furniture is the whole condition, and `z > 0` is not it: every object on a
+        //   raised floor tile carries that tile's own altitude, so testing against zero fired on all
+        //   of them - which is how a furni standing on a platform came to draw over an avatar on the
+        //   ground in front of it. The floor's altitude at the object's own tile is the datum, and
+        //   only the canvas can reach it, which is why this is here and not in FurnitureVisualization.
+        //
+        //   It applies to the sprite offsets and to nothing else. Biasing the object's *base* depth
+        //   by height instead cannot work: one scalar cannot both outrank another object's layers
+        //   (which reach +/-3) and stay inside its own tile (worth 0.7071).
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::renderObject()
+        //
+        //   A negative floor height is not a floor: `RoomPlaneParser` writes TILE_BLOCKED (-110) and
+        //   TILE_HOLE (-100) into the map, and fills the whole border of the room with the first of
+        //   them. Read as an altitude those make everything above them look stacked by a hundred
+        //   units - including the room object itself, whose location sits on one of those border
+        //   tiles. That clamped every floor and wall plane's +1000 depth to 0 and put the room's own
+        //   geometry in among the furniture.
+        const location = object.getLocation();
+        const floorHeight = this.floorHeightAt?.(Math.round(location.x), Math.round(location.y)) ?? location.z;
+        const stacked = floorHeight >= 0 && (location.z - floorHeight) > RoomRenderingCanvas.STACK_EPSILON;
 
         const spriteCount = visualization.spriteCount;
         let localCount = 0;
@@ -1341,7 +1361,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
             // applies - see RoomObjectSpriteVisualization.createDisplaySprite().
             sortable.x = finalX - this._screenOffsetX + (sprite.flipH ? spriteWidth : 0);
             sortable.y = finalY - this._screenOffsetY + (sprite.flipV ? spriteHeight : 0);
-            sortable.z = baseZ + sprite.relativeDepth + 3.7e-11 * (startIndex + localCount);
+            // See the DEVIATION above `const location` for why a stacked object loses the backward
+            // half of its layer offsets. Negative ones are kept: they are what orders an avatar's
+            // own parts, and its body against the furniture it stands on. Room planes are exempt
+            // whatever the object looks like: their +1000 is what holds the floor and the walls
+            // behind every object in the room, and nothing may be allowed to clamp it.
+            const relativeDepth = stacked && sprite.spriteType !== RoomObjectSpriteType.ROOM_PLANE
+                ? Math.min(sprite.relativeDepth, 0)
+                : sprite.relativeDepth;
+
+            sortable.z = baseZ + relativeDepth + 3.7e-11 * (startIndex + localCount);
 
             localCount++;
         }

@@ -5665,6 +5665,12 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         canvas.mouseListener = this;
 
+        // The canvas sorts an object resting on furniture differently from one on the ground, and
+        // the ground is not z=0: a raised floor tile carries its own altitude. Resolved per call
+        // rather than captured, because the geometry only arrives with the floor height map.
+        canvas.floorHeightAt = (x: number, y: number): number | null =>
+            this.getLegacyGeometry(roomId)?.getTileHeight(x, y) ?? null;
+
         this._renderingCanvases.set(key, canvas);
         this.applyRoomCanvasGeometry(roomId, canvas);
 
