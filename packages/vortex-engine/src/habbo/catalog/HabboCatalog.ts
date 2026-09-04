@@ -580,13 +580,9 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/HabboCatalog.as::get specialItemsController()
-    // TODO(AS3): SpecialItemsController (habbo/catalog/special_items_display/SpecialItemsController.as)
-    // has no port anywhere in the engine - it's a full separate Component (own DI,
-    // ILinkEventTracker, message events, makeClaimable()/makeClaim()/claimState/items/view, etc.).
-    // Porting it is out of scope for this single-getter fix; always null until it exists.
-    get specialItemsController(): unknown
+    get specialItemsController(): SpecialItemsController | null
     {
-        return null;
+        return this._specialItemsController;
     }
 
     private _groupMembershipsController: GuildMembershipsController | null = null;

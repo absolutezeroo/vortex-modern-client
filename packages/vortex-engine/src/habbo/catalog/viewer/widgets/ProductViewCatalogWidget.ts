@@ -34,6 +34,7 @@ import type {CatalogWidgetEvent} from './events/CatalogWidgetEvent';
 import {CatalogWidgetName} from './CatalogWidgetName';
 import {CatalogWidget} from './CatalogWidget';
 import {PreviewCanvasStack} from '@habbo/room/preview/PreviewCanvasStack';
+import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
 
 const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWidget');
 
@@ -43,13 +44,17 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  * interaction controls (rotate_avatar_left/right, toggle_preview_magic - avatar pose cycling,
  * toggle_preview_zoom).
  *
- * TODO(AS3): two AS3 sub-paths are still not ported, each noted again at its call site:
- * - "e" (avatar effect) preview rendering - it needs pixel-level sprite compositing
- *   (addEffectSprites()) onto a canvas, which requires bridging PixiJS Texture output to
- *   ImageBitmap the way ProductGridItem.renderAvatarImage() does, but for a multi-layer composite
- *   rather than a single crop. ("r" used to be listed here as a rentable avatar effect; it is a
- *   bot offer, a single cropped avatar render, and is implemented — see renderBotPreview().)
- * - class_3172/ProductImageConfiguration's pre-rendered special-product image table.
+ * TODO(AS3): one AS3 sub-path is still not ported and is noted again at its call site — the "e"
+ * branch's *fallback*, which composites the effect's sprites onto a flat BitmapData when there is
+ * no room canvas (`addEffectSprites()`). Its primary path is ported; see `renderEffectPreview()`.
+ *
+ * Three things used to be listed here as missing and none of them were. "r" is a bot offer — a
+ * single cropped avatar render, `renderBotPreview()`. "e" was described as needing pixel-level
+ * compositing, but AS3 takes the room-previewer path first (`addAvatarIntoRoom(figure,
+ * productClassId)` plus the two `applyPreviewAvatar*` helpers, all of which this port already had).
+ * And the pre-rendered special-product image table was cited as `class_3172` — a room-session
+ * message composer with nothing to do with any of this; the real table is `_SafeCls_3399`, ported
+ * as `CatalogProductImages`, and `onPreviewProduct()` has been reading it all along.
  *
  * Two more used to be on that list and are not any more: ProductDisplayWrapper drives the generic
  * default case, and furniture/wall-item rotation is real — `canRotatePreviewFurniture()` reads the
@@ -220,6 +225,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.events.off(SetRoomPreviewerStuffDataEvent.CWE_SET_PREVIEWER_STUFFDATA, this.onStuffDataSet);
         this.events.off(CatalogWidgetSpinnerEvent.VALUE_CHANGED, this.onSpinnerEvent);
         this.events.off('TOTAL_PRICE_WIDGET_INITIALIZED', this.onTotalPriceWidgetInitialized);
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
         this._rotateAvatarLeftButton?.removeEventListener('WME_CLICK', this.onRotateAvatarLeft);
         this._rotateAvatarLeftButton = null;
         this._rotateAvatarRightButton?.removeEventListener('WME_CLICK', this.onRotateAvatarRight);
@@ -1127,12 +1133,25 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
                 break;
             case 'e':
-                // TODO(AS3): avatar effect preview needs multi-layer sprite compositing
-                // (addEffectSprites()) - not ported, see class doc comment.
-                log.warn('"e" preview not ported yet');
-                this.setPreviewImage(null);
+                return this.renderEffectPreview(product, roomPreviewer);
+            case 'habbicon':
+            {
+                let bitmap = HabbiconAssetManager.getPreviewBitmap(parseInt(product.extraParam, 10) || 0, false);
 
-                break;
+                if(bitmap === null)
+                {
+                    // Nothing to request — the manager loads once for the client — so subscribe and
+                    // show AS3's plain 40x40 0x8F8F8F square until it arrives.
+                    HabbiconAssetManager.addEventListener(
+                        HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded
+                    );
+                    bitmap = ProductViewCatalogWidget.createHabbiconPlaceholder();
+                }
+
+                this.setPreviewImage(bitmap);
+
+                return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+            }
             case 'h':
                 break;
             default:
@@ -1164,6 +1183,65 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
      * loop.
      */
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct() ("r" branch)
+    /**
+	 * Wears the effect on the player's own figure inside the preview room, which is the same thing
+	 * `EffectPreviewer` and the avatar editor's `FigureDataView` do — `productClassId` is the
+	 * effect id.
+	 *
+	 * TODO(AS3): AS3 has a second path below this one, taken only when there is no room canvas: it
+	 *   composites the effect's sprites onto a flat BitmapData filled with `pixelsBackground`'s
+	 *   colour (`addEffectSprites()`, ProductViewCatalogWidget.as:695-760). It is not ported, and
+	 *   the room canvas exists in every current call — `_hasRoomCanvas` is what the container
+	 *   visibility above already keys on.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::updatePreview() ("e" branch)
+    private renderEffectPreview(product: IProduct, roomPreviewer: RoomPreviewer | null): {mode: number; canRotate: boolean}
+    {
+        const figure = this._catalog?.sessionDataManager?.figure ?? null;
+
+        if(roomPreviewer == null || this._roomCanvas == null || figure == null)
+        {
+            log.warn('"e" preview needs the room canvas; the flat-composite fallback is not ported');
+            this.setPreviewImage(null);
+
+            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+        }
+
+        roomPreviewer.addAvatarIntoRoom(figure, product.productClassId);
+        this.applyPreviewAvatarDirection(roomPreviewer);
+        this.applyPreviewAvatarAction(roomPreviewer);
+
+        return {mode: ProductViewCatalogWidget.PREVIEW_MODE_AVATAR, canRotate: false};
+    }
+
+    /**
+	 * Re-runs the whole preview for the offer still on screen. The habbicon branch is the only
+	 * caller: it is the one product type whose picture can arrive after the offer was selected.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onHabbiconAssetsLoaded()
+    private onHabbiconAssetsLoaded = (): void =>
+    {
+        HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
+
+        if(this.disposed || this._lastSelectEvent === null) return;
+
+        this.onPreviewProduct(this._lastSelectEvent);
+    };
+
+    // TS-only: Flash fills a BitmapData in its constructor; this port needs a canvas.
+    private static createHabbiconPlaceholder(): ImageBitmap | null
+    {
+        const canvas = new OffscreenCanvas(40, 40);
+        const context = canvas.getContext('2d');
+
+        if(context === null) return null;
+
+        context.fillStyle = '#8f8f8f';
+        context.fillRect(0, 0, 40, 40);
+
+        return canvas.transferToImageBitmap();
+    }
+
     private renderBotPreview(product: IProduct): void
     {
         const manager = this._catalog?.avatarRenderManager ?? null;

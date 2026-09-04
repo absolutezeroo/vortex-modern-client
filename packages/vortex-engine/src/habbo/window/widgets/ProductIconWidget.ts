@@ -441,6 +441,7 @@ export class ProductIconWidget implements IWidget, IGetImageListener, IAvatarIma
 	 * `setPreviewImage()` copies it. TS-only helper: Flash constructs a filled BitmapData in one
 	 * expression where this port needs a canvas.
 	 */
+    // TS-only: Flash fills a BitmapData in its constructor; this port needs a canvas.
     private static createHabbiconPlaceholder(): ImageBitmap | null
     {
         const canvas = new OffscreenCanvas(40, 40);

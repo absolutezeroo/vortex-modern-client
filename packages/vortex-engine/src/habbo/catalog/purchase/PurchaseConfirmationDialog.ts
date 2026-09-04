@@ -572,6 +572,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 	 * AS3: `new BitmapData(40,40,false,9408399)` — 0x8F8F8F. TS-only helper: Flash fills a
 	 * BitmapData in its constructor where this port needs a canvas.
 	 */
+    // TS-only: Flash fills a BitmapData in its constructor; this port needs a canvas.
     private static createHabbiconPlaceholder(): ImageBitmap | null
     {
         const canvas = new OffscreenCanvas(40, 40);
