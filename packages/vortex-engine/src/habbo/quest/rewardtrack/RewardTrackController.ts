@@ -35,9 +35,7 @@ import type {RewardTrackPrize} from './data/RewardTrackPrize';
 import type {RewardTrackTask} from './data/RewardTrackTask';
 import type {IRewardTrackController} from './IRewardTrackController';
 import {RewardTrackView} from './view/RewardTrackView';
-import {
-    RewardTrackPremiumPurchaseConfirmationView
-} from './view/premium/RewardTrackPremiumPurchaseConfirmationView';
+import {RewardTrackPremiumPurchaseConfirmationView} from './view/premium/RewardTrackPremiumPurchaseConfirmationView';
 
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
@@ -186,7 +184,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         if(parts.length >= 3 && parts[1] === 'open') this.openRewardTrack(parts[2]);
     }
 
-    /** The outgoing window's position is handed to the incoming one, so the board stays put. */
     // AS3: RewardTrackController.as::openRewardTrack()
     openRewardTrack(trackId: string): void
     {
@@ -273,13 +270,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         this._premiumConfirmation = null;
     }
 
-    /**
-     * A fresh list, a disabled feature, or *any* previously held list all drop the cached windows —
-     * the track data behind them is about to be replaced, so every open window is stale.
-     *
-     * The reload alert is only raised if a window was actually on screen: a silent refresh while the
-     * board is closed needs no explanation.
-     */
     // AS3: RewardTrackController.as::onRewardTracks()
     private onRewardTracks = (event: IMessageEvent): void =>
     {
@@ -320,7 +310,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         this.broadcastClaimableRewardsCount();
     };
 
-    /** The task's before-state is read *before* `updateProgress()` overwrites it. */
     // AS3: RewardTrackController.as::onRewardTrackProgress()
     private onRewardTrackProgress = (event: IMessageEvent): void =>
     {
@@ -363,7 +352,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         this.showClaimSuccessNotification(prize);
     };
 
-    /** A refusal re-enables the confirmation instead of closing it, so the player can retry. */
     // AS3: RewardTrackController.as::onRewardTrackPremiumPurchaseResult()
     private onRewardTrackPremiumPurchaseResult = (event: IMessageEvent): void =>
     {
@@ -398,11 +386,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         this.showNotification('${reward_track.premium.notification.success}');
     };
 
-    /**
-     * `force` is AS3's default. Progress updates pass `false` so an unchanged count stays silent —
-     * that message arrives on every counted action, and the badge would otherwise be rewritten on
-     * each one.
-     */
     // AS3: RewardTrackController.as::broadcastClaimableRewardsCount()
     private broadcastClaimableRewardsCount(force: boolean = true): void
     {
@@ -445,11 +428,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         );
     }
 
-    /**
-     * AS3 clones the icon's `BitmapData` before handing it over, because the notification owns and
-     * eventually disposes what it is given. The port's `ImageBitmap` is immutable and shared, so
-     * there is nothing to clone and nothing to protect — the same bitmap is passed straight through.
-     */
     // AS3: RewardTrackController.as::showNotification()
     private showNotification(content: string, iconAssetName: string | null = null): void
     {
@@ -474,10 +452,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         notifications.addItemWithBitmap(content, 'info', copyBitmap(this._windowManager?.getAsset(iconAssetName) ?? null));
     }
 
-    /**
-     * AS3 writes to the AIR `Clipboard`; the browser's is asynchronous and permission-gated, so the
-     * confirmation notification is raised optimistically as AS3 does rather than after the write.
-     */
     // AS3: RewardTrackController.as::copyDebugId()
     private copyDebugId(id: string, successMessage: string): void
     {
@@ -513,7 +487,6 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         this.getTrackView(track)?.premiumPurchased();
     }
 
-    /** Identity, not id: a cached window built against a replaced `RewardTrack` is not this track's. */
     // AS3: RewardTrackController.as::getTrackView()
     private getTrackView(track: RewardTrack): RewardTrackView | null
     {
