@@ -23,6 +23,7 @@ import {EventEmitter} from 'eventemitter3';
 import type {NavigatorData} from '../domain';
 import {Tabs} from '../domain/Tabs';
 import {FakeMainViewCtrl} from './FakeMainViewCtrl';
+import {MainViewCtrl} from '../mainview/MainViewCtrl';
 import {RoomSettingsCtrl} from '../roomsettings/RoomSettingsCtrl';
 import {RoomInfoViewCtrl} from '../inroom/RoomInfoViewCtrl';
 import {RoomCreateViewCtrl} from '../roomsettings/RoomCreateViewCtrl';
@@ -48,6 +49,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
     private _newNavigator: HabboNewNavigator | null;
     private _oldNavigator: HabboNavigator | null;
     private _fakeMainViewCtrl: FakeMainViewCtrl;
+    private _mainViewCtrl: MainViewCtrl;
     private readonly _events: EventEmitter = new EventEmitter();
     private _tabs: Tabs;
 
@@ -57,6 +59,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
         this._oldNavigator = oldNavigator;
         this._tabs = new Tabs(this);
         this._fakeMainViewCtrl = new FakeMainViewCtrl(newNavigator, oldNavigator);
+        this._mainViewCtrl = new MainViewCtrl(this);
         this._roomSettingsCtrl = new RoomSettingsCtrl(this);
         this._roomInfoViewCtrl = new RoomInfoViewCtrl(this);
         this._roomCreateViewCtrl = new RoomCreateViewCtrl(this);
@@ -214,6 +217,23 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
     get mainViewCtrl(): ITransitionalMainViewCtrl
     {
         return this._fakeMainViewCtrl;
+    }
+
+    /**
+	 * TS-only: the legacy navigator window itself, which AS3 keeps as `HabboNavigator`'s own field
+	 * (`HabboNavigator.as:127`, `new MainViewCtrl(this)`). This port moved that whole set of fields
+	 * here — see `roomSettingsCtrl` and the rest above — so `HabboNavigator.mainViewCtrl` reaches
+	 * the real controller through this accessor while `mainViewCtrl` above keeps handing the new
+	 * navigator its `FakeMainViewCtrl`, exactly as AS3's two classes do.
+	 *
+	 * The distinction is not cosmetic: `FakeMainViewCtrl.searchInput` delegates to
+	 * `_oldNavigator.mainViewCtrl.searchInput`, so with both accessors answering the fake, that
+	 * getter called itself.
+	 */
+    // TS-only: AS3 keeps this controller on `HabboNavigator` itself (`HabboNavigator.as:127`).
+    get realMainViewCtrl(): MainViewCtrl
+    {
+        return this._mainViewCtrl;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::get communication()
@@ -563,6 +583,7 @@ export class LegacyNavigator implements IHabboTransitionalNavigator
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/LegacyNavigator.as::dispose()
     dispose(): void
     {
+        this._mainViewCtrl.dispose();
         this._roomSettingsCtrl.dispose();
         this._roomInfoViewCtrl.dispose();
         this._roomCreateViewCtrl.dispose();

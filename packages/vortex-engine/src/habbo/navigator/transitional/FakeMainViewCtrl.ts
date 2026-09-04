@@ -36,16 +36,21 @@ export class FakeMainViewCtrl implements ITransitionalMainViewCtrl
         return (this._newNavigator as any)?.mainWindow ?? null;
     }
 
+    /**
+	 * `_oldNavigator.mainViewCtrl` is the real `MainViewCtrl`, not this object — the two accessors
+	 * hand out different controllers, which is the whole point of the pair. While both answered
+	 * the fake, this getter called itself.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/FakeMainViewCtrl.as::get searchInput()
     get searchInput(): TextSearchInputs | null
     {
-        return (this._oldNavigator as any)?.mainViewCtrl?.searchInput ?? null;
+        return this._oldNavigator?.mainViewCtrl?.searchInput ?? null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/FakeMainViewCtrl.as::get isPhaseOneNavigator()
     get isPhaseOneNavigator(): boolean
     {
-        return (this._oldNavigator as any)?.mainViewCtrl?.isPhaseOneNavigator ?? false;
+        return this._oldNavigator?.mainViewCtrl?.isPhaseOneNavigator ?? false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/transitional/FakeMainViewCtrl.as::onNavigatorToolBarIconClick()

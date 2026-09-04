@@ -10,6 +10,7 @@ import type { IViewCtrl } from '../IViewCtrl';
 import { UserCountRenderer } from '../UserCountRenderer';
 import { RoomPopupCtrl } from '../RoomPopupCtrl';
 import { Util } from '../Util';
+import { MainViewCtrl } from './MainViewCtrl';
 import { AddFavouriteRoomMessageComposer } from '../../communication/messages/outgoing/navigator/AddFavouriteRoomMessageComposer';
 import { DeleteFavouriteRoomMessageComposer } from '../../communication/messages/outgoing/navigator/DeleteFavouriteRoomMessageComposer';
 
@@ -33,17 +34,26 @@ export class GuestRoomListCtrl implements IViewCtrl
     private _lastHovered: IWindowContainer | null = null;
     private _lastMouseX: number = 0;
     private _isFastHorizontalMove: boolean = false;
-    private _adIndex: number;
+    /**
+	 * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/GuestRoomListCtrl.as::_SafeStr_9013
+	 *
+	 * Name derived from its single use — `refreshEntry()` adds it to a newly created entry's
+	 * width. It was called `_adIndex` here and read by nothing, which is how the line that uses it
+	 * came to be missing: `PromotedRoomsGuestRoomListCtrl` passes **-6** (its entries sit inside a
+	 * narrower panel), and an ad index of -6 would have made no sense to anyone reading it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/GuestRoomListCtrl.as::_SafeStr_9013
+    private _extraEntryWidth: number;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/GuestRoomListCtrl.as::_showRoomNumbers
     private _showRoomNumbers: boolean;
 
     private readonly _onAddFavouriteClick: (event: WindowEvent) => void;
     private readonly _onRemoveFavouriteClick: (event: WindowEvent) => void;
 
-    constructor(navigator: IHabboTransitionalNavigator, adIndex: number, showRoomNumbers: boolean)
+    constructor(navigator: IHabboTransitionalNavigator, extraEntryWidth: number, showRoomNumbers: boolean)
     {
         this._navigator = navigator;
-        this._adIndex = adIndex;
+        this._extraEntryWidth = extraEntryWidth;
         this._showRoomNumbers = showRoomNumbers;
         this._roomPopupCtrl = new RoomPopupCtrl(navigator, 5, -5);
         this._userCountRenderer = new UserCountRenderer(navigator);
@@ -295,6 +305,7 @@ export class GuestRoomListCtrl implements IViewCtrl
     private refreshEntry(show: boolean, index: number, room: GuestRoomData | null): boolean
     {
         let entry = this._itemList!.getListItemAt(index) as IWindowContainer | null;
+        let isNew = false;
 
         if(entry === null)
         {
@@ -302,6 +313,7 @@ export class GuestRoomListCtrl implements IViewCtrl
 
             entry = this.getListEntry(index);
             this._itemList!.addListItem(entry);
+            isNew = true;
         }
 
         Util.hideChildren(entry);
@@ -316,6 +328,14 @@ export class GuestRoomListCtrl implements IViewCtrl
         {
             entry.height = 0;
             entry.visible = false;
+        }
+
+        // Only a brand-new entry needs this: the list itself was widened once when the scrollbar
+        // went away, and children added afterwards do not inherit that width.
+        if(isNew)
+        {
+            entry.width += this._extraEntryWidth;
+            MainViewCtrl.stretchNewEntryIfNeeded(this, entry);
         }
 
         return false;

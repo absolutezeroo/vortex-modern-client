@@ -48,6 +48,13 @@ export interface IHabboTransitionalNavigator extends IHabboNavigator
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get tabs()
     readonly tabs: Tabs;
     readonly mainViewCtrl: ITransitionalMainViewCtrl | null;
+    /**
+	 * TS-only: the legacy navigator window itself. AS3 keeps it as `HabboNavigator`'s own field
+	 * and this port keeps it on `LegacyNavigator` with the rest of them, so the component has to
+	 * reach it back through the wrapper — see `LegacyNavigator.realMainViewCtrl`.
+	 */
+    // TS-only: AS3 keeps this controller on `HabboNavigator` itself, so no interface declares it.
+    readonly realMainViewCtrl: ITransitionalMainViewCtrl | null;
     readonly roomInfoViewCtrl: RoomInfoViewCtrl | null;
     readonly roomCreateViewCtrl: RoomCreateViewCtrl | null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/navigator/IHabboTransitionalNavigator.as::get communication()

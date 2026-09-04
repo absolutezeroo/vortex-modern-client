@@ -1,5 +1,6 @@
 export { CategoryListCtrl } from './CategoryListCtrl';
 export { GuestRoomListCtrl } from './GuestRoomListCtrl';
+export { MainViewCtrl } from './MainViewCtrl';
 export { OfficialRoomEntryManager } from './OfficialRoomEntryManager';
 export { OfficialRoomImageLoader } from './OfficialRoomImageLoader';
 export { OfficialRoomListCtrl } from './OfficialRoomListCtrl';

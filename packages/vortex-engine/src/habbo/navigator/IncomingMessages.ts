@@ -53,6 +53,10 @@ import type {UserRightsMessageParser} from '../communication/messages/parser/han
 import type {ScrSendUserInfoMessageParser} from '../communication/messages/parser/users/ScrSendUserInfoMessageParser';
 import type {RoomSettingsSavedEventParser} from '../communication/messages/parser/roomsettings';
 import {GetGuestRoomMessageComposer} from '../communication/messages/outgoing/navigator/GetGuestRoomMessageComposer';
+import {
+    FollowFriendMessageComposer
+} from '../communication/messages/outgoing/friendlist/FollowFriendMessageComposer';
+import {isRoomViewerMode} from '../configuration/enum/HabboComponentFlags';
 import {QuitMessageComposer} from '../communication/messages/outgoing/room/session/QuitMessageComposer';
 import {HabboWebTools} from '../utils/HabboWebTools';
 import {HabboToolbarEvent} from '../toolbar/events/HabboToolbarEvent';
@@ -261,6 +265,20 @@ export class IncomingMessages
         this._messageEvents.push(event);
     }
 
+    /**
+	 * The login landing decision, and the only place that makes it.
+	 *
+	 * The first settings packet of a session is what decides where you end up: an external
+	 * `friend.id` follows a friend, an external `forward.type == 2` forwards to a room,
+	 * `roomIdToEnter` re-enters wherever you logged out, and a `roomIdToEnter` equal to the home
+	 * room goes through `goToHomeRoom()` instead — which can refuse, and then the navigator opens
+	 * so you have somewhere to go. Every later packet takes the `else` branch and only reloads the
+	 * room-info panel.
+	 *
+	 * The port had all of that missing: it recorded `homeRoomId`, set the flag and returned, so a
+	 * session never auto-entered anything and the navigator never opened by itself.
+	 * `HabboLandingView` covers only the `roomIdToEnter <= 0` half.
+	 */
     // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onNavigatorSettings()
     private onNavigatorSettings(event: IMessageEvent): void
     {
@@ -270,10 +288,66 @@ export class IncomingMessages
 
         if(!parser) return;
 
+        log.debug(`Got navigator settings: ${parser.homeRoomId}`);
+
+        const firstTime = !this.data.settingsReceived;
+
         this.data.homeRoomId = parser.homeRoomId;
         this.data.settingsReceived = true;
 
-        log.trace(`Navigator settings received: homeRoomId=${parser.homeRoomId}`);
+        this._navigator.mainViewCtrl?.refresh();
+
+        let forwardType = -1;
+        let forwardId = -1;
+
+        if(firstTime && !isRoomViewerMode(this._navigator.flags))
+        {
+            let openNavigator = false;
+
+            if(this._navigator.propertyExists('friend.id'))
+            {
+                forwardType = 0;
+                this._navigator.send(
+                    new FollowFriendMessageComposer(parseInt(this._navigator.getProperty('friend.id'), 10))
+                );
+            }
+
+            if(this._navigator.propertyExists('forward.type') && this._navigator.propertyExists('forward.id'))
+            {
+                forwardType = parseInt(this._navigator.getProperty('forward.type'), 10);
+                forwardId = parseInt(this._navigator.getProperty('forward.id'), 10);
+            }
+
+            const noRoomToEnter = parser.roomIdToEnter <= 0;
+
+            if(forwardType === 2)
+            {
+                log.debug(`Guest room forward on enter: ${forwardId}`);
+                this.forwardToRoom(forwardId);
+            }
+            else if(forwardType === -1 && !noRoomToEnter)
+            {
+                const roomId = parser.roomIdToEnter;
+
+                if(roomId !== this.data.homeRoomId)
+                {
+                    this._navigator.goToRoom(roomId, true);
+                }
+                else if(!this._navigator.goToHomeRoom())
+                {
+                    openNavigator = true;
+                }
+            }
+
+            if(openNavigator && !(this._navigator.mainViewCtrl?.isOpen() ?? false))
+            {
+                this._navigator.mainViewCtrl?.onNavigatorToolBarIconClick();
+            }
+        }
+        else
+        {
+            this._navigator.transitionalNavigator?.roomInfoViewCtrl?.reload();
+        }
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/_SafeCls_1951.as::onFavourites()
@@ -300,6 +374,11 @@ export class IncomingMessages
         if(!parser) return;
 
         this.data.favouriteChanged(parser.flatId, parser.added);
+
+        // The star has to be repainted in two places: the room-info panel and the navigator's own
+        // list. AS3 does both here and the port did neither.
+        this._navigator.transitionalNavigator?.roomInfoViewCtrl?.reload();
+        this._navigator.mainViewCtrl?.refresh();
 
         log.debug(`Favourite changed: roomId=${parser.flatId}, added=${parser.added}`);
     }
@@ -553,6 +632,12 @@ export class IncomingMessages
         // the new room, refreshes "my rooms" (category 5) so it is listed, and returns the navigator
         // to its main view — which is what actually takes the creation form down.
         this._navigator.goToRoom(parser.flatId, true);
+        // AS3 has two handlers for this message — `_SafeCls_1951` on the legacy window and
+        // `_SafeCls_2208` on the new navigator — and both refresh their own controller. This port
+        // merged them into one class, so it has to reach both: `mainViewCtrl` is the legacy
+        // window, `transitionalNavigator.mainViewCtrl` the `FakeMainViewCtrl` that forwards to the
+        // new navigator. Same pairing at `onRoomSettingsSaved()` and `onGameStarted()`.
+        this._navigator.mainViewCtrl?.reloadRoomList(5);
         this._navigator.transitionalNavigator?.mainViewCtrl?.reloadRoomList(5);
         this._navigator.goToMainView();
     }
@@ -946,6 +1031,7 @@ export class IncomingMessages
         if(!parser) return;
 
         log.debug(`Room settings saved: ${parser.roomId}`);
+        this._navigator.mainViewCtrl?.reloadRoomList(5);
         this._navigator.transitionalNavigator?.mainViewCtrl?.reloadRoomList(5);
     }
 
@@ -1011,6 +1097,7 @@ export class IncomingMessages
     // AS3: .../_SafeCls_1951.as::onGameStarted()
     private onGameStarted(_event: IMessageEvent): void
     {
+        this._navigator.mainViewCtrl?.close();
         this._navigator.transitionalNavigator?.mainViewCtrl?.close();
     }
 

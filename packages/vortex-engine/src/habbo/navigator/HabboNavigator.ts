@@ -48,16 +48,9 @@ import {Logger} from '@core/utils/Logger';
 
 // Composers
 import {
-    CompetitionRoomsSearchMessageComposer,
     CreateFlatMessageComposer,
     GetGuestRoomMessageComposer,
-    MyFavouriteRoomsSearchMessageComposer,
-    MyFrequentRoomHistorySearchMessageComposer,
-    MyGuildBasesSearchMessageComposer,
-    MyRoomHistorySearchMessageComposer,
-    MyRoomsSearchMessageComposer,
     RemoveOwnRoomRightsRoomMessageComposer,
-    RoomTextSearchMessageComposer,
 } from '../communication/messages/outgoing/navigator';
 import type {IMessageComposer} from "@core";
 
@@ -70,7 +63,6 @@ export class HabboNavigator extends Component implements IHabboNavigator
 {
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_incomingMessages
     private _incomingMessages: IncomingMessages | null = null;
-    private _isOpen: boolean = false;
     /**
      * The new navigator, resolved optionally so this component can still start without
      * it. AS3's HabboNavigator implements the transitional interface itself and owns its
@@ -332,64 +324,81 @@ export class HabboNavigator extends Component implements IHabboNavigator
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performTagSearch()
-    performTagSearch(tag: string): void 
+    performTagSearch(tag: string): void
     {
+        const mainViewCtrl = this.mainViewCtrl;
+
+        if(mainViewCtrl === null) return;
+
         let searchTag = tag;
 
-        if(searchTag.indexOf(' ') !== -1) 
+        if(searchTag.indexOf(' ') !== -1)
         {
             searchTag = '"' + searchTag + '"';
         }
 
-        this.send(new RoomTextSearchMessageComposer(searchTag));
-
-        log.debug(`Tag search: ${searchTag}`);
+        mainViewCtrl.startSearch(5, 9, searchTag);
+        this.trackNavigationDataPoint('Search', 'search.tag', searchTag);
+        mainViewCtrl.mainWindow?.activate();
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performTextSearch()
-    performTextSearch(searchText: string): void 
+    performTextSearch(searchText: string): void
     {
-        this.send(new RoomTextSearchMessageComposer(searchText));
+        const mainViewCtrl = this.mainViewCtrl;
 
-        log.debug(`Text search: ${searchText}`);
+        if(mainViewCtrl === null) return;
+
+        mainViewCtrl.startSearch(5, 8, searchText);
+        this.trackNavigationDataPoint('Search', 'search', searchText);
+        mainViewCtrl.mainWindow?.activate();
+        mainViewCtrl.searchInput?.searchStr?.setText(searchText);
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performGuildBaseSearch()
-    performGuildBaseSearch(): void 
+    performGuildBaseSearch(): void
     {
-        this.send(new MyGuildBasesSearchMessageComposer());
+        const mainViewCtrl = this.mainViewCtrl;
 
-        log.debug('Guild base search');
+        if(mainViewCtrl === null) return;
+
+        mainViewCtrl.startSearch(5, 14, '');
+        mainViewCtrl.mainWindow?.activate();
+        mainViewCtrl.searchInput?.searchStr?.setText('');
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::performCompetitionRoomsSearch()
-    performCompetitionRoomsSearch(goalId: number, pageIndex: number): void 
+    performCompetitionRoomsSearch(goalId: number, pageIndex: number): void
     {
-        if(this._data.isLoading()) 
+        const mainViewCtrl = this.mainViewCtrl;
+
+        if(mainViewCtrl === null || this._data.isLoading())
         {
             return;
         }
 
-        // Set competition data for tracking
+        // The search itself carries no ids: `MainViewCtrl.getSearchMsg()` reads them back off
+        // `competitionRoomsData`, which is why this is set before startSearch() and not after.
         this._data.competitionRoomsData = {
             goalId,
             pageIndex,
             pageCount: 0,
         } as CompetitionRoomsData;
 
-        this.send(new CompetitionRoomsSearchMessageComposer(goalId, pageIndex));
-
-        log.debug(`Competition rooms search: goal=${goalId}, page=${pageIndex}`);
+        mainViewCtrl.startSearch(5, 15, '');
+        mainViewCtrl.mainWindow?.activate();
+        mainViewCtrl.searchInput?.searchStr?.setText('');
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showOwnRooms()
-    showOwnRooms(): void 
+    showOwnRooms(): void
     {
-        this.send(new MyRoomsSearchMessageComposer());
+        const mainViewCtrl = this.mainViewCtrl;
 
-        this.openNavigator();
+        if(mainViewCtrl === null) return;
 
-        log.debug('Showing own rooms');
+        mainViewCtrl.startSearch(3, 5);
+        this.tabs?.getTab(3)?.tabPageDecorator.tabSelected();
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::hasRoomRightsButIsNotOwner()
@@ -425,23 +434,20 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * the source.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::openNavigator()
+    /**
+	 * Empty in AS3 too — the parameter is read by nobody and the body has no statements. The way
+	 * the legacy window actually opens is `mainViewCtrl.open()` / `onNavigatorToolBarIconClick()`,
+	 * and the new navigator's is `HabboNewNavigator.open()`. This port had it flipping an `_isOpen`
+	 * flag that nothing else read, which made three callers look like they were opening something.
+	 */
     openNavigator(_position: {x: number; y: number} | null = null): void
     {
-        if(this._isOpen) return;
-
-        this._isOpen = true;
-
-        log.debug('Navigator opened');
     }
 
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::closeNavigator()
-    closeNavigator(): void 
+    closeNavigator(): void
     {
-        if(!this._isOpen) return;
-
-        this._isOpen = false;
-
-        log.debug('Navigator closed');
+        this.mainViewCtrl?.close();
     }
 
     /**
@@ -510,10 +516,16 @@ export class HabboNavigator extends Component implements IHabboNavigator
 	 * a hop through the wrapper rather than a field read. Null while the wrapper is not attached —
 	 * AS3 cannot express that because the fields are constructed with the component.
 	 */
+    /**
+	 * AS3 returns its own `MainViewCtrl` field here — the legacy navigator window — where
+	 * `LegacyNavigator.mainViewCtrl` returns the `FakeMainViewCtrl` that forwards to the new
+	 * navigator. They are two different objects and this accessor is the first of the pair, so it
+	 * goes to `realMainViewCtrl`.
+	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get mainViewCtrl()
     get mainViewCtrl(): ITransitionalMainViewCtrl | null
     {
-        return this.transitionalNavigator?.mainViewCtrl ?? null;
+        return this.transitionalNavigator?.realMainViewCtrl ?? null;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/HabboNavigator.as::get tabs()
@@ -842,48 +854,54 @@ export class HabboNavigator extends Component implements IHabboNavigator
      * Shows favourite rooms in the navigator.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showFavouriteRooms()
-    showFavouriteRooms(): void 
+    showFavouriteRooms(): void
     {
-        this.send(new MyFavouriteRoomsSearchMessageComposer());
+        this.showMeTab(6);
+    }
 
-        this.openNavigator();
+    /**
+	 * The "me" tab is tab 3 for all three of these; the search type is what its decorator then
+	 * highlights as the sub-selection, so the list and the little sub-tab stay in step.
+	 */
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showMeTab()
+    private showMeTab(searchType: number): void
+    {
+        const mainViewCtrl = this.mainViewCtrl;
 
-        log.debug('Showing favourite rooms');
+        if(mainViewCtrl === null) return;
+
+        mainViewCtrl.startSearch(3, searchType);
+        this.tabs?.getTab(3)?.tabPageDecorator.setSubSelection(searchType);
     }
 
     /**
      * Shows room visit history.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showHistoryRooms()
-    showHistoryRooms(): void 
+    showHistoryRooms(): void
     {
-        this.send(new MyRoomHistorySearchMessageComposer());
-
-        this.openNavigator();
-
-        log.debug('Showing history rooms');
+        this.showMeTab(7);
     }
 
     /**
      * Shows frequently visited rooms.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showFrequentRooms()
-    showFrequentRooms(): void 
+    showFrequentRooms(): void
     {
-        this.send(new MyFrequentRoomHistorySearchMessageComposer());
-
-        this.openNavigator();
-
-        log.debug('Showing frequent rooms');
+        this.showMeTab(23);
     }
 
     /**
      * Returns to the navigator main view.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::goToMainView()
-    goToMainView(): void 
+    goToMainView(): void
     {
-        log.debug('Go to main view');
+        const wrapper = this.transitionalNavigator;
+
+        wrapper?.roomCreateViewCtrl?.hide();
+        wrapper?.roomInfoViewCtrl?.close();
     }
 
     /**
