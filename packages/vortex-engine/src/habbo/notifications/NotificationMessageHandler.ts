@@ -183,6 +183,10 @@ import type {
 } from '@habbo/communication/messages/parser/campaign/treasurehunt/TreasureHuntWinnerInfo';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {imageElementToBitmap} from '@core/utils/BitmapSlot';
+import type {
+    HabboAchievementNotificationMessageEventParser
+} from '@habbo/communication/messages/parser/notifications/HabboAchievementNotificationMessageEventParser';
 
 const log = Logger.getLogger('habbo.notifications.NotificationMessageHandler');
 
@@ -285,17 +289,18 @@ export class NotificationMessageHandler implements IAvatarImageListener
             new Map<string, string>([['badge_name', badgeName]])
         );
 
-        // TODO(AS3): AS3 passes the resolved badge BitmapData as addItem()'s param3. This port
-        // keeps two representations of a badge image — BadgeImageManager hands back an
-        // HTMLImageElement, while HabboNotificationItemStyle.icon is an ImageBitmap — so the
-        // request is still made (it is what starts the badge load and fires BADGE_IMAGE_READY)
-        // but the icon travels on param5, the badge code, until the two are reconciled.
-        this._notifications?.sessionDataManager?.requestBadgeImage(parser.badgeCode);
+        // `requestBadgeImage()` is both the request and the answer: it returns the image if the
+        // library already has it and null while the load it just started is in flight. The two
+        // representations the port keeps — `HTMLImageElement` here, `ImageBitmap` on the item —
+        // are bridged by `imageElementToBitmap()`, which returns null for an image that has not
+        // finished loading, i.e. exactly the null AS3 would have passed at that moment.
+        // `badgeCode` still travels on param5, so a late arrival is still resolvable from it.
+        const badgeImage = this._notifications?.sessionDataManager?.requestBadgeImage(parser.badgeCode) ?? null;
 
         singularController.addItem(
             message,
             NotificationType.BADGE_RECEIVED,
-            null,
+            imageElementToBitmap(badgeImage),
             null,
             parser.badgeCode,
             'inventory/open/badges'
@@ -669,7 +674,29 @@ export class NotificationMessageHandler implements IAvatarImageListener
 
         if(!parser) return;
 
-        // Show achievement notification with badge image
+        const data = (parser as HabboAchievementNotificationMessageEventParser).data;
+        const localization = this._notifications?.localizationManager ?? null;
+        const singularController = this._notifications?.singularController ?? null;
+
+        if(data === null || localization === null || singularController === null) return;
+
+        // The body was an empty stub with a comment where these six lines should have been, so
+        // levelling an achievement produced no notification at all.
+        const achievementName = localization.getBadgeName(data.badgeCode);
+
+        localization.registerParameter('notification.new.achievement', 'achievement_name', achievementName);
+
+        const message = localization.getLocalization('notification.new.achievement');
+        const badgeImage = this._notifications?.sessionDataManager?.requestBadgeImage(data.badgeCode) ?? null;
+
+        singularController.addItem(
+            message,
+            NotificationType.ACHIEVEMENT_RECEIVED,
+            imageElementToBitmap(badgeImage),
+            null,
+            data.badgeCode,
+            `questengine/achievements/${data.category}`
+        );
     }
 
     /**

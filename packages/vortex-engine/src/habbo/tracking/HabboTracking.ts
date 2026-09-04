@@ -49,13 +49,15 @@ const log = Logger.getLogger('habbo.tracking.HabboTracking');
  */
 export class HabboTracking extends Component implements IHabboTracking, IUpdateReceiver
 {
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/HabboTracking.as::getInstance()
-    // AS3 reaches tracking through a global singleton (`_SafeStr_4847`, set to `this` in the
-    // constructor and cleared in dispose()) that dozens of unrelated classes call directly. This
-    // port replaced every one of those call sites with the standard DI ComponentDependency
-    // pattern instead (`IID_HabboTracking`) - see HabboCatalog.ts's `get tracking()` for the
-    // documented precedent. A static getInstance() here would be a second, competing way to reach
-    // the same instance and invites the DI lifecycle being bypassed.
+    // DEVIATION: AS3 reaches tracking through a global singleton (`_SafeStr_4847`, assigned `this`
+    //   in the constructor and cleared in dispose()) that dozens of unrelated classes call
+    //   directly. This port resolves it through `IID_HabboTracking` at every one of those call
+    //   sites instead — `grep -rn "IID_HabboTracking" packages/vortex-engine/src` is the check, and
+    //   `HabboCatalog.get tracking()` is the documented precedent. Adding `getInstance()` back
+    //   would be a second, competing way to reach the same instance, and the one that bypasses the
+    //   DI lifecycle: a caller holding the static reference keeps working after the component is
+    //   disposed, which is the bug the pattern exists to prevent. Not a gap — a decision.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/tracking/HabboTracking.as::getInstance()
 
     // AS3: .../src/com/sulake/habbo/tracking/HabboTracking.as::ERROR_DATA_FLAG_COUNT
     private static readonly ERROR_DATA_FLAG_COUNT: number = 11;

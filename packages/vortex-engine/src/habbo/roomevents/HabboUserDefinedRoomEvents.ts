@@ -3,6 +3,9 @@ import type {IContext} from '@core/runtime';
 import type {IAssetLibrary} from '@core/assets';
 import type {IMessageComposer} from '@core';
 import type {IWindow} from '@core/window/IWindow';
+import type {IWindowContainer} from '@core/window/IWindowContainer';
+import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 
 import {IID_HabboCommunicationManager} from '@iid/IIDHabboCommunicationManager';
@@ -130,12 +133,70 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     // AS3: .../src/com/sulake/habbo/roomevents/HabboUserDefinedRoomEvents.as::_incomingMessages
     private _incomingMessages: IncomingMessages | null = null;
 
-    // TODO(AS3): the UI helpers `refreshButton`/`prepareButton` (HabboUserDefinedRoomEvents.as) are
-    // absent. Narrowed 2026-09-01: this note used to name `getButtonImage` too, which is ported
-    // below and is the *only* one of the three with a caller — `SourceTypeOption`. Nothing in any
-    // tree calls the room-events `refreshButton`; the `_friendList.refreshButton(...)` sites in
-    // habbo/friendlist are `HabboFriendList`'s own same-named member, a different class.
-    // Every sub-controller AS3's constructor builds is created in initComponent().
+    /**
+	 * Shows or hides a named button inside a container, wiring it on the way in.
+	 *
+	 * Nothing in any tree calls this one — the `_friendList.refreshButton(...)` sites in
+	 * `habbo/friendlist` are `HabboFriendList`'s own same-named member, a different class — but it
+	 * is public AS3 API and a caller can arrive, so it ships rather than being left as a note.
+	 *
+	 * `tooltip` doubles as the asset name when it is omitted, which is why hiding takes the cheap
+	 * path and never touches the image.
+	 */
+    // AS3: HabboUserDefinedRoomEvents.as::refreshButton()
+    refreshButton(
+        container: IWindowContainer,
+        name: string,
+        visible: boolean,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null,
+        id: number,
+        tooltip: string | null = null
+    ): void
+    {
+        const assetName = tooltip ?? name;
+        const button = container.findChildByName(name) as IBitmapWrapperWindow | null;
+
+        if(button === null) return;
+
+        if(!visible)
+        {
+            (button as unknown as IWindow).visible = false;
+
+            return;
+        }
+
+        this.prepareButton(button, assetName, procedure, id);
+        (button as unknown as IWindow).visible = true;
+    }
+
+    /**
+	 * The `bitmap != null` early return is what makes this idempotent: a button already carrying
+	 * its image keeps it and only has its id and procedure refreshed, so repeated `refreshButton()`
+	 * calls do not re-read the asset library on every redraw.
+	 */
+    // AS3: HabboUserDefinedRoomEvents.as::prepareButton()
+    private prepareButton(
+        button: IBitmapWrapperWindow,
+        assetName: string,
+        procedure: ((event: WindowEvent, window: IWindow) => void) | null,
+        id: number
+    ): void
+    {
+        const window = button as unknown as IWindow;
+
+        window.id = id;
+        window.procedure = procedure;
+
+        if(button.bitmap !== null) return;
+
+        const image = this.getButtonImage(assetName);
+
+        if(image === null) return;
+
+        button.bitmap = image;
+        window.width = image.width;
+        window.height = image.height;
+    }
 
     /**
      * The asset library is not optional decoration: AS3's third constructor argument is forwarded

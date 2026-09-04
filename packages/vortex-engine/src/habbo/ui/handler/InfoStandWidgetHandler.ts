@@ -102,6 +102,7 @@ import {Vector3d} from '@room/utils/Vector3d';
 import type {IUserData} from '@habbo/session/IUserData';
 import type {InfoStandWidget} from '@habbo/ui/widget/infostand/InfoStandWidget';
 import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
+import {BuilderClubUtils} from '@habbo/utils/BuilderClubUtils';
 
 const log = Logger.getLogger('habbo.ui.handler.InfoStandWidgetHandler');
 
@@ -1294,9 +1295,32 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
         if(!container?.roomEngine) return;
 
-        // TODO(AS3): the Builder's Club "not in warehouse" confirmation dialog branch
-        // (isBuilderClubId + buildersClubEnabled + availableForBuildersClub check) is
-        // deferred — falls through to a direct pickup, matching the non-BC AS3 path.
+        // Picking up a Builder's Club item that is not in the warehouse loses it — the rental is
+        // returned and the item is gone — so that one case asks first. A BC item that *is* in the
+        // warehouse, and everything that is not a BC item at all, goes straight through.
+        const isBuildersClubPickup = BuilderClubUtils.isBuilderClubId(furniId)
+            && (container.catalog?.buildersClubEnabled ?? false);
+
+        if(isBuildersClubPickup && !(this._widget?.furniData.availableForBuildersClub ?? false))
+        {
+            container.windowManager?.confirm(
+                '${generic.alert.title}',
+                '${room.confirm.not_in_warehouse}',
+                0,
+                (dialog: {dispose(): void}, event: WindowEvent): void =>
+                {
+                    dialog.dispose();
+
+                    if(event.type === 'WE_OK')
+                    {
+                        container.roomEngine?.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
+                    }
+                }
+            );
+
+            return;
+        }
+
         container.roomEngine.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
     }
 
