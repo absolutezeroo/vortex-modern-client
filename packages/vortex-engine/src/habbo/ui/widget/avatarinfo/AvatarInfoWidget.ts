@@ -478,6 +478,13 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         if(userData) this._ownRoomIndex = userData.roomObjectId;
 
+        // AS3 runs `updateUserView()`'s prologue before it reaches the own-user arm, so the view
+        // already on screen — here, the name bubble the same click raised — comes down first. The
+        // room index compared is `_ownRoomIndex` rather than the event's `userRoomId` because that
+        // is what `OwnAvatarMenuView.setup()` below installs, and the comparison has to be against
+        // the value a second click will find on the view.
+        if(!this.prepareUserView(event.webID, event.name, this._ownRoomIndex, this._data.allowNameChange, true)) return;
+
         // AS3: AvatarInfoWidget.as::updateUserView() — the own-user arm's two substitutions, both
         // *instead of* the me-menu rather than alongside it. Decorate mode has its own floating
         // "done" button and wants nothing else on screen; the room-entry effect shows the new-user
@@ -554,6 +561,11 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     private showContextInfoButton(event: RoomWidgetAvatarInfoEvent): void
     {
         const container = this.container;
+
+        // `showAvatarContextMenu` is AS3's `data != null`, and this is the arm where it is false:
+        // the first guard (drop a non-menu view) is skipped, the rest still runs. AS3 checks
+        // `isDecorateMode` on the branch itself, after the prologue, so the order below is its own.
+        if(!this.prepareUserView(event.userId, event.userName, event.roomIndex, event.allowNameChange, false)) return;
 
         if(container?.roomEngine?.isDecorateMode ?? false) return;
 
@@ -638,20 +650,32 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
      * The build itself is deferred through `_buttonsSetup`, as the pet path already is: a wired
      * handler gets first refusal on the click, and `maybeSetupMenuView()` runs it if nothing took it.
      */
-    // AS3: AvatarInfoWidget.as::updateUserView()
-    private updatePeerUserView(event: RoomWidgetUserInfoUpdateEvent): void
+    /**
+	 * The head of AS3's `updateUserView()`, before it branches on who was clicked.
+	 *
+	 * AS3 has one method for all three outcomes — the own menu, a peer's menu, and the plain
+	 * `AvatarContextInfoButtonView` name bubble — so this prologue runs for every one of them: it
+	 * takes down whatever is currently on screen before the caller puts something else up. This
+	 * port split that method into three entry points and copied the prologue into only one of
+	 * them, so clicking your own avatar installed the me-menu on top of the name bubble the click
+	 * had just raised, and the bubble stayed there with nothing left holding a reference to it.
+	 *
+	 * Returns whether the caller should go on to install a view. False means AS3's `else` arm
+	 * already did the work — the same menu was open for the same user, so the click closes it —
+	 * or the room is in game mode, where no view opens at all.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::updateUserView()
+    private prepareUserView(
+        userId: number,
+        userName: string,
+        roomIndex: number,
+        allowNameChange: boolean,
+        showAvatarContextMenu: boolean
+    ): boolean
     {
-        this._data.populate(event);
-
-        if(event.isSpectatorMode) return;
-
-        const userId = event.webID;
-        const userName = event.name;
-        const roomIndex = event.userRoomId;
-        const data = this._data;
-
         // A view that is not one of the five context menus is in the way and goes first.
-        if(this._activeView
+        if(showAvatarContextMenu
+            && this._activeView
             && !(this._activeView instanceof AvatarMenuView
                 || this._activeView instanceof OwnAvatarMenuView
                 || this._activeView instanceof PetMenuView
@@ -664,16 +688,43 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.removeUseProductViews();
 
         // AS3 re-opens on any mismatch, and `allowNameChange` forces it even on a match.
-        if(this._activeView
-            && this._activeView.userId === userId
-            && this._activeView.userName === userName
-            && this._activeView.roomIndex === roomIndex
-            && this._activeView.userType === 1
-            && !data.allowNameChange) return;
+        if(this._activeView === null
+            || this._activeView.userId !== userId
+            || this._activeView.userName !== userName
+            || this._activeView.roomIndex !== roomIndex
+            || this._activeView.userType !== 1
+            || allowNameChange)
+        {
+            // `removeView()` clears `_activeView` when it is the one going, exactly as AS3's does,
+            // which is what lets the caller install into a clean slot.
+            if(this._activeView) this.removeView(this._activeView, false);
 
-        if(this._activeView) this.removeView(this._activeView, false);
+            return !this.isGameMode();
+        }
 
-        if(this.isGameMode()) return;
+        // Everything matched: a second click on the avatar whose menu is already open closes it.
+        if((this._activeView instanceof AvatarMenuView || this._activeView instanceof OwnAvatarMenuView)
+            && this._activeView.userName === userName)
+        {
+            this.removeView(this._activeView, false);
+        }
+
+        return false;
+    }
+
+    // AS3: AvatarInfoWidget.as::updateUserView()
+    private updatePeerUserView(event: RoomWidgetUserInfoUpdateEvent): void
+    {
+        this._data.populate(event);
+
+        if(event.isSpectatorMode) return;
+
+        const userId = event.webID;
+        const userName = event.name;
+        const roomIndex = event.userRoomId;
+        const data = this._data;
+
+        if(!this.prepareUserView(userId, userName, roomIndex, data.allowNameChange, true)) return;
 
         this._pendingMenuRoomIndex = roomIndex;
 
