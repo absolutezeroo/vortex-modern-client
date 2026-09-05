@@ -4357,6 +4357,37 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
+- 🆕 **The room-photo payload, closed — 13 → 10, 2026-09-05.** Four markers, one feature, and the
+  reason it had sat is worth recording: its stated blocker was partly *"the emulator's
+  `RenderRoomMessageHandler` is an 18-line accept-and-drop stub, so none of it is exercisable"*.
+  That is a reason to not test it end to end, never a reason to leave the client half unbuilt — the
+  client is the deliverable.
+
+  The other stated blockers did not survive contact either:
+
+  - *"This port renders straight off `_sortableSpriteList` and keeps no such cache."* It keeps one:
+    `_objectSpriteCaches`, a `Map<string, IObjectSpriteCache>` whose `sprites` array is AS3's
+    per-object cache under a different name. That single wrong sentence is what held up all four.
+  - *"`RoomVisualization` exposes no `planes` accessor."* True, and it is four lines.
+  - *"`RoomPlane` has no `getDrawingDatas()`."* Also true — and a documented DEVIATION, since this
+    port's rasterizer paints to a canvas instead of returning asset-name columns. That one still
+    stands, and is now stated where it applies rather than as a blocker on the whole feature.
+
+  What landed: `RoomObjectSpriteData` in `room/data/` where AS3 keeps it — the port had been
+  conflating it with `SortableSprite`, the renderer's draw-order entry, because
+  `getSortableSpriteList()` returned the latter under the former's name. Then
+  `getPlaneSortableSprites()`, `getRoomObjectCacheItem()`, and `Canvas.averageColor()`, which is
+  what lets a downloaded image — a wall photo, a group badge — reach the payload as its mean colour
+  instead of as nothing. Then AS3's three passes in `getFurniData()` (drawn, culled-avatar merge,
+  mannequin expansion) and the whole of `getRoomPlanes()`: projection, viewport culling that counts
+  each axis separately so a straddling plane survives, `sortQuadPoints()` winding, and
+  `sortRoomPlanes()` taking each plane's z from the sprite that drew it.
+
+  One deviation improves on the source and says so: AS3's merge passes add their offsets to the
+  live `IRoomObjectSprite`s, because its sprite and its record are duck-compatible — which visibly
+  drifts a mannequin in the room while a photo is being composed. Each part is converted to its own
+  record first here, so the offsets land on the payload only.
+
 - 🆕 **`GlowFilter.quality` is applied, in one pass — 16 → 15, 2026-09-05.** Flash re-runs its blur
   `quality` times; `q` successive box blurs of the same radius are one convolution with the box
   folded into itself `q` times, so the kernel is computed on the CPU and the shader samples
