@@ -1070,6 +1070,38 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::resetRoomPlanes()
     private resetRoomPlanes(): void
     {
+        // Drop the visible list BEFORE disposing, and this is not tidiness: `plane.dispose()`
+        // destroys the plane's sprite and its texture, and `update()` reads `_visiblePlanes` to
+        // hand those same sprites to the canvas. A pass between the two draws a destroyed texture,
+        // whose `source` is null — which surfaces inside PixiJS as
+        // `getAdjustedBlendModeBlend: Cannot read properties of null (reading 'alphaMode')`, a long
+        // way from here. Flash tolerated the same order because a disposed BitmapData still drew as
+        // nothing.
+        //
+        // `dispose()` on this class already cleared both, one line after calling this — which is
+        // why the hazard only showed once something *else* started calling it: nothing did until
+        // `updatePlaneThicknesses()` landed.
+        // The published sprites hold the planes' textures (`sprite.texture = planeTexture`), and
+        // `plane.dispose()` destroys those textures. Detach them first, or the canvas draws one
+        // whose `source` is now null — which surfaces inside PixiJS as
+        // `getAdjustedBlendModeBlend: Cannot read properties of null (reading 'alphaMode')`, a long
+        // way from here. A sprite with a null texture simply draws nothing until `updatePlanes()`
+        // gives it the rebuilt one, which is the same frame.
+        //
+        // Flash tolerated the reverse order because a disposed BitmapData still drew as nothing.
+        // `dispose()` on this class cleared the two lists below one line after calling this, so the
+        // hazard only appeared once something *else* began calling it: nothing did until
+        // `updatePlaneThicknesses()` landed.
+        for(let i = 0; i < this.spriteCount; i++)
+        {
+            const sprite = this.getSprite(i);
+
+            if(sprite !== null) sprite.texture = null;
+        }
+
+        this._visiblePlanes = [];
+        this._visiblePlaneSpriteNumbers = [];
+
         for(const plane of this._planes)
         {
             if(plane !== null)
