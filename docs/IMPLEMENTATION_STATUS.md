@@ -4380,6 +4380,29 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
+- 🆕 **The inventory's real filters and the selectable staff name — 6 → 4 (2026-09-05).**
+
+  - **`FurniGridFilters` is `_SafeCls_4087`, 264 lines and twenty predicates, and it was in no TS
+    file at all.** That is what `setFilterByWired()` had been "blocked on that substitution" behind:
+    the port had replaced AS3's filter-string system with a numeric floor/wall model, leaving no
+    slot for either of the wired picker's two filters. `_showFloorItems`/`_showWallItems` are gone
+    in favour of `passMainFilter()` — two booleans cannot express `room_layout` at all, and they got
+    `wall_items` wrong in a way that showed, since AS3 excludes wallpaper, floor and landscape from
+    it. What stays is the port's own placement dropdown, which asks a question AS3's filters
+    cannot, and it sits beside AS3's clauses now rather than in place of them.
+    `scripts/check-furni-filters.mjs` guards the twenty, and `isTilesOrRugs` clause by clause.
+  - **A canvas cannot offer selection**, which is the whole of why `ExternalImageWidget`'s staff
+    name never rendered: text painted into a canvas is pixels and a browser has nothing to drag
+    across. `SelectableTextOverlay` lays a transparent, read-only DOM element over the same
+    rectangle — the window still paints the glyphs, the overlay only carries the selection. Same
+    technique as `TextFieldController`'s input bridge, minus the input half.
+
+  **`RoomPlane.maskManager` was re-scoped rather than closed**, and the scoping is the useful part:
+  "wire the manager in" understates it by three steps, because **`PlaneMaskManager.updateMask()` is
+  itself a stub** — it resolves the asset and returns true without drawing, on a note saying PixiJS
+  handles masks in the pipeline. Nothing masks anything today. The marker now names the four
+  changes and their order.
+
 - 🆕 **The effect preview composites without a room — 9 → 6, and `--stale` reaches 0 (2026-09-05).**
   `ProductViewCatalogWidget`'s "e" fallback had been deferred across several sweeps, and the reason
   it survived them is worth naming: each restatement of the blocker was true and none of them was

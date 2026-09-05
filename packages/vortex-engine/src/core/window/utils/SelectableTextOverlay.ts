@@ -19,10 +19,16 @@ export class SelectableTextOverlay
     // TS-only: the bridge in `TextFieldController` picks 9999; this sits under it.
     private static readonly Z_INDEX: string = '9990';
 
+    // TS-only: the DOM element itself, which AS3 has no counterpart for — see the class note.
     private _element: HTMLElement | null = null;
+    // TS-only: the window whose rectangle the element tracks.
     private _window: IWindow | null = null;
+    // TS-only: mirrors the `text` a Flash TextField would carry.
     private _text: string = '';
+    // TS-only: mirrors `TextField.textColor`.
     private _color: number = 0;
+    // TS-only: the element is hidden rather than removed, so this is kept rather than read back
+    //   off `style.display`.
     private _visible: boolean = false;
 
     /**
