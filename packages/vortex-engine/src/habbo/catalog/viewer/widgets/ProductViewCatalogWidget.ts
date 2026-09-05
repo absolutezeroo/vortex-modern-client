@@ -1,4 +1,5 @@
-import type {Container} from 'pixi.js';
+import type {Container, Texture} from 'pixi.js';
+import type {IAvatarImage} from '@habbo/avatar/IAvatarImage';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
@@ -44,12 +45,10 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  * interaction controls (rotate_avatar_left/right, toggle_preview_magic - avatar pose cycling,
  * toggle_preview_zoom).
  *
- * TODO(AS3): one AS3 sub-path is still not ported and is noted again at its call site — the "e"
- * branch's *fallback*, which composites the effect's sprites onto a flat BitmapData when there is
- * no room canvas (`addEffectSprites()`). Its primary path is ported; see `renderEffectPreview()`.
- * The blocker is **not** BitmapData: `onBoardingHcUi/display/BitmapData.ts` has `draw`,
- * `copyPixels` and a fill, which is everything the AS3 body uses. It is that the branch has no
- * reachable caller — see `renderEffectPreview()` for the condition.
+ * Both halves of the "e" branch are here: the room-previewer path in `renderEffectPreview()`, and
+ * the flat composite in `renderEffectPreviewFallback()` for when there is no room canvas to put an
+ * avatar in. The second was deferred for a long time on the grounds that it needed a `BitmapData`
+ * the engine does not have — it needs an `OffscreenCanvas`, which it does.
  *
  * Three things used to be listed here as missing and none of them were. "r" is a bot offer — a
  * single cropped avatar render, `renderBotPreview()`. "e" was described as needing pixel-level
@@ -75,6 +74,18 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
     private static readonly PREVIEW_MODE_FLOOR_FURNITURE: number = 2;
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_MODE_WALL_ITEM
     private static readonly PREVIEW_MODE_WALL_ITEM: number = 3;
+
+    /** The flat preview's fill when the layout carries no `pixelsBackground` window. */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct() (4291611852)
+    private static readonly EFFECT_PREVIEW_BACKGROUND_COLOR: number = 4291611852;
+
+    /** The cell an effect's sprites are authored around, which is not the avatar's own size. */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct() (64)
+    private static readonly EFFECT_SPRITE_CELL: number = 64;
+
+    /** Flash's ADD blend, as a sprite ink value. */
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::addEffectSprites() (33)
+    private static readonly SPRITE_INK_ADD: number = 33;
 
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION
     private static readonly PREVIEW_AVATAR_DEFAULT_BODY_DIRECTION: number = 2;
@@ -1191,17 +1202,9 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 	 * `EffectPreviewer` and the avatar editor's `FigureDataView` do — `productClassId` is the
 	 * effect id.
 	 *
-	 * TODO(AS3): AS3 has a second path below this one, taken only when there is no room canvas: it
-	 *   composites the effect's sprites onto a flat BitmapData filled with `pixelsBackground`'s
-	 *   colour (`addEffectSprites()`, ProductViewCatalogWidget.as:695-760).
-	 *
-	 *   The blocker is reachability, not capability — restated 2026-09-05 because
-	 *   `todo-inventory --stale` kept flagging this on the grounds that a `BitmapData` exists, and
-	 *   one does (`onBoardingHcUi/display/BitmapData.ts`, with `draw`/`copyPixels`/fill: enough
-	 *   for the whole AS3 body). What is missing is a caller: the guard below is the only way in,
-	 *   `_hasRoomCanvas` is what the container visibility already keys on, and AS3's own fallback
-	 *   reads `sessionDataManager.figure` too — so the one condition it would newly cover is
-	 *   "canvas absent, figure present", which no current path produces. Port it if one appears.
+	 * AS3 has a second path below this one, taken only when there is no room canvas: it composites
+	 * the effect's sprites onto a flat background filled with `pixelsBackground`'s colour. That is
+	 * {@link renderEffectPreviewFallback}, and this is where it is taken from.
 	 */
     // AS3 has no `updatePreview()`: the branch lives inside `onPreviewProduct()` (l.473), the
     // `SelectProductEvent` handler, which this port splits into one method per product type.
@@ -1212,10 +1215,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
         if(roomPreviewer == null || this._roomCanvas == null || figure == null)
         {
-            log.warn('"e" preview needs the room canvas; the flat-composite fallback is not ported');
-            this.setPreviewImage(null);
-
-            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+            return this.renderEffectPreviewFallback(product, figure);
         }
 
         roomPreviewer.addAvatarIntoRoom(figure, product.productClassId);
@@ -1223,6 +1223,208 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.applyPreviewAvatarAction(roomPreviewer);
 
         return {mode: ProductViewCatalogWidget.PREVIEW_MODE_AVATAR, canRotate: false};
+    }
+
+    /**
+     * The "e" preview with no room to put an avatar in: the player wearing the effect, composited
+     * flat onto the `pixelsBackground` colour.
+     *
+     * Three draws in AS3's order, and the order is the whole of it — the effect's sprites are split
+     * by their z offset, so the ones *behind* the avatar go down first, then the avatar itself,
+     * then the ones in front. Doing it in one pass would put a jetpack's exhaust over the figure.
+     *
+     * The avatar is animated forward two frames before being read: `updateAnimationByFrames(1)`
+     * twice, as AS3 does. One is not enough — an effect's first frame is usually its rest pose.
+     *
+     * DEVIATION: Flash composites this into a `BitmapData`. There is none in the engine — the shim
+     *   under `onBoardingHcUi/display/` belongs to the client, which the engine may not import
+     *   (`.claude/rules/20-architecture.md` #3) — so it composites into an `OffscreenCanvas` and
+     *   hands the result over as an `ImageBitmap`, the same way `HabbiconBubble` does.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct() ("e" branch, no-canvas path)
+    private renderEffectPreviewFallback(product: IProduct, figure: string | null): {mode: number; canRotate: boolean}
+    {
+        const teaser = this._teaserImage;
+        const renderManager = this._catalog?.avatarRenderManager ?? null;
+
+        if(teaser === null || renderManager === null || figure === null)
+        {
+            this.setPreviewImage(null);
+
+            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+        }
+
+        // AS3 makes the background window visible and reads its colour, falling back to its own
+        // literal when the layout has no such window.
+        const background = this.window.findChildByName('pixelsBackground');
+        let backgroundColor = ProductViewCatalogWidget.EFFECT_PREVIEW_BACKGROUND_COLOR;
+
+        if(background !== null)
+        {
+            background.visible = true;
+            backgroundColor = background.color;
+        }
+
+        const width = Math.max(1, Math.round(teaser.width));
+        const height = Math.max(1, Math.round(teaser.height));
+        const canvas = new OffscreenCanvas(width, height);
+        const context = canvas.getContext('2d');
+
+        if(context === null)
+        {
+            this.setPreviewImage(null);
+
+            return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+        }
+
+        // Opaque: AS3 builds the BitmapData with `transparent = false`.
+        context.fillStyle = `#${(backgroundColor & 0xFFFFFF).toString(16).padStart(6, '0')}`;
+        context.fillRect(0, 0, width, height);
+
+        const avatar = renderManager.createAvatarImage(figure, 'h', null, null, null);
+
+        if(avatar !== null)
+        {
+            avatar.setDirection('head', ProductViewCatalogWidget.PREVIEW_AVATAR_DEFAULT_HEAD_DIRECTION);
+            avatar.initActionAppends();
+            avatar.appendAction('gest', 'sml');
+            avatar.appendAction('fx', product.productClassId);
+            avatar.endActionAppends();
+            avatar.updateAnimationByFrames(1);
+            avatar.updateAnimationByFrames(1);
+
+            const image = avatar.getImage('full', true);
+
+            if(image !== null)
+            {
+                // Where the avatar's own layer sits relative to its sprites — subtracted inside
+                // addEffectSprites() so an effect sprite lands on the figure and not on the canvas
+                // origin.
+                const spriteOrigin = {x: 0, y: 0};
+
+                for(const sprite of avatar.getSprites())
+                {
+                    if(sprite.id !== 'avatar') continue;
+
+                    const layer = avatar.getLayerData(sprite);
+
+                    if(layer === null) continue;
+
+                    spriteOrigin.x = layer.dx;
+                    spriteOrigin.y = layer.dy;
+                }
+
+                const centre = {
+                    x: (width - image.width) / 2,
+                    y: (height - image.height) / 2
+                };
+                // AS3's `_loc33_ = 64` — the effect grid's own cell, which is where its sprites are
+                // authored around, not the avatar's size.
+                const cell = ProductViewCatalogWidget.EFFECT_SPRITE_CELL;
+                const effectOffset = {
+                    x: centre.x + (image.width - cell) / 2,
+                    y: centre.y + image.height - cell / 4
+                };
+
+                this.addEffectSprites(context, avatar, spriteOrigin, effectOffset, false);
+                this.drawTexture(context, image, centre.x, centre.y);
+                this.addEffectSprites(context, avatar, spriteOrigin, effectOffset, true);
+            }
+
+            avatar.dispose();
+        }
+
+        this.setPreviewImage(canvas.transferToImageBitmap());
+
+        // AS3 never assigns a mode on this path: the composited picture goes straight into the
+        // teaser image, and the mode stays whatever it was — 0, so no preview control is shown.
+        return {mode: ProductViewCatalogWidget.PREVIEW_MODE_NONE, canRotate: false};
+    }
+
+    /**
+     * Draws one half of the effect's sprites — the half behind the avatar, or the half in front.
+     *
+     * `front` selects on the sprite's own z direction offset: negative is behind. Each sprite's
+     * asset name is rebuilt from scale, member, direction and animation frame, which is how the
+     * effect's own animation state reaches the picture.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::addEffectSprites()
+    private addEffectSprites(
+        context: OffscreenCanvasRenderingContext2D,
+        avatar: IAvatarImage,
+        spriteOrigin: {x: number; y: number},
+        offset: {x: number; y: number},
+        front: boolean = true
+    ): void
+    {
+        const direction = avatar.getDirection();
+
+        for(const sprite of avatar.getSprites())
+        {
+            const layer = avatar.getLayerData(sprite);
+            const offsetZ = sprite.getDirectionOffsetZ(direction);
+
+            // Behind and in front are drawn by two separate calls, so each skips the other's half.
+            if(front ? offsetZ < 0 : offsetZ >= 0) continue;
+
+            let offsetX = sprite.getDirectionOffsetX(direction);
+            let offsetY = sprite.getDirectionOffsetY(direction);
+            let frame = 0;
+            let spriteDirection = sprite.hasDirections ? direction : 0;
+
+            if(layer !== null)
+            {
+                frame = layer.animationFrame;
+                offsetX += layer.dx;
+                offsetY += layer.dy;
+                // `dd` is what the 2016 interface calls the 2026 one's `directionOffset`; the port
+                // took the older name and they are the same member.
+                spriteDirection += layer.dd;
+            }
+
+            if(spriteDirection < 0) spriteDirection += 8;
+            if(spriteDirection > 7) spriteDirection -= 8;
+
+            const asset = avatar.getAsset(`${avatar.getScale()}_${sprite.member}_${spriteDirection}_${frame}`);
+
+            if(asset === null || asset.texture === null) continue;
+
+            const x = offset.x - asset.offsetX + offsetX - spriteOrigin.x;
+            const y = offset.y - asset.offsetY + offsetY - spriteOrigin.y;
+
+            // Ink 33 is Flash's ADD blend, which is what makes a glow read as light rather than as
+            // paint. `lighter` is the Canvas2D operation with the same arithmetic.
+            const additive = sprite.ink === ProductViewCatalogWidget.SPRITE_INK_ADD;
+
+            if(additive) context.globalCompositeOperation = 'lighter';
+
+            this.drawTexture(context, asset.texture, x, y);
+
+            if(additive) context.globalCompositeOperation = 'source-over';
+        }
+    }
+
+    /**
+     * Blits one PixiJS texture into a 2D context at its own frame.
+     *
+     * Only the texture's frame is drawn: these come off atlas pages, and drawing the whole source
+     * would paint every sibling sprite with it.
+     */
+    // TS-only: Flash's `copyPixels`/`draw` take a BitmapData; a GPU texture has to be drawn from
+    //   its source resource instead.
+    private drawTexture(context: OffscreenCanvasRenderingContext2D, texture: Texture, x: number, y: number): void
+    {
+        const source = (texture.source?.resource ?? null) as CanvasImageSource | null;
+
+        if(source === null) return;
+
+        const frame = texture.frame;
+
+        context.drawImage(
+            source,
+            frame.x, frame.y, frame.width, frame.height,
+            x, y, frame.width, frame.height
+        );
     }
 
     /**
