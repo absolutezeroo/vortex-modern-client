@@ -71,29 +71,61 @@ export class PlaneMaskManager
         this.parseMasks(this._data, collection);
     }
 
+    /**
+     * Stamps one mask's artwork into `target` at the given offset.
+     *
+     * This is where a door or window *shape* comes from: the plane hands over a scratch canvas and
+     * the position the opening sits at, and the mask's own asset — chosen for the plane's scale and
+     * facing — is drawn into it. The plane then punches that shape out of its texture.
+     *
+     * The asset carries its own offset and may be flipped on either axis, and a flip has to move
+     * the image back by its own size or it lands a width to the left of where it belongs — which is
+     * what the `translate` by `flipOffsetX`/`flipOffsetY` is for. AS3 builds the same matrix.
+     *
+     * DEVIATION: AS3 takes a `BitmapData` and calls `draw(bitmap, matrix)`. The target here is an
+     *   `OffscreenCanvas` and the artwork a PixiJS `Texture`, so the matrix goes on the 2D context
+     *   and only the texture's own frame is blitted — these come off atlas pages, and drawing the
+     *   whole source would stamp every sibling mask with it.
+     *
+     * @returns true when the mask was resolved, whether or not it had artwork to draw — AS3 returns
+     *   true unconditionally, and the caller uses it for nothing.
+     */
     // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::updateMask()
     updateMask(
-        _target: any,
+        target: OffscreenCanvas | null,
         maskType: string,
         scale: number,
         position: IVector3d,
-        _offsetX: number,
-        _offsetY: number
+        offsetX: number,
+        offsetY: number
     ): boolean
     {
         const mask = this._masks.get(maskType);
 
-        if(mask !== undefined)
-        {
-            const asset = mask.getGraphicAsset(scale, position);
+        if(mask === undefined || target === null) return true;
 
-            if(asset !== null && asset.texture !== null)
-            {
-                // In PixiJS, mask application is handled by the rendering pipeline
-                // rather than drawing onto BitmapData. The mask asset is available for use.
-                return true;
-            }
-        }
+        const asset = mask.getGraphicAsset(scale, position);
+        const texture = asset?.texture ?? null;
+
+        if(asset === null || texture === null) return true;
+
+        const source = (texture.source?.resource ?? null) as CanvasImageSource | null;
+        const context = target.getContext('2d');
+
+        if(source === null || context === null) return true;
+
+        const frame = texture.frame;
+        const x = offsetX + asset.offsetX;
+        const y = offsetY + asset.offsetY;
+        const scaleX = asset.flipH ? -1 : 1;
+        const scaleY = asset.flipV ? -1 : 1;
+        const flipOffsetX = asset.flipH ? frame.width : 0;
+        const flipOffsetY = asset.flipV ? frame.height : 0;
+
+        context.save();
+        context.setTransform(scaleX, 0, 0, scaleY, x + flipOffsetX, y + flipOffsetY);
+        context.drawImage(source, frame.x, frame.y, frame.width, frame.height, 0, 0, frame.width, frame.height);
+        context.restore();
 
         return true;
     }

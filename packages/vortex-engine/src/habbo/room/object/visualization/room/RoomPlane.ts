@@ -184,20 +184,24 @@ export class RoomPlane
     // from artwork. The *rectangle* masks are exact either way — a rectangle is a rectangle — so
     // what this costs is the shaped edge of a door or an arched window.
     //
-    // Scoped 2026-09-05, because "wire the manager in" understates it by three steps. The setter is
-    // one line; the feature is four changes, and the order matters:
+    // Two of the four steps this needed landed on 2026-09-05, and the third turned out to be the
+    // real blocker — not "wire the manager in", which is what the marker used to say.
     //
-    //   1. `PlaneMaskManager.updateMask()` **is itself a stub** — it resolves the asset and returns
-    //      true without drawing anything, on a note saying PixiJS masks in the pipeline. Nothing
-    //      masks anything today. It has to draw the resolved asset into a target canvas first.
-    //   2. `RoomVisualizationData` has to own the manager, `initialize()` it from the bundle's
-    //      `maskData` (already carried, already typed) and forward `initializeAssetCollection()`
-    //      to it — AS3 does all three, at l.34, l.152 and l.167.
-    //   3. `RoomVisualization` hands it to each plane as it builds them (AS3 l.472).
-    //   4. Only then does this setter mean anything, and `render()`'s bitmap-mask branch swaps
-    //      `drawMaskPoly()` for a `destination-out` blit of the mask canvas. The `destination-out`
-    //      compositing is already there and already correct; it is the *shape* being drawn that
-    //      changes.
+    //   DONE. `PlaneMaskManager.updateMask()` was itself a stub: it resolved the asset and returned
+    //     true without drawing anything, on a note claiming PixiJS handled masks in the pipeline.
+    //     It draws now — flip-aware matrix, the asset's own offset, the texture's own frame.
+    //   DONE. `RoomVisualizationData` owns the manager, initialises it from the bundle's `maskData`
+    //     and disposes it, as AS3 does at l.34, l.152 and l.89.
+    //   BLOCKED. `initializeAssetCollection()` cannot be forwarded: the room rasterizers take
+    //     `Map<string, HTMLCanvasElement>` — textures by name and nothing else — while the mask
+    //     manager takes an `IGraphicAssetCollection`, where an asset carries its **offset and flip
+    //     flags**. `updateMask()` needs exactly those, so with the Map every mask would draw at the
+    //     plane's origin instead of at the opening. See the note at that method in
+    //     `RoomVisualizationData` for the bridge and why it is not a one-liner.
+    //   THEN. `RoomVisualization` hands the manager to each plane (AS3 l.472), and `render()`'s
+    //     bitmap-mask branch swaps `drawMaskPoly()` for a `destination-out` blit of the mask canvas.
+    //     The `destination-out` compositing is already there and already correct; only the *shape*
+    //     being drawn changes.
     //
     // Worth doing with the client running: it changes how every wall carrying a door or a window
     // renders, and the geometric approximation it replaces is working code.
