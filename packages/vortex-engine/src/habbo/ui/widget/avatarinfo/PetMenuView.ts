@@ -105,7 +105,7 @@ export class PetMenuView extends AvatarContextInfoButtonView
 
         if(!this._window)
         {
-            this._window = this._widget.windowManager.buildWidgetLayout('pet_menu') as IWindowContainer | null;
+            this._window = this._widget.windowManager.buildWidgetLayout('pet_menu', 0) as IWindowContainer | null;
 
             if(!this._window) return;
 

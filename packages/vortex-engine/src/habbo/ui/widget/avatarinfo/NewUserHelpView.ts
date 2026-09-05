@@ -56,7 +56,7 @@ export class NewUserHelpView extends AvatarContextInfoButtonView
 
         if(!this._window)
         {
-            this._window = this.widget.windowManager?.buildWidgetLayout('new_user_help') as IWindowContainer | null ?? null;
+            this._window = this.widget.windowManager?.buildWidgetLayout('new_user_help', 0) as IWindowContainer | null ?? null;
 
             if(!this._window) return;
 

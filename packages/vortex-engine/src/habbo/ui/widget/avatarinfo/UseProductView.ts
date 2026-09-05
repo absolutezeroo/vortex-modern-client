@@ -179,7 +179,7 @@ export class UseProductView extends AvatarContextInfoButtonView
 
         if(!this._window)
         {
-            this._window = this._widget.windowManager.buildWidgetLayout('use_product_menu') as IWindowContainer | null;
+            this._window = this._widget.windowManager.buildWidgetLayout('use_product_menu', 0) as IWindowContainer | null;
 
             if(!this._window) return;
 

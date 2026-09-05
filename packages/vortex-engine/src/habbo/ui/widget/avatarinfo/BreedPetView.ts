@@ -103,7 +103,7 @@ export class BreedPetView extends AvatarContextInfoButtonView
 
         if(!this._window)
         {
-            this._window = this._widget.windowManager.buildWidgetLayout('breed_pet_menu') as IWindowContainer | null;
+            this._window = this._widget.windowManager.buildWidgetLayout('breed_pet_menu', 0) as IWindowContainer | null;
 
             if(!this._window) return;
 

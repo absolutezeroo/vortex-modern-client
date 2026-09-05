@@ -131,7 +131,7 @@ export class AvatarMenuView extends AvatarContextInfoButtonView
 
         if(!this._window)
         {
-            this._window = this._widget.windowManager.buildWidgetLayout('avatar_menu_widget') as IWindowContainer | null;
+            this._window = this._widget.windowManager.buildWidgetLayout('avatar_menu_widget', 0) as IWindowContainer | null;
 
             if(!this._window) return;
 

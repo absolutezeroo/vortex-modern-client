@@ -71,7 +71,7 @@ export class DecorateModeView extends AvatarContextInfoButtonView
 
         if(!this._window)
         {
-            this._window = this.widget.windowManager?.buildWidgetLayout('own_avatar_decorating') as IWindowContainer | null ?? null;
+            this._window = this.widget.windowManager?.buildWidgetLayout('own_avatar_decorating', 0) as IWindowContainer | null ?? null;
 
             if(!this._window) return;
 

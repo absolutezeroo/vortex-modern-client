@@ -289,6 +289,14 @@ export class ContextInfoView
 
         if(!this._activeView.parent)
         {
+            // Layer 0, and every context view is *built* on it too — AS3 passes it explicitly,
+            // `buildFromXML(_loc1_, 0)`, at all twelve of these build sites even though its own
+            // default is 1. That is not decoration: a layer is a whole WindowContext with its own
+            // desktop, and `WindowContext.createWindow()` parents a root window to it
+            // (`parent ?? _desktop`), so a view built on the default landed on `desktop_1` and
+            // painted over every window on `desktop_0` — including the menus it is supposed to sit
+            // under. The `!parent` test below then never fired, because the build had already given
+            // it one, so nothing brought it back down here either.
             const desktop = this._widget.windowManager.getDesktop(0);
 
             if(desktop) (desktop as IWindowContainer).addChild(this._activeView);
@@ -384,7 +392,7 @@ export class ContextInfoView
     {
         if(!this._minimizedWindow)
         {
-            this._minimizedWindow = this._widget.windowManager.buildWidgetLayout('minimized_menu') as IWindowContainer | null;
+            this._minimizedWindow = this._widget.windowManager.buildWidgetLayout('minimized_menu', 0) as IWindowContainer | null;
 
             if(!this._minimizedWindow) return null;
 

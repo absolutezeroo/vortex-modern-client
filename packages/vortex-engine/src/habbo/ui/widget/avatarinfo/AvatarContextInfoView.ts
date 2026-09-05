@@ -113,7 +113,7 @@ export class AvatarContextInfoView extends ContextInfoView
 
         if(!this._window)
         {
-            this._window = this._widget.windowManager.buildWidgetLayout('avatar_info_widget') as IWindowContainer | null;
+            this._window = this._widget.windowManager.buildWidgetLayout('avatar_info_widget', 0) as IWindowContainer | null;
 
             if(!this._window) return;
         }
