@@ -101,8 +101,14 @@ export class PlaneMaskManager
      *   and only the texture's own frame is blitted — these come off atlas pages, and drawing the
      *   whole source would stamp every sibling mask with it.
      *
-     * @returns true when the mask was resolved, whether or not it had artwork to draw — AS3 returns
-     *   true unconditionally, and the caller uses it for nothing.
+     * DEVIATION: AS3 returns true unconditionally and its one caller ignores the result. Here the
+     *   return says **whether anything was actually drawn**, because the port's caller needs it: a
+     *   mask that resolves but draws nothing must fall back to the geometric cut, and treating
+     *   "resolved" as "drawn" left walls with no opening at all. Every early return below is a way
+     *   for that to happen — an unknown type, a texture whose CPU-side resource pixi has released
+     *   after upload, or artwork placed entirely outside the plane's texture.
+     *
+     * @returns true when artwork was drawn into `target`
      */
     // AS3: .../src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::updateMask()
     updateMask(
@@ -116,21 +122,29 @@ export class PlaneMaskManager
     {
         const mask = this._masks.get(maskType);
 
-        if(mask === undefined || target === null) return true;
+        if(mask === undefined || target === null) return false;
 
         const asset = mask.getGraphicAsset(scale, position);
         const texture = asset?.texture ?? null;
 
-        if(asset === null || texture === null) return true;
+        if(asset === null || texture === null) return false;
 
         const source = (texture.source?.resource ?? null) as CanvasImageSource | null;
         const context = target.getContext('2d');
 
-        if(source === null || context === null) return true;
+        if(source === null || context === null) return false;
 
         const frame = texture.frame;
         const x = offsetX + asset.offsetX;
         const y = offsetY + asset.offsetY;
+
+        // Placed off the texture entirely: `drawImage` succeeds and paints nothing, which is
+        // indistinguishable from success unless it is checked here.
+        if(x + frame.width <= 0 || y + frame.height <= 0 || x >= target.width || y >= target.height)
+        {
+            return false;
+        }
+
         const scaleX = asset.flipH ? -1 : 1;
         const scaleY = asset.flipV ? -1 : 1;
         const flipOffsetX = asset.flipH ? frame.width : 0;
