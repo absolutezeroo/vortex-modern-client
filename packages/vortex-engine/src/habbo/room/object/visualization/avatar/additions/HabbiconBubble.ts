@@ -113,7 +113,11 @@ export class HabbiconBubble implements IAvatarAddition
      */
     // AS3: .../additions/HabbiconBubble.as::_bitmap
     private _texture: Texture | null = null;
+    // TS-only: AS3 reads `_bitmap.width` / `.height` off the BitmapData whenever it needs them.
+    //   A PixiJS Texture is handed the pixels and the canvas is blanked, so the two dimensions the
+    //   anchor compensation depends on are remembered here instead.
     private _textureWidth: number = 0;
+    // TS-only: as above.
     private _textureHeight: number = 0;
 
     /**
