@@ -1,5 +1,6 @@
 import type {Component} from '@core/runtime';
 import type {IWindow} from '@core/window/IWindow';
+import {SelectableTextOverlay} from '@core/window/utils/SelectableTextOverlay';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
@@ -165,15 +166,15 @@ export class ExternalImageWidget extends RoomWidgetBase
      * layout's `name_copy_wrapper` slot for room controller level 5 only, so staff can select and
      * copy the photographer's name out of a label that is otherwise not selectable.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/
-     * externalimage/ExternalImageWidget.as::ExternalImageWidget() — this port has no Flash
-     * TextField. The holder below keeps the text assignments faithful and is handed to
-     * `setDisplayObject()` exactly where AS3 hands over the TextField, but nothing renders it: the
-     * remaining work is a selectable text display object (the DOM input bridge is the closest
-     * existing mechanism). Non-staff are unaffected — the wrapper is never populated for them.
+     * DEVIATION: there is no Flash `TextField` to drop in, and a canvas cannot offer selection at
+     *   all — text painted into it is pixels. `SelectableTextOverlay` puts a transparent, read-only
+     *   DOM element over the same rectangle instead, which is what makes the same glyphs
+     *   selectable: the window still paints them, the overlay only carries the selection. Same
+     *   technique as `TextFieldController`'s input bridge, minus the input half. Non-staff are
+     *   unaffected either way — the wrapper is never populated for them.
      */
     // AS3: .../widget/furniture/externalimage/ExternalImageWidget.as::_staffNameField
-    private _staffNameField: {text: string; textColor: number} = {text: '', textColor: 0};
+    private _staffNameField: SelectableTextOverlay = new SelectableTextOverlay();
 
     // AS3: .../widget/furniture/externalimage/ExternalImageWidget.as::_creationDateLabel
     // Name DERIVED (`_SafeStr_7509`): found by "creationDate".
@@ -313,7 +314,10 @@ export class ExternalImageWidget extends RoomWidgetBase
 
             this._staffNameField.textColor = ExternalImageWidget.STAFF_NAME_COLOR;
             this._staffNameField.text = '';
+            // Both, and in this order: AS3 hands the TextField to the wrapper so the layout owns
+            // its rectangle, and the overlay tracks that same window to sit over it.
             wrapper?.setDisplayObject(this._staffNameField);
+            this._staffNameField.attachTo(wrapper as unknown as IWindow | null);
         }
 
         this._creationDateLabel = this._window.findChildByName('creationDate') as ILabelWindow | null;
@@ -427,6 +431,12 @@ export class ExternalImageWidget extends RoomWidgetBase
         this._senderNameButton = null;
         this._buttonContainer = null;
         this._shareArea = null;
+
+        // Before the window goes: the overlay tracks one of its children, and a DOM element left
+        // over a window that no longer exists would keep swallowing the pointer where it sat.
+        // AS3 nulls its TextField here for the same reason.
+        // AS3: .../widget/furniture/externalimage/ExternalImageWidget.as::dispose()
+        this._staffNameField.dispose();
 
         this._window.procedure = null;
         this._window.dispose();
@@ -902,6 +912,9 @@ export class ExternalImageWidget extends RoomWidgetBase
         if(this._photo === null)
         {
             this._window.center();
+            // The overlay is a DOM element in page coordinates, so it has to be told: it does not
+            // move with the window the way a Flash TextField parented to it would.
+            this._staffNameField.sync();
 
             return;
         }
@@ -934,6 +947,8 @@ export class ExternalImageWidget extends RoomWidgetBase
 
         if(previousButton !== null) previousButton.y = arrowY;
         if(nextButton !== null) nextButton.y = arrowY;
+
+        this._staffNameField.sync();
     }
 
     /**
