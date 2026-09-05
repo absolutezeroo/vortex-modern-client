@@ -101,6 +101,16 @@ export class PlaneMaskManager
      *   and only the texture's own frame is blitted — these come off atlas pages, and drawing the
      *   whole source would stamp every sibling mask with it.
      *
+     * The other half of that deviation is which channel cuts. `RoomPlane.combineTextureMask()`
+     * copies the texture's ALPHA into a scratch RED, blends this bitmap over it in `darken`, and
+     * copies RED back into ALPHA — so in AS3 it is the mask's **RGB darkness** that opens the hole,
+     * and its own alpha never participates. `RoomPlane.applyBitmapMasks()` cuts with
+     * `destination-out`, which reads this bitmap's **alpha** instead. The two agree because the
+     * shipped masks are solid: `door_64` in `HabboRoomContent.nitro` is 32x88 and every one of its
+     * 2,816 pixels is opaque `0,0,0` — checked, not assumed. A mask asset that was ever authored as
+     * black-on-white rather than black-on-transparent would cut its whole bounding box here and
+     * only its dark part in AS3, and that is the case to port `combineTextureMask()` properly for.
+     *
      * DEVIATION: AS3 returns true unconditionally and its one caller ignores the result. Here the
      *   return says **whether anything was actually drawn**, because the port's caller needs it: a
      *   mask that resolves but draws nothing must fall back to the geometric cut, and treating

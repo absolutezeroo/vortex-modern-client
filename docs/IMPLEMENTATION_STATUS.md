@@ -93,6 +93,27 @@ does. The polygon fallback was skipped for masks that had drawn nothing, so a do
 be a crude rectangle became no opening at all. It now asks `getGraphicAsset(scale, normal)` and only
 claims the mask when there is something to draw.
 
+**What actually made the doorway vanish: `reset()` was missing one field.** Everything above is
+real, and none of it was the reported bug. AS3's `resetRoomPlanes()` ends by calling `reset()`, and
+AS3's `reset()` nulls six fields where the port nulled five — the missing one being `_maskXml`, the
+cached mask XML that `updateMasksAndColors()` compares against before re-applying masks. Rebuilding
+the planes throws their masks away with them; leaving the cache standing means the fresh planes
+never get doors or windows, and no later update can repair it because the XML never changes again.
+
+The omission was inert for as long as nothing rebuilt planes mid-session. `updatePlaneThicknesses()`
+does, so the symptom arrived with the thickness fix and read as "the door rendered for two frames
+and then the wall went solid for good" — which is exactly what it was. Two lessons, both already in
+this file in other words: a field-by-field diff against the AS3 body is worth more than reading it
+for sense, and a latent gap surfaces when an unrelated change starts exercising it.
+
+Three measurements settled this, after two wrong diagnoses that were reasoned rather than measured:
+the mask-type log line (29 types, artwork reaches the planes), a probe printing the placement
+numbers (`place=112,115`, asset offset `-16,-86` → the cut lands at texture (96,29)-(128,115), which
+is correct), and a decode of `HabboRoomContent.nitro`'s own pixels (`door_64` is 32x88 and every one
+of its 2,816 pixels is opaque black, so the mask is a rectangle and the port's alpha-based cut and
+AS3's `darken`-on-RGB cut agree). With all three green the remaining candidate was the one nobody
+had looked at.
+
 **The doorway reveal is a deliberate deviation, and it is `near \ far`.** Neither AS3 nor Flash
 Habbo draws the inside faces of a cut opening: their mask punches a flat hole through a wall that
 has thickness everywhere else, so an open doorway shows the void behind the room. The port fills it,

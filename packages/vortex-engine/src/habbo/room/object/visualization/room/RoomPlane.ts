@@ -15,9 +15,6 @@ import type {IPlaneRasterizer} from './rasterizer/IPlaneRasterizer';
 import type {PlaneBitmapData} from './utils/PlaneBitmapData';
 import {Randomizer} from './utils/Randomizer';
 import type {PlaneMaskManager} from './mask/PlaneMaskManager';
-import {Logger} from '@core/utils/Logger';
-
-const log = Logger.getLogger('habbo.room.object.visualization.room.RoomPlane');
 
 /**
  * Bitmap mask data for plane masking (doors, windows).
@@ -63,9 +60,6 @@ export class RoomPlane
     // TS-only: the reveal has no AS3 counterpart; the colour does.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_SIDE
     private static readonly REVEAL_COLOR: number = 0xCCCCCC;
-
-    /** TEMPORARY PROBE — plane ids already reported, so the log is one line per plane, not per frame. */
-    private static readonly PROBED: Set<number> = new Set();
 
     private _randomSeed: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_origin
@@ -1002,26 +996,7 @@ export class RoomPlane
             // here — resolving a type is not the same as putting pixels on the canvas, and treating
             // the two as one skipped the polygon fallback for masks that had drawn nothing, which
             // left the wall solid where a doorway had been.
-            const drawn = manager.updateMask(maskCanvas, mask.type, geometry.scale, normal, offsetX, offsetY);
-
-            // TEMPORARY PROBE — remove once the doorway is confirmed on screen.
-            if(!RoomPlane.PROBED.has(this._uniqueId))
-            {
-                RoomPlane.PROBED.add(this._uniqueId);
-
-                const gAsset = manager.getMask(mask.type)?.getGraphicAsset(geometry.scale, normal) ?? null;
-                const frame = gAsset?.texture?.frame ?? null;
-
-                log.warn(
-                    `mask ${mask.type} on plane#${this._uniqueId}: tex=${width}x${height}`
-                    + ` loc=${mask.leftSideLoc}/${mask.rightSideLoc} len=${leftLen}/${rightLen}`
-                    + ` place=${offsetX.toFixed(1)},${offsetY.toFixed(1)}`
-                    + ` asset=${gAsset === null ? 'null' : `${gAsset.offsetX},${gAsset.offsetY} ${frame?.width}x${frame?.height} flipH=${gAsset.flipH}`}`
-                    + ` drawn=${drawn}`
-                );
-            }
-
-            if(!drawn) continue;
+            if(!manager.updateMask(maskCanvas, mask.type, geometry.scale, normal, offsetX, offsetY)) continue;
 
             this._assetMaskedTypes.add(mask);
         }

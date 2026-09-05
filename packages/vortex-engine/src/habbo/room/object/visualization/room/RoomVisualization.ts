@@ -296,6 +296,19 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         this._floorType = null;
         this._wallType = null;
         this._landscapeType = null;
+
+        // The cached mask XML, and it is not optional. `resetRoomPlanes()` ends by calling this,
+        // and it has just destroyed every plane and their masks with them. `updateMasksAndColors()`
+        // re-applies masks only when the XML differs from what it last saw — so leaving the cache
+        // standing across a rebuild means the fresh planes never get their doors and windows, and
+        // no later update can fix it because the XML never changes again. AS3 nulls it here for
+        // exactly this reason (`reset()`, `_SafeStr_8318 = null`).
+        //
+        // Harmless until something started rebuilding planes mid-session: `updatePlaneThicknesses()`
+        // now does, and the doorway rendered for two frames and then went solid for good.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::reset()
+        this._maskXml = null;
+
         this._geometryUpdateId = -1;
         this._geometryScale = 0;
     }
@@ -1070,17 +1083,6 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::resetRoomPlanes()
     private resetRoomPlanes(): void
     {
-        // Drop the visible list BEFORE disposing, and this is not tidiness: `plane.dispose()`
-        // destroys the plane's sprite and its texture, and `update()` reads `_visiblePlanes` to
-        // hand those same sprites to the canvas. A pass between the two draws a destroyed texture,
-        // whose `source` is null — which surfaces inside PixiJS as
-        // `getAdjustedBlendModeBlend: Cannot read properties of null (reading 'alphaMode')`, a long
-        // way from here. Flash tolerated the same order because a disposed BitmapData still drew as
-        // nothing.
-        //
-        // `dispose()` on this class already cleared both, one line after calling this — which is
-        // why the hazard only showed once something *else* started calling it: nothing did until
-        // `updatePlaneThicknesses()` landed.
         // The published sprites hold the planes' textures (`sprite.texture = planeTexture`), and
         // `plane.dispose()` destroys those textures. Detach them first, or the canvas draws one
         // whose `source` is now null — which surfaces inside PixiJS as
