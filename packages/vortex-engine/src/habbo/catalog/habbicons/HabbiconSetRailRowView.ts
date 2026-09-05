@@ -5,6 +5,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
+import {copyBitmap} from '@habbo/notifications/utils/copyBitmap';
 
 import type {HabbiconSetModel} from './HabbiconSetModel';
 import {HabbiconProgressBarView} from './HabbiconProgressBarView';
@@ -151,7 +152,7 @@ export class HabbiconSetRailRowView implements IDisposable
         if(preview !== null)
         {
             target.disposesBitmap = true;
-            target.bitmap = preview;
+            target.bitmap = copyBitmap(preview);
             (target as unknown as IWindow).visible = true;
             (target as unknown as IWindow).invalidate();
         }
@@ -162,10 +163,10 @@ export class HabbiconSetRailRowView implements IDisposable
     }
 
     /**
-	 * The bitmap handed over is the manager's cached preview, not a clone: `createImageBitmap` is
-	 * async and the AS3 clone cannot be reproduced synchronously. `disposesBitmap` is still set as
-	 * AS3 sets it, so a window that does dispose its bitmap behaves the same — but this port's
-	 * bitmap wrapper only drops the reference.
+	 * The bitmap handed over is a *copy* of the manager's cached preview, as AS3's `.clone()` is.
+	 * That is not optional now that `disposesBitmap` is set: the wrapper closes the bitmap it holds
+	 * on the next assignment, and closing the cached one detaches the preview for every other
+	 * habbicon view — the owned tray then throws mid-refresh and renders empty.
 	 */
     // AS3: HabbiconSetRailRowView.as::clearIcon()
     private clearIcon(): void

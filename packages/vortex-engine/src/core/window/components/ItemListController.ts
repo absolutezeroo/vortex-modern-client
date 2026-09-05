@@ -110,7 +110,24 @@ export class ItemListController extends WindowController implements IItemListWin
         // The container is created at the item list's full height, so the
         // flag is armed while _container matches this.height - subsequent
         // per-child resize deltas then net to zero, keeping this.height correct.
-        if(this._isHorizontal)
+        //
+        // The branch is taken on the TYPE, not on `_isHorizontal`, and that is
+        // not a shortcut. AS3 arms this from its own constructor
+        // (`resizeOnItemUpdate = _resizeOnItemUpdate`, ItemListController.as:71)
+        // where `_SafeStr_5024` still holds `param2 == 51` - ItemGridController's
+        // body, which widens it to `param2 != 54`, only runs after `super()`
+        // returns. So a vertical item GRID arms the flag as a vertical list:
+        // its container reflects height to the grid, and the grid keeps its
+        // authored width.
+        //
+        // Reading `_isHorizontal` here instead - already true for the grid,
+        // because this port applies properties in a later phase - armed the
+        // HORIZONTAL bit, so the grid's width collapsed onto its content:
+        // 486 -> 50 after the first tile. `resolveColumnForNextItem()` then
+        // tests `column.right + item.width <= _width` against that collapsed
+        // width and never opens a second column, which is how every habbicon
+        // grid rendered as one vertical strip.
+        if(this._type === 51)
         {
             containerWin.setParamFlag(0x400000, this._resizeOnItemUpdate);
             containerWin.setParamFlag(0x800000, this._inverseResizeOnItemUpdate);

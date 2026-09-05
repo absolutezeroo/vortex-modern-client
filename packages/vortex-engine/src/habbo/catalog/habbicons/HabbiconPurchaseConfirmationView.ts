@@ -12,6 +12,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
+import {copyBitmap} from '@habbo/notifications/utils/copyBitmap';
 import type {
     HabbiconCollectionData
 } from '@habbo/communication/messages/incoming/habbicons/HabbiconCollectionData';
@@ -426,14 +427,17 @@ export class HabbiconPurchaseConfirmationView implements IDisposable
     // AS3: HabbiconPurchaseConfirmationView.as::createHabbiconBitmap()
     private static createHabbiconBitmap(habbiconId: number): ImageBitmap | null
     {
-        return HabbiconAssetManager.getPreviewBitmap(habbiconId, false)
+        // AS3: `_loc2_.clone()`. `productImage.disposesBitmap` is true, and the preview handed back
+        // is the asset manager's cached one — closing it detaches it for every other habbicon view.
+        return copyBitmap(HabbiconAssetManager.getPreviewBitmap(habbiconId, false))
             ?? HabbiconPurchaseConfirmationView.createPlaceholderBitmap();
     }
 
     // AS3: HabbiconPurchaseConfirmationView.as::createSetBitmap()
     private static createSetBitmap(set: HabbiconSetModel): ImageBitmap | null
     {
-        return set.bitmap ?? HabbiconPurchaseConfirmationView.createPlaceholderBitmap();
+        // AS3: `param1._SafeStr_6778.clone()` — `set.bitmap` is the manager's cached collection icon.
+        return copyBitmap(set.bitmap) ?? HabbiconPurchaseConfirmationView.createPlaceholderBitmap();
     }
 
     // AS3: HabbiconPurchaseConfirmationView.as::createSetBitmap() — the `new BitmapData(...)` fallback

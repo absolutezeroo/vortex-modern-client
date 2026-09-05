@@ -202,6 +202,11 @@ export class HabbiconTileView implements IDisposable
     // AS3: HabbiconTileView.as::refresh() — the BitmapData.clone()/colorTransform() half
     private static prepareBitmap(source: ImageBitmap | null, locked: boolean): ImageBitmap | null
     {
+        // A closed `ImageBitmap` reports 0x0 and makes `drawImage` throw `InvalidStateError` — in
+        // the middle of a tray refresh, which then adds no groups at all. Treat it as "no artwork",
+        // which is the case this method already handles.
+        if(source !== null && (source.width === 0 || source.height === 0)) source = null;
+
         const width = source?.width ?? 40;
         const height = source?.height ?? 40;
         const canvas = new OffscreenCanvas(width, height);

@@ -31,6 +31,7 @@ import {ClubBuyOfferData} from '../club/ClubBuyOfferData';
 import {RentUtils} from '../viewer/widgets/utils/RentUtils';
 import {CatalogWidgetEvent} from '../viewer/widgets/events/CatalogWidgetEvent';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
+import {copyBitmap} from '@habbo/notifications/utils/copyBitmap';
 
 const log = Logger.getLogger('habbo.catalog.purchase.PurchaseConfirmationDialog');
 
@@ -451,7 +452,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         // have a rendered pet portrait on screen already and the dialog has no way to make one.
         if(previewImage !== null)
         {
-            this.setImage(previewImage);
+            this.setImage(previewImage, true);
 
             return;
         }
@@ -466,7 +467,8 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
             if(named !== null)
             {
-                this.setImage(named);
+                // AS3 passes `false` here alone: the bitmap is the asset library's, not ours.
+                this.setImage(named, false);
 
                 return;
             }
@@ -545,7 +547,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
         // AS3 calls setImage() unconditionally at the end of the branch; setImage() is null-guarded,
         // so the pending case falls through to imageReady() without clearing what is there.
-        this.setImage(image);
+        this.setImage(image, true);
     }
 
     /**
@@ -558,14 +560,15 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * different picture from the offer preview — hence the two branches rather than one.
      */
     /**
-	 * AS3 clones the manager's bitmap because assigning a BitmapData transfers ownership; the
-	 * port's window wrapper does not take it, so the cached `ImageBitmap` is handed over as-is —
-	 * the same call the chat-style branch above makes.
+	 * AS3 clones the manager's bitmap, and that clone is what `setImage(_, true)` then disposes.
+	 * The port must copy for the same reason: `getPreviewBitmap()` hands back the manager's
+	 * *cached* `ImageBitmap`, so closing it detaches the preview for every other habbicon view in
+	 * the session — the catalog trays, the chat selector and the bubbles all draw that one object.
 	 */
     // AS3: .../src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::getHabbiconPreviewBitmap()
     private static getHabbiconPreviewBitmap(habbiconId: string): ImageBitmap | null
     {
-        return HabbiconAssetManager.getPreviewBitmap(parseInt(habbiconId, 10) || 0, false);
+        return copyBitmap(HabbiconAssetManager.getPreviewBitmap(parseInt(habbiconId, 10) || 0, false));
     }
 
     /**
@@ -627,7 +630,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
 
         if(this.disposed) return;
 
-        this.setImage(bitmap);
+        this.setImage(bitmap, true);
     }
 
     // AS3: PurchaseConfirmationDialog.as::imageReady()
@@ -636,7 +639,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         if(id !== this._pendingImageId) return;
 
         this._pendingImageId = 0;
-        this.setImage(data);
+        this.setImage(data, true);
     }
 
     // AS3: PurchaseConfirmationDialog.as::imageFailed()
@@ -651,9 +654,15 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
      * the wrapper is a fixed 126x152 slot in the layout, so a small icon must not stretch to fill
      * it. The OffscreenCanvas here is the same operation — the port's bitmap wrappers take an
      * ImageBitmap, and assigning the raw preview would let fitSize() scale it.
+     *
+     * `disposeSource` is AS3's second parameter, and it is not cosmetic: the source is blitted, so
+     * whoever rendered it hands ownership over (`true`), while a library asset must survive
+     * (`false`). The port had dropped the parameter and always closed — which detaches the shared
+     * `ImageBitmap`, and every later `drawImage` of it throws `InvalidStateError: The image source
+     * is detached` mid-paint. See `@habbo/notifications/utils/copyBitmap` for the same failure.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/purchase/PurchaseConfirmationDialog.as::setImage()
-    private setImage(image: ImageBitmap | null): void
+    private setImage(image: ImageBitmap | null, disposeSource: boolean): void
     {
         if(this._disposed || image == null) return;
 
@@ -671,7 +680,8 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         context.drawImage(image, Math.floor((width - image.width) * 0.5), Math.floor((height - image.height) * 0.5));
 
         wrapper.bitmap = canvas.transferToImageBitmap();
-        image.close();
+
+        if(disposeSource) image.close();
     }
 
     // AS3: PurchaseConfirmationDialog.as::updateLocalizations()
@@ -1142,7 +1152,7 @@ export class PurchaseConfirmationDialog implements IDisposable, IGetImageListene
         if(result === null) return;
 
         this._pendingImageId = result.id;
-        this.setImage(result.data);
+        this.setImage(result.data, true);
         this.showSuggestions(false);
         this.updateGiftDialogLabels();
     }

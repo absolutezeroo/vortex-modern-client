@@ -8,6 +8,7 @@ import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowUtils} from '@core/window/utils/WindowUtils';
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
+import {copyBitmap} from '@habbo/notifications/utils/copyBitmap';
 
 import type {HabbiconController} from './HabbiconController';
 import type {HabbiconEntryModel} from './HabbiconEntryModel';
@@ -192,7 +193,9 @@ export class HabbiconRewardPanelView implements IDisposable
 
         if(target === null) return;
 
-        target.bitmap = preview ?? HabbiconRewardPanelView.createPlaceholderBitmap();
+        // AS3: `_loc2_.clone()`. `rewardHabbicon.disposesBitmap` is true, so handing over the
+        // manager's cached preview would close it on the next reward change.
+        target.bitmap = copyBitmap(preview) ?? HabbiconRewardPanelView.createPlaceholderBitmap();
         (target as unknown as IWindow).visible = true;
         (target as unknown as IWindow).invalidate();
     }
