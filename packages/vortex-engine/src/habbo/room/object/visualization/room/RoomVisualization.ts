@@ -18,6 +18,7 @@ import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum'
 import type {RoomPlaneParser} from '@habbo/room/object/RoomPlaneParser';
 import {RoomVisualizationData} from './RoomVisualizationData';
 import {RoomPlaneBitmapMaskParser} from '@habbo/room/object/RoomPlaneBitmapMaskParser';
+import type {IRoomObjectModel} from '@room/object/IRoomObjectModel';
 import {Logger} from "@core";
 
 const log = Logger.getLogger('habbo.room.object.visualization.room.RoomVisualization');
@@ -99,10 +100,16 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomPlaneParser.as::WALL_THICKNESS
     public static readonly WALL_THICKNESS: number = 0.25;
 
+    /**
+     * The room's own thickness *multipliers*, not thicknesses — AS3's naming, kept.
+     *
+     * NaN until the visualization-settings message arrives, which is what
+     * {@link updateThickness} tests: an unset room keeps the parser's own default of 1.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_floorThickness
     private _floorThickness: number = NaN;
-    /** Multiplied thickness, in world units — see `WALL_THICKNESS` and `updateThickness()`. */
     // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_wallThickness
-    private _wallThickness: number = RoomVisualization.WALL_THICKNESS;
+    private _wallThickness: number = NaN;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundColor
     private _backgroundColor: number = 0xFFFFFF;
@@ -221,6 +228,13 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         const geometryUpdated = this.updateGeometry(geometry);
         const model = roomObject.getModel();
 
+        // Before `initializeRoomPlanes()`, and that ordering is the whole of it: a thickness change
+        // throws the planes away, and this is what rebuilds them — in the *same* tick, so the room
+        // is never without them. AS3 has the two adjacent and in this order (l.601-609) for exactly
+        // that reason.
+        // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::update()
+        this.updatePlaneThicknesses(model);
+
         this.initializeRoomPlanes();
 
         // Check for mask and color changes (AS3: updateMasksAndColors)
@@ -312,6 +326,13 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         {
             return;
         }
+
+        // Before parsing, not after: the multipliers size the wall's side and top faces, and those
+        // are planes the parser generates. Handing them over afterwards would change nothing.
+        // This handoff was missing, which is why the room settings' thickness controls did nothing.
+        // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::initializeRoomPlanes()
+        if(!isNaN(this._floorThickness)) planeParser.floorThicknessMultiplier = this._floorThickness;
+        if(!isNaN(this._wallThickness)) planeParser.wallThicknessMultiplier = this._wallThickness;
 
         this._planeParser = planeParser;
         this.createPlanesAndSprites(planeParser);
@@ -601,10 +622,13 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateRoomPlanes()
                 plane.maskManager = this._visualizationData.maskManager;
 
-                // TS-only: the depth a cut opening's reveal is drawn to. AS3 keeps the thickness in
-                //   the plane parser, which builds the wall's own edge planes from it and never
-                //   tells a plane; the reveal is drawn by the plane, so it has to know.
-                plane.wallThickness = this._wallThickness;
+                // TS-only: the depth a cut opening's reveal is drawn to, in world units — the base
+                //   thickness times the room's own multiplier, which is what `_wallThickness`
+                //   holds. AS3 keeps this in the plane parser, which builds the wall's edge planes
+                //   from it and never tells a plane; the reveal is drawn by the plane, so it has
+                //   to know. An unset room falls back to the parser's own default of 1.
+                plane.wallThickness = RoomVisualization.WALL_THICKNESS
+                    * (isNaN(this._wallThickness) ? 1 : this._wallThickness);
             }
 
             // Thin walls without texture (AS3 lines 624-626)
@@ -692,6 +716,43 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 	 * Based on AS3 RoomVisualization.updatePlaneTexturesAndVisibilities()
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneTexturesAndVisibilities()
+    /**
+     * Picks up a change to the room's wall or floor thickness and rebuilds the planes for it.
+     *
+     * The rebuild is the whole point: the thickness is not a property a plane can be told after the
+     * fact, it is baked into the geometry `RoomPlaneParser` generates — the wall's side and top
+     * faces are separate planes, sized from it. Nothing short of re-parsing changes them, which is
+     * why AS3 answers `true` here and lets the caller re-run `initializeRoomPlanes()`.
+     *
+     * Both are read and compared together, as AS3 does: a settings message carries the two, and
+     * rebuilding twice for one message would throw the planes away mid-frame for nothing.
+     *
+     * This was missing entirely. `RoomLogic` has always written both variables onto the model from
+     * the visualization-settings message, and nothing had ever read them — so the parser kept its
+     * default multiplier of 1 and the room settings' thickness controls did nothing at all.
+     *
+     * **It must be called immediately before `initializeRoomPlanes()`**, which is where AS3 calls
+     * it. Anywhere later and the reset lands after the rebuild that would have undone it, leaving
+     * the room with no planes until the next tick — a room that renders and then goes black.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updatePlaneThicknesses()
+    private updatePlaneThicknesses(model: IRoomObjectModel): boolean
+    {
+        const floor = model.getNumber(RoomObjectVariableEnum.ROOM_FLOOR_THICKNESS_MULTIPLIER);
+        const wall = model.getNumber(RoomObjectVariableEnum.ROOM_WALL_THICKNESS_MULTIPLIER);
+
+        // NaN means the room's visualization settings have not arrived; the defaults stand.
+        if(isNaN(floor) || isNaN(wall)) return false;
+        if(floor === this._floorThickness && wall === this._wallThickness) return false;
+
+        this._floorThickness = floor;
+        this._wallThickness = wall;
+
+        this.resetRoomPlanes();
+
+        return true;
+    }
+
     private updatePlaneTexturesAndVisibilities(model: any): boolean
     {
         if(!model) return false;
@@ -710,18 +771,6 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 wallType ?? '201',
                 landscapeType ?? '1'
             );
-
-            // The room's own wall thickness, which the reveal on a cut opening is drawn to. AS3
-            // reads the same variable here and uses it only to notice a change and rebuild the
-            // planes; the number itself lives in `RoomPlaneParser`, whose `WALL_THICKNESS` this
-            // multiplies. NaN before the room's visualization settings arrive, which reads as zero
-            // and simply draws no reveal.
-            // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateThickness()
-            const wallThicknessMultiplier = model.getNumber(RoomObjectVariableEnum.ROOM_WALL_THICKNESS_MULTIPLIER);
-
-            this._wallThickness = Number.isFinite(wallThicknessMultiplier)
-                ? RoomVisualization.WALL_THICKNESS * wallThicknessMultiplier
-                : RoomVisualization.WALL_THICKNESS;
 
             const floorVisible = model.getNumber(RoomObjectVariableEnum.ROOM_FLOOR_VISIBILITY);
             const wallVisible = model.getNumber(RoomObjectVariableEnum.ROOM_WALL_VISIBILITY);
