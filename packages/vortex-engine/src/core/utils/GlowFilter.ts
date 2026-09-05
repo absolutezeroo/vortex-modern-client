@@ -7,7 +7,7 @@ import {foldedBoxWeights, GLOW_MAX_TAPS, padGlowWeights} from './GlowKernel';
  * Ten AS3 classes across this port construct one — the furni chest's floating icons, the wired
  * selection and variable-holder highlights, the avatar's variable-holder tint, the toolbar and
  * bottom-bar labels, the onboarding dialogs — and until now the port had no equivalent, so every
- * one of them either shipped without its halo or carried a `TODO(AS3)`.
+ * one of them either shipped without its halo or carried a marker saying so.
  *
  * **How Flash's filter behaves, and what this reproduces.** The source's alpha channel is blurred
  * by `blurX`/`blurY`, multiplied by `strength` and clamped, and the result painted in `color` at

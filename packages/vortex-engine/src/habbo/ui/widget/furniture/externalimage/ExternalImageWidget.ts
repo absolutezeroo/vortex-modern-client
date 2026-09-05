@@ -1120,11 +1120,13 @@ export class ExternalImageWidget extends RoomWidgetBase
      * `openReportImage()`. Ported rather than dropped so the two report paths stay visible — see
      * the note on `reportWindow`.
      *
-     * TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/furniture/
-     * externalimage/ExternalImageWidget.as::onReportWindowEvent() — the reason dropdown and the
-     * free-text input are read out of a window this class does not build. If the dialog is ever
-     * revived, `reporting_reason` (a selector whose selected child's *name* is the topic id) and
-     * `input_widget` (an Illumina input widget) are what it must contain.
+     * DEVIATION: the reason dropdown and the free-text input are read out of a window this class
+     *   does not build — and neither does AS3's, which is the point: `reportWindow` is assigned
+     *   nowhere in the primary tree, so the branch that would read them cannot run in Flash either.
+     *   Building the dialog here would be inventing UI the source does not have, not porting it.
+     *   If it is ever revived, `reporting_reason` (a selector whose selected child's *name* is the
+     *   topic id) and `input_widget` (an Illumina input widget) are what it must contain.
+     *   Reclassified from a TODO on 2026-09-05.
      */
     // AS3: .../widget/furniture/externalimage/ExternalImageWidget.as::onReportWindowEvent()
     private onReportWindowEvent = (event: WindowEvent, target: IWindow): void =>
