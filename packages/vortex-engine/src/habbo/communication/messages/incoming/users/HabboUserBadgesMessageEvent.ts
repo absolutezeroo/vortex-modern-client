@@ -1,6 +1,7 @@
 import {MessageEvent} from '@core/communication/messages/MessageEvent';
 import type {IMessageEvent, MessageEventCallback} from '@core/communication/messages/IMessageEvent';
 import {HabboUserBadgesMessageParser} from '../../parser/users/HabboUserBadgesMessageParser';
+import type {ISelectedBadge} from '../../parser/users/HabboUserBadgesMessageParser';
 
 /**
  * HabboUserBadgesMessageEvent
@@ -24,5 +25,18 @@ export class HabboUserBadgesMessageEvent extends MessageEvent implements IMessag
     get badges(): string[]
     {
         return (this._parser as HabboUserBadgesMessageParser).badges;
+    }
+
+    /**
+	 * The full per-slot records — slot, code, owner count and rarity.
+	 *
+	 * `badges` above is the codes alone, which is all the callers wanted before rarity was read
+	 * off the wire; anything that needs the glow colour or the authoritative slot takes this.
+	 */
+    // TS-only: the parser member this exposes is `selectedBadges`; AS3's event declares only the
+    //   two accessors above and its consumers reach the parser directly through `getParser()`.
+    get selectedBadges(): ISelectedBadge[]
+    {
+        return (this._parser as HabboUserBadgesMessageParser).selectedBadges;
     }
 }

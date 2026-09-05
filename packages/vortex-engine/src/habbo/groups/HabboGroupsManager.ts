@@ -539,7 +539,9 @@ export class HabboGroupsManager extends Component implements IHabboGroupsManager
     {
         const badgesEvent = event as HabboUserBadgesMessageEvent;
 
-        this._extendedProfileWindowCtrl.onUserBadges(badgesEvent.userId, badgesEvent.badges);
+        // The full records, not `badges` (codes only): the profile grid needs each badge's own
+        // slot and its rarity, which is what decides the glow colour.
+        this._extendedProfileWindowCtrl.onUserBadges(badgesEvent.userId, badgesEvent.selectedBadges);
     }
 
     // AS3: .../src/com/sulake/habbo/groups/HabboGroupsManager.as::onRelationshipStatusInfo()

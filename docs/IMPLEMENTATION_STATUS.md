@@ -4357,14 +4357,44 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
-- 🆕 **TODO markers 31 → 26, by reclassifying five that were never TODOs — 2026-09-05.**
+- 🆕 **The profile's badge rarity glow, and a marker that invented its own feature — 2026-09-05.**
+  Two of the surviving markers had blockers that had stopped being true, and checking them is what
+  found both:
+
+  - **`ExtendedProfileWindowCtrl` badge glow.** Its marker deferred glow "same pattern as
+    InfoStandUserView.ts/InfoStandFurniView.ts already skip for the same reason" — and
+    `InfoStandUserView` stopped skipping it: `setBadge()` there sets `glowColor` off
+    `BadgeRarityEnum` and calls `playGlow()`. Every piece was already in the tree
+    (`BadgeImageWidget.playGlow()` animates on the filter pipeline since 2026-09-01, the parser
+    reads `badgeRarityId` *and* the authoritative `slotId`, `isStandaloneTier`/`getGlowColor` are
+    ported). What was missing was one link in the data path: `HabboGroupsManager` handed the
+    controller `badgesEvent.badges` — the codes alone — so rarity never arrived. It now passes
+    `selectedBadges`, and the controller ports the rest of AS3's shape with it:
+    `_playGlowOnNextBadgeUpdate` (a reopened profile is a repaint and must not re-animate),
+    `setSelectedBadge(index, badge, playGlow)`, `getBadgeWidget()`, `isUncommonBadgeRarityEnabled()`
+    and `clearBadgeGlowEffects()` in `dispose()`. **The grid also indexed by array position where
+    AS3 indexes by each badge's own `slotIndex`**, bounds-checked to [0,4] — so a badge list that
+    skips a slot used to shift every later badge one slot left.
+  - **`RoomEngine.modifyRoomObject()` claimed a gap that does not exist.** Its marker read "no
+    cancel/right-click binding onto the move it starts — a shared gap with the unbuilt
+    furniture-context-menu widget". The widget is built and wired, handler and both cases included;
+    and AS3 has no right-click binding to port at all — `WME_RIGHT_CLICK` is declared in
+    `WindowMouseEvent.as` and listened for nowhere under `com/sulake/`. The cancel itself is
+    complete (`cancelRoomObjectInsert()`, all three AS3 call sites). Marker replaced by the check.
+
+  The three that were re-verified and *hold*: `MeMenuController.getUnseenItemCounter` (the class is
+  dead — `grep` finds no construction in the port, and AS3 builds it only from `ToolbarView`, which
+  nothing constructs either), `FurniModel.initListImages()` (real, at `FurniModel.as:1186`, and
+  genuinely unported), and `ProductViewCatalogWidget`'s effect fallback.
+
+- 🆕 **TODO markers 31 → 25, by reclassifying five that were never TODOs and closing one — 2026-09-05.**
   `AssetLibrary`'s `enableGamedataCache`/`setDebugLogsEnabled`/`getClass`/`loadFromFile` and
   `AvatarStructure.displayGeometry` each name a mechanism the port deliberately replaced (AIR
   filesystem → HTTP cache, per-class debug flag → central `Logger`, `ApplicationDomain` → file
   lookup, `flash.display.Loader` → `loadFromUrl()`) or one that is dead in AS3 itself. Per rule
   30's table those are `DEVIATION:`, and each keeps its `AS3:` line. The reverse of the 2026-09-03
   audit's finding, and the same rule: the marker must match what the AS3 side says, not how the
-  work felt. The 26 that remain all carry a named, dated blocker; `--stale` is down to one, and
+  work felt. The 25 that remain all carry a named, dated blocker; `--stale` is down to one, and
   that one's blocker was restated — it is reachability, not the `BitmapData` the detector kept
   finding.
 

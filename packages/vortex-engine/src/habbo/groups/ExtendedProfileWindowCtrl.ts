@@ -5,16 +5,30 @@
  *
  * Phase 1 (basic profile) port: header (name/motto/avatar/online-friend
  * status/last-login/activity-points/friend-count/level/badge-count),
- * badges without glow or a hover-details popup, add-as-friend, block/
- * unblock (with confirm dialogs), the "search rooms by owner" and
- * change-looks/change-badges links, and close.
+ * badges with their rarity glow, add-as-friend, block/unblock (with confirm
+ * dialogs), the "search rooms by owner" and change-looks/change-badges links,
+ * and close.
  *
  * Explicitly deferred as TODO(AS3), matching the Phase 1 scope decision:
- * - Badge glow effects and the hover badge-details popup (same pattern as
- *   InfoStandUserView.ts/InfoStandFurniView.ts already skip for the same
- *   reason).
+ * - The hover badge-details popup (`showBadgeInfo`/`hideBadgeInfo`/
+ *   `populateBadgeDetails`/`disposeBadgeDetails`, AS3 l.435-530). It needs
+ *   AS3's `_selectedBadges` slot array, which this controller does not keep —
+ *   `onUserBadges()` writes straight to the widgets — plus a second window
+ *   built from the badge-details layout and positioned against the hovered
+ *   slot's rectangle.
  * - The badge-count leaderboard link (needs HabboGroups' internal link
  *   builder, low value alone).
+ *
+ * **Badge glow came off that list on 2026-09-05**, and the stated reason for
+ * deferring it had been wrong for a while: it said InfoStandUserView skipped
+ * the same thing, and it no longer does — `setBadge()` there sets `glowColor`
+ * off `BadgeRarityEnum` and calls `playGlow()`. Every piece was already here.
+ * `BadgeImageWidget.playGlow()` animates on the filter pipeline, the parser
+ * reads `badgeRarityId` and the authoritative `slotId` off the wire, and
+ * `BadgeRarityEnum.isStandaloneTier()`/`getGlowColor()` are ported. What was
+ * missing was the data path: `HabboGroupsManager` handed this controller
+ * `badgesEvent.badges` — the codes alone — so rarity never arrived and the
+ * grid indexed slots by array position instead of by each badge's own slot.
  *
  * Two things came off that list on 2026-09-01, both for the same reason — the
  * stated blocker had stopped being true:
@@ -48,6 +62,8 @@ import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
+import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
+import {BadgeRarityEnum} from '@habbo/communication/enum/BadgeRarityEnum';
 import {ExtendedProfileData} from '@habbo/communication/messages/incoming/users/ExtendedProfileData';
 import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
 import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
@@ -79,6 +95,9 @@ export class ExtendedProfileWindowCtrl
     private _profile: ExtendedProfileData | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_7764
     private _badgeUpdateExpected: boolean = false;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_playGlowOnNextBadgeUpdate
+    private _playGlowOnNextBadgeUpdate: boolean = true;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_8041
     private _relationshipUpdateExpected: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_5493
@@ -111,6 +130,10 @@ export class ExtendedProfileWindowCtrl
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::dispose()
     dispose(): void
     {
+        // Before the window goes, and before `_groupsManager` is dropped: AS3 calls this first in
+        // its own dispose() for the same reason.
+        this.clearBadgeGlowEffects();
+
         this._groupsManager = null;
         this._window?.dispose();
         this._window = null;
@@ -318,6 +341,10 @@ export class ExtendedProfileWindowCtrl
         this.prepareWindow();
 
         if(!isSameUserAlreadyShown) this.clearSelectedBadges();
+
+        // A profile being reopened on the same user is a repaint, not an arrival: its badges must
+        // not re-animate. Only a fresh profile plays the rarity glow.
+        this._playGlowOnNextBadgeUpdate = !isSameUserAlreadyShown;
 
         this._relationshipUpdateExpected = true;
         this._badgeUpdateExpected = true;
@@ -687,35 +714,73 @@ export class ExtendedProfileWindowCtrl
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onUserBadges()
-    // TS deviation: only the plain badge-code list is used (no per-slot rarity/glow
-    // data or glow playback) — same simplification as InfoStandUserView.updateBadges().
-    onUserBadges(userId: number, badges: string[]): void
+    /**
+     * The wire slot is authoritative: AS3 indexes by each badge's own `slotIndex`, bounds-checked
+     * to [0,4], rather than by its position in the array. A badge list that skips a slot therefore
+     * leaves that slot empty instead of shifting everything left.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onUserBadges()
+    onUserBadges(userId: number, badges: ISelectedBadge[]): void
     {
         if(!this._profile || !this._badgeUpdateExpected || !this._window || this._profile.userId !== userId) return;
 
+        // Read then reset, as AS3 does: the flag applies to this update only, and `refresh()`
+        // clears it for a profile that is merely being repainted with the same badges.
+        const playGlow = this._playGlowOnNextBadgeUpdate;
+
+        this._playGlowOnNextBadgeUpdate = true;
+
         this.clearSelectedBadges();
 
-        for(let i = 0; i < badges.length && i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
+        for(const badge of badges)
         {
-            this.setSelectedBadge(i, badges[i]);
+            if(badge.slotId < 0 || badge.slotId >= ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT) continue;
+
+            this.setSelectedBadge(badge.slotId, badge, playGlow);
         }
 
         this._badgeUpdateExpected = false;
     }
 
+    /**
+     * Puts one badge in one of the five slots, with its rarity glow.
+     *
+     * Only a *standalone* rarity tier gets a colour — the tiers that share one with a neighbour
+     * get -1, which `glowColor`'s setter reads as "no glow". Having a colour and animating are
+     * separate: `playGlow` decides the second, so reopening the same profile does not re-animate.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::setSelectedBadge()
-    // TS deviation: AS3 takes (index, badge data object, playGlow) — simplified to
-    // (index, badgeId) since no rarity/glow data reaches this call (see onUserBadges()).
-    private setSelectedBadge(index: number, badgeId: string): void
+    private setSelectedBadge(index: number, badge: ISelectedBadge | null, playGlow: boolean): void
     {
-        const widgetWindow = this._window?.findChildByName(`badge_${index}`) as IWidgetWindow | null;
-        const widget = (widgetWindow?.widget ?? null) as IBadgeImageWidget | null;
+        const widget = this.getBadgeWidget(index);
 
-        if(widget)
-        {
-            widget.type = 'normal';
-            widget.badgeId = badgeId;
-        }
+        if(!widget) return;
+
+        const uncommonEnabled = this.isUncommonBadgeRarityEnabled();
+
+        widget.type = 'normal';
+        widget.badgeId = badge?.badgeCode ?? '';
+        widget.glowColor = badge !== null && BadgeRarityEnum.isStandaloneTier(badge.badgeRarityId, uncommonEnabled)
+            ? BadgeRarityEnum.getGlowColor(badge.badgeRarityId, uncommonEnabled)
+            : -1;
+
+        if(widget.badgeId !== '' && playGlow && widget.glowColor >= 0) widget.playGlow(widget.glowColor);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::getBadgeWidget()
+    private getBadgeWidget(index: number): IBadgeImageWidget | null
+    {
+        if(!this._window) return null;
+
+        const widgetWindow = this._window.findChildByName(`badge_${index}`) as IWidgetWindow | null;
+
+        return (widgetWindow?.widget ?? null) as IBadgeImageWidget | null;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::isUncommonBadgeRarityEnabled()
+    private isUncommonBadgeRarityEnabled(): boolean
+    {
+        return this._groupsManager?.getBoolean('badge_rarity.uncommon') ?? false;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::clearSelectedBadges()
@@ -725,7 +790,20 @@ export class ExtendedProfileWindowCtrl
 
         for(let i = 0; i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
         {
-            this.setSelectedBadge(i, '');
+            this.setSelectedBadge(i, null, false);
+        }
+    }
+
+    /**
+     * Stops any running glow animation before the window goes away — a glow ticking against a
+     * disposed window has nothing to draw into.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::clearBadgeGlowEffects()
+    private clearBadgeGlowEffects(): void
+    {
+        for(let i = 0; i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
+        {
+            this.getBadgeWidget(i)?.clearGlow();
         }
     }
 

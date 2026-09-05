@@ -3178,8 +3178,14 @@ export class RoomEngine extends Component implements IRoomEngine,
      * The one entry point for "the user asked to change this object": rotate, pick up, eject or
      * start a move.
      *
-     * TODO(AS3): there is still no cancel/right-click binding onto the move it starts — a shared
-     * gap with the unbuilt furniture-context-menu widget.
+     * This carried a marker saying there was "no cancel/right-click binding onto the move it
+     * starts — a shared gap with the unbuilt furniture-context-menu widget". Both halves were
+     * wrong, checked 2026-09-05. The widget is built and wired
+     * (`ui/widget/furniture/contextmenu/FurnitureContextMenuWidget.ts` plus its handler, a
+     * `RoomWidgetFactory` case and a `RoomDesktop` case). And AS3 has no right-click binding to
+     * port: `WME_RIGHT_CLICK` is declared in `WindowMouseEvent.as` and listened for nowhere under
+     * `com/sulake/`. The cancel itself exists and is complete — `cancelRoomObjectInsert()`, at all
+     * three AS3 call sites (catalog, recycler widget, furni model).
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::modifyRoomObject()
     modifyRoomObject(objectId: number, category: number, action: string): boolean
