@@ -124,6 +124,9 @@ export class WindowModel
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/core/window/WindowModel.as::_mouseThreshold
     protected _mouseThreshold: number = 10;
 
+    // AS3: .../src/com/sulake/core/window/WindowModel.as::_ignoreMouseEvents
+    protected _ignoreMouseEvents: boolean = false;
+
     // AS3: .../src/com/sulake/core/window/WindowModel.as::get mouseThreshold()
     public get mouseThreshold(): number
     {

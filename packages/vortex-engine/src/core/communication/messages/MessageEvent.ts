@@ -70,8 +70,17 @@ export class MessageEvent implements IMessageEvent
     }
 
     /**
-	 * Get the parser cast to a specific type
+	 * Get the parser cast to a specific type.
 	 */
+    // DEVIATION: AS3 has no generics, so *every* event subclass redeclares
+    //   `getParser():<ItsOwnParserClass>` purely to narrow `parser`'s return type — the body is
+    //   always `return _SafeStr_4545 as <ParserClass>`. One generic method on the base says the
+    //   same thing once, which is why no ported event carries the override. The three traces
+    //   below are the ones `as3-member-coverage.mjs` can see (their AS3 files are cited by name in
+    //   `HabboMessages.ts`); the same override exists on ~580 more.
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2935.as::getParser()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2102/_SafeCls_2101.as::getParser()
+    // AS3: sources/WIN63-202607011411-782849652/src/unknowns/_SafePkg_2538/_SafeCls_3768.as::getParser()
     getParser<T extends IMessageParser>(): T
     {
         return this._parser as T;

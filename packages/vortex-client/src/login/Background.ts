@@ -45,6 +45,10 @@ export class Background extends Sprite
     /**
      * AS3: resize()
      */
+    // AS3 also declares `protected function stageChangeResize(Event) { resize(); }`, a listener
+    // nothing registers — `grep -rn stageChangeResize sources/` finds only the two declarations
+    // (here and in `friendbar/onBoardingHcSteps/Background.as`), no `addEventListener` for either.
+    // AS3: .../src/login/Background.as::stageChangeResize()
     // AS3: .../src/login/Background.as::resize()
     public resize(): void
     {

@@ -75,6 +75,10 @@ export class NineSplitSprite
         return NineSplitSprite._borderSunk;
     }
 
+    // AS3 declares the raw `DARK_POPUP_BITMAP` public where every sibling bitmap is private, and
+    // nothing outside NineSplitSprite.as reads it — here the pixels come from
+    // `LoginAssets.get('dark_popup')`, which any caller can reach the same way.
+    // AS3: DARK_POPUP_BITMAP
     // AS3: DARK_POPUP
     public static get DARK_POPUP(): NineSplitSprite
     {

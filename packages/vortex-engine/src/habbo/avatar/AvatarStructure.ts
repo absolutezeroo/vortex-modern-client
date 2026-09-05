@@ -710,11 +710,12 @@ export class AvatarStructure
         this._mandatorySetTypeCache.clear();
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::displayGeometry()
-    // Flash-only debug visualization: draws each body part as a labelled circle into a
-    // BitmapData attached to a flash.display.Stage using Shape/TextField/Matrix, none of which
-    // this port has an equivalent for. No caller anywhere in the primary AS3 tree - dead debug
-    // tooling left over from development, not a feature to port.
+    // DEVIATION: Flash-only debug visualisation — it draws each body part as a labelled circle
+    //   into a `BitmapData` attached to a `flash.display.Stage`, through `Shape`, `TextField` and
+    //   `Matrix`. There is no stage to attach to here. It is also dead in AS3: `grep -rn
+    //   displayGeometry sources/` finds only this declaration, so it is development leftovers, not
+    //   a feature. Carried a TODO marker until 2026-09-05; reclassified, since nothing is owed.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/AvatarStructure.as::displayGeometry()
 
     // AS3: .../src/com/sulake/habbo/avatar/AvatarStructure.as::getPopulatedArray()
     private getPopulatedArray(count: number): number[]

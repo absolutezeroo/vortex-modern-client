@@ -47,6 +47,9 @@ const log = Logger.getLogger('habbo.catalog.viewer.widgets.ProductViewCatalogWid
  * TODO(AS3): one AS3 sub-path is still not ported and is noted again at its call site — the "e"
  * branch's *fallback*, which composites the effect's sprites onto a flat BitmapData when there is
  * no room canvas (`addEffectSprites()`). Its primary path is ported; see `renderEffectPreview()`.
+ * The blocker is **not** BitmapData: `onBoardingHcUi/display/BitmapData.ts` has `draw`,
+ * `copyPixels` and a fill, which is everything the AS3 body uses. It is that the branch has no
+ * reachable caller — see `renderEffectPreview()` for the condition.
  *
  * Three things used to be listed here as missing and none of them were. "r" is a bot offer — a
  * single cropped avatar render, `renderBotPreview()`. "e" was described as needing pixel-level
@@ -1190,11 +1193,19 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 	 *
 	 * TODO(AS3): AS3 has a second path below this one, taken only when there is no room canvas: it
 	 *   composites the effect's sprites onto a flat BitmapData filled with `pixelsBackground`'s
-	 *   colour (`addEffectSprites()`, ProductViewCatalogWidget.as:695-760). It is not ported, and
-	 *   the room canvas exists in every current call — `_hasRoomCanvas` is what the container
-	 *   visibility above already keys on.
+	 *   colour (`addEffectSprites()`, ProductViewCatalogWidget.as:695-760).
+	 *
+	 *   The blocker is reachability, not capability — restated 2026-09-05 because
+	 *   `todo-inventory --stale` kept flagging this on the grounds that a `BitmapData` exists, and
+	 *   one does (`onBoardingHcUi/display/BitmapData.ts`, with `draw`/`copyPixels`/fill: enough
+	 *   for the whole AS3 body). What is missing is a caller: the guard below is the only way in,
+	 *   `_hasRoomCanvas` is what the container visibility already keys on, and AS3's own fallback
+	 *   reads `sessionDataManager.figure` too — so the one condition it would newly cover is
+	 *   "canvas absent, figure present", which no current path produces. Port it if one appears.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::updatePreview() ("e" branch)
+    // AS3 has no `updatePreview()`: the branch lives inside `onPreviewProduct()` (l.473), the
+    // `SelectProductEvent` handler, which this port splits into one method per product type.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/catalog/viewer/widgets/ProductViewCatalogWidget.as::onPreviewProduct() ("e" branch)
     private renderEffectPreview(product: IProduct, roomPreviewer: RoomPreviewer | null): {mode: number; canRotate: boolean}
     {
         const figure = this._catalog?.sessionDataManager?.figure ?? null;

@@ -9,6 +9,11 @@ import type {ClubBuyOfferData} from '../../club/ClubBuyOfferData';
  */
 export interface IVipBuyCatalogWidget extends IDisposable
 {
+    // Redeclared rather than left to `IDisposable`: AS3 declares it on this interface, and the
+    // implementations are reached through this type, not through the disposable one.
+    // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::dispose()
+    dispose(): void;
+
     // AS3: .../src/com/sulake/habbo/catalog/viewer/widgets/IVipBuyCatalogWidget.as::init()
     init(): boolean;
 

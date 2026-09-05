@@ -133,7 +133,7 @@ const PARAMETERISED_MAP: Record<string, string> = {
     crr: AvatarAction.CARRY_OBJECT,
     drk: AvatarAction.USE_OBJECT,
     sig: AvatarAction.SIGN,
-    dance: AvatarAction.DANCE,
+    dance: AvatarAction.EXPRESSION_JUMP,
     fx: AvatarAction.EFFECT,
     effect: AvatarAction.EFFECT
 };
@@ -197,7 +197,7 @@ export function parseAvatarRequest(figure: string, query: AvatarQuery): IAvatarR
     applyIdParameter(request, AvatarAction.CARRY_OBJECT, readNumber(query, 'crr', 0));
     applyIdParameter(request, AvatarAction.USE_OBJECT, readNumber(query, 'drk', 0));
     applyIdParameter(request, AvatarAction.SIGN, readNumber(query, 'sign', 0));
-    applyIdParameter(request, AvatarAction.DANCE, readNumber(query, 'dance', 0));
+    applyIdParameter(request, AvatarAction.EXPRESSION_JUMP, readNumber(query, 'dance', 0));
     applyIdParameter(request, AvatarAction.EFFECT, readNumber(query, 'effect', 0));
 
     for(const action of request.actions)

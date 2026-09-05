@@ -80,7 +80,7 @@ export class BlockedAvatarImage extends AvatarImage
                 break;
 
             case AvatarAction.EFFECT:
-            case AvatarAction.DANCE:
+            case AvatarAction.EXPRESSION_JUMP:
             case AvatarAction.EXPRESSION_WAVE:
             case AvatarAction.SIGN:
             case AvatarAction.CARRY_OBJECT:

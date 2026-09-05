@@ -2817,6 +2817,14 @@ with it, more gaps. That is the expected direction, not a regression.
 | members whose AS3 name is obfuscated | 3,517 | 3,555 | 3,555 | 6,465 |
 | citations to a file that does not exist | 80 | **7** | 7 | 11 |
 
+**Re-measured 2026-09-05**, after the pass at the top of "Recent Work Recorded": 2,203 measurable
+files, 31,047 readable members, 21,140 (68.1%) carrying a trace, **0 absent public/protected** on
+the measurable side *and* **0 on the unmeasurable side's presence check** (56 the same morning).
+1,069 files are still cited at file level only, holding 9,329 members whose *coverage* stays
+unknowable — 5,464 more public/protected members are present in the TS and untraced. That number
+is the rule-30 debt and no amount of porting shrinks it; it is the reason the two zeros above mean
+"nothing is missing that this tool can see", never "nothing is missing".
+
 **The worklist reached 0 on 2026-08-27.** The last three entries were not ports — they were three
 distinct shapes of false positive, each worth recognising because they will recur:
 
@@ -4282,6 +4290,83 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 ---
 
 ## Recent Work Recorded
+
+- 🆕 **Both member worklists read 0 — 2026-09-05, and one of the eighty was a live bug.** The
+  measurable worklist was 24 and the hidden one 56. Neither is now. What they were:
+
+  - **`disposeObjectFurniture()`/`disposeObjectWallItem()` never dequeued.** AS3 opens both with
+    `getRoomInstanceData(roomId).getFurnitureDataWithId(id)` — a *take*, `remove()` on a keyed
+    collection — and discards the result. The port had deviated the by-id take away on the grounds
+    that "the by-id lookup only ever runs from `addObjectFurnitureFromData()`'s null branch", which
+    is false: `_SafeCls_90.as:3209` and `:3482` are the other two call sites and they are removals.
+    So an "add X" still sitting in the frame-budgeted queue survived a "remove X" and
+    `createRoomFurniture()` built a ghost of an item the server had already deleted. Both takes are
+    ported and called first in both dispose methods, and the stale DEVIATION now says what the id
+    key is actually for.
+  - **Nine renames back to the primary tree's names.** `AvatarAction.DANCE` →`EXPRESSION_JUMP`,
+    `SNOWWAR_*` → `POSTURE_SNOWWAR_*` (5), `RoomObjectRoomAdEvent.RORAE_ROOM_AD_*` → `ROOM_AD_*`
+    (4, values unchanged — the 2016 build names those constants after their own values, the 2026
+    one does not). Every one was traced to PRODUCTION; rule 30 says the primary tree. 20 call
+    sites across three packages, `vortex-imager` included.
+  - **Four narrow interfaces hiding their own implementation**, the port's most common defect:
+    `IAvatarImageWidget` was missing `zoomX`/`zoomY` (`AvatarImageWidget` implements both, fully),
+    `IHabboFreeFlowChat` was missing `set visible` (likewise), `IVipBuyCatalogWidget` left
+    `dispose()` to `IDisposable` where AS3 declares it, and `ICoreConfiguration` carried **no
+    `AS3:` traces at all** — which is why `FurniIconImageManager.ts`, the one file citing
+    `_SafeCls_49.as::getProperty()`, was being charged with that interface's whole surface.
+  - **`WIDGET_TYPES` was a copy that had already drifted.** `ThemeManager` spelled the
+    `widget_type` enumeration out by hand and its own comment recorded the drift
+    (`chest_overlay_grid` added in 2026, missing from the copy). AS3 derives it from the registry
+    in `WidgetClasses`; `HabboWidgetFactory.WIDGET_TYPES` now does the same and the hand list is
+    deleted.
+  - **Six more members implemented**: `CoreComponentContext.getLockedComponents()`,
+    `NameChangeController.get assets()`, `SkinLayout`'s `getEntityByID`/`getEntityIndex`/
+    `groupEntitiesWithID` (`_SafeCls_4490`'s child API), `RoomObjectRoomAdEvent.clone()`, and
+    `WindowModel._ignoreMouseEvents` moved off `WindowController` to the base, `protected`, where
+    AS3 declares it.
+  - **Eight documented as deliberate, each with the check named at the declaration** — not in this
+    file, where nobody looking at the code will find it. `MouseCursorControl.defineCustomCursorType`
+    and both `Background.stageChangeResize` are dead in AS3 (`grep` finds only the declarations);
+    `CameraPhotoLab.onClose` likewise, with `header_button_close` the live path;
+    `NineSplitSprite.DARK_POPUP_BITMAP` is a public raw bitmap nothing outside its own file reads;
+    `WindowEventDispatcher.get error` returns null in Flash too, its backing field never written;
+    `MessageEvent.getParser()` is the generic collapse of the per-event override AS3 needs because
+    it has no generics; `RoomEngine`'s `SETUP_WITHOUT_GAME_MANAGER` joins `SETUP_WITHOUT_TOOLBAR`.
+  - **`FakeContext`'s thirty, and `IFileProxy`'s eight, stay non-ports — and now say so in the
+    file.** The FakeContext decision was taken on 2026-08-27 and recorded *here*; it was
+    re-verified independently on 2026-09-05 and holds, with a sharper check than the original:
+    AS3's `Component` constructor takes `_SafeCls_54`, not `_SafeCls_57`, so no consumer of that
+    object — in AS3 either — ever sees the thirty. `IFileProxy`'s eight are AIR filesystem calls
+    whose only implementation in the primary tree is `com/sulake/air/FileProxy.as`. Both now carry
+    a `DEVIATION:` with their `AS3:` traces at the declaration, so the measure reads 0 and the next
+    reader does not re-investigate the same thirty a third time.
+
+  One tooling note worth keeping: **a full `sources/…/X.as` path written in prose reads as a
+  citation** to `as3-member-coverage.mjs`, and makes that file answerable for the class. Naming
+  `com/sulake/air/FileProxy.as` without the prefix in the `IFileProxy` note was the fix.
+
+  **`audit-as3-traces` is back to 0 unannotated derived names in the same pass** (6 → 0, 4
+  distinct), and one of the four was citing a member that does not exist:
+  `ProductViewCatalogWidget`'s "e" branch traced to `updatePreview()`, which AS3 has no such thing
+  as — the branch lives inside `onPreviewProduct()` (l.473), the `SelectProductEvent` handler this
+  port splits one method per product type. The other three are obfuscated backing fields named
+  after their readable getter (`Component._requiredDependencyIids`,
+  `HabboNotifications._productImageUtility`) or after the config key that fills them
+  (`FurniModel._bottomAlignedTypes`, AS3's `_SafeStr_9587`). `RoomEngine._thumbnailIdBank` is the
+  one worth a second look: AS3 holds **two** `NumberBank`s, `_SafeStr_5795` and `_SafeStr_6137`,
+  built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
+  `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
+
+- 🆕 **TODO markers 31 → 26, by reclassifying five that were never TODOs — 2026-09-05.**
+  `AssetLibrary`'s `enableGamedataCache`/`setDebugLogsEnabled`/`getClass`/`loadFromFile` and
+  `AvatarStructure.displayGeometry` each name a mechanism the port deliberately replaced (AIR
+  filesystem → HTTP cache, per-class debug flag → central `Logger`, `ApplicationDomain` → file
+  lookup, `flash.display.Loader` → `loadFromUrl()`) or one that is dead in AS3 itself. Per rule
+  30's table those are `DEVIATION:`, and each keeps its `AS3:` line. The reverse of the 2026-09-03
+  audit's finding, and the same rule: the marker must match what the AS3 side says, not how the
+  work felt. The 26 that remain all carry a named, dated blocker; `--stale` is down to one, and
+  that one's blocker was restated — it is reachability, not the `BitmapData` the detector kept
+  finding.
 
 - 🆕 **`wire-coverage` reads 0/0 — 2026-09-01, and the last four "gaps" were all false.** With the
   snow-war tier in, the sweep was down to three send gaps and one recv gap. None of them was a

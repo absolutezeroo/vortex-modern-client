@@ -98,6 +98,12 @@ export class MouseCursorControl
 	 * Applies the current cursor type by mapping it to a CSS cursor.
 	 * Only updates the DOM if the cursor type has changed.
 	 */
+    // AS3 also declares `defineCustomCursorType(uint, DisplayObject)`, which registers a Flash
+    // `DisplayObject` to be drawn as the cursor and followed to the mouse in `onStageMouseMove()`.
+    // Nothing calls it — `grep -rn defineCustomCursorType sources/` finds only the declaration —
+    // and there is no display list to draw into here: this port maps the cursor type to a CSS
+    // `cursor` value on the canvas, so a custom cursor would be an image URL, not an object.
+    // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::defineCustomCursorType()
     // AS3: .../src/com/sulake/core/window/utils/MouseCursorControl.as::change()
     public static change(): void
     {

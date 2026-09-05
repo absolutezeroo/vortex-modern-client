@@ -30,8 +30,8 @@ export class FurnitureRoomBillboardLogic extends FurnitureRoomBrandingLogic
         else if(this.eventDispatcher !== null)
         {
             this.eventDispatcher.emit(
-                RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK,
-                new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK, this.object, '', url)
+                RoomObjectRoomAdEvent.ROOM_AD_FURNI_CLICK,
+                new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.ROOM_AD_FURNI_CLICK, this.object, '', url)
             );
         }
     }

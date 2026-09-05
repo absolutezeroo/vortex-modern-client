@@ -32,9 +32,22 @@ export class WindowEventDispatcher
 
     /** Whether this dispatcher has been disposed. */
     // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::get disposed()
-    public get disposed(): boolean 
+    public get disposed(): boolean
     {
         return this._disposed;
+    }
+
+    /**
+     * The last dispatch error — always null.
+     *
+     * AS3 declares the backing `_SafeStr_6474:Error` and never writes it: the getter is the only
+     * occurrence of the field in the class besides its declaration, so it reads null in Flash too.
+     * Carried so the member is not silently missing, not because anything fills it.
+     */
+    // AS3: .../src/com/sulake/core/window/events/WindowEventDispatcher.as::get error()
+    public get error(): Error | null
+    {
+        return null;
     }
 
     /**

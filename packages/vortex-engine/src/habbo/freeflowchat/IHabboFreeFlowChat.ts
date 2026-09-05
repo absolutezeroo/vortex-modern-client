@@ -293,6 +293,15 @@ export interface IHabboFreeFlowChat
     toggleVisibility(): void;
 
     /**
+	 * Show or hide the whole chat flow.
+	 *
+	 * AS3 declares only the setter on this interface; TypeScript has no set-only interface member,
+	 * so it is a property here and `HabboFreeFlowChat` still implements only the write half.
+	 */
+    // AS3: .../src/com/sulake/habbo/freeflowchat/_SafeCls_70.as::set visible()
+    visible: boolean;
+
+    /**
 	 * Insert a chat item into the chat system.
 	 * Adds to history buffer and (in VIEW layer) creates the visual bubble.
 	 *

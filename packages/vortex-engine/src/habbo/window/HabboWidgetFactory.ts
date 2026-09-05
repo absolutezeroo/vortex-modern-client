@@ -59,6 +59,18 @@ export class HabboWidgetFactory implements IWidgetFactory
 {
     private static readonly WIDGET_REGISTRY: Map<string, WidgetConstructor> = HabboWidgetFactory.buildRegistry();
 
+    /**
+	 * Every registered widget type name, sorted — the enumeration `ThemeManager` offers for the
+	 * `widget_type` window property.
+	 *
+	 * AS3 derives it from the registry in the same class body (`for(key in _SafeStr_4661)` then
+	 * `.sort()`); deriving it here too is what stops the two lists drifting, which they already had
+	 * once — `chest_overlay_grid` is in the 2026 registry and was missing from the copy.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/WidgetClasses.as::WIDGET_TYPES
+    public static readonly WIDGET_TYPES: readonly string[] =
+        [...HabboWidgetFactory.WIDGET_REGISTRY.keys()].sort();
+
     private _windowManager: IHabboWindowManager;
 
     constructor(windowManager: IHabboWindowManager)

@@ -39,7 +39,11 @@ export class Background extends Sprite
         return this._disposed;
     }
 
-    // AS3: resize()
+    // AS3 also declares `protected function stageChangeResize(Event) { resize(); }`, a listener
+    // nothing registers — `grep -rn stageChangeResize sources/` finds only the two declarations
+    // (here and in `login/Background.as`), no `addEventListener` for either.
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/Background.as::stageChangeResize()
+    // AS3: .../src/com/sulake/habbo/friendbar/onBoardingHcSteps/Background.as::resize()
     public resize(): void
     {
         const stage = this.stage;

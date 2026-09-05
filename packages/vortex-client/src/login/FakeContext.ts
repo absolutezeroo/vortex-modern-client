@@ -166,7 +166,7 @@ export class FakeContext implements IContext
     }
 
     // AS3: .../src/binaryData/FakeContext.as::dispose()
-    dispose(): void 
+    dispose(): void
     {
         if(this._disposed) return;
 
@@ -174,4 +174,53 @@ export class FakeContext implements IContext
         this._events.removeAllListeners();
         this._configuration = null;
     }
+
+    // DEVIATION: AS3's FakeContext implements `_SafeCls_57` — the *full* core interface — and the
+    //   thirty members below are its shims for that: every one returns `null`, `false`, `""`, `0`
+    //   or an empty `Dictionary`, and none is ever called. It implements them because ActionScript
+    //   has no way to implement half an interface, not because a caller wants them.
+    //
+    //   The check, and it is the one that decides this: `Component`'s constructor takes
+    //   `_SafeCls_54` (`public function _SafeCls_50(param1:_SafeCls_54, …)`), not `_SafeCls_57` —
+    //   so every consumer of this object, in AS3 as here, only ever sees the `IContext` half.
+    //   `LoginFlow.createFakeContext()` builds a localization manager, a communication manager and
+    //   a separate configuration object from it; not one of them reaches past `IContext`.
+    //   `IContext.ts`'s own header records the same decision for the interface side, checked on
+    //   2026-08-27 and again on 2026-09-05: the seventeen `_SafeCls_57` extras are AIR plumbing
+    //   with zero callers outside `core/runtime`, and a browser has no file proxy. The four
+    //   `_SafeCls_54` members left out — `displayObjectContainer`, `loadFromFile`,
+    //   `prepareComponent`, `toXMLString` — each carry their own `DEVIATION:` on
+    //   `ComponentContext`, which is the class that would have to mean something by them.
+    //
+    //   `injectDependencies` is declared on no interface in any tree; it is FakeContext's own.
+    // AS3: .../src/binaryData/FakeContext.as::get displayObjectContainer()
+    // AS3: .../src/binaryData/FakeContext.as::loadFromFile()
+    // AS3: .../src/binaryData/FakeContext.as::prepareComponent()
+    // AS3: .../src/binaryData/FakeContext.as::toXMLString()
+    // AS3: .../src/binaryData/FakeContext.as::release()
+    // AS3: .../src/binaryData/FakeContext.as::injectDependencies()
+    // AS3: .../src/binaryData/FakeContext.as::initialize()
+    // AS3: .../src/binaryData/FakeContext.as::purge()
+    // AS3: .../src/binaryData/FakeContext.as::hibernate()
+    // AS3: .../src/binaryData/FakeContext.as::resume()
+    // AS3: .../src/binaryData/FakeContext.as::readConfigDocument()
+    // AS3: .../src/binaryData/FakeContext.as::writeDictionaryToProxy()
+    // AS3: .../src/binaryData/FakeContext.as::readDictionaryFromProxy()
+    // AS3: .../src/binaryData/FakeContext.as::writeXMLToProxy()
+    // AS3: .../src/binaryData/FakeContext.as::readXMLFromProxy()
+    // AS3: .../src/binaryData/FakeContext.as::readStringFromProxy()
+    // AS3: .../src/binaryData/FakeContext.as::writeStringToProxy()
+    // AS3: .../src/binaryData/FakeContext.as::getNumberOfFilesPending()
+    // AS3: .../src/binaryData/FakeContext.as::getNumberOfFilesLoaded()
+    // AS3: .../src/binaryData/FakeContext.as::setProfilerMode()
+    // AS3: .../src/binaryData/FakeContext.as::get arguments()
+    // AS3: .../src/binaryData/FakeContext.as::clearArguments()
+    // AS3: .../src/binaryData/FakeContext.as::propertyExists()
+    // AS3: .../src/binaryData/FakeContext.as::getProperty()
+    // AS3: .../src/binaryData/FakeContext.as::setProperty()
+    // AS3: .../src/binaryData/FakeContext.as::getBoolean()
+    // AS3: .../src/binaryData/FakeContext.as::getInteger()
+    // AS3: .../src/binaryData/FakeContext.as::interpolate()
+    // AS3: .../src/binaryData/FakeContext.as::updateUrlProtocol()
+    // AS3: .../src/binaryData/FakeContext.as::get fileProxy()
 }

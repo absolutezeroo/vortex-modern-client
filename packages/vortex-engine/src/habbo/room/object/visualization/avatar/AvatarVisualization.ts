@@ -1430,7 +1430,7 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
         if(this._danceStyle > 0) 
         {
-            avatarImage.appendAction(AvatarAction.DANCE, this._danceStyle);
+            avatarImage.appendAction(AvatarAction.EXPRESSION_JUMP, this._danceStyle);
         }
 
         if(this._signType > -1) 
@@ -1466,8 +1466,8 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             {
                 switch(expression) 
                 {
-                    case AvatarAction.DANCE:
-                        avatarImage.appendAction(AvatarAction.DANCE, 2);
+                    case AvatarAction.EXPRESSION_JUMP:
+                        avatarImage.appendAction(AvatarAction.EXPRESSION_JUMP, 2);
                         break;
                     default:
                         avatarImage.appendAction(expression);

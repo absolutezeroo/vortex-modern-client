@@ -99,12 +99,12 @@ export class FurnitureLogic extends MovingObjectLogic
     override getEventTypes(): string[]
     {
         const types = [
-            RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_SHOW,
-            RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE,
-            RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_DOUBLE_CLICK,
+            RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_SHOW,
+            RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_HIDE,
+            RoomObjectRoomAdEvent.ROOM_AD_FURNI_DOUBLE_CLICK,
             RoomObjectStateChangeEvent.ROSCE_STATE_CHANGE,
             RoomObjectMouseEvent.ROE_MOUSE_CLICK,
-            RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK,
+            RoomObjectRoomAdEvent.ROOM_AD_FURNI_CLICK,
             RoomObjectMouseEvent.ROE_MOUSE_DOWN
         ];
 
@@ -275,8 +275,8 @@ export class FurnitureLogic extends MovingObjectLogic
                     if(this.eventDispatcher !== null && adUrl !== null && adUrl.indexOf('http') === 0)
                     {
                         this.eventDispatcher.emit(
-                            RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_SHOW,
-                            new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_SHOW, this.object)
+                            RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_SHOW,
+                            new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_SHOW, this.object)
                         );
                     }
 
@@ -308,8 +308,8 @@ export class FurnitureLogic extends MovingObjectLogic
                     if(this.eventDispatcher !== null && adUrl !== null && adUrl.indexOf('http') === 0)
                     {
                         this.eventDispatcher.emit(
-                            RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE,
-                            new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE, this.object)
+                            RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_HIDE,
+                            new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_HIDE, this.object)
                         );
                     }
 
@@ -368,8 +368,8 @@ export class FurnitureLogic extends MovingObjectLogic
                 if(this.eventDispatcher !== null && this.object !== null && adUrl !== null && adUrl.indexOf('http') === 0)
                 {
                     this.eventDispatcher.emit(
-                        RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE,
-                        new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE, this.object)
+                        RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_HIDE,
+                        new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_HIDE, this.object)
                     );
                 }
 
@@ -422,8 +422,8 @@ export class FurnitureLogic extends MovingObjectLogic
             if(this.eventDispatcher !== null && adUrl !== null && adUrl.length > 0)
             {
                 this.eventDispatcher.emit(
-                    RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_DOUBLE_CLICK,
-                    new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_DOUBLE_CLICK, this.object, null, adUrl)
+                    RoomObjectRoomAdEvent.ROOM_AD_FURNI_DOUBLE_CLICK,
+                    new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.ROOM_AD_FURNI_DOUBLE_CLICK, this.object, null, adUrl)
                 );
             }
         }
@@ -597,8 +597,8 @@ export class FurnitureLogic extends MovingObjectLogic
         if(this.eventDispatcher !== null)
         {
             this.eventDispatcher.emit(
-                RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK,
-                new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK, this.object)
+                RoomObjectRoomAdEvent.ROOM_AD_FURNI_CLICK,
+                new RoomObjectRoomAdEvent(RoomObjectRoomAdEvent.ROOM_AD_FURNI_CLICK, this.object)
             );
         }
     }

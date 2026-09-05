@@ -683,6 +683,10 @@ export class CameraPhotoLab
                 this.dispose();
                 break;
 
+            // AS3 also carries a `protected function onClose(WindowMouseEvent) { dispose(); }`,
+            // which is dead: `grep -rn onClose` over `ui/widget/camera/` finds only its own
+            // declaration, so nothing ever registers it. This case is the live close path.
+            // AS3: .../ui/widget/camera/CameraPhotoLab.as::onClose()
             case 'header_button_close':
                 this.dispose();
                 break;

@@ -462,11 +462,11 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
 
                     case AvatarAction.POSTURE_SWIM:
                     case AvatarAction.POSTURE_FLOAT:
-                    case AvatarAction.SNOWWAR_RUN:
-                    case AvatarAction.SNOWWAR_DIE_FRONT:
-                    case AvatarAction.SNOWWAR_DIE_BACK:
-                    case AvatarAction.SNOWWAR_PICK:
-                    case AvatarAction.SNOWWAR_THROW:
+                    case AvatarAction.POSTURE_SNOWWAR_RUN:
+                    case AvatarAction.POSTURE_SNOWWAR_DIE_FRONT:
+                    case AvatarAction.POSTURE_SNOWWAR_DIE_BACK:
+                    case AvatarAction.POSTURE_SNOWWAR_PICK:
+                    case AvatarAction.POSTURE_SNOWWAR_THROW:
                         this._useFullImageCache = false;
                         this.addActionData(param!);
                         break;
@@ -497,7 +497,7 @@ export class AvatarImage implements IAvatarImage, IAvatarEffectListener
                     this._useFullImageCache = true;
                 }
                 // fall through
-            case AvatarAction.DANCE:
+            case AvatarAction.EXPRESSION_JUMP:
             case AvatarAction.TALK:
             case AvatarAction.EXPRESSION_WAVE:
             case AvatarAction.SLEEP:

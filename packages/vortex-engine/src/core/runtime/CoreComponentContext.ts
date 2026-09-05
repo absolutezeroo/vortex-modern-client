@@ -6,6 +6,7 @@ import type {ICoreErrorLogger} from './ICoreErrorLogger';
 import type {IFileProxy} from './IFileProxy';
 import {ComponentContext} from './ComponentContext';
 import {ComponentEvents} from './Component';
+import type {Component} from './Component';
 import {DefaultErrorReporter} from './DefaultErrorReporter';
 import {Exception} from './exceptions/Exception';
 import {LibraryProgressEvent} from './events/LibraryProgressEvent';
@@ -319,6 +320,28 @@ export class CoreComponentContext extends ComponentContext implements ICore
         }
 
         return false;
+    }
+
+    /**
+	 * Every attached component still waiting on a required dependency.
+	 *
+	 * The list form of {@link hasLockedComponents}; `describeLockedComponents()` is the reporting
+	 * wrapper the boot warning uses.
+	 */
+    // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::getLockedComponents()
+    getLockedComponents(): Component[]
+    {
+        const locked: Component[] = [];
+
+        for(const component of this.getAttachedComponents())
+        {
+            if(component.locked)
+            {
+                locked.push(component);
+            }
+        }
+
+        return locked;
     }
 
     // AS3: .../src/com/sulake/core/runtime/_SafeCls_58.as::clearArguments()

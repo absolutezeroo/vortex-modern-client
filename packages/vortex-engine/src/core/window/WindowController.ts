@@ -92,7 +92,7 @@ export class WindowController extends WindowModel implements IWindow, IGraphicCo
         this._parentRect = {x: 0, y: 0, width: 0, height: 0};
     }
 
-    private _ignoreMouseEvents: boolean = false;
+    // The backing field lives on `WindowModel`, `protected`, exactly as AS3 declares it.
 
     /** Returns whether this window ignores mouse events. */
     // AS3: .../src/com/sulake/core/window/WindowController.as::get ignoreMouseEvents()

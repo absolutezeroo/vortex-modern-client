@@ -269,11 +269,15 @@ interface IRoomEngineRoomInstanceData {
 	 * would otherwise build all three hundred inside one message handler. `createRoomFurniture()`
 	 * drains it a few at a time, on a frame budget.
 	 *
-	 * DEVIATION: AS3's two accessor pairs (`getFurnitureData()`/`getFurnitureDataWithId()`) are
-	 *   *takes* — each removes the entry it returns — over a keyed collection. A plain array
-	 *   shifted from the front is the same queue with the same take semantics, and the by-id
-	 *   lookup only ever runs from `addObjectFurnitureFromData()`'s null branch, which this port
-	 *   reaches with the data already in hand.
+	 * DEVIATION: AS3 holds these in a keyed collection, and its `getFurnitureData()`/
+	 *   `getWallItemData()` no-arg accessors are *takes* — each removes the entry it returns. A
+	 *   plain array shifted from the front is the same queue with the same take semantics, and
+	 *   the id key buys nothing for the drain.
+	 *
+	 *   It does buy something for *removal*, which is why the by-id take is ported and not
+	 *   deviated away: `disposeObjectFurniture()`/`disposeObjectWallItem()` call
+	 *   `getFurnitureDataWithId()`/`getWallItemDataWithId()` and discard the result, purely to
+	 *   drop an entry the drain has not reached yet. See both methods below.
 	 */
     // AS3: .../src/com/sulake/habbo/room/utils/_SafeCls_2223.as::addFurnitureData()
     furnitureQueue: IPendingFurnitureData[];
@@ -385,7 +389,11 @@ export class RoomEngine extends Component implements IRoomEngine,
     private static readonly ROOM_TEMP_ID: string = 'temporary_room';
 
     /** How many thumbnail requests may be outstanding at once — AS3's `new NumberBank(1000)`. */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_thumbnailIdBank
+    // Name DERIVED: AS3 holds two `NumberBank`s and both field names are obfuscated
+    // (`_SafeStr_5795` and `_SafeStr_6137`, `_SafeCls_90.as:209/213`, built side by side at
+    // l.443-444). This is the size argument to the first, the one the generic room-object
+    // thumbnail path reserves from at l.4185.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::initComponent()
     private static readonly THUMBNAIL_ID_POOL_SIZE: number = 1000;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::OBJECT_ID_ROOM
@@ -519,7 +527,9 @@ export class RoomEngine extends Component implements IRoomEngine,
      * counter that only ever grows cannot say "too many in flight", so the give-up branch had
      * nothing to fire on and a leak had nothing to show for itself.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_thumbnailIdBank
+    // Name DERIVED: AS3's field is `_SafeStr_5795` (l.213), obfuscated; named after what it hands
+    // out. See THUMBNAIL_ID_POOL_SIZE above for the pair it belongs to.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getGenericRoomObjectThumbnail()
     private readonly _thumbnailIdBank: NumberBank = new NumberBank(RoomEngine.THUMBNAIL_ID_POOL_SIZE);
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_7265
     private _pendingImageListeners: Map<number, IGetImageListener> = new Map();
@@ -1310,10 +1320,13 @@ export class RoomEngine extends Component implements IRoomEngine,
     //   `roomEngine.x` call site reads `this.x` directly.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::get roomEngine()
 
-    // DEVIATION: two `uint` bit flags (1 and 4) that nothing in the primary tree reads — there is no
-    //   `setup()` in `_SafeCls_90.as` for them to be passed to, so they are dead in AS3 as well as
-    //   absent here. The engine's dependencies are wired by the DI container either way.
+    // DEVIATION: two `uint` bit flags (1 and 4) that nothing in either tree reads — `grep -rn
+    //   SETUP_WITHOUT sources/` finds only the two declarations and `RoomSessionManager`'s
+    //   unrelated `SETUP_WITHOUT_TRACKING`, and there is no `setup()` in `_SafeCls_90.as` for them
+    //   to be passed to. They are dead in AS3 as well as absent here; the engine's dependencies are
+    //   wired by the DI container either way.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::SETUP_WITHOUT_TOOLBAR
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::SETUP_WITHOUT_GAME_MANAGER
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::getIsPlayingGame()
     getIsPlayingGame(roomId: number): boolean
@@ -4640,6 +4653,41 @@ export class RoomEngine extends Component implements IRoomEngine,
     }
 
     /**
+     * Takes the still-pending floor item with this id out of the room's queue, and returns it.
+     *
+     * AS3's is a *take* — `_furnitureData.remove(id)` — and `disposeObjectFurniture()` calls it
+     * purely for that side effect, discarding the result. It is what stops an "add X" that is
+     * still waiting on the frame budget from being built after the server has already said
+     * "remove X": without it `createRoomFurniture()` drains the entry a few frames later and
+     * builds a ghost of an item that no longer exists.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_2223.as::getFurnitureDataWithId()
+    private getFurnitureDataWithId(roomId: number, id: number): IPendingFurnitureData | null
+    {
+        const queue = this.getRoomInstanceData(roomId).furnitureQueue;
+        const index = queue.findIndex(data => data.id === id);
+
+        if(index < 0) return null;
+
+        return queue.splice(index, 1)[0];
+    }
+
+    /**
+     * The wall-item half of {@link getFurnitureDataWithId}, with the same take semantics and the
+     * same reason for existing.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_2223.as::getWallItemDataWithId()
+    private getWallItemDataWithId(roomId: number, id: number): IPendingWallItemData | null
+    {
+        const queue = this.getRoomInstanceData(roomId).wallItemQueue;
+        const index = queue.findIndex(data => data.id === id);
+
+        if(index < 0) return null;
+
+        return queue.splice(index, 1)[0];
+    }
+
+    /**
      * Removes a floor item, and — when the local player is the one who picked it up — flies its
      * icon into the inventory button on the way out.
      *
@@ -4654,6 +4702,9 @@ export class RoomEngine extends Component implements IRoomEngine,
         refresh: boolean = false
     ): boolean
     {
+        // AS3 drops the pending entry first, before anything else in the method.
+        this.getFurnitureDataWithId(roomId, id);
+
         this.playPickupAnimation(roomId, id, pickerId);
 
         const success = this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE);
@@ -5046,12 +5097,16 @@ export class RoomEngine extends Component implements IRoomEngine,
         ) as IRoomObjectController | null;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::disposeObjectWallItem()
     disposeObjectWallItem(
         roomId: number,
         id: number,
         _pickerId?: number
     ): boolean
     {
+        // AS3 drops the pending entry first, before anything else in the method.
+        this.getWallItemDataWithId(roomId, id);
+
         return this.disposeRoomObject(roomId, id, RoomObjectCategoryEnum.OBJECT_CATEGORY_WALL);
     }
 
@@ -8262,7 +8317,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             switch(event.type)
             {
-                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_CLICK:
+                case RoomObjectRoomAdEvent.ROOM_AD_FURNI_CLICK:
                     this.events.emit(event.type, event);
 
                     if(this._toolbar !== null)
@@ -8274,7 +8329,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                     engineType = RoomEngineRoomAdEvent.FURNI_CLICK;
                     break;
 
-                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_FURNI_DOUBLE_CLICK:
+                case RoomObjectRoomAdEvent.ROOM_AD_FURNI_DOUBLE_CLICK:
                 {
                     const prefix = 'CATALOG_PAGE:';
 
@@ -8287,18 +8342,18 @@ export class RoomEngine extends Component implements IRoomEngine,
                     break;
                 }
 
-                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_SHOW:
+                case RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_SHOW:
                     engineType = RoomEngineRoomAdEvent.TOOLTIP_SHOW;
                     break;
 
-                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_TOOLTIP_HIDE:
+                case RoomObjectRoomAdEvent.ROOM_AD_TOOLTIP_HIDE:
                     engineType = RoomEngineRoomAdEvent.TOOLTIP_HIDE;
                     break;
 
                 // The only case with no engine event of its own: it starts a load instead, and
                 // the answer comes back through onRoomAdImageLoaded().
                 // AS3: .../src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectRoomAdEvent()
-                case RoomObjectRoomAdEvent.RORAE_ROOM_AD_LOAD_IMAGE:
+                case RoomObjectRoomAdEvent.ROOM_AD_LOAD_IMAGE:
                     this.requestRoomAdImage(
                         this._activeRoomId, event.objectId, category, event.imageUrl ?? '', event.clickUrl ?? '');
                     break;

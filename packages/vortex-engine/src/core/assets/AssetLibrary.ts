@@ -140,21 +140,33 @@ export class AssetLibrary extends Component implements IAssetLibrary
         return AssetLibrary._cacheNamespace;
     }
 
-    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::enableGamedataCache() opens
-    // `File.applicationStorageDirectory` and sweeps stale temp files. That is the AIR filesystem
-    // API; the browser build caches through the HTTP layer instead and has no directory to sweep.
+    // The four below carried TODO markers and should not have: each names a mechanism this port
+    // deliberately replaced, not one it still owes. Reclassified 2026-09-05 per
+    // `.claude/rules/30`'s table — a gap you intend to close is a TODO, a decision already made
+    // is a DEVIATION.
 
-    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::setDebugLogsEnabled() gates AS3's
-    // own static debug() on a flag. This port logs through `Logger`, whose level is configured
-    // centrally (see .claude/rules/10-conventions.md), so a per-class flag would fight it.
+    // DEVIATION: AS3 opens `File.applicationStorageDirectory` and sweeps stale temp files out of
+    //   it. That is the AIR filesystem API — `flash.filesystem` has no browser counterpart to
+    //   narrow to — and the browser build caches through the HTTP layer, so there is no directory
+    //   to sweep and nothing for the method to do.
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::enableGamedataCache()
 
-    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::getClass() resolves a linkage name
-    // to a `Class` through the library's `ApplicationDomain`. There are no runtime-loaded SWF
-    // definitions here — assets arrive as files — so there is no domain to ask.
+    // DEVIATION: AS3 gates its own static `debug()` on a per-class flag. This port logs through
+    //   `Logger.getLogger('core.assets.AssetLibrary')`, whose level is set centrally (see
+    //   `.claude/rules/10-conventions.md` → Logging), so a second per-class switch would only be
+    //   able to contradict it.
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::setDebugLogsEnabled()
 
-    // TODO(AS3): .../src/com/sulake/core/assets/AssetLibrary.as::loadFromFile() loads a library
-    // from a URLRequest through `flash.display.Loader`. The port's loaders (see `loaders/`) take
-    // a URL directly; see `loadFromUrl()` below for the path that replaced it.
+    // DEVIATION: AS3 resolves a linkage name to a `Class` through the library's
+    //   `ApplicationDomain`. Nothing here is loaded as runtime SWF definitions — assets arrive as
+    //   files and are looked up by name through `getAssetByName()` — so there is no domain to ask
+    //   and no `Class` to return.
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::getClass()
+
+    // DEVIATION: AS3 loads a library from a `URLRequest` through `flash.display.Loader`. The
+    //   port's loaders (see `loaders/`) take a URL directly — `loadFromUrl()` below is the method
+    //   that replaced it, same job, no Loader.
+    // AS3: .../src/com/sulake/core/assets/AssetLibrary.as::loadFromFile()
 
     private _url: string = '';
 

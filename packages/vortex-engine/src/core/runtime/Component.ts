@@ -150,7 +150,9 @@ export class Component implements IDisposable
      * "required" but its content shrinks. `pendingDependencyIids` below holds the same names in
      * a Set; both are kept because AS3 declares this one and callers may hold either.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::_requiredDependencyIids
+    // Name DERIVED: AS3's backing field is obfuscated; only the getter at l.351 is readable, so
+    // the field is named after it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::get requiredDependencyIids()
     private readonly _requiredDependencyIids: string[] = [];
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/runtime/_SafeCls_50.as::get requiredDependencyIids()

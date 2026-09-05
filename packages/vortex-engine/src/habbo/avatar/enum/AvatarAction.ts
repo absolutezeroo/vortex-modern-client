@@ -23,8 +23,9 @@ export class AvatarAction
     public static readonly EXPRESSION: string = 'expression';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::VOTE
     public static readonly VOTE: string = 'vote';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::DANCE
-    public static readonly DANCE: string = 'dance';
+    // The 2016 build calls this `DANCE`; the 2026 client renamed it without changing the value.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::EXPRESSION_JUMP
+    public static readonly EXPRESSION_JUMP: string = 'dance';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::TYPING
     public static readonly TYPING: string = 'typing';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::MUTED
@@ -87,16 +88,18 @@ export class AvatarAction
     public static readonly POSTURE_SWIM: string = 'swim';
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::POSTURE_FLOAT
     public static readonly POSTURE_FLOAT: string = 'float';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::SNOWWAR_RUN
-    public static readonly SNOWWAR_RUN: string = 'swrun';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::SNOWWAR_DIE_FRONT
-    public static readonly SNOWWAR_DIE_FRONT: string = 'swdiefront';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::SNOWWAR_DIE_BACK
-    public static readonly SNOWWAR_DIE_BACK: string = 'swdieback';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::SNOWWAR_PICK
-    public static readonly SNOWWAR_PICK: string = 'swpick';
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::SNOWWAR_THROW
-    public static readonly SNOWWAR_THROW: string = 'swthrow';
+    // The five below are `SNOWWAR_*` in the 2016 build and `POSTURE_SNOWWAR_*` in the 2026 one —
+    // same values, and the 2026 name says what they are: postures, not actions.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::POSTURE_SNOWWAR_RUN
+    public static readonly POSTURE_SNOWWAR_RUN: string = 'swrun';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::POSTURE_SNOWWAR_DIE_FRONT
+    public static readonly POSTURE_SNOWWAR_DIE_FRONT: string = 'swdiefront';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::POSTURE_SNOWWAR_DIE_BACK
+    public static readonly POSTURE_SNOWWAR_DIE_BACK: string = 'swdieback';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::POSTURE_SNOWWAR_PICK
+    public static readonly POSTURE_SNOWWAR_PICK: string = 'swpick';
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/enum/_SafeCls_2652.as::POSTURE_SNOWWAR_THROW
+    public static readonly POSTURE_SNOWWAR_THROW: string = 'swthrow';
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/avatar/enum/AvatarAction.as::GESTURE_MAP
     private static readonly GESTURE_MAP: string[] = [

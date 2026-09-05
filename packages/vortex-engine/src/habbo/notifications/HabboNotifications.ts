@@ -238,7 +238,9 @@ export class HabboNotifications extends Component implements IHabboNotifications
         return null;
     }
 
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::_productImageUtility
+    // Name DERIVED: the AS3 field is `_SafeStr_6251` (l.67), obfuscated. Named after the getter
+    // that lazily fills it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/notifications/HabboNotifications.as::get productImageUtility()
     private _productImageUtility: ProductImageUtility | null = null;
 
     /** Built on first use, as `petImageUtility` above is, and for the same reason. */

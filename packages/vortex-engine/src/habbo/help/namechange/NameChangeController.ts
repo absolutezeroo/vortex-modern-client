@@ -1,4 +1,5 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
+import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IWindow} from '@core/window/IWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
@@ -92,6 +93,12 @@ export class NameChangeController implements INameChangeUI, IDisposable
     get help(): HabboHelp | null
     {
         return this._habboHelp;
+    }
+
+    // AS3: .../NameChangeController.as::get assets()
+    get assets(): IAssetLibrary | null
+    {
+        return this._habboHelp?.assets ?? null;
     }
 
     // AS3: .../NameChangeController.as::get localization()

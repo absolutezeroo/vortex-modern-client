@@ -128,6 +128,64 @@ export class SkinLayout
     }
 
     /**
+     * Returns the first entity carrying the given id.
+     *
+     * @param id - The entity id
+     * @returns The layout entity, or null
+     */
+    // Declared on `ChildEntityArray`'s obfuscated base, as with numEntities above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/_SafeCls_4490.as::getChildByID()
+    public getEntityByID(id: number): SkinLayoutEntity | null
+    {
+        for(const entity of this._entities)
+        {
+            if(entity.id === id) return entity;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the index of an entity, or -1 when it is not in this layout.
+     *
+     * @param entity - The entity to look up
+     * @returns The index, or -1
+     */
+    // Declared on `ChildEntityArray`'s obfuscated base, as with numEntities above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/_SafeCls_4490.as::getChildIndex()
+    public getEntityIndex(entity: SkinLayoutEntity): number
+    {
+        return this._entities.indexOf(entity);
+    }
+
+    /**
+     * Appends every entity carrying `id` to `out`.
+     *
+     * Ids are not unique — `getEntityByID` returns the first, this returns all of them.
+     *
+     * @param id - The entity id
+     * @param out - Array the matches are pushed onto
+     * @returns How many were appended
+     */
+    // Declared on `ChildEntityArray`'s obfuscated base, as with numEntities above.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/_SafeCls_4490.as::groupChildrenWithID()
+    public groupEntitiesWithID(id: number, out: SkinLayoutEntity[]): number
+    {
+        let count = 0;
+
+        for(const entity of this._entities)
+        {
+            if(entity.id === id)
+            {
+                out.push(entity);
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    /**
      * Whether no entity stretches horizontally, so the layout cannot be
      * widened.
      *

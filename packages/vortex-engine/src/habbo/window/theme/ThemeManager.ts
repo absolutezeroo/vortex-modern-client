@@ -3,6 +3,7 @@ import type {IPropertyMap} from '@core/window/theme/IPropertyMap';
 import type {SkinContainer} from '@core/window/graphics/SkinContainer';
 import {PropertyMap} from '@core/window/theme/PropertyMap';
 import {Theme} from './Theme';
+import {HabboWidgetFactory} from '../HabboWidgetFactory';
 
 // Moved to core/window/theme so `IThemeManager` — a core interface — can name its own return type
 // without core importing from habbo. Re-exported here for the callers already importing it.
@@ -130,20 +131,10 @@ export class ThemeManager implements IThemeManager
         properties.addBoolean('tool_tip_is_dynamic', false);
         properties.addBoolean('interactive_cursor_disabled', false);
         properties.addBoolean('vertical', false);
-        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("widget_type","",class_2086.WIDGET_TYPES)
-        // class_2086 = sources/win63_version/habbo/window/widgets/class_2086.as (renamed WidgetClasses.as in the
-        // 2026 source, which adds "chest_overlay_grid") — WIDGET_TYPES is sorted alphabetically
-        properties.addEnumeration('widget_type', '', [
-            'avatar_image', 'badge_image', 'balloon', 'chest_overlay_grid', 'countdown',
-            'furniture_image', 'hover_bitmap', 'illumina_border',
-            'illumina_chat_bubble', 'illumina_input',
-            'limited_item_overlay_grid', 'limited_item_overlay_preview', 'limited_item_overlay_supply',
-            'pet_image', 'pixel_limit', 'product_icon', 'product_image',
-            'progress_indicator',
-            'rarity_item_overlay_grid', 'rarity_item_overlay_preview',
-            'room_previewer', 'room_thumbnail', 'room_user_count',
-            'running_number', 'separator', 'updating_timestamp',
-        ]);
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/theme/ThemeManager.as::ThemeManager() — addEnumeration("widget_type","",WidgetClasses.WIDGET_TYPES)
+        // The list was spelled out here and had already drifted from the registry it copies; it now
+        // comes off `HabboWidgetFactory` (the port of `WidgetClasses`), which derives it as AS3 does.
+        properties.addEnumeration('widget_type', '', [...HabboWidgetFactory.WIDGET_TYPES]);
         properties.addBoolean('word_wrap', false);
         properties.addNumber('zoom_x', 1);
         properties.addNumber('zoom_y', 1);

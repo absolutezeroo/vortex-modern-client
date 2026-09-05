@@ -1515,7 +1515,9 @@ export class FurniModel implements IFurniModel
 	 *   than throwing, which would freeze an empty list in for the session — so it is read on
 	 *   first use and cached from the first non-empty answer.
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::_bottomAlignedTypes
+    // Name DERIVED: the AS3 field is `_SafeStr_9587`, obfuscated in every tree. Named after the
+    // configuration key it is filled from — `catalog.preview.alignment.bottom` (FurniModel.as:111).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::FurniModel()
     private _bottomAlignedTypes: string[] | null = null;
 
     // TS-only: the lazy half of the deviation documented on `_bottomAlignedTypes`.

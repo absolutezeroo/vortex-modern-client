@@ -13,6 +13,7 @@ import type {DefaultAttStruct} from '../utils/DefaultAttStruct';
  */
 export class SkinContainer implements ISkinContainer
 {
+    // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::statesByRenderPriority
     protected static _statesByRenderPriority: number[] | null = null;
     // AS3: .../src/com/sulake/core/window/graphics/SkinContainer.as::MAX_STYLE_COUNT
     private static readonly MAX_STYLE_COUNT: number = 100;
