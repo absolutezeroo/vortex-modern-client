@@ -1110,19 +1110,32 @@ export class RoomPlane
         reveal.setTransform(a, b, c, d, tx + offset.x, ty + offset.y);
         reveal.drawImage(shape, 0, 0);
 
-        // And minus the far opening again with only the horizontal half of the offset, which leaves
-        // the jamb and drops the band along the bottom of the hole.
+        // And minus the far opening again, slid **along the wall** rather than back into it. That
+        // leaves the jamb and drops the band along the bottom of the hole.
         //
         // That band is the opening's lower face, and a doorway does not have one: it is cut all the
         // way to the floor, so there is no wall material under it and what belongs there is the
         // floor showing through. Filling it painted a wall-coloured threshold across the doorway.
         //
-        // ponytail: unconditional, so a window loses the inner face of its sill too — 4px it never
-        //   had before this reveal existed. The precise rule is "no lower face when the opening's
-        //   bottom edge meets the wall's", which needs the mask's placement rectangle plumbed out
-        //   of `PlaneMaskManager.updateMask()`; do that if the sill ever matters.
-        reveal.setTransform(a, b, c, d, tx + offset.x, ty);
-        reveal.drawImage(shape, 0, 0);
+        // "Along the wall" is not "horizontally on screen": the wall's own horizontal runs oblique
+        // in an isometric room, so a screen-horizontal slide leaves a wedge along the slanted lower
+        // edge — the residue this second pass is here to remove. The offset is therefore resolved
+        // in the plane's own basis, `u = (a, b)` per texture pixel across and `v = (c, d)` down,
+        // and only its `u` part is replayed.
+        //
+        // ponytail: unconditional, so a window loses the inner face of its sill too — a few pixels
+        //   it never had before this reveal existed. The precise rule is "no lower face when the
+        //   opening's bottom edge meets the wall's", which needs the mask's placement rectangle
+        //   plumbed out of `PlaneMaskManager.updateMask()`; do that if the sill ever matters.
+        const det = a * d - b * c;
+
+        if(Math.abs(det) > 1e-6)
+        {
+            const across = (offset.x * d - offset.y * c) / det;
+
+            reveal.setTransform(a, b, c, d, tx + across * a, ty + across * b);
+            reveal.drawImage(shape, 0, 0);
+        }
 
         // Paint what survives in the wall's side colour.
         reveal.setTransform(1, 0, 0, 1, 0, 0);
