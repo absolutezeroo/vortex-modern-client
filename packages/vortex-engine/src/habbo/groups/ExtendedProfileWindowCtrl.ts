@@ -10,14 +10,17 @@
  * and close.
  *
  * Explicitly deferred as TODO(AS3), matching the Phase 1 scope decision:
- * - The hover badge-details popup (`showBadgeInfo`/`hideBadgeInfo`/
- *   `populateBadgeDetails`/`disposeBadgeDetails`, AS3 l.435-530). It needs
- *   AS3's `_selectedBadges` slot array, which this controller does not keep —
- *   `onUserBadges()` writes straight to the widgets — plus a second window
- *   built from the badge-details layout and positioned against the hovered
- *   slot's rectangle.
  * - The badge-count leaderboard link (needs HabboGroups' internal link
  *   builder, low value alone).
+ *
+ * **The hover badge-details card landed 2026-09-05** — `showBadgeInfo`/
+ * `hideBadgeInfo`/`createBadgeDetails`/`populateBadgeDetails`/
+ * `disposeBadgeDetails`, plus the `_selectedBadges` slot array they read and
+ * the `WME_OVER`/`WME_OUT` pair AS3 attaches to each slot window. Every
+ * dependency was already shipped: the `extended_profile_badge_details` layout,
+ * `BadgeRarityEnum.getLabelLocalizationKey()`/`getWhiteBackgroundTagColor()`,
+ * `BadgeLeaderboardUtils.shouldShowOwnerCount()`/`formatOwnerCount()`, and
+ * `getBadgeName()`/`getBadgeDesc()` on the localization manager.
  *
  * **Badge glow came off that list on 2026-09-05**, and the stated reason for
  * deferring it had been wrong for a while: it said InfoStandUserView skipped
@@ -64,6 +67,8 @@ import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget'
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import type {ISelectedBadge} from '@habbo/communication/messages/parser/users/HabboUserBadgesMessageParser';
 import {BadgeRarityEnum} from '@habbo/communication/enum/BadgeRarityEnum';
+import {BadgeLeaderboardUtils} from './BadgeLeaderboardUtils';
+import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {ExtendedProfileData} from '@habbo/communication/messages/incoming/users/ExtendedProfileData';
 import type {RelationshipStatusInfo} from '@habbo/communication/messages/incoming/users/RelationshipStatusInfo';
 import {RelationshipStatusEnum} from '@habbo/friendlist/RelationshipStatusEnum';
@@ -87,6 +92,10 @@ export class ExtendedProfileWindowCtrl
 {
     private static readonly BADGE_SLOT_COUNT = 5;
 
+    /** AS3's literal `+ 6` when it sizes the badge-details card to its own list. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::populateBadgeDetails()
+    private static readonly BADGE_DETAILS_BOTTOM_PADDING = 6;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_4571
     private _groupsManager: HabboGroupsManager | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_window
@@ -98,6 +107,18 @@ export class ExtendedProfileWindowCtrl
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_playGlowOnNextBadgeUpdate
     private _playGlowOnNextBadgeUpdate: boolean = true;
+
+    /**
+     * The badge shown in each of the five slots, indexed by slot — what the hover card reads.
+     *
+     * Name DERIVED: AS3's field is `_SafeStr_6955`, obfuscated; named after what it holds and
+     * after `onUserBadges()`, the only method that writes it.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onUserBadges()
+    private _selectedBadges: (ISelectedBadge | null)[] = [];
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_badgeDetails
+    private _badgeDetails: IWindowContainer | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_8041
     private _relationshipUpdateExpected: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::_SafeStr_5493
@@ -130,8 +151,9 @@ export class ExtendedProfileWindowCtrl
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::dispose()
     dispose(): void
     {
-        // Before the window goes, and before `_groupsManager` is dropped: AS3 calls this first in
+        // Before the window goes, and before `_groupsManager` is dropped: AS3 calls both first in
         // its own dispose() for the same reason.
+        this.disposeBadgeDetails();
         this.clearBadgeGlowEffects();
 
         this._groupsManager = null;
@@ -298,6 +320,18 @@ export class ExtendedProfileWindowCtrl
             const region = window.findChildByName(`${RelationshipStatusEnum.statusAsString(status)}_friend_name_link_region`);
 
             if(region) region.procedure = this.onRelationshipLink;
+        }
+
+        // The five badge slots each get the hover pair that shows the details card, exactly where
+        // AS3 attaches them (l.134-141) — on the slot window, not on the widget inside it.
+        for(let i = 0; i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
+        {
+            const slot = window.findChildByName(`badge_${i}`);
+
+            if(slot === null) continue;
+
+            slot.addEventListener(WindowMouseEvent.OVER, this.showBadgeInfo);
+            slot.addEventListener(WindowMouseEvent.OUT, this.hideBadgeInfo);
         }
     }
 
@@ -736,10 +770,173 @@ export class ExtendedProfileWindowCtrl
         {
             if(badge.slotId < 0 || badge.slotId >= ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT) continue;
 
+            this._selectedBadges[badge.slotId] = badge;
             this.setSelectedBadge(badge.slotId, badge, playGlow);
         }
 
         this._badgeUpdateExpected = false;
+    }
+
+    /**
+     * The hover card: badge name, description, rarity tag and owner count, parked to the right of
+     * the slot and vertically centred on it.
+     *
+     * Hovering also replays the glow, which is what makes a rare badge announce itself on a
+     * profile that has been open for a while.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::showBadgeInfo()
+    private showBadgeInfo = (event: WindowEvent): void =>
+    {
+        const slot = event.window;
+
+        if(slot === null) return;
+
+        const index = parseInt(slot.name.replace('badge_', ''), 10);
+
+        if(!Number.isFinite(index) || index < 0 || index >= ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT) return;
+
+        const badge = this._selectedBadges[index] ?? null;
+
+        if(badge === null) return;
+
+        const widget = this.getBadgeWidget(index);
+
+        if(widget && widget.glowColor >= 0) widget.playGlow(widget.glowColor);
+
+        const localization = this._groupsManager?.localization ?? null;
+
+        this.populateBadgeDetails(
+            localization?.getBadgeName(badge.badgeCode) ?? '',
+            localization?.getBadgeDesc(badge.badgeCode) ?? '',
+            badge
+        );
+
+        const details = this._badgeDetails;
+
+        if(details === null) return;
+
+        // AS3 re-parents the card to the desktop every time it is shown, which is what keeps it
+        // above the profile window instead of clipped inside it.
+        const desktop = details.desktop as IWindowContainer | null;
+
+        if(desktop) desktop.addChild(details);
+
+        details.activate();
+
+        const rectangle = {x: 0, y: 0, width: 0, height: 0};
+
+        slot.getGlobalRectangle(rectangle);
+
+        details.x = rectangle.x + rectangle.width;
+        details.y = rectangle.y + (rectangle.height - details.height) / 2;
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::hideBadgeInfo()
+    private hideBadgeInfo = (_event: WindowEvent): void =>
+    {
+        this.disposeBadgeDetails();
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::createBadgeDetails()
+    private createBadgeDetails(): void
+    {
+        if(this._badgeDetails !== null) return;
+
+        this._badgeDetails = this._groupsManager?.getXmlWindow('extended_profile_badge_details') as IWindowContainer | null ?? null;
+
+        if(this._badgeDetails === null)
+        {
+            throw new Error('Failed to construct extended profile badge details window from XML!');
+        }
+    }
+
+    /**
+     * Fills the card and sizes it to its own list.
+     *
+     * The rarity tag is drawn twice on purpose — AS3 puts the same string in `rarity_border` and
+     * `rarity`, the first being the outline behind the second — and the tag's background takes the
+     * *white-background* colour, which is the variant meant to sit on this card rather than on a
+     * badge.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::populateBadgeDetails()
+    private populateBadgeDetails(name: string, description: string, badge: ISelectedBadge | null): void
+    {
+        this.createBadgeDetails();
+
+        const details = this._badgeDetails;
+
+        if(details === null) return;
+
+        const localization = this._groupsManager?.localization ?? null;
+        const list = details.findChildByName('details_list') as IItemListWindow | null;
+        const nameField = details.findChildByName('name');
+        const descriptionField = details.findChildByName('description');
+        const rarityTag = details.findChildByName('rarity_tag');
+        const rarityBorder = details.findChildByName('rarity_border');
+        // The only one read as text rather than as a plain window: AS3 sets `textColor` on it.
+        const rarity = details.findChildByName('rarity') as ITextWindow | null;
+        const ownerCount = details.findChildByName('owner_count');
+
+        if(nameField) nameField.caption = name;
+
+        if(descriptionField)
+        {
+            descriptionField.visible = description !== '';
+            descriptionField.caption = description;
+        }
+
+        const hasBadge = badge !== null;
+        const uncommonEnabled = this.isUncommonBadgeRarityEnabled();
+
+        if(rarityTag) rarityTag.visible = hasBadge;
+        if(rarityBorder) rarityBorder.caption = '';
+        if(rarity) rarity.caption = '';
+
+        if(hasBadge && badge !== null)
+        {
+            const label = localization?.getLocalizationWithParams(
+                'badge.rarity.badge',
+                '',
+                'rarity',
+                localization.getLocalization(
+                    BadgeRarityEnum.getLabelLocalizationKey(badge.badgeRarityId, uncommonEnabled)
+                )
+            ) ?? '';
+
+            if(rarity)
+            {
+                rarity.textColor = 0xFFFFFF;
+                rarity.caption = label;
+            }
+
+            if(rarityBorder) rarityBorder.caption = label;
+            if(rarityTag) rarityTag.color = BadgeRarityEnum.getWhiteBackgroundTagColor(badge.badgeRarityId, uncommonEnabled);
+        }
+
+        const showOwnerCount = badge !== null && BadgeLeaderboardUtils.shouldShowOwnerCount(badge.ownerCount);
+
+        if(ownerCount)
+        {
+            ownerCount.visible = showOwnerCount;
+            ownerCount.caption = showOwnerCount && badge !== null
+                ? localization?.getLocalizationWithParams(
+                    'badge.owner_count', '', 'count', BadgeLeaderboardUtils.formatOwnerCount(badge.ownerCount)
+                ) ?? ''
+                : '';
+        }
+
+        if(list)
+        {
+            list.arrangeListItems();
+            details.height = list.y + list.height + ExtendedProfileWindowCtrl.BADGE_DETAILS_BOTTOM_PADDING;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::disposeBadgeDetails()
+    private disposeBadgeDetails(): void
+    {
+        this._badgeDetails?.dispose();
+        this._badgeDetails = null;
     }
 
     /**
@@ -787,6 +984,8 @@ export class ExtendedProfileWindowCtrl
     private clearSelectedBadges(): void
     {
         if(!this._window) return;
+
+        this._selectedBadges = [];
 
         for(let i = 0; i < ExtendedProfileWindowCtrl.BADGE_SLOT_COUNT; i++)
         {

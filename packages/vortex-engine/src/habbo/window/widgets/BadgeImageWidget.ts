@@ -280,9 +280,12 @@ export class BadgeImageWidget implements IBadgeImageWidget
      *   the image is in the library — so the fetch, its timeout and `receiveAsset()` collapse
      *   into starting the animation here. `cancelPendingGlow()` goes with them.
      *
-     * TODO(AS3): the *inner* glow of AS3's three filters is not drawn. `windowFiltersToCss()`
-     *   skips `inner`, because Canvas2D has no inset shadow and an inner glow drawn outside is a
-     *   different effect rather than a rougher one. The outer glow and the colour tint render.
+     * All three of AS3's filters render. The inner one used to be skipped on the grounds that
+     * Canvas2D has no inset shadow, which is true of `ctx.filter` and not of Canvas2D: an inner
+     * glow is the blurred *inverse* of the shape's own alpha, painted in the glow colour and
+     * clipped to the shape, which is two composite operations. `applyInnerGlows()` in
+     * `WindowFilterCss.ts` does it, and `WindowComposite` runs it on the window's buffer before
+     * the blit.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::playGlow()
     public playGlow(color: number, durationMs: number = 500, _scale: number = 1.04): void

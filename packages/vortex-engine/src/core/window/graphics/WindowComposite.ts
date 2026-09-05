@@ -2,7 +2,7 @@ import type {IWindow} from '../IWindow';
 import type {IWindowContext} from '../IWindowContext';
 import type {IWindowContainer} from '../IWindowContainer';
 import type {IGraphicContext} from './IGraphicContext';
-import {windowFiltersToCss} from './WindowFilterCss';
+import {applyInnerGlows, windowFiltersToCss, windowInnerGlowFilters} from './WindowFilterCss';
 import {WindowType} from '../enum/WindowType';
 import {WindowParam} from '../enum/WindowParam';
 
@@ -471,7 +471,14 @@ export class WindowComposite
 
         if(buffer && buffer.width > 0 && buffer.height > 0)
         {
-            ctx.drawImage(buffer, absX, absY);
+            // An inner glow is not expressible as a filter string — `ctx.filter` has no inset
+            // shadow — so it is burned into a copy of the buffer instead, clipped to the buffer's
+            // own alpha. `applyInnerGlows()` returns the buffer untouched when there is none,
+            // which is every window bar a rare-badge widget mid-glow.
+            // AS3: .../src/com/sulake/habbo/window/widgets/BadgeImageWidget.as::createInnerGlowFilter()
+            const glows = windowInnerGlowFilters(this.getWindowFilters(window));
+
+            ctx.drawImage(applyInnerGlows(buffer, glows), absX, absY);
         }
 
         // Tear down this window's clip, blend and filter before descending. AS3 treats

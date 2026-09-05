@@ -19,11 +19,15 @@ import {CatalogWidget} from './CatalogWidget';
 /**
  * The buy/gift button bar for the currently selected offer.
  *
- * TODO(AS3): sources/win63_version/habbo/catalog/viewer/widgets/PurchaseCatalogWidget.as::
- *   `purchaseWidgetBuyVipStub` — the club-upsell UI shown in place of the buy button for an offer
- *   the player is not club-eligible for. `attachStub()`/`_stub` stay null here, so
- *   `enableBuyButton()`/`enableGiftButton()` always take the normal path and a non-eligible offer
- *   simply shows a disabled button instead of the upsell.
+ * **The club-upsell stub is not a gap — it is dead in the 2026 client**, checked 2026-09-05 against
+ * the primary tree (this used to carry a marker saying the port owed it). `PurchaseCatalogWidget.as`
+ * declares `_SafeStr_6480`, the stub window, and the only three things it ever does with it are
+ * *test it for null* (l.130, l.176) and *tear it down* (l.132-135). Nothing assigns it. The XML it
+ * would be built from, `purchaseWidgetBuyVipStub`, is loaded into `_stubPurchaseVipXML` at l.110
+ * and read by nothing. So `attachStub()` is a husk whose branch cannot fire, `_SafeStr_6480` is
+ * permanently null, and `enableBuyButton()`/`enableGiftButton()` take the normal path in Flash for
+ * exactly the reason they do here. Same in `win63_version`. Porting the husk would add a method
+ * that can only ever no-op.
  *
  * The room-ad half is no longer a gap: `HabboCatalog.roomAdPurchaseData` is a real accessor and is
  * what switches `purchaseProduct()` over to `PurchaseRoomAdMessageComposer`.

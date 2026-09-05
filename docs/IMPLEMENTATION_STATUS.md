@@ -4357,6 +4357,35 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
+- 🆕 **Four more markers closed, 25 → 22 — 2026-09-05, and two were real defects.**
+
+  - **The inner glow renders.** Its marker said Canvas2D has no inset shadow, which is true of
+    `ctx.filter` and not of Canvas2D. An inner glow is the blurred *inverse* of the shape's own
+    alpha, painted in the glow colour and clipped to the shape — three composite steps: fill a
+    scratch canvas with the colour, `destination-out` the blurred source into it (punching a soft
+    hole, leaving the inverted alpha), then `source-atop` that onto a copy of the source.
+    `applyInnerGlows()` in `WindowFilterCss.ts` does it and `WindowComposite` runs it on the
+    window's buffer before the blit; it returns the buffer untouched when there is no inner glow,
+    which is every window bar a rare badge mid-glow. All three of `BadgeImageWidget`'s filters now
+    draw.
+  - **The profile's badge hover card.** `showBadgeInfo`/`hideBadgeInfo`/`createBadgeDetails`/
+    `populateBadgeDetails`/`disposeBadgeDetails`, the `_selectedBadges` slot array they read, and
+    the `WME_OVER`/`WME_OUT` pair AS3 attaches to each slot window. Every dependency was already
+    shipped — the `extended_profile_badge_details` layout, `getLabelLocalizationKey()`/
+    `getWhiteBackgroundTagColor()`, `BadgeLeaderboardUtils`, `getBadgeName()`/`getBadgeDesc()`.
+  - **The inventory fired every icon render at once.** `FurniModel.createGroupItem()` dropped AS3's
+    fifth argument, `isInitializing`, which becomes `GroupItem`'s `isNoAutoRequestImage` — so every
+    group built during the initial bulk load requested its own icon immediately instead of leaving
+    it to the paced loader. `initListImages()` (one image per call, current page only, `break` on
+    the first that starts a render) and `onImageUpdateTimerEvent()` (50 ms, with the 200 ms
+    rent-expiry sweep AS3 folds into the same tick) are ported, and the argument is threaded
+    through both call sites. This is the difference between a full inventory landing in one frame
+    and landing over a few seconds.
+  - **The catalog's club-upsell stub is dead in AS3, not owed here.** `PurchaseCatalogWidget.as`
+    declares `_SafeStr_6480`, tests it for null twice and tears it down once — and assigns it
+    nowhere. `purchaseWidgetBuyVipStub` is loaded into `_stubPurchaseVipXML` at l.110 and read by
+    nothing. `attachStub()` is a husk whose branch cannot fire. Same in `win63_version`.
+
 - 🆕 **The profile's badge rarity glow, and a marker that invented its own feature — 2026-09-05.**
   Two of the surviving markers had blockers that had stopped being true, and checking them is what
   found both:

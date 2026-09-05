@@ -142,6 +142,27 @@ export class FurniModel implements IFurniModel
         this._roomEngine.events.on('REOE_PLACED', this.onObjectPlaced);
     }
 
+    /** AS3's `new Timer(50)`. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::FurniModel()
+    private static readonly IMAGE_UPDATE_INTERVAL_MS = 50;
+
+    /** AS3's `_imageUpdateCumulativeTime >= 200`. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::onImageUpdateTimerEvent()
+    private static readonly RENT_SWEEP_INTERVAL_MS = 200;
+
+    /**
+     * Name DERIVED: AS3's field is `_SafeStr_5802`, obfuscated. Named after what it drives.
+     *
+     * AS3 creates the `Timer` in the constructor and starts it from `initListImages()`; a browser
+     * interval has no started/stopped pair, so it is created on that same first call and cleared
+     * in `dispose()`.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::initListImages()
+    private _imageUpdateTimer: ReturnType<typeof setInterval> | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::_imageUpdateCumulativeTime
+    private _imageUpdateCumulativeTime: number = 0;
+
     private _view: FurniView;
 
     get view(): FurniView
@@ -679,6 +700,12 @@ export class FurniModel implements IFurniModel
 
         this._roomEngine.events.off('REOE_PLACED', this.onObjectPlaced);
 
+        if(this._imageUpdateTimer !== null)
+        {
+            clearInterval(this._imageUpdateTimer);
+            this._imageUpdateTimer = null;
+        }
+
         for(const group of this._furniData)
         {
             group.dispose();
@@ -757,6 +784,10 @@ export class FurniModel implements IFurniModel
         }
 
         this._view.setViewToState();
+
+        // Starts the paced loader. Every group built above was created with `isInitializing`, so
+        // none of them requested its own icon — this is what makes them arrive, one per 50 ms.
+        this.initListImages();
 
         // AS3 dispatches this at the tail of insertFurniture(), only on the pass that actually
         // claimed the category. Its only AS3 consumer is CollectiblesController, which is not
@@ -1369,7 +1400,7 @@ export class FurniModel implements IFurniModel
 
         // Create new group for this non-groupable item
         const isUnseen = !isInitializing;
-        const groupItem = this.createGroupItem(item.type, item.category, item.stuffData, item.extra);
+        const groupItem = this.createGroupItem(item.type, item.category, item.stuffData, item.extra, isInitializing);
 
         groupItem.push(item, isUnseen);
 
@@ -1475,7 +1506,7 @@ export class FurniModel implements IFurniModel
         }
 
         // Create new group
-        const groupItem = this.createGroupItem(item.type, item.category, item.stuffData, item.extra);
+        const groupItem = this.createGroupItem(item.type, item.category, item.stuffData, item.extra, isInitializing);
 
         groupItem.push(item, isUnseen);
 
@@ -1544,14 +1575,23 @@ export class FurniModel implements IFurniModel
 	 *   mutable and its consumer disposes it. `GroupItem` here only ever hands the image to
 	 *   `setFinalImage()` and never closes it, so the library's own `ImageBitmap` is shared.
 	 *
-	 * TODO(AS3): still always auto-requests icons instead of AS3's `isInitializing`-gated
-	 *   deferral — `FurniModel.initListImages()`'s paced loader is not ported.
+	 * `isInitializing` is AS3's fifth argument, and it is the gate on the icon request: it becomes
+	 * `GroupItem`'s `isNoAutoRequestImage`, so a group built during the initial bulk load does not
+	 * render its own icon. `initListImages()` does it instead, one per 50 ms tick, over the current
+	 * page only. Dropping the argument — as this used to — made a full inventory fire every icon
+	 * render at once.
 	 *
 	 * AS3 declares this public — the inventory's trading handler calls it to build the group
 	 * items for both sides' offers (`_SafeCls_1951.populateItemGroups()`).
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::createGroupItem()
-    createGroupItem(type: number, category: number, stuffData: IStuffData | null, extra: number): GroupItem
+    createGroupItem(
+        type: number,
+        category: number,
+        stuffData: IStuffData | null,
+        extra: number,
+        isInitializing: boolean = false
+    ): GroupItem
     {
         let iconName: string | null = null;
 
@@ -1583,10 +1623,79 @@ export class FurniModel implements IFurniModel
         // A group built while the machine is running starts with its recycle badge already on;
         // otherwise items added mid-run would be the only ones in the grid without one.
         return new GroupItem(
-            this, type, category, stuffData, extra, icon, false, alignment,
+            this, type, category, stuffData, extra, icon, isInitializing, alignment,
             this._habboInventory.recyclerModel?.running ?? false
         );
     }
+
+    /**
+     * Renders **one** not-yet-rendered icon on the grid's current page, and starts the pacing
+     * timer if it is not already running.
+     *
+     * The `break` is the whole point: AS3 inits a single image per call and lets
+     * `onImageUpdateTimerEvent()` come back 50 ms later for the next. Rendering an avatar or a
+     * furni preview is not cheap, and a full inventory is hundreds of them — done in one pass they
+     * land in a single frame and the client visibly stalls. Only the *current page* is walked, so
+     * an inventory the player never scrolls costs one page's worth of renders and no more.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::initListImages()
+    private initListImages(): void
+    {
+        if(this._imageUpdateTimer === null)
+        {
+            this._imageUpdateTimer = setInterval(this.onImageUpdateTimerEvent, FurniModel.IMAGE_UPDATE_INTERVAL_MS);
+        }
+
+        const items = this._view.currentPageItems;
+
+        if(items === null) return;
+
+        for(const item of items)
+        {
+            if(item.isImageInited) continue;
+
+            // `initImage(false)` returns true when it actually started a render; a group whose
+            // icon was already resolved returns false and the loop moves on to the next one.
+            if(item.initImage(false)) break;
+        }
+    }
+
+    /**
+     * The 50 ms tick: one icon, and every fourth tick a sweep for rentals that have run out.
+     *
+     * AS3 counts the ticks in `_imageUpdateCumulativeTime` rather than running a second timer, and
+     * 200 ms is how often an expiry can go unnoticed at worst.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::onImageUpdateTimerEvent()
+    private onImageUpdateTimerEvent = (): void =>
+    {
+        if(this._disposed) return;
+
+        this.initListImages();
+
+        this._imageUpdateCumulativeTime += FurniModel.IMAGE_UPDATE_INTERVAL_MS;
+
+        if(this._imageUpdateCumulativeTime < FurniModel.RENT_SWEEP_INTERVAL_MS) return;
+
+        const expired: number[] = [];
+
+        for(const group of this._furniData)
+        {
+            const item = group.getAt(0);
+
+            if(item && item.isRented && item.hasRentPeriodStarted && item.secondsToExpiration <= 0)
+            {
+                expired.push(item.id);
+            }
+        }
+
+        for(const id of expired) this.removeFurni(id);
+
+        if(expired.length > 0) this._view.updateGridFilters();
+
+        this._view.updateRentedItem();
+        this._imageUpdateCumulativeTime = 0;
+    };
 
     // AS3: .../src/com/sulake/habbo/inventory/furni/FurniModel.as::addItemToTop()
     private addItemToTop(groupItem: GroupItem): void
