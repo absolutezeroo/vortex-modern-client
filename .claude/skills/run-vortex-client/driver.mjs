@@ -322,6 +322,30 @@ async function run(cdp, line)
             break;
         }
 
+        case 'drag':
+        {
+            const [x1, y1, x2, y2, steps = 8] = rest.map(Number);
+            const base = {button: 'left', clickCount: 1};
+
+            await cdp.send('Input.dispatchMouseEvent', {...base, type: 'mouseMoved', x: x1, y: y1, buttons: 0});
+            await cdp.send('Input.dispatchMouseEvent', {...base, type: 'mousePressed', x: x1, y: y1, buttons: 1});
+
+            for(let i = 1; i <= steps; i++)
+            {
+                const x = Math.round(x1 + ((x2 - x1) * i) / steps);
+                const y = Math.round(y1 + ((y2 - y1) * i) / steps);
+
+                await sleep(20);
+                await cdp.send('Input.dispatchMouseEvent', {...base, type: 'mouseMoved', x, y, buttons: 1});
+            }
+
+            await sleep(20);
+            await cdp.send('Input.dispatchMouseEvent', {...base, type: 'mouseReleased', x: x2, y: y2, buttons: 0});
+
+            console.log(`[drag] ${x1},${y1} -> ${x2},${y2}`);
+            break;
+        }
+
         case 'type':
             await cdp.send('Input.insertText', {text: arg});
             console.log(`[type] ${arg}`);

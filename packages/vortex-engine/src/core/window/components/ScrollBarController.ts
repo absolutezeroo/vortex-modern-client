@@ -3,7 +3,9 @@ import type {IWindowContainer} from '../IWindowContainer';
 import type {IWindowContext} from '../IWindowContext';
 import type {IScrollbarWindow} from './IScrollbarWindow';
 import type {IScrollableWindow} from './IScrollableWindow';
+import type {IDesktopWindow} from './IDesktopWindow';
 import {InteractiveController} from './InteractiveController';
+import {SubstituteParentController} from './SubstituteParentController';
 import type {ScrollBarLiftController} from './ScrollBarLiftController';
 import type {WindowController} from '../WindowController';
 import type {WindowEvent} from '../events/WindowEvent';
@@ -683,6 +685,38 @@ export class ScrollBarController extends InteractiveController implements IScrol
     }
 
     /**
+	 * Whether the parent is a container this may sweep for a scroll target.
+	 *
+	 * AS3 writes this inline, twice, as `_parent is IWindowContainer && !(_parent is
+	 * IDesktopWindow)`. TypeScript erases interfaces, so the port duck-typed the first half as
+	 * "has findChildByName" / "has numChildren" - which every `WindowController` satisfies,
+	 * `SubstituteParentController` included, and that one is a bare `WindowController` in AS3
+	 * too, so the AS3 guard rejects it where this port accepted it.
+	 *
+	 * That is the whole bug: a scrollbar carries USE_PARENT_GRAPHIC_CONTEXT, so
+	 * `WindowContext.createWindow()` parks it on the context's substitute parent before its real
+	 * one exists. The park fires WE_PARENT_ADDED, this resolves *there*, sweeps whatever other
+	 * in-flight windows happen to be parked alongside it, and binds to a stranger's list -
+	 * permanently, because `resolveScrollTarget()` returns early once `_scrollable` is set. In
+	 * the floor plan editor all four bars ended up on an unnamed `ItemListController` under
+	 * `_CONTEXT_SUBSTITUTE_PARENT`, which does not overflow: full-length lift, then `disable()`.
+	 * It reproduces only with other windows already parked, which is why an empty harness
+	 * resolved correctly.
+	 *
+	 * The desktop half is duck-typed on `getActiveWindow`, the one member `IDesktopWindow` adds
+	 * that nothing else has - importing `DesktopController` here would close the cycle
+	 * ScrollBarController -> DesktopController -> WindowContext -> Classes -> ScrollBarController.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::resolveScrollTarget()
+    private isSweepableParent(parent: IWindow | null): boolean
+    {
+        if(parent === null) return false;
+        if(parent instanceof SubstituteParentController) return false;
+
+        return typeof (parent as unknown as IDesktopWindow).getActiveWindow !== 'function';
+    }
+
+    /**
 	 * Attempts to resolve the scroll target from the parent hierarchy.
 	 *
 	 * Searches by name first, then checks if parent is scrollable,
@@ -703,19 +737,16 @@ export class ScrollBarController extends InteractiveController implements IScrol
         {
             const found = this.findParentByName(this._targetName) as unknown as IScrollableWindow | null;
 
-            if(found === null && this._parent !== null)
+            if(found === null && this.isSweepableParent(this._parent))
             {
                 const container = this._parent as unknown as IWindowContainer;
 
-                if(container.findChildByName)
-                {
-                    const sibling = container.findChildByName(this._targetName) as unknown as IScrollableWindow | null;
+                const sibling = container.findChildByName(this._targetName) as unknown as IScrollableWindow | null;
 
-                    if(sibling)
-                    {
-                        this.scrollable = sibling;
-                        return true;
-                    }
+                if(sibling)
+                {
+                    this.scrollable = sibling;
+                    return true;
                 }
             }
         }
@@ -726,21 +757,18 @@ export class ScrollBarController extends InteractiveController implements IScrol
             return true;
         }
 
-        if(this._parent !== null)
+        if(this.isSweepableParent(this._parent))
         {
             const container = this._parent as unknown as IWindowContainer;
 
-            if(container.numChildren !== undefined)
+            for(let i = 0; i < container.numChildren; i++)
             {
-                for(let i = 0; i < container.numChildren; i++)
-                {
-                    const child = container.getChildAt(i);
+                const child = container.getChildAt(i);
 
-                    if(child && 'scrollH' in child && 'scrollV' in child && 'visibleRegion' in child)
-                    {
-                        this.scrollable = child as unknown as IScrollableWindow;
-                        return true;
-                    }
+                if(child && 'scrollH' in child && 'scrollV' in child && 'visibleRegion' in child)
+                {
+                    this.scrollable = child as unknown as IScrollableWindow;
+                    return true;
                 }
             }
         }
@@ -764,6 +792,13 @@ export class ScrollBarController extends InteractiveController implements IScrol
     // AS3: .../src/com/sulake/core/window/components/ScrollBarController.as::onScrollableScrolled()
     private onScrollableScrolled(_event: WindowEvent): void
     {
+        // Adopt the target's position first, exactly as AS3 does. Without it `_offset` keeps
+        // whatever the scrollbar last wrote while the target scrolls itself - a list that
+        // re-normalises its own 0..1 position when its content resizes does that on every
+        // WE_SCROLL - and every later increment/decrement/track click then computes from a stale
+        // base, so the first one jumps the content instead of nudging it.
+        this.setScrollPosition(this.horizontal ? this._scrollable!.scrollH : this._scrollable!.scrollV, false);
+
         this.updateLiftSizeAndPosition();
     }
 }
