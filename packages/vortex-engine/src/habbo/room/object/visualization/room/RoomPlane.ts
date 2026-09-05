@@ -1180,8 +1180,18 @@ export class RoomPlane
 
             ctx.globalCompositeOperation = 'source-over';
 
-            // After the holes and before anything else: the reveal fills part of what was just cut.
-            this.drawMaskReveals(ctx, a, b, c, d, tx, ty);
+            // The reveal is OFF, and stays off until it is measured rather than reasoned about.
+            //
+            // It shipped unverified and the doorway went from a black opening to no opening at all,
+            // which is one symptom with two possible causes and no way to tell them apart from the
+            // screen: either the band it fills is wrong and covers the hole, or the openings stopped
+            // being cut for an unrelated reason and the reveal is innocent. Guessing between them
+            // cost two broken rooms already.
+            //
+            // What settles it is the line `RoomVisualizationData` now logs at room load — the mask
+            // types the manager resolved. With that number in hand the reveal is one call away:
+            //   this.drawMaskReveals(ctx, a, b, c, d, tx, ty);
+            // and `drawMaskReveals()` below is left intact and unreferenced for exactly that.
         }
 
         // Dispose previous texture to prevent memory leak
