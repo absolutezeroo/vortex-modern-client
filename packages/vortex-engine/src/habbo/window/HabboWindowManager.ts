@@ -74,6 +74,7 @@ import type {IConfirmDialog} from './utils/ConfirmDialog';
 import {ConfirmDialog} from './utils/ConfirmDialog';
 import {SimpleAlertDialog} from './utils/SimpleAlertDialog';
 import {HabbletLinkHandler} from './handlers/HabbletLinkHandler';
+import {HabboPagesViewer} from './utils/habbopedia/HabboPagesViewer';
 import {ElementPointerHandler} from './utils/ElementPointerHandler';
 import {BCFloorPlanEditor} from './utils/floorplaneditor/BCFloorPlanEditor';
 
@@ -115,6 +116,10 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_hintManager
     private _hintManager: HintManager | null = null;
     private _habbletLinkHandler: HabbletLinkHandler | null = null;
+
+    // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_habboPagesViewer
+    // Name DERIVED: AS3's field is `_SafeStr_6365`, obfuscated; named after the class it holds.
+    private _habboPagesViewer: HabboPagesViewer | null = null;
     private _elementPointerHandler: ElementPointerHandler | null = null;
 
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_bcfloorPlanEditor
@@ -1112,12 +1117,16 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         );
     }
 
+    /**
+     * Opens a habbopedia page.
+     *
+     * Every frame built through `buildFromXML()` wires its help button here, so this is what the
+     * `?` in a window title bar does.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
-    // TODO(AS3): AS3 opens HabboPagesViewer with the given page ID
-    // sources/win63_version/habbo/window/HabboWindowManagerComponent.as::openHelpPage()
-    public openHelpPage(_pageId: string): void 
+    public openHelpPage(pageId: string): void
     {
-        // HabboPagesViewer integration - to be connected
+        this._habboPagesViewer?.openPage(pageId);
     }
 
     /**
@@ -1500,7 +1509,14 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this.removeMouseEventTracker(this);
         this._disposed = true;
 
-        if(this._habbletLinkHandler) 
+        if(this._habboPagesViewer)
+        {
+            // It removes its own tracker — it added it — unlike the habblet handler below.
+            this._habboPagesViewer.dispose();
+            this._habboPagesViewer = null;
+        }
+
+        if(this._habbletLinkHandler)
         {
             this.context.removeLinkEventTracker(this._habbletLinkHandler);
             this._habbletLinkHandler.dispose();
@@ -1590,7 +1606,15 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
         this.addMouseEventTracker(this);
         this.registerUpdateReceiver(this, 0);
 
-        if(!this._habbletLinkHandler) 
+        // AS3 builds both here, one line apart, and the viewer registers its own `habbopages/`
+        // tracker in its constructor where the habblet handler is registered from outside.
+        // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::initComponent()
+        if(!this._habboPagesViewer)
+        {
+            this._habboPagesViewer = new HabboPagesViewer(this);
+        }
+
+        if(!this._habbletLinkHandler)
         {
             this._habbletLinkHandler = new HabbletLinkHandler(this);
             this.context.addLinkEventTracker(this._habbletLinkHandler);

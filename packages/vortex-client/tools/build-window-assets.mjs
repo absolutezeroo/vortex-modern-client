@@ -185,6 +185,10 @@ function indexFilesByLinkage(dirs, obfuscatedNameMap)
 // cannot collide with a field name because assignNames() keys on the same string either way.
 const DIRECT_EMBED_SOURCES = [
     'com/sulake/habbo/window/utils/floorplaneditor/BCFloorPlanEditor.as',
+    // Same shape: `habbopedia_window_layout`/`habbopedia_edit_layout` are static Class fields on
+    // the viewer, instantiated as ByteArray and parsed, never fetched by name. They ship as
+    // `habbopedia_xml` and `habbopedia_edit_xml`.
+    'com/sulake/habbo/window/utils/habbopedia/HabboPagesViewer.as',
 ];
 
 /** Reads every `<fieldName>:Class = <ref>` declaration across the component manifests. */

@@ -9,9 +9,11 @@
  * dialogs), the "search rooms by owner" and change-looks/change-badges links,
  * and close.
  *
- * Explicitly deferred as TODO(AS3), matching the Phase 1 scope decision:
- * - The badge-count leaderboard link (needs HabboGroups' internal link
- *   builder, low value alone).
+ * Nothing is deferred here any more. The Phase 1 scope decision had two
+ * items left and both closed on 2026-09-05; the badge-count leaderboard link
+ * needed no "HabboGroups internal link builder" at all —
+ * `BadgeLeaderboardUtils.getLink()` is the builder, it was already ported, and
+ * `onBadgeCountClicked()` is four lines around it.
  *
  * **The hover badge-details card landed 2026-09-05** — `showBadgeInfo`/
  * `hideBadgeInfo`/`createBadgeDetails`/`populateBadgeDetails`/
@@ -310,6 +312,10 @@ export class ExtendedProfileWindowCtrl
         const blockButton = window.findChildByName('block_button');
 
         if(blockButton) blockButton.procedure = this.onBlock;
+
+        const badgeCountRegion = window.findChildByName('badgeCountRegion');
+
+        if(badgeCountRegion) badgeCountRegion.procedure = this.onBadgeCountClicked;
 
         const userActivityPoints = window.findChildByName('user_activity_points');
 
@@ -1095,7 +1101,38 @@ export class ExtendedProfileWindowCtrl
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::close()
     close(): void
     {
-        if(this._window) this._window.visible = false;
+        if(!this._window) return;
+
+        // Both before hiding, as AS3 does: a hover card parented to the desktop would outlive the
+        // window it belongs to, and a glow animation would keep ticking against a hidden one.
+        this.disposeBadgeDetails();
+        this.clearBadgeGlowEffects();
+
+        this._window.visible = false;
+    }
+
+    /**
+     * The badge count opens the badge leaderboard.
+     *
+     * AS3 asks `getBadgeLeaderboardPageForCurrentProfile()` which page to open on and that method
+     * returns a hardcoded `0` — the profile carries no rank to derive one from — so the link is
+     * always badge 0, the default rarity, page 0. Kept as its own method for the same reason AS3
+     * keeps it: it is the seam where a rank would go.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onBadgeCountClicked()
+    private onBadgeCountClicked = (event: WindowEvent): void =>
+    {
+        if(event.type !== WindowMouseEvent.CLICK) return;
+
+        this._groupsManager?.context.createLinkEvent(
+            BadgeLeaderboardUtils.getLink(0, -1, this.getBadgeLeaderboardPageForCurrentProfile())
+        );
+    };
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::getBadgeLeaderboardPageForCurrentProfile()
+    private getBadgeLeaderboardPageForCurrentProfile(): number
+    {
+        return 0;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/groups/ExtendedProfileWindowCtrl.as::onChangeLooks()
