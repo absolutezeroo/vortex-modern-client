@@ -175,9 +175,11 @@ export class TextController extends WindowController implements ITextWindow
     protected static readonly FLASH_TEXT_FIELD_TOP_GUTTER: number = 2;
 
     // The horizontal half of the same Flash gutter. TextSkinRenderer applies it to
-    // editable fields (its FLASH_TEXT_FIELD_LEFT_GUTTER, and the TODO(AS3) there
-    // explains why only those), so the caret bridge has to start from the same
-    // origin or the caret sits 2px left of the glyphs.
+    // editable fields only — its own FLASH_TEXT_FIELD_LEFT_GUTTER explains why: an
+    // auto-sized label takes its width from the measured text, so shifting its
+    // glyphs right without widening the box would clip the last 2px off captions
+    // across the client. The caret bridge has to start from the same origin either
+    // way, or the caret sits 2px left of the glyphs.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::_field
     protected static readonly FLASH_TEXT_FIELD_LEFT_GUTTER: number = 2;
 
@@ -917,18 +919,26 @@ export class TextController extends WindowController implements ITextWindow
     }
 
     /**
-     * Always null — correcting an earlier note here that claimed this renderer draws `<img>`
-     * inline. It does not render inline images at all.
+     * The display object behind an `<img>` in the text — always null, because nothing puts one
+     * there.
      *
-     * AS3's body is one line, `_field.getImageReference(id)`, a pass-through to Flash's
-     * `TextField`. There is no TextField here and no inline-image support to hand a handle out
-     * of, so answering honestly would mean building that support first — and nothing wants it:
-     * no shipped layout or localisation string contains an `<img>`, and AS3's own method has no
-     * caller in any tree either.
+     * AS3's body is a single pass-through, `_field.getImageReference(id)`, handing back whatever
+     * Flash's `TextField` built for an `<img src="…">` in its `htmlText`. There is no `TextField`
+     * here to pass through to, and this renderer draws no inline images.
+     *
+     * DEVIATION rather than a gap, on three checks that all have to fail before it becomes one:
+     *   - **Nothing calls it.** `grep -rn getImageReference sources/WIN63-…/src/` finds the
+     *     interface declaration and this one-line body, and no call site anywhere.
+     *   - **Nothing to reference.** No `<img` appears in any of the 788 shipped window layouts.
+     *   - **Nothing arrives at runtime either.** No `<img` in `external_flash_texts.txt`, nor in
+     *     the live gamedata the client actually loads.
+     *
+     *   So implementing inline-image layout would add a text feature with no content to render and
+     *   no caller to ask for it. Returning null is what Flash returns for an id it does not know,
+     *   which is every id here. Reclassified from a TODO on 2026-09-05: three failing checks is a
+     *   decision, not a debt.
      */
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
-    //   returns a real handle once inline `<img>` rendering exists. Reopen this with that feature,
-    //   not before — a handle to an image nobody draws is worth nothing.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/TextController.as::getImageReference()
     public getImageReference(_id: string): unknown
     {
         return null;
