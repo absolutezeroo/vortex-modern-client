@@ -462,12 +462,16 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return this._master;
     }
 
-    // TODO(AS3): .../src/com/sulake/room/renderer/_SafeCls_3073.as::getPlaneSortableSprites(),
-    // getRoomObjectCacheItem() and getObjectId() all read `_roomObjectCache`, the per-object sprite
-    // cache AS3 keeps beside the sortable list. This port renders straight off `_sortableSpriteList`
-    // and keeps no such cache, so the three have nothing to look into.
+    // DEVIATION: AS3's is `getObjectId(sprite:_SafeCls_4441):String` — a four-line null guard around
+    //   `sprite.identifier`, `protected`, and called from nowhere in the primary tree
+    //   (`grep -rn "\.getObjectId(" com/sulake/` finds no call site at all). The port reads
+    //   `extSprite.identifier` at the one place that wants it, in `handleMouseEvent()`'s hit walk.
+    //   Its two siblings in the old marker here — `getPlaneSortableSprites()` and
+    //   `getRoomObjectCacheItem()` — were ported on 2026-09-05: that marker said this port "keeps
+    //   no such cache" as AS3's `_roomObjectCache`, and `_objectSpriteCaches` above is one.
+    // AS3: .../src/com/sulake/room/renderer/_SafeCls_3073.as::getObjectId()
 
-    private static compareSortableSprites(a: SortableSprite, b: SortableSprite): number 
+    private static compareSortableSprites(a: SortableSprite, b: SortableSprite): number
     {
         return b.z - a.z;
     }

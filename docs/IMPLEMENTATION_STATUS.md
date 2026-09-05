@@ -4380,6 +4380,26 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
+- 🆕 **The effect preview composites without a room — 9 → 6, and `--stale` reaches 0 (2026-09-05).**
+  `ProductViewCatalogWidget`'s "e" fallback had been deferred across several sweeps, and the reason
+  it survived them is worth naming: each restatement of the blocker was true and none of them was
+  the blocker. "Needs pixel compositing" (false — AS3 takes the room-previewer path first).
+  "Blocked on `BitmapData`" (false — one exists). "Blocked on reachability" (true, and irrelevant:
+  the branch is AS3's, so the port owes it). The actual obstacle was that the only `BitmapData`
+  shim lives in `vortex-client` and **the engine may not import from the client** — and the answer
+  was never a shim: `HabbiconBubble` had already established compositing into an `OffscreenCanvas`
+  and handing over an `ImageBitmap`.
+
+  What it does now is AS3's three ordered draws — effect sprites behind the avatar, the avatar, then
+  the sprites in front, split on each sprite's z direction offset — plus `addEffectSprites()`, with
+  ink 33 drawn as `lighter` because that is Flash's ADD blend. The avatar is advanced two frames
+  before being read, as AS3 does, since an effect's first frame is usually its rest pose.
+
+  `RoomRenderingCanvas`'s last marker went with it: two of the three members it deferred
+  (`getPlaneSortableSprites`, `getRoomObjectCacheItem`) landed with the photo work, and the third,
+  `getObjectId()`, is a four-line protected null guard with no call site anywhere in the primary
+  tree.
+
 - 🆕 **The room-photo payload, closed — 13 → 10, 2026-09-05.** Four markers, one feature, and the
   reason it had sat is worth recording: its stated blocker was partly *"the emulator's
   `RenderRoomMessageHandler` is an 18-line accept-and-drop stub, so none of it is exercisable"*.
