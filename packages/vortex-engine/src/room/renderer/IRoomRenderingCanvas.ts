@@ -90,11 +90,26 @@ export interface IRoomRenderingCanvas
     pingMs: number;
 
     // TODO(AS3): .../src/com/sulake/room/renderer/IRoomRenderingCanvas.as::getSortableSpriteList()
-    // and getPlaneSortableSprites() both hand back sprite lists. Declaring the first here would
-    // pull `SortableSprite` — which lives in `habbo/room/renderer/utils/` — into this generic
-    // `room/` interface and invert the layering (see .claude/rules/room.md); AS3 gets away with it
-    // by returning an untyped Array. RoomRenderingCanvas implements it regardless. The second reads
-    // a per-object sprite cache this port does not keep.
+    // and getPlaneSortableSprites() both hand back sprite lists, and both delegate to
+    // `_roomObjectCache` — the per-object sprite cache AS3 keeps beside the draw list and this
+    // port does not.
+    //
+    // Blocker restated 2026-09-05, because the one this used to give was wrong. It said declaring
+    // the first here would invert the layering, since `SortableSprite` lives in
+    // `habbo/room/renderer/utils/` while this interface is generic `room/`, and that "AS3 gets away
+    // with it by returning an untyped Array". AS3 returns `Vector.<RoomObjectSpriteData>` — only
+    // the *second* method is untyped — and `RoomObjectSpriteData` lives in `com/sulake/room/data/`,
+    // the same generic layer as this file. There is no inversion in AS3's shape.
+    //
+    // The real gap is that the two types are not the same thing. AS3's `RoomObjectSpriteData` is
+    // the *serialisation* record — objectId, x/y/z, name, blendMode, flipH, skew, frame, color,
+    // alpha, width, height, objectType, posture — which is the shape `SpriteDataCollector` emits as
+    // the room-photo JSON. This port's `SortableSprite` is the renderer's own draw-order record,
+    // a different thing that happens to be what its `getSortableSpriteList()` returns, which is why
+    // `SpriteDataCollector` has to wrap every entry. Closing this means porting `_roomObjectCache`
+    // and `RoomObjectSpriteData` for real, not moving a type: see `SpriteDataCollector`'s own two
+    // markers for the rest of the same feature, and note the emulator's `RenderRoomMessageHandler`
+    // is an 18-line accept-and-drop stub, so none of it is exercisable end to end today.
 
     dispose(): void;
 }

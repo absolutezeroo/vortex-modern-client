@@ -4357,6 +4357,29 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
+- 🆕 **`GlowFilter.quality` is applied, in one pass — 16 → 15, 2026-09-05.** Flash re-runs its blur
+  `quality` times; `q` successive box blurs of the same radius are one convolution with the box
+  folded into itself `q` times, so the kernel is computed on the CPU and the shader samples
+  `4q + 1` taps per axis instead of re-running. Same result, one surface pass, and `q = 1` is
+  byte-for-byte the 5-tap box it always was — which matters, since nine of the port's ten call
+  sites pass 1. `q` clamps at 3, where the grid is already 13x13 (169 samples per pixel).
+
+  The arithmetic lives in its own module, `core/utils/GlowKernel.ts`, for a reason worth reusing:
+  **`GlowFilter` extends a PixiJS `Filter` and cannot be constructed without a renderer**, so
+  anything on it is unreachable from a node check. Pulled out, it is checked by
+  `scripts/check-glow-kernel.mjs` on the four properties that pin a kernel down — sums to 1 (the
+  shader does no division, so a kernel summing to 0.9 dims the glow by 19%), symmetric (else the
+  halo shifts off the shape), `4q + 1` taps, and q = 1 unchanged.
+
+  Also corrected while nearby: **`IRoomRenderingCanvas`'s marker misdescribed AS3.** It said
+  declaring `getSortableSpriteList()` there would invert the layering and that "AS3 gets away with
+  it by returning an untyped Array". AS3 returns `Vector.<RoomObjectSpriteData>` — only
+  `getPlaneSortableSprites()` is untyped — and `RoomObjectSpriteData` lives in
+  `com/sulake/room/data/`, the same generic layer as the interface. The real gap is that this
+  port's `SortableSprite` is the renderer's draw-order record while AS3's is the *serialisation*
+  record the room-photo JSON is made of; they are different types with the same method behind them,
+  which is why `SpriteDataCollector` wraps every entry.
+
 - 🆕 **Habbopedia, the whole `Tween`, and four markers that were decisions — 22 → 16, 2026-09-05.**
 
   - **`openHelpPage()` opens a page.** It was an empty body whose marker read "HabboPagesViewer

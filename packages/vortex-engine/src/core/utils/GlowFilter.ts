@@ -1,4 +1,5 @@
 import {Color, defaultFilterVert, Filter, GlProgram} from 'pixi.js';
+import {foldedBoxWeights, GLOW_MAX_TAPS, padGlowWeights} from './GlowKernel';
 
 /**
  * `flash.filters.GlowFilter`, as a PixiJS filter.
@@ -11,19 +12,18 @@ import {Color, defaultFilterVert, Filter, GlProgram} from 'pixi.js';
  * **How Flash's filter behaves, and what this reproduces.** The source's alpha channel is blurred
  * by `blurX`/`blurY`, multiplied by `strength` and clamped, and the result painted in `color` at
  * `alpha` — behind the source for an outer glow, clipped to the source for an inner one. Both
- * branches are here. The blur is a single 5x5 box spanning ±blur rather than `quality` successive
- * Gaussian passes: every call site in this port passes `quality` 1, and at the 2-6px radii they
- * use the visible difference is nil.
+ * branches are here.
+ *
+ * **`quality` is applied**, in one pass rather than Flash's several. `q` successive box blurs of
+ * the same radius are one convolution with the box folded into itself `q` times, so the kernel is
+ * computed on the CPU (`foldedBoxWeights()`) and the shader samples `4q + 1` taps per axis instead
+ * of re-running. Same result, one surface pass; `q` is clamped at 3, where the grid is already
+ * 13x13.
  *
  * `knockout` is applied: it drops the source and keeps the glow alone. Every one of the ten
  * `new GlowFilter(...)` constructions in the primary AS3 tree passes `false`, so nothing exercises
  * it today — it is implemented rather than ignored because a silently-dropped argument changes
  * what is drawn.
- *
- * TODO(AS3): `quality` is accepted and ignored. Flash runs the blur `quality` times; this runs one
- * 5x5 box. Nine of the ten AS3 constructions pass 1, where the difference is nil at their 2-6px
- * radii. The tenth is `BadgeImageWidget.createOuterGlowFilter()`, which passes 2 — and that widget
- * cannot render a filter at all yet (see its own marker), so nothing is waiting on this.
  *
  * The shader is GLSL only. The port never sets `preference` on `Application.init()`, so PixiJS
  * picks its WebGL default; a WGSL twin would have to be added before that changes.
@@ -55,27 +55,34 @@ uniform float uStrength;
 uniform vec2 uBlur;
 uniform float uInner;
 uniform float uKnockout;
+uniform int uTapCount;
+uniform float uWeights[13];
 
 void main(void)
 {
     vec4 src = texture(uTexture, vTextureCoord);
 
-    // 5x5 box over ±blur pixels: the taps land on -blur, -blur/2, 0, +blur/2, +blur.
+    // Separable kernel over the alpha channel. The taps sit blur/2 apart, so the base 5-tap
+    // kernel spans -blur..+blur and a quality-fold one spans quality times that -- which is
+    // exactly where quality successive box blurs of radius blur land. uWeights is that folded
+    // kernel, already normalised on the CPU, so nothing is divided here.
     // Named tapStep because a plain 'step' would shadow the GLSL built-in of that name.
     vec2 tapStep = uBlur * uInputSize.zw * 0.5;
-    float sum = 0.0;
+    int mid = uTapCount / 2;
+    float blurred = 0.0;
 
-    for(int y = -2; y <= 2; y++)
+    for(int y = 0; y < uTapCount; y++)
     {
-        for(int x = -2; x <= 2; x++)
-        {
-            vec2 uv = clamp(vTextureCoord + vec2(float(x), float(y)) * tapStep, uInputClamp.xy, uInputClamp.zw);
+        float wy = uWeights[y];
 
-            sum += texture(uTexture, uv).a;
+        for(int x = 0; x < uTapCount; x++)
+        {
+            vec2 offset = vec2(float(x - mid), float(y - mid)) * tapStep;
+            vec2 uv = clamp(vTextureCoord + offset, uInputClamp.xy, uInputClamp.zw);
+
+            blurred += texture(uTexture, uv).a * uWeights[x] * wy;
         }
     }
-
-    float blurred = sum / 25.0;
 
     // Everything here is premultiplied alpha, which is what the filter pipeline hands over.
     float outerA = clamp(blurred * uStrength, 0.0, 1.0) * uGlowAlpha;
@@ -113,6 +120,7 @@ void main(void)
     )
     {
         const rgb = new Color(color).toArray();
+        const weights = foldedBoxWeights(quality);
 
         super({
             glProgram: GlProgram.from({
@@ -127,7 +135,9 @@ void main(void)
                     uStrength: {value: strength, type: 'f32'},
                     uBlur: {value: new Float32Array([blurX, blurY]), type: 'vec2<f32>'},
                     uInner: {value: inner ? 1 : 0, type: 'f32'},
-                    uKnockout: {value: knockout ? 1 : 0, type: 'f32'}
+                    uKnockout: {value: knockout ? 1 : 0, type: 'f32'},
+                    uTapCount: {value: weights.length, type: 'i32'},
+                    uWeights: {value: padGlowWeights(weights), type: 'f32', size: GLOW_MAX_TAPS}
                 }
             },
             // Without this the glow is clipped to the sprite's own bounds.
@@ -138,13 +148,13 @@ void main(void)
         this._knockout = knockout;
     }
 
-    // TS-only: kept so a caller can read back what it passed; see the class TODO on `quality`.
+    // TS-only: kept so a caller can read back what it passed.
     private _quality: number;
 
     // TS-only: mirrors the uniform, so a caller can read back what it passed.
     private _knockout: boolean;
 
-    // TS-only: accepted for signature parity, not applied — see the class TODO.
+    // TS-only: mirrors `flash.filters.GlowFilter.quality`, applied through `uWeights`/`uTapCount`.
     get quality(): number
     {
         return this._quality;
