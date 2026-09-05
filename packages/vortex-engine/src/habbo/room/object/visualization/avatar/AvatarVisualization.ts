@@ -219,6 +219,22 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_useObjectType
     private _useObjectType: number = 0;
     private _sitOffset: number = 0;
+
+    // TS-only: AS3 needs no field for this — sprite 0 always holds the composed image, and every
+    // consumer reads the dimensions straight off it (`_loc22_.asset = getImage("full", …)` then
+    // `_loc22_.asset.width`/`.height`, AvatarVisualization.as l.1120-1125). The field exists only
+    // because `AvatarRenderMode.spriteParts` — itself TS-only, Flash had no GPU to batch for —
+    // leaves sprite 0 textureless, so the rectangle it stands for has nowhere else to live. Null on
+    // the composed path, where sprite 0 carries the texture exactly as AS3's does.
+    private _anchorRectangle: { x: number; y: number; width: number; height: number } | null = null;
+
+    // TS-only: AS3 returns a fresh `flash.geom.Rectangle` from `boundingRectangle` and the callers
+    // mutate it in place (`_loc5_.offset(...)` in RoomEngine.getRoomObjectBoundingRectangle()); this
+    // port's callers copy instead, so the getter can reuse one object and allocate nothing — it
+    // runs once per bubble per frame.
+    private readonly _unionBounds: { x: number; y: number; width: number; height: number } =
+        {x: 0, y: 0, width: 0, height: 0};
+
     private _verticalOffset: number = 0;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_effectJustApplied
     private _effectJustApplied: boolean = false;
@@ -1598,6 +1614,50 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     }
 
     /**
+	 * The avatar's bounding box, with the canvas rectangle sprite 0 stands for put back in.
+	 *
+	 * `RoomObjectSpriteVisualization.boundingRectangle` counts a sprite only when it has an asset —
+	 * AS3's own test, and correct there, because AS3 has exactly one avatar sprite and it always
+	 * carries the composed 90x130 canvas image. `AvatarRenderMode.spriteParts` (TS-only: Flash had
+	 * no GPU to batch for) replaces that image with one room sprite per body part and leaves sprite
+	 * 0 as a textureless anchor, so the base class drops it and the box collapses to a tight union
+	 * of the drawn parts.
+	 *
+	 * The canvas is deliberately taller than the figure — `HabboAvatarGeometry.xml` gives the `h`
+	 * scale 90x130 so lay and swim fit — and consumers are calibrated against that slack.
+	 * `AvatarContextInfoView.getOffset()` adds a flat `+25` for a user, which is the AS3 way of
+	 * sinking the name bubble into the empty headroom; against a tight box that 25px lands on the
+	 * avatar's hair instead. `rect.height` also decides that method's `> 50` branch and
+	 * `getMaximumVerticalLead()`'s 5% clamp.
+	 *
+	 * So the override is not a correction to AS3 — it restores what AS3 measures, on a rendering
+	 * path AS3 does not have.
+	 */
+    // DEVIATION: the base method is a faithful port and stays untouched; this compensates the
+    //   TS-only sprite-parts path, which is the only reason sprite 0 can lack a texture. Null
+    //   `_anchorRectangle` (the composed path) makes this a straight pass-through.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/object/visualization/RoomObjectSpriteVisualization.as::get boundingRectangle()
+    public override get boundingRectangle(): { x: number; y: number; width: number; height: number }
+    {
+        const bounds = super.boundingRectangle;
+        const anchor = this._anchorRectangle;
+
+        if(anchor === null) return bounds;
+
+        const left = Math.min(bounds.x, anchor.x);
+        const top = Math.min(bounds.y, anchor.y);
+        const right = Math.max(bounds.x + bounds.width, anchor.x + anchor.width);
+        const bottom = Math.max(bounds.y + bounds.height, anchor.y + anchor.height);
+
+        this._unionBounds.x = left;
+        this._unionBounds.y = top;
+        this._unionBounds.width = right - left;
+        this._unionBounds.height = bottom - top;
+
+        return this._unionBounds;
+    }
+
+    /**
      * Updates the main avatar composite sprite (index 0) with the rendered
      * avatar image, position offsets, and depth.
      *
@@ -1606,7 +1666,8 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * @param offsets - The canvas offset array [x, y, z]
      * @param fullUpdate - Whether this is a full sprite update
      */
-    private updateMainSprite(model: IRoomObjectModel, geometry: IRoomGeometry, offsets: number[], _fullUpdate: boolean): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::update()
+    private updateMainSprite(model: IRoomObjectModel, geometry: IRoomGeometry, offsets: number[], _fullUpdate: boolean): void
     {
         const mainSprite = this.getSprite(0);
 
@@ -1632,9 +1693,20 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
             mainSprite.texture = null;
             mainSprite.offsetX = (((-1 * scale) / 2) + offsets[0]) - ((partSet.width - scale) / 2);
             mainSprite.offsetY = ((-partSet.height + (scale / 4)) + offsets[1]) + this._sitOffset;
+
+            // Remember the rectangle the composed texture would have occupied — see
+            // `boundingRectangle` below for why a textureless anchor is not enough.
+            this._anchorRectangle = {
+                x: mainSprite.offsetX,
+                y: mainSprite.offsetY,
+                width: partSet.width,
+                height: partSet.height,
+            };
         }
         else
         {
+            this._anchorRectangle = null;
+
             const image = this._activeAvatarImage!.getImage(AvatarSetType.FULL, isHighlighted);
 
             if(image != null)

@@ -102,7 +102,6 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
         let top = 0;
         let right = 0;
         let bottom = 0;
-        let first = true;
 
         for(let i = 0; i < this._sprites.length; i++)
         {
@@ -113,13 +112,20 @@ export class RoomObjectSpriteVisualization implements IRoomObjectSpriteVisualiza
                 const x = sprite.offsetX;
                 const y = sprite.offsetY;
 
-                if(first)
+                // AS3 seeds the rectangle from index 0 specifically (`if(_loc7_ == 0)`), not from
+                // the first sprite it accepts: when sprite 0 is invisible or has no asset, the seed
+                // branch never runs and the rect stays `new Rectangle()` — so every later sprite is
+                // unioned against (0, 0), the object's own origin, and the box reaches down to it.
+                // A `first`-accepted-sprite flag skipped that and produced a tight union instead,
+                // which is a shorter box whenever sprite 0 is skipped. `height` feeds
+                // `AvatarContextInfoView.getOffset()`'s `> 50` test and `getMaximumVerticalLead()`,
+                // so a shorter box moves the name bubble.
+                if(i === 0)
                 {
                     left = x;
                     top = y;
                     right = x + sprite.width;
                     bottom = y + sprite.height;
-                    first = false;
                 }
                 else
                 {

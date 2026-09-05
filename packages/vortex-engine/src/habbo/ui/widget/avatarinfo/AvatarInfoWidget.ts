@@ -66,6 +66,7 @@ import {RoomEnterEffect} from '@room/utils/RoomEnterEffect';
 import {RoomWidgetGetObjectLocationMessage} from '../messages/RoomWidgetGetObjectLocationMessage';
 import type {RoomWidgetUserLocationUpdateEvent} from '../events/RoomWidgetUserLocationUpdateEvent';
 import {RoomWidgetAvatarInfoEvent} from '../events/RoomWidgetAvatarInfoEvent';
+import type {EventEmitter} from 'eventemitter3';
 import {RoomWidgetUserDataUpdateEvent} from '../events/RoomWidgetUserDataUpdateEvent';
 import {RoomWidgetInventoryUpdatedMessage} from '../messages/RoomWidgetInventoryUpdatedMessage';
 import {OwnAvatarMenuView} from './OwnAvatarMenuView';
@@ -112,6 +113,9 @@ import type {IConfirmDialog} from '@habbo/window/utils/ConfirmDialog';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {AvatarInfoWidgetHandler} from '@habbo/ui/handler/AvatarInfoWidgetHandler';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('habbo.ui.widget.avatarinfo.AvatarInfoWidget');
 
 export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuParentWidget, IUpdateReceiver
 {
@@ -137,6 +141,7 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // AS3: AvatarInfoWidget.as::_activeView (obfuscated `_SafeStr_4550`; named from removeView(),
     // which clears it, and updatePetView(), which tests what it currently is)
     private _activeView: AvatarContextInfoButtonView | null = null;
+
     private _cachedOwnMenu: OwnAvatarMenuView | null = null;
 
     /** Derived name — `_SafeStr_5648`: the peer-avatar menu, kept between opens like its siblings. */
@@ -249,24 +254,14 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this._catalog = catalog;
         this.handler.widget = this;
 
-        this.container?.desktopEvents.on(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
-        this.container?.desktopEvents.on(RoomWidgetUserInfoUpdateEvent.PEER, this.onUserInfoUpdate);
-        this.container?.desktopEvents.on(RoomWidgetAvatarInfoEvent.AVATAR_INFO, this.onAvatarInfo);
-        this.container?.desktopEvents.on(RoomWidgetUserDataUpdateEvent.USER_DATA_UPDATED, this.onUserDataUpdated);
-        this.container?.desktopEvents.on(RoomWidgetInventoryUpdatedMessage.INVENTORY_UPDATED, this.onInventoryUpdated);
-        this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
-        this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected);
-        this.container?.desktopEvents.on(RoomWidgetPetInfoUpdateEvent.PET_INFO, this.onPetInfoUpdate);
-        this.container?.desktopEvents.on(RoomWidgetPetStatusUpdateEvent.PET_STATUS_UPDATE, this.onPetStatusUpdate);
-        this.container?.desktopEvents.on(RoomWidgetPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate);
-        this.container?.desktopEvents.on(RoomWidgetPetBreedingEvent.PET_BREEDING, this.onPetBreeding);
-        this.container?.desktopEvents.on(RoomWidgetPetBreedingResultEvent.PET_BREEDING_RESULT, this.onPetBreedingResult);
-        this.container?.desktopEvents.on(RoomWidgetConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, this.onConfirmPetBreeding);
-        this.container?.desktopEvents.on(RoomWidgetConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, this.onConfirmPetBreedingResult);
-        this.container?.desktopEvents.on(RoomWidgetRentableBotInfoUpdateEvent.RENTABLE_BOT, this.onRentableBotInfoUpdate);
-        this.container?.desktopEvents.on(RoomWidgetRentableBotSkillListUpdateEvent.SKILL_LIST, this.onRentableBotSkillListUpdate);
-        this.container?.desktopEvents.on(RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu);
-        this.container?.desktopEvents.on(RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded);
+        for(const [type, handler] of this.desktopEventBindings())
+        {
+            this.container?.desktopEvents.on(type, handler);
+            // AS3's `checkUpdateNeed()` tail, reproduced on the emitter: eventemitter3 calls
+            // listeners in registration order, so this always runs after the case above.
+            this.container?.desktopEvents.on(type, this.onDesktopEventHandled);
+        }
+
         this.container?.inventory?.events.on(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
         this.container?.userDefinedRoomEvents?.events.on(
             WiredUserClickHandledEvent.WIRED_USER_CLICK_HANDLED, this.onUserClickHandledEvent
@@ -1552,6 +1547,62 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         }
     }
 
+    /**
+	 * The cases of AS3's `updateEventHandler()` switch, as an emitter binding table.
+	 *
+	 * One list, read by both the constructor and `dispose()`, so a case can never be registered
+	 * without its `checkUpdateNeed()` tail — or torn down without it. That pairing is the whole
+	 * point: see `onDesktopEventHandled()`.
+	 *
+	 * The handlers each take a different event type, so the table is typed with the emitter's own
+	 * `ListenerFn` — `desktopEvents` is an untyped eventemitter3, and that is the type `.on()`/
+	 * `.off()` actually accept.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::updateEventHandler()
+    private desktopEventBindings(): readonly (readonly [string, EventEmitter.ListenerFn])[]
+    {
+        return [
+            [RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate],
+            [RoomWidgetUserInfoUpdateEvent.PEER, this.onUserInfoUpdate],
+            [RoomWidgetAvatarInfoEvent.AVATAR_INFO, this.onAvatarInfo],
+            [RoomWidgetUserDataUpdateEvent.USER_DATA_UPDATED, this.onUserDataUpdated],
+            [RoomWidgetInventoryUpdatedMessage.INVENTORY_UPDATED, this.onInventoryUpdated],
+            [RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected],
+            [RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected],
+            [RoomWidgetPetInfoUpdateEvent.PET_INFO, this.onPetInfoUpdate],
+            [RoomWidgetPetStatusUpdateEvent.PET_STATUS_UPDATE, this.onPetStatusUpdate],
+            [RoomWidgetPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate],
+            [RoomWidgetPetBreedingEvent.PET_BREEDING, this.onPetBreeding],
+            [RoomWidgetPetBreedingResultEvent.PET_BREEDING_RESULT, this.onPetBreedingResult],
+            [RoomWidgetConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, this.onConfirmPetBreeding],
+            [RoomWidgetConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, this.onConfirmPetBreedingResult],
+            [RoomWidgetRentableBotInfoUpdateEvent.RENTABLE_BOT, this.onRentableBotInfoUpdate],
+            [RoomWidgetRentableBotSkillListUpdateEvent.SKILL_LIST, this.onRentableBotSkillListUpdate],
+            [RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu],
+            [RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded],
+        ];
+    }
+
+    /**
+	 * `updateEventHandler()`'s last statement, which sits outside its switch.
+	 *
+	 * AS3 gets this for free: one method, one switch, `checkUpdateNeed()` after it
+	 * (AvatarInfoWidget.as l.820), so every case is followed by it whether the case remembers or
+	 * not. Splitting the switch into per-event listeners dropped the tail along with the method,
+	 * and the obligation silently became per-branch — five of the nine `_activeView` assignments
+	 * had no `checkUpdateNeed()` anywhere near them. An unregistered update receiver means
+	 * `update()` never runs, so `positionView()` never runs; the view is on screen regardless,
+	 * because `buildFromXML()` parents a root window straight to the desktop
+	 * (`WindowContext.createWindow()`: `parent ?? _desktop`). It just sits at (0, 0) forever. That
+	 * was the avatar name bubble stranded in the top-left corner, with the pet, rentable-bot and
+	 * peer-avatar menus one click behind it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/avatarinfo/AvatarInfoWidget.as::updateEventHandler()
+    private onDesktopEventHandled = (): void =>
+    {
+        this.checkUpdateNeed();
+    };
+
     // AS3: AvatarInfoWidget.as::update() (IUpdateReceiver)
     public update(deltaTime: number): void
     {
@@ -1603,9 +1654,66 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         // AS3 hands `screenLocation` straight through; the port declares it nullable on the event
         // and non-null on `update()`, so the pair is applied only when both arrived.
-        if(location === null || location.screenLocation === null) return;
+        //
+        // TS-only: returning here is silent, and silence is expensive. `buildFromXML()` parents a
+        // root window straight to the desktop (WindowContext.createWindow(): `parent ?? _desktop`),
+        // so the bubble is on screen from the moment it is built — `update()` is the ONLY thing
+        // that ever moves it off (0, 0). In Flash an unanswered location lasts a frame; here it
+        // strands the bubble in the top-left corner for good. Say which part came back empty.
+        //
+        // `rectangle` is in the test for the same reason: `ContextInfoView.update()` opens with
+        // `if(!rect) return;`, so a null rectangle is a *third* silent exit, and the two fields
+        // come from independent engine calls — `getRoomObjectBoundingRectangle()` needs the
+        // object's rendered sprites where `getRoomObjectScreenLocation()` only needs its projected
+        // position, so one can answer while the other does not. Hoisting the check changes nothing:
+        // AS3 does nothing on a null rectangle either.
+        if(location === null || location.screenLocation === null || location.rectangle === null)
+        {
+            AvatarInfoWidget.reportUnlocatable(view, location);
+
+            return;
+        }
 
         view.update(location.rectangle, location.screenLocation, deltaTime);
+    }
+
+    // TS-only: rate limit for reportUnlocatable() below — views already named, so the warning fires
+    // once per stranded bubble rather than once a frame. No AS3 counterpart; AS3 does not warn here.
+    private static readonly REPORTED_UNLOCATABLE: Set<string> = new Set();
+
+    /**
+	 * Names the part of the location round-trip that came back empty, once per view.
+	 *
+	 * The three cases need opposite fixes, which is why they are told apart rather than being one
+	 * "no location" line: a null event means the message never reached
+	 * `ObjectLocationRequestHandler` (no handler registered, or no room session / user-data
+	 * manager); a missing `screenLocation` means the handler ran and `getUserDataByType()` or
+	 * `getRoomObjectScreenLocation()` found nothing; a missing `rectangle` alone means the object
+	 * *is* placed but `getRoomObjectBoundingRectangle()` has no rendered bounds for it.
+	 */
+    // TS-only: diagnostic for the silent return above; AS3 has no counterpart.
+    private static reportUnlocatable(
+        view: AvatarContextInfoButtonView | UserNameView,
+        location: RoomWidgetUserLocationUpdateEvent | null
+    ): void
+    {
+        const key = `${view.userType}:${view.userId}`;
+
+        if(AvatarInfoWidget.REPORTED_UNLOCATABLE.has(key)) return;
+
+        AvatarInfoWidget.REPORTED_UNLOCATABLE.add(key);
+
+        log.warn(
+            `No location for "${view.userName}" (userId ${view.userId}, userType ${view.userType}): `
+			+ (location === null
+			    ? 'RWGOI_MESSAGE_GET_OBJECT_LOCATION went unanswered — no handler, or no room session.'
+			    : location.screenLocation === null
+			        ? 'the handler answered with no screenLocation — the user is not in userDataManager, '
+						+ 'or its roomObjectId names nothing on the first canvas.'
+			        : 'the handler answered with a screenLocation but no rectangle — '
+						+ 'getRoomObjectBoundingRectangle() has no rendered bounds for that object.')
+			+ ' The bubble stays parked at (0, 0) until this resolves.'
+        );
     }
 
     // --- state getters read by OwnAvatarMenuView ---
@@ -1822,24 +1930,12 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
         this.container?.roomEngine?.events.off(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAdded);
         this.container?.roomEngine?.events.off(RoomEngineObjectEvent.REOE_REMOVED, this.onRoomObjectRemoved);
-        this.container?.desktopEvents.off(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfoUpdate);
-        this.container?.desktopEvents.off(RoomWidgetUserInfoUpdateEvent.PEER, this.onUserInfoUpdate);
-        this.container?.desktopEvents.off(RoomWidgetAvatarInfoEvent.AVATAR_INFO, this.onAvatarInfo);
-        this.container?.desktopEvents.off(RoomWidgetUserDataUpdateEvent.USER_DATA_UPDATED, this.onUserDataUpdated);
-        this.container?.desktopEvents.off(RoomWidgetInventoryUpdatedMessage.INVENTORY_UPDATED, this.onInventoryUpdated);
-        this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected);
-        this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected);
-        this.container?.desktopEvents.off(RoomWidgetPetInfoUpdateEvent.PET_INFO, this.onPetInfoUpdate);
-        this.container?.desktopEvents.off(RoomWidgetPetStatusUpdateEvent.PET_STATUS_UPDATE, this.onPetStatusUpdate);
-        this.container?.desktopEvents.off(RoomWidgetPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate);
-        this.container?.desktopEvents.off(RoomWidgetPetBreedingEvent.PET_BREEDING, this.onPetBreeding);
-        this.container?.desktopEvents.off(RoomWidgetPetBreedingResultEvent.PET_BREEDING_RESULT, this.onPetBreedingResult);
-        this.container?.desktopEvents.off(RoomWidgetConfirmPetBreedingEvent.CONFIRM_PET_BREEDING, this.onConfirmPetBreeding);
-        this.container?.desktopEvents.off(RoomWidgetConfirmPetBreedingResultEvent.CONFIRM_PET_BREEDING_RESULT, this.onConfirmPetBreedingResult);
-        this.container?.desktopEvents.off(RoomWidgetRentableBotInfoUpdateEvent.RENTABLE_BOT, this.onRentableBotInfoUpdate);
-        this.container?.desktopEvents.off(RoomWidgetRentableBotSkillListUpdateEvent.SKILL_LIST, this.onRentableBotSkillListUpdate);
-        this.container?.desktopEvents.off(RoomWidgetRentableBotForceOpenContextMenuEvent.OPEN, this.onRentableBotForceOpenContextMenu);
-        this.container?.desktopEvents.off(RoomWidgetRoomObjectUpdateEvent.FURNI_ADDED, this.onFurniAdded);
+        for(const [type, handler] of this.desktopEventBindings())
+        {
+            this.container?.desktopEvents.off(type, handler);
+            this.container?.desktopEvents.off(type, this.onDesktopEventHandled);
+        }
+
         this.container?.inventory?.events.off(HabboInventoryEffectsEvent.HIEE_EFFECTS_CHANGED, this.onEffectsChanged);
         this.container?.userDefinedRoomEvents?.events.off(
             WiredUserClickHandledEvent.WIRED_USER_CLICK_HANDLED, this.onUserClickHandledEvent
