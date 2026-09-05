@@ -14,6 +14,7 @@ import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
 import type {IPlaneRasterizer} from './rasterizer/IPlaneRasterizer';
 import type {PlaneBitmapData} from './utils/PlaneBitmapData';
 import {Randomizer} from './utils/Randomizer';
+import type {PlaneMaskManager} from './mask/PlaneMaskManager';
 
 /**
  * Bitmap mask data for plane masking (doors, windows).
@@ -171,40 +172,51 @@ export class RoomPlane
 
     private _rasterizer: IPlaneRasterizer | null = null;
 
+    /**
+     * The room's shared door/window artwork, or null before `RoomVisualization` hands it over.
+     *
+     * Shared, not owned: one manager per room, assigned to every plane. Disposing it here would
+     * take the masks away from every other wall.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_maskManager
+    // Name DERIVED: AS3's field is `_SafeStr_6110`, obfuscated; named after the setter below.
+    private _maskManager: PlaneMaskManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::set maskManager()
+    set maskManager(value: PlaneMaskManager | null)
+    {
+        this._maskManager = value;
+    }
+
+    /**
+     * The masks this frame's texture pass cut from real artwork, so the screen-space pass skips
+     * them. Rebuilt on every render — a mask's artwork can appear once the bundle finishes loading.
+     */
+    // TS-only: AS3 has one mask path, so it needs no such split. See applyBitmapMasks().
+    private readonly _assetMaskedTypes: Set<IRoomPlaneBitmapMask> = new Set();
+
+    /** Scratch for the masked copy of the texture; reused rather than allocated per frame. */
+    // TS-only: AS3 masks its BitmapData in place.
+    private _maskedTextureCanvas: HTMLCanvasElement | null = null;
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::set rasterizer()
     set rasterizer(value: IPlaneRasterizer | null)
     {
         this._rasterizer = value;
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::set maskManager
-    // AS3 resolves door/window cutouts to real bitmap assets and composites them onto the rendered
-    // texture; this class computes the holes geometrically instead
-    // (getRectMaskScreenPoints()/getMaskHolePoints() below), which approximates shapes AS3 draws
-    // from artwork. The *rectangle* masks are exact either way — a rectangle is a rectangle — so
-    // what this costs is the shaped edge of a door or an arched window.
+    // The four steps this needed all landed on 2026-09-05: `PlaneMaskManager.updateMask()` draws
+    // (it was a stub returning true without drawing), `RoomVisualizationData` owns the manager and
+    // feeds it the bundle's `maskData`, `RoomEngine` builds it an `IGraphicAssetCollection` off the
+    // same spritesheet — which is what carries the per-asset offset and flip flags a texture map
+    // cannot — and `RoomVisualization` hands it to every plane above.
     //
-    // Two of the four steps this needed landed on 2026-09-05, and the third turned out to be the
-    // real blocker — not "wire the manager in", which is what the marker used to say.
-    //
-    //   DONE. `PlaneMaskManager.updateMask()` was itself a stub: it resolved the asset and returned
-    //     true without drawing anything, on a note claiming PixiJS handled masks in the pipeline.
-    //     It draws now — flip-aware matrix, the asset's own offset, the texture's own frame.
-    //   DONE. `RoomVisualizationData` owns the manager, initialises it from the bundle's `maskData`
-    //     and disposes it, as AS3 does at l.34, l.152 and l.89.
-    //   BLOCKED. `initializeAssetCollection()` cannot be forwarded: the room rasterizers take
-    //     `Map<string, HTMLCanvasElement>` — textures by name and nothing else — while the mask
-    //     manager takes an `IGraphicAssetCollection`, where an asset carries its **offset and flip
-    //     flags**. `updateMask()` needs exactly those, so with the Map every mask would draw at the
-    //     plane's origin instead of at the opening. See the note at that method in
-    //     `RoomVisualizationData` for the bridge and why it is not a one-liner.
-    //   THEN. `RoomVisualization` hands the manager to each plane (AS3 l.472), and `render()`'s
-    //     bitmap-mask branch swaps `drawMaskPoly()` for a `destination-out` blit of the mask canvas.
-    //     The `destination-out` compositing is already there and already correct; only the *shape*
-    //     being drawn changes.
-    //
-    // Worth doing with the client running: it changes how every wall carrying a door or a window
-    // renders, and the geometric approximation it replaces is working code.
+    // The geometric path below has NOT been deleted, and that is deliberate rather than timid:
+    // `applyBitmapMasks()` asks the manager for each mask's artwork first and only falls through to
+    // `getMaskHolePoints()` for the types it does not know. A room whose masks are missing renders
+    // exactly as it did before, so what changed is confined to walls whose openings have real
+    // artwork behind them. Rectangle masks never went through either path — they carry their own
+    // lengths and are exact.
 
     // DEVIATION: AS3 walks the rasterizer's layers/material-cell-matrix here and returns
     //   PlaneDrawingData (asset-name columns) for an external renderer to composite. This port
@@ -887,6 +899,94 @@ export class RoomPlane
 	 *   cornerD = origin + vertical axis
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::renderTexture()
+    /**
+     * Cuts the door and window openings out of the plane's texture, using each mask's own artwork.
+     *
+     * Runs in **texture space, before the projection**, which is where AS3 does it and where it has
+     * to be done: the mask asset is authored against the wall's flat texture, not against its
+     * projected parallelogram. The screen-space polygon pass in `renderTexture()` is the older
+     * approximation and still runs — for every mask this one could *not* resolve.
+     *
+     * That split is deliberate and is what makes this safe to land: a mask type the manager does
+     * not know is left to the polygon exactly as before, so a room whose artwork is missing renders
+     * as it did. Only masks with real artwork change.
+     *
+     * The offsets are AS3's, and they are measured from the far edge inward —
+     * `width - width * leftSideLoc / leftSide.length` — because a plane's texture runs the opposite
+     * way to its side vectors.
+     *
+     * @returns the masked copy, or `texture` untouched when nothing resolved
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::updateMask()
+    private applyBitmapMasks(texture: HTMLCanvasElement, geometry: IRoomGeometry): HTMLCanvasElement
+    {
+        this._assetMaskedTypes.clear();
+
+        const manager = this._maskManager;
+
+        if(manager === null || this._bitmapMasks.length === 0) return texture;
+
+        const leftLen = this._leftSide.length;
+        const rightLen = this._rightSide.length;
+
+        if(leftLen < 0.001 || rightLen < 0.001) return texture;
+
+        const normal = geometry.getCoordinatePosition(this._normal);
+
+        if(normal === null) return texture;
+
+        const width = texture.width;
+        const height = texture.height;
+        let maskCanvas: OffscreenCanvas | null = null;
+
+        for(const mask of this._bitmapMasks)
+        {
+            // Ask before drawing: an unknown type has no artwork, and leaving it to the polygon is
+            // better than cutting nothing at all.
+            if(manager.getMask(mask.type) === null) continue;
+
+            if(maskCanvas === null) maskCanvas = new OffscreenCanvas(width, height);
+
+            manager.updateMask(
+                maskCanvas,
+                mask.type,
+                geometry.scale,
+                normal,
+                width - width * mask.leftSideLoc / leftLen,
+                height - height * mask.rightSideLoc / rightLen
+            );
+
+            this._assetMaskedTypes.add(mask);
+        }
+
+        if(maskCanvas === null) return texture;
+
+        if(this._maskedTextureCanvas === null)
+        {
+            this._maskedTextureCanvas = document.createElement('canvas');
+        }
+
+        this._maskedTextureCanvas.width = width;
+        this._maskedTextureCanvas.height = height;
+
+        const context = this._maskedTextureCanvas.getContext('2d');
+
+        if(context === null)
+        {
+            this._assetMaskedTypes.clear();
+
+            return texture;
+        }
+
+        context.clearRect(0, 0, width, height);
+        context.drawImage(texture, 0, 0);
+        context.globalCompositeOperation = 'destination-out';
+        context.drawImage(maskCanvas, 0, 0);
+        context.globalCompositeOperation = 'source-over';
+
+        return this._maskedTextureCanvas;
+    }
+
     private renderTexture(textureBitmap: HTMLCanvasElement): void
     {
         const tw = textureBitmap.width;
@@ -935,9 +1035,13 @@ export class RoomPlane
                 }
             }
 
-            // Bitmap masks (doors, windows via mask parser)
+            // Bitmap masks (doors, windows via mask parser) — only the ones `applyBitmapMasks()`
+            // could not resolve to artwork. A mask cut from its own asset is already out of the
+            // texture; cutting it again here would take a second, differently-shaped bite.
             for(const mask of this._bitmapMasks)
             {
+                if(this._assetMaskedTypes.has(mask)) continue;
+
                 const maskPoints = this.getMaskHolePoints(mask, leftLen, rightLen);
 
                 if(maskPoints !== null)
@@ -1022,7 +1126,7 @@ export class RoomPlane
 
         if(textureBitmapData?.bitmap)
         {
-            this.renderTexture(textureBitmapData.bitmap);
+            this.renderTexture(this.applyBitmapMasks(textureBitmapData.bitmap, geometry));
 
             // Also render to _bitmapData canvas for the sprite system
             this.renderTextureToBitmapData(ctx, textureBitmapData.bitmap);

@@ -583,6 +583,12 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 {
                     plane.rasterizer = this._visualizationData.wallRasterizer;
                 }
+
+                // Every plane, whatever its type: AS3 assigns it outside the rasterizer branch
+                // (l.472), because a landscape plane carries `hole` masks as readily as a wall
+                // carries doors and windows.
+                // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateRoomPlanes()
+                plane.maskManager = this._visualizationData.maskManager;
             }
 
             // Thin walls without texture (AS3 lines 624-626)

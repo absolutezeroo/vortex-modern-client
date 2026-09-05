@@ -11,6 +11,7 @@ import {FloorRasterizer} from './rasterizer/basic/FloorRasterizer';
 import {WallRasterizer} from './rasterizer/basic/WallRasterizer';
 import type {IAssetRoomVisualizationData} from './rasterizer/basic/PlaneRasterizerTypes';
 import {PlaneMaskManager} from './mask/PlaneMaskManager';
+import type {IGraphicAssetCollection} from '@room/object/visualization/utils/IGraphicAssetCollection';
 
 export class RoomVisualizationData implements IRoomObjectVisualizationData
 {
@@ -102,28 +103,32 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
         return true;
     }
 
+    /**
+     * Hands the room's artwork to everything that draws with it.
+     *
+     * Two forms, because two consumers want different things and AS3 only ever had one. The
+     * rasterizers take textures by name as canvases — that is all a plane's material needs. The
+     * mask manager takes a real `IGraphicAssetCollection`, because a mask has to be positioned:
+     * `updateMask()` reads each asset's **offset and flip flags**, and a bare texture carries
+     * neither. Handing it the canvas map would draw every mask at the plane's origin instead of at
+     * the opening.
+     *
+     * The collection is optional: a caller that has not built one still gets working rasterizers,
+     * and the masks simply resolve nothing — which is where this port was before 2026-09-05.
+     */
     // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::initializeAssetCollection()
-    initializeAssetCollection(textures: Map<string, HTMLCanvasElement>): void
+    initializeAssetCollection(
+        textures: Map<string, HTMLCanvasElement>,
+        collection: IGraphicAssetCollection | null = null
+    ): void
     {
         if(this._initialized) return;
 
         this._floorRasterizer.initializeAssetCollection(textures);
         this._wallRasterizer.initializeAssetCollection(textures);
 
-        // TODO(AS3): .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::initializeAssetCollection()
-        //   AS3 forwards to `_maskManager` here as well (l.167), and this port cannot yet: the two
-        //   take different things. The room rasterizers work off `Map<string, HTMLCanvasElement>` —
-        //   textures by name, and nothing else — while `PlaneMaskManager` was written against AS3's
-        //   `IGraphicAssetCollection`, where an asset carries its own **offset and flip flags**.
-        //   `updateMask()` needs exactly those: without them every mask draws at the plane's origin
-        //   instead of at the opening.
-        //
-        //   That is the real blocker behind `RoomPlane.maskManager`, and it is not "wire it in".
-        //   The bridge is buildable — `GraphicAssetCollection.define()` reads a bundle's `assets`
-        //   descriptors and `defineFromSpritesheet()` takes the `Map<string, Texture>` `RoomEngine`
-        //   already holds one step before it converts them to canvases (RoomEngine.as l.8060) — but
-        //   it means giving the room path a real asset collection, which the rasterizers do not
-        //   use today.
+        // AS3 forwards to the mask manager here too (l.167).
+        if(collection !== null) this._maskManager.initializeAssetCollection(collection);
 
         this._initialized = true;
     }

@@ -227,6 +227,7 @@ import {
 import {RoomUserData} from '@habbo/communication/messages/incoming/room/engine/RoomUserData';
 import {RoomObjectMouseEvent} from '@room/events/RoomObjectMouseEvent';
 import {OrderedMap} from '@core/utils/OrderedMap';
+import {GraphicAssetCollection} from '@room/object/visualization/utils/GraphicAssetCollection';
 
 const log = Logger.getLogger('habbo.room.RoomEngine');
 
@@ -8080,7 +8081,22 @@ export class RoomEngine extends Component implements IRoomEngine,
         log.info(`Room textures converted in ${Math.round(performance.now() - conversionStart)} ms `
             + `(${this._blittedTextureCount} blitted, ${readbacks} via GPU readback)`);
 
-        this._roomVisualizationData.initializeAssetCollection(canvasTextures);
+        // The masks need more than a texture by name: `PlaneMaskManager.updateMask()` positions
+        // each one by the asset's own offset and flips it when the asset says so, and neither
+        // survives the conversion to a canvas map above. `defineFromSpritesheet()` keeps them —
+        // it reads the bundle's `assets` descriptors, where `x`/`y` become the offsets and
+        // `flipH`/`flipV` the flags — so the mask manager gets its own collection off the same
+        // spritesheet the rasterizers are fed from.
+        // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualizationData.as::initializeAssetCollection()
+        const maskCollection = new GraphicAssetCollection();
+
+        maskCollection.defineFromSpritesheet(
+            textures ?? new Map(),
+            (jsonData as Record<string, unknown>).assets ?? null,
+            RoomEngine.OBJECT_TYPE_ROOM
+        );
+
+        this._roomVisualizationData.initializeAssetCollection(canvasTextures, maskCollection);
 
         log.debug(`Room visualization data initialized with ${canvasTextures.size} textures`);
     }
