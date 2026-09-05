@@ -12,6 +12,9 @@ import {WallRasterizer} from './rasterizer/basic/WallRasterizer';
 import type {IAssetRoomVisualizationData} from './rasterizer/basic/PlaneRasterizerTypes';
 import {PlaneMaskManager} from './mask/PlaneMaskManager';
 import type {IGraphicAssetCollection} from '@room/object/visualization/utils/IGraphicAssetCollection';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('habbo.room.object.visualization.room.RoomVisualizationData');
 
 export class RoomVisualizationData implements IRoomObjectVisualizationData
 {
@@ -129,6 +132,14 @@ export class RoomVisualizationData implements IRoomObjectVisualizationData
 
         // AS3 forwards to the mask manager here too (l.167).
         if(collection !== null) this._maskManager.initializeAssetCollection(collection);
+
+        // Warn, not debug: zero masks is not a quiet degradation. Every door and window silently
+        // falls back to the geometric approximation — a one-tile-by-2.5 rectangle whatever the
+        // opening actually is — and nothing else in the client says so.
+        const maskTypes = this._maskManager.maskTypes;
+
+        if(maskTypes.length === 0) log.warn('Room mask manager resolved no masks: openings fall back to the geometric cut');
+        else log.info(`Room mask manager resolved ${maskTypes.length} mask type(s): ${maskTypes.join(', ')}`);
 
         this._initialized = true;
     }

@@ -30,6 +30,20 @@ export class PlaneMaskManager
     private _assetCollection: IGraphicAssetCollection | null = null;
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_masks
     private _masks: Map<string, PlaneMask> = new Map();
+
+    /**
+     * How many mask types resolved to artwork, and which.
+     *
+     * The one measurement that separates "the masks are not reaching the planes" from "the planes
+     * are not drawing them": zero here means every opening falls back to the geometric
+     * approximation, whatever the plane does afterwards.
+     */
+    // TS-only: no AS3 counterpart; a diagnostic for the mask pipeline.
+    get maskTypes(): string[]
+    {
+        return [...this._masks.keys()];
+    }
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/room/mask/PlaneMaskManager.as::_data
     private _data: any = null;
 
