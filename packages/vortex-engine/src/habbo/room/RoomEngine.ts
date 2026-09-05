@@ -5816,7 +5816,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         const collector = new SpriteDataCollector();
-        const sprites = collector.getFurniData(viewPort, canvas, skipObjectId);
+        const sprites = collector.getFurniData(viewPort, canvas, this, skipObjectId);
         const modifiers = collector.getRoomRenderingModifiers();
         const planes = collector.getRoomPlanes(viewPort, backgroundColor);
 

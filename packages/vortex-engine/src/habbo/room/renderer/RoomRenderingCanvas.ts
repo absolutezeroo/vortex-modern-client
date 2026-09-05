@@ -38,10 +38,21 @@ import {SortableSprite} from './utils/SortableSprite';
 import {ObjectMouseData} from './utils/ObjectMouseData';
 import {RoomCullingMode} from './RoomCullingMode';
 import {RoomObjectUserTypes} from '@habbo/room/object/RoomObjectUserTypes';
+import {RoomObjectSpriteData} from '@room/data/RoomObjectSpriteData';
+import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
+import {StringUtil} from '@habbo/utils/StringUtil';
+import {Canvas} from '@habbo/utils/Canvas';
 
 export type {IRoomRenderingCanvasMouseListener};
 
 interface IObjectSpriteCache {
+    /**
+     * The room object's numeric id, kept so the payload can name what a sprite belongs to. AS3
+     * stores it on its own cache item for the same reason; this port's map is keyed by the id's
+     * string form, which is not the same thing once it has to go into JSON.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4432.as::objectId
+    objectId: number;
     initialized: boolean;
     instanceId: number;
     updateId: number;
@@ -295,6 +306,15 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
      * same question.
      */
     // TS-only: see the DEVIATION in renderObject().
+    /**
+	 * Above this, a sprite's pixels are not read back to average them.
+	 *
+	 * It is a cost ceiling, not a correctness one: the read is a full upload-and-scan per sprite,
+	 * and the sprites it exists for — badges, wall photos, thumbnails — are all small.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::MAX_SIZE_FOR_AVG_COLOR
+    private static readonly MAX_SIZE_FOR_AVG_COLOR: number = 200;
+
     private static readonly STACK_EPSILON: number = 0.02;
 
     /**
@@ -508,17 +528,134 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     }
 
     /**
-	 * The z-sorted sprites of the last render — what the camera serializes into the photo.
+	 * Every drawn sprite as a flat payload record — what the camera serialises into the photo.
 	 *
-	 * Returned live rather than copied, matching AS3, whose caller appends culled objects to the
-	 * same vector before sorting it.
+	 * A fresh array of fresh records, deliberately: `SpriteDataCollector.getFurniData()` appends
+	 * culled avatars and mannequin parts to it and adds offsets to their `x`/`y`/`z` in place, and
+	 * doing that to the renderer's own list would move objects on screen.
+	 *
+	 * Room planes are excluded — they go through `getPlaneSortableSprites()` — and so is any sprite
+	 * with no library asset name, which is one the receiving end could not resolve.
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::getSortableSpriteList()
-    // (_SafeCls_3073 implements IRoomRenderingCanvas; the 2016 RoomSpriteCanvas.as this used to
-    //  cite has no such member — only a private _sortableSpriteList and obfuscated accessors.)
-    getSortableSpriteList(): SortableSprite[]
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::getSortableSpriteList()
+    getSortableSpriteList(): RoomObjectSpriteData[]
     {
-        return this._sortableSpriteList;
+        const list: RoomObjectSpriteData[] = [];
+
+        for(const cache of this._objectSpriteCaches.values())
+        {
+            for(const sortable of cache.sprites)
+            {
+                const sprite = sortable.sprite;
+
+                if(sprite === null) continue;
+                if(sprite.spriteType === RoomObjectSpriteType.ROOM_PLANE) continue;
+                if(sprite.libraryAssetName === '') continue;
+
+                list.push(this.toSpriteData(cache.objectId, sortable, sprite));
+            }
+        }
+
+        return list;
+    }
+
+    /**
+	 * Fills one payload record from a drawn sprite.
+	 *
+	 * The last branch is the one that matters: for a sprite whose picture is a *download* — a wall
+	 * photo, a group badge, a skewed thumbnail — the payload carries the image's average colour in
+	 * place of pixels it cannot include, and marks an external wall image as needing a frame drawn
+	 * round it. AS3 caps that read at 200x200, which is what keeps it off large sprites.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::getSortableSpriteList()
+    private toSpriteData(objectId: number, sortable: SortableSprite, sprite: IRoomObjectSprite): RoomObjectSpriteData
+    {
+        const data = new RoomObjectSpriteData();
+
+        data.objectId = objectId;
+        data.x = Math.round(sortable.x);
+        data.y = Math.round(sortable.y);
+        data.z = sortable.z;
+        data.name = StringUtil.nonNull(sprite.libraryAssetName);
+        data.flipH = sprite.flipH;
+        data.alpha = sprite.alpha;
+        data.color = sprite.color.toString();
+        data.blendMode = sprite.blendMode;
+        data.width = sprite.width;
+        data.height = sprite.height;
+        data.objectType = sprite.objectType ?? '';
+        data.posture = sprite.assetPosture ?? '';
+
+        const skewed = RoomRenderingCanvas.isSkewedSprite(sprite);
+
+        if(skewed)
+        {
+            // Which way the shear leans is decided by the wall the sprite is on, and the two walls
+            // are the even and odd directions.
+            data.skew = sprite.direction % 4 === 0 ? -0.5 : 0.5;
+        }
+
+        const isDownloadedImage = data.name.indexOf('%image.library.url%') >= 0
+            || data.name.indexOf('%group.badge.url%') >= 0;
+
+        if((skewed || isDownloadedImage)
+            && data.width <= RoomRenderingCanvas.MAX_SIZE_FOR_AVG_COLOR
+            && data.height <= RoomRenderingCanvas.MAX_SIZE_FOR_AVG_COLOR)
+        {
+            data.color = Canvas.averageColor(sprite.texture).toString();
+
+            if(data.objectType.indexOf('external_image_wallitem') === 0) data.frame = true;
+        }
+
+        return data;
+    }
+
+    /**
+	 * The two sprite kinds drawn on a wall at an angle, which is what `skew` exists for: an
+	 * external image's thumbnail and a guild forum's.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::isSkewedSprite()
+    private static isSkewedSprite(sprite: IRoomObjectSprite): boolean
+    {
+        const objectType = sprite.objectType;
+
+        if(!objectType) return false;
+        if(sprite.tag !== 'THUMBNAIL') return false;
+
+        return objectType.indexOf('external_image_wallitem') === 0 || objectType.indexOf('guild_forum') === 0;
+    }
+
+    /**
+	 * The room's own plane sprites — floor, walls, landscape — as drawn.
+	 *
+	 * The complement of {@link getSortableSpriteList}: that one excludes exactly what this returns.
+	 * These stay `SortableSprite`s because the caller wants their live geometry, not a flat record.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::getPlaneSortableSprites()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::getPlaneSortableSprites()
+    getPlaneSortableSprites(): SortableSprite[]
+    {
+        const planes: SortableSprite[] = [];
+
+        for(const cache of this._objectSpriteCaches.values())
+        {
+            for(const sortable of cache.sprites)
+            {
+                if(sortable.sprite?.spriteType === RoomObjectSpriteType.ROOM_PLANE) planes.push(sortable);
+            }
+        }
+
+        return planes;
+    }
+
+    /**
+	 * The per-object sprite cache entry, or null when the object drew nothing this frame.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::getRoomObjectCacheItem()
+    getRoomObjectCacheItem(objectId: string): {objectId: number; sprites: SortableSprite[]} | null
+    {
+        return this._objectSpriteCaches.get(objectId) ?? null;
     }
 
     // AS3: sources/win63_version/room/renderer/class_3523.as::skipSpriteVisibilityChecking()
@@ -1191,6 +1328,11 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         }
 
         const cache = this.getObjectSpriteCache(objectId);
+
+        // Set every frame rather than only on creation: an id is cheap and a cache entry outlives
+        // the object whose id it was keyed under only if the map key is reused, which it is not.
+        cache.objectId = object.getId();
+
         const screenPos = this.getCachedScreenLocation(object, cache);
 
         if(screenPos === null) 
@@ -1506,6 +1648,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         if(cache === undefined) 
         {
             cache = {
+                // The map key is `<category>_<id>` for some callers and a bare id for others, so it
+                // is not parseable; `renderObject()` sets the real one from the object itself.
+                objectId: -1,
                 initialized: false,
                 instanceId: -1,
                 updateId: -1,

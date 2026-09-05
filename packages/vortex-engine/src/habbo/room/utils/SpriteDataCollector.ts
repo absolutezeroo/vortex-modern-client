@@ -1,8 +1,14 @@
-import type {IRoomEngineRectangle} from '@habbo/room/RoomEngine';
+// The concrete engine, not `IRoomEngine`, because that is what AS3 takes here
+// (`getFurniData(..., param3:_SafeCls_90, ...)`): `getRoomObjects()` is declared on the class and
+// not on the interface, in AS3 as here.
+import type {IRoomEngineRectangle, RoomEngine} from '@habbo/room/RoomEngine';
 import type {RoomRenderingCanvas} from '@habbo/room/renderer/RoomRenderingCanvas';
-import type {SortableSprite} from '@habbo/room/renderer/utils/SortableSprite';
 import {PlaneDrawingData} from '@habbo/room/object/visualization/room/PlaneDrawingData';
 import type {IPlaneDrawingData} from '@room/object/visualization/IPlaneDrawingData';
+import {RoomObjectSpriteData} from '@room/data/RoomObjectSpriteData';
+import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
+import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
+import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
 
 /**
  * Turns the room canvas into the JSON payload the camera sends for server-side rendering.
@@ -22,6 +28,17 @@ export class SpriteDataCollector
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::AVATAR_WATER_EFFECT_MAGIC_Y_OFFSET
     private static readonly AVATAR_WATER_EFFECT_MAGIC_Y_OFFSET: number = -52;
 
+    /** The one object type whose room sprite is a placeholder for a figure. */
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::addMannequinSprites() ("boutique_mannequin1")
+    private static readonly MANNEQUIN_OBJECT_TYPE: string = 'boutique_mannequin1';
+
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::addMannequinSprites() ("mannequin_")
+    private static readonly MANNEQUIN_SPRITE_PREFIX: string = 'mannequin_';
+
+    /** AS3's `+ -16` on the mannequin's bottom edge. */
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::addMannequinSprites()
+    private static readonly MANNEQUIN_Y_OFFSET: number = 16;
+
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::_SafeStr_5988
     private _firstSpriteZ: number = 0;
 
@@ -37,72 +54,198 @@ export class SpriteDataCollector
 	 * receives.
 	 */
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::sortSpriteDataObjects()
-    private static sortSpriteDataObjects(a: SortableSprite, b: SortableSprite): number
+    private static sortSpriteDataObjects(a: RoomObjectSpriteData, b: RoomObjectSpriteData): number
     {
         if(a.z < b.z) return 1;
 
         return -1;
     }
 
+    /**
+	 * Replaces a boutique mannequin's placeholder sprite with the mannequin's own sprite list,
+	 * re-parented onto where the placeholder sat.
+	 *
+	 * The mannequin draws as one `mannequin_*` sprite in the room, but the photo needs the clothes
+	 * on it — so the object's real sprite list is fetched and each part offset onto the
+	 * placeholder's position. The `+ width / 2 + 1` and `+ height - 16` are AS3's literals: the
+	 * parts are authored around the figure's own origin, which is the bottom centre of the
+	 * placeholder, less sixteen.
+	 *
+	 * DEVIATION: AS3 pushes the live `IRoomObjectSprite`s straight into the payload vector and adds
+	 *   the offsets **to the sprites themselves** — its sprite and its `RoomObjectSpriteData` are
+	 *   duck-compatible, so it gets away with it, and the mannequin visibly drifts in the room for
+	 *   as long as the photo is being composed. Here each part is converted into its own record
+	 *   first, so the offsets land on the payload and never on the room.
+	 */
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::addMannequinSprites()
+    private static addMannequinSprites(sprites: RoomObjectSpriteData[], engine: RoomEngine): RoomObjectSpriteData[]
+    {
+        const result: RoomObjectSpriteData[] = [];
+
+        for(const data of sprites)
+        {
+            if(data.objectType !== SpriteDataCollector.MANNEQUIN_OBJECT_TYPE
+                || data.name.indexOf(SpriteDataCollector.MANNEQUIN_SPRITE_PREFIX) !== 0)
+            {
+                result.push(data);
+
+                continue;
+            }
+
+            const object = engine.getRoomObject(
+                engine.activeRoomId, data.objectId, RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE
+            );
+            const parts = (object?.getVisualization() as IRoomObjectSpriteVisualization | null)?.getSpriteList() ?? null;
+
+            if(parts === null) continue;
+
+            for(const part of parts)
+            {
+                const partData = SpriteDataCollector.fromSprite(part, data.objectId);
+
+                partData.x += data.x + data.width / 2 + 1;
+                partData.y += data.y + data.height - SpriteDataCollector.MANNEQUIN_Y_OFFSET;
+                partData.z += data.z;
+
+                result.push(partData);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+	 * A payload record for a sprite the canvas did not draw.
+	 *
+	 * The culled and mannequin passes both start from a visualization's raw sprite list, where a
+	 * sprite carries `offsetX`/`offsetY`/`relativeDepth` rather than a resolved screen position —
+	 * so those are what seed x/y/z, and the caller adds the object's own location on top.
+	 */
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::getFurniData()
+    private static fromSprite(sprite: IRoomObjectSprite, objectId: number): RoomObjectSpriteData
+    {
+        const data = new RoomObjectSpriteData();
+
+        data.objectId = objectId;
+        data.x = sprite.offsetX;
+        data.y = sprite.offsetY;
+        data.z = sprite.relativeDepth;
+        data.name = sprite.libraryAssetName;
+        data.flipH = sprite.flipH;
+        data.alpha = sprite.alpha;
+        data.color = sprite.color.toString();
+        data.blendMode = sprite.blendMode;
+        data.width = sprite.width;
+        data.height = sprite.height;
+        data.objectType = sprite.objectType ?? '';
+        data.posture = sprite.assetPosture ?? '';
+
+        return data;
+    }
+
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::isSpriteInViewPort()
-    private static isSpriteInViewPort(sprite: SortableSprite, viewPort: IRoomEngineRectangle, canvas: RoomRenderingCanvas): boolean
+    private static isSpriteInViewPort(sprite: RoomObjectSpriteData, viewPort: IRoomEngineRectangle, canvas: RoomRenderingCanvas): boolean
     {
         const left = sprite.x + canvas.screenOffsetX;
         const top = sprite.y + canvas.screenOffsetY;
-        const width = sprite.sprite?.width ?? 0;
-        const height = sprite.sprite?.height ?? 0;
 
-        return left < viewPort.right && left + width > viewPort.left
-            && top < viewPort.bottom && top + height > viewPort.top;
+        return left < viewPort.right && left + sprite.width > viewPort.left
+            && top < viewPort.bottom && top + sprite.height > viewPort.top;
     }
 
     /**
 	 * The furniture and avatar sprites, as a JSON array.
 	 *
-	 * AS3 first walks the room's category-100 objects and merges any sprite the canvas culled back
-	 * into the list, offsetting each by the object's screen location — see the TODO below for why
-	 * that pass is not here. What the canvas *did* draw is complete and is what this returns, which
-	 * for a room the player is looking at is the same set minus objects scrolled off screen.
+	 * Three passes, in AS3's order: what the canvas drew, then every category-100 object's own
+	 * sprite list merged in — which is what puts an avatar the canvas scrolled off screen back into
+	 * the photo — then the mannequins expanded. Only after that is the lot sorted and filtered to
+	 * the viewport, because the merged sprites have to sort among the drawn ones.
 	 */
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::getFurniData()
-    getFurniData(viewPort: IRoomEngineRectangle, canvas: RoomRenderingCanvas, skipObjectId: number): string
+    getFurniData(
+        viewPort: IRoomEngineRectangle,
+        canvas: RoomRenderingCanvas,
+        engine: RoomEngine,
+        skipObjectId: number
+    ): string
     {
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1840.as::getFurniData()
-        // The culled-avatar merge pass described above, plus `addMannequinSprites()`, which
-        // re-parents a boutique mannequin's own sprite list onto the mannequin's position (`+width/2
-        // + 1` and `+height - 16`, literals in AS3, not named constants).
-        //
-        // Blockers restated 2026-09-04, because the two this used to name are not the ones. Both
-        // `RoomEngine.getRoomObjects(roomId, category)` and
-        // `IRoomObjectSpriteVisualization.getSpriteList()` exist here. What does not line up is the
-        // sprite type: AS3 pushes `IRoomObjectSprite`s straight into the `RoomObjectSpriteData`
-        // vector because its sprite carries `.x/.y/.z/.name` and the two are duck-compatible; this
-        // port's `IRoomObjectSprite` carries `offsetX`/`offsetY`/`relativeDepth` instead, so each
-        // merged sprite needs wrapping in a `SortableSprite` — and AS3's `+=` mutates the live
-        // room sprite, which here would move the object on screen rather than only in the payload.
-        //
-        // It also cannot be exercised: `RenderRoomMessageHandler.cs` in the emulator is an
-        // 18-line accept-and-drop stub, so nothing consumes this JSON.
-        const sprites = [...canvas.getSortableSpriteList()];
+        let sprites = canvas.getSortableSpriteList();
 
+        // The culled-avatar merge. The canvas drops an avatar it scrolled off screen, and the photo
+        // still wants it — so every category-100 object's own sprite list is re-parented onto where
+        // the object is, whether or not the canvas drew it.
+        //
+        // The z and the baseline come from the avatar's *drawn* sprite when there is one, which is
+        // what keeps a merged avatar sorted among the furniture rather than on top of it; with no
+        // drawn sprite the object's screen y stands in.
+        for(const object of engine.getRoomObjects(engine.activeRoomId, RoomObjectCategoryEnum.OBJECT_CATEGORY_USER))
+        {
+            if(object.getId() === skipObjectId) continue;
+
+            const parts = (object.getVisualization() as IRoomObjectSpriteVisualization | null)?.getSpriteList() ?? null;
+
+            if(parts === null) continue;
+
+            let baseZ = 0;
+            let baseY = 0;
+
+            for(const drawn of sprites)
+            {
+                if(drawn.name === `avatar_${object.getId()}`)
+                {
+                    baseZ = drawn.z;
+                    baseY = drawn.y + drawn.height - canvas.geometry.scale / 4;
+
+                    break;
+                }
+            }
+
+            const screen = engine.getRoomObjectScreenLocation(
+                engine.activeRoomId, object.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_USER, canvas.getId()
+            );
+
+            if(screen === null) continue;
+
+            if(baseY === 0) baseY = screen.y;
+
+            for(const part of parts)
+            {
+                const data = SpriteDataCollector.fromSprite(part, object.getId());
+
+                data.x += screen.x - canvas.screenOffsetX;
+                data.y += baseY;
+                data.z += baseZ;
+
+                // The two swimming effects are authored a tile higher than they draw; AS3 pulls
+                // them back down by hand rather than fixing the assets.
+                if(data.name.indexOf('h_std_fx29_') === 0 || data.name.indexOf('h_std_fx185_') === 0)
+                {
+                    data.y += SpriteDataCollector.AVATAR_WATER_EFFECT_MAGIC_Y_OFFSET;
+                }
+
+                sprites.push(data);
+            }
+        }
+
+        sprites = SpriteDataCollector.addMannequinSprites(sprites, engine);
         sprites.sort(SpriteDataCollector.sortSpriteDataObjects);
 
         const result: Record<string, unknown>[] = [];
 
-        for(const sortable of sprites)
+        for(const data of sprites)
         {
-            const name = sortable.name;
+            const name = data.name;
 
             if(name !== null && name.length > 0
                 && name.indexOf('tile_cursor_') !== 0
-                && SpriteDataCollector.isSpriteInViewPort(sortable, viewPort, canvas)
-                && (skipObjectId < 0 || sortable.sprite?.instanceId !== skipObjectId))
+                && SpriteDataCollector.isSpriteInViewPort(data, viewPort, canvas)
+                && (skipObjectId < 0 || data.objectId !== skipObjectId))
             {
-                result.push(this.getSpriteDataObject(sortable, viewPort, canvas));
+                result.push(this.getSpriteDataObject(data, viewPort, canvas));
 
                 if(!this._firstSpriteZ)
                 {
-                    this._firstSpriteZ = sortable.z;
+                    this._firstSpriteZ = data.z;
                 }
 
                 this._spriteCount = this._spriteCount + 1;
@@ -123,14 +266,13 @@ export class SpriteDataCollector
 
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::getSpriteDataObject()
     private getSpriteDataObject(
-        sortable: SortableSprite,
+        sprite: RoomObjectSpriteData,
         viewPort: IRoomEngineRectangle,
         canvas: RoomRenderingCanvas
     ): Record<string, unknown>
     {
         const data: Record<string, unknown> = {};
-        const sprite = sortable.sprite;
-        let name = sortable.name;
+        let name = sprite.name;
 
         // A palette-swapped asset is `assetName@paletteId`; AS3 resolves the palette's source image
         // through the content loader. That lookup needs `getGraphicAssetCollection().getPaletteXML()`
@@ -141,39 +283,42 @@ export class SpriteDataCollector
         }
 
         data.name = name;
-        data.x = sortable.x - viewPort.left + canvas.screenOffsetX;
-        data.y = sortable.y - viewPort.top + canvas.screenOffsetY;
-        data.z = sortable.z;
+        data.x = sprite.x - viewPort.left + canvas.screenOffsetX;
+        data.y = sprite.y - viewPort.top + canvas.screenOffsetY;
+        data.z = sprite.z;
 
-        if(sprite !== null)
+        // Each of these is omitted at its default, exactly as AS3 does — the payload is
+        // checksummed by length, so an extra key is not free.
+        if(sprite.alpha && sprite.alpha.toString() !== '255') data.alpha = sprite.alpha;
+
+        if(sprite.flipH) data.flipH = sprite.flipH;
+
+        if(sprite.color) data.color = sprite.color;
+
+        if(sprite.blendMode && sprite.blendMode !== 'normal') data.blendMode = sprite.blendMode;
+
+        // The shear and the frame only reach the payload for the sprites the canvas set them on —
+        // a wall photo or a forum thumbnail. Both are omitted at their default like the rest.
+        if(sprite.skew) data.skew = sprite.skew;
+
+        if(sprite.frame) data.frame = sprite.frame;
+
+        if(name.indexOf('http') === 0)
         {
-            // Each of these is omitted at its default, exactly as AS3 does — the payload is
-            // checksummed by length, so an extra key is not free.
-            if(sprite.alpha && sprite.alpha.toString() !== '255') data.alpha = sprite.alpha;
+            data.width = sprite.width;
+            data.height = sprite.height;
 
-            if(sprite.flipH) data.flipH = sprite.flipH;
+            this._externalImageCount = this._externalImageCount + 1;
 
-            if(sprite.color) data.color = sprite.color;
-
-            if(sprite.blendMode && sprite.blendMode !== 'normal') data.blendMode = sprite.blendMode;
-
-            if(name.indexOf('http') === 0)
+            // Past the cap the image is replaced by a plain box rather than dropped, so the
+            // composition still lines up.
+            if(this._externalImageCount > SpriteDataCollector.MAX_EXTERNAL_IMAGE_COUNT)
             {
-                data.width = sprite.width;
-                data.height = sprite.height;
-
-                this._externalImageCount = this._externalImageCount + 1;
-
-                // Past the cap the image is replaced by a plain box rather than dropped, so the
-                // composition still lines up.
-                if(this._externalImageCount > SpriteDataCollector.MAX_EXTERNAL_IMAGE_COUNT)
-                {
-                    data.name = 'box';
-                }
+                data.name = 'box';
             }
-
-            if(sprite.assetPosture) data.posture = sprite.assetPosture;
         }
+
+        if(sprite.posture) data.posture = sprite.posture;
 
         return data;
     }
