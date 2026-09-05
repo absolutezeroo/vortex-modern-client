@@ -4357,6 +4357,39 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   built side by side at l.443-444, and only the first is the thumbnail pool — the trace now names
   `getGenericRoomObjectThumbnail()`, which is where it is reserved from.
 
+- 🆕 **Habbopedia, the whole `Tween`, and four markers that were decisions — 22 → 16, 2026-09-05.**
+
+  - **`openHelpPage()` opens a page.** It was an empty body whose marker read "HabboPagesViewer
+    integration - to be connected". The viewer is *one 198-line file* in the primary tree and every
+    dependency it has was already ported. What was missing was its two layouts, and only because
+    they are `[Embed]`ed as `Class` fields on the viewer rather than declared in a component
+    manifest — the exact case `DIRECT_EMBED_SOURCES` already exists for in
+    `build-window-assets.mjs`, where `BCFloorPlanEditor` sits. Added there, `habbopedia_xml` and
+    `habbopedia_edit_xml` ship (788 layouts, up from 786). The viewer is constructed in
+    `initComponent()` beside `HabbletLinkHandler`, one line apart as in AS3, and registers its own
+    `habbopages/` link tracker. Every frame built through `buildFromXML()` already wires its help
+    button to `openHelpPage()`, so the `?` in a window title bar now does something.
+  - **`Tween` is ported whole** — the callback surface with its four argument arrays, the
+    repeat/reverse/roundToInt knobs, `reset()`, the read-back accessors, the convenience setters,
+    and the property-hint machinery with its four update paths (plain, RGB, radians, degrees). It
+    had been the slice the login fade needs, with 41 members named in a marker. Two are still out
+    and each says why at the declaration: the object pool (`fromPool`/`toPool` are `internal`,
+    their only AS3 caller is a `Juggler` helper nothing here uses, and a pool in a GC'd runtime
+    buys a bug class rather than a saving) and the `REMOVE_FROM_JUGGLER` event, which this port's
+    juggler replaces by polling `isComplete`.
+  - **Three markers were decisions, not debt**, and are `DEVIATION:` now:
+    `MeMenuController.getUnseenItemCounter` (the class is a shell with no `_window` and nothing
+    constructs it in either tree — the live equivalent is `AbstractSubMenuController`'s),
+    `FloorDrawingPreset`'s ten `[Embed]` asset classes (the artwork ships as files; there is no
+    embed class to reproduce), and `HabboAir`'s crash reporter (AIR-only inputs, and no endpoint
+    for the payload to reach).
+
+  Worth keeping from the `Tween` port: **half of AS3's fields survived as `m`-prefixed names and
+  half are `_SafeStr_N`**, and porting all 25 at once put `audit-as3-traces` from 0 to 25
+  unannotated derived names in one commit. The fix is the rule the audit already wants — name an
+  obfuscated field after its own public accessor and cite that accessor — but it is worth knowing
+  that a single large class can move that number that far.
+
 - 🆕 **Four more markers closed, 25 → 22 — 2026-09-05, and two were real defects.**
 
   - **The inner glow renders.** Its marker said Canvas2D has no inset shadow, which is true of

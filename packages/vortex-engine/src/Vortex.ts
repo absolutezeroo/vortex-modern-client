@@ -175,13 +175,19 @@ export interface ICrashReport
  */
 export class Vortex implements IVortex
 {
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::reportCrashStack(),
-    // logError(), set errorLogger() and HabboCoreErrorReporter are one subsystem: AS3 POSTs a crash
-    // payload (throttled to one per 15s) to an external error logger, with Capabilities.version and
-    // the AIR process log attached. This build has no such endpoint. ErrorReportStorage already
-    // collects the debug data such a report would carry, so the collection half is not what is
-    // missing. ERROR_CATEGORY_FINALIZE_PRELOADING (9) and ERROR_CATEGORY_DOWNLOAD_FONT (11) belong
-    // beside Core.ts's other categories if a reporter is ever built.
+    // DEVIATION: `reportCrashStack()`, `logError()`, `set errorLogger()` and
+    // `HabboCoreErrorReporter` are one subsystem — AS3 POSTs a crash payload, throttled to one per
+    // 15s, to an external error logger, with `Capabilities.version` and the AIR process log
+    // attached. Two of those three inputs do not exist outside AIR, and this hotel runs no such
+    // endpoint for the payload to go to, so there is nothing to POST and nowhere to POST it. The
+    // collection half is not what is missing: `ErrorReportStorage` already gathers the debug data
+    // such a report would carry, and `HabboTracking` sends what the server does accept.
+    // `ERROR_CATEGORY_FINALIZE_PRELOADING` (9) and `ERROR_CATEGORY_DOWNLOAD_FONT` (11) belong
+    // beside Core.ts's other categories if a reporter is ever built. Reclassified from a TODO on
+    // 2026-09-05: an endpoint that does not exist is not work owed.
+    // AS3: sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::reportCrashStack()
+    // AS3: sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::logError()
+    // AS3: sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::set errorLogger()
     //
     // The payload **keys are not missing**, contrary to what this note used to claim. HabboAir.as
     // is the SWF root and re-declares constants that have their own home elsewhere in the source;

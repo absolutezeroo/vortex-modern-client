@@ -73,8 +73,8 @@ export class HabboPagesViewer implements ILinkEventTracker
 	 *   resolves styles itself, and the CSS embed is a `ByteArray` the asset build does not ship
 	 *   (it ships XML layouts and PNG skins, not stylesheets). The pages render with the
 	 *   controller's own link/paragraph styling instead of habbopedia's.
-	 * AS3: .../habbo/window/utils/habbopedia/HabboPagesViewer.as::set visible()
 	 */
+    // AS3: .../habbo/window/utils/habbopedia/HabboPagesViewer.as::set visible()
     private set visible(value: boolean)
     {
         if(this._window === null || this._window.disposed)
@@ -112,8 +112,8 @@ export class HabboPagesViewer implements ILinkEventTracker
 	 * DEVIATION: AS3 takes the layout's embed `Class`, instantiates it as a `ByteArray` and parses
 	 *   the XML out of it. The layouts ship as files here, so the name is what identifies them and
 	 *   `buildWidgetLayout()` is the same operation with the embed step removed.
-	 * AS3: .../habbo/window/utils/habbopedia/HabboPagesViewer.as::createWindow()
 	 */
+    // AS3: .../habbo/window/utils/habbopedia/HabboPagesViewer.as::createWindow()
     private createWindow(layout: string): IFrameWindow | null
     {
         const window = this._windowManager?.buildWidgetLayout(layout, 1) as IFrameWindow | null ?? null;

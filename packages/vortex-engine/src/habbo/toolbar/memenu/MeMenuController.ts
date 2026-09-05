@@ -193,14 +193,15 @@ export class MeMenuController
         }
     }
 
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::getUnseenItemCounter()
-    // Builds/caches an unseen-count badge widget under a named toolbar icon. This class is dead
-    // per the class doc above (ToolbarView, its only owner, is never constructed in either tree),
-    // so there is no live window here to attach a badge to. The live equivalent - same lookup,
-    // same lazy-create-and-cache logic - is AbstractSubMenuController.ts's getUnseenItemCounter(),
-    // ported from the separate sources/WIN63-202607011411-782849652/.../abstractsubmenu/
-    // AbstractSubMenuController.as, which MeMenuNewController (BottomBarLeft's live me-menu)
-    // extends and actually uses.
+    // DEVIATION: AS3 builds and caches an unseen-count badge window under a named toolbar icon,
+    //   through `_window.findChildByName()`. This shell has no `_window` and will not get one:
+    //   the class is dead in both trees — `ToolbarView` is its only constructor and nothing
+    //   constructs `ToolbarView` — so there is no window to attach a badge to and nothing that
+    //   could ever call this. The check is the class doc above, and the live equivalent, same
+    //   lookup and same lazy-create-and-cache, is `AbstractSubMenuController.getUnseenItemCounter()`,
+    //   which `MeMenuNewController` (BottomBarLeft's real me-menu) extends and uses. Reclassified
+    //   from a TODO on 2026-09-05: a shell nothing constructs owes nothing.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::getUnseenItemCounter()
 
     /**
 	 * Set unseen item count for a category
@@ -208,6 +209,10 @@ export class MeMenuController
 	 * @param category The category name
 	 * @param count The count value
 	 */
+    // DEVIATION: AS3 fetches the counter window through `getUnseenItemCounter()` and writes the
+    //   number into its `count` caption, hiding it at zero. There is no window here — see that
+    //   member's own note — so this records the number and nothing reads it back except
+    //   `getUnseenItemCount()` below. Same reason: the class is dead in both trees.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/memenu/MeMenuController.as::setUnseenItemCount()
     public setUnseenItemCount(category: string, count: number): void
     {

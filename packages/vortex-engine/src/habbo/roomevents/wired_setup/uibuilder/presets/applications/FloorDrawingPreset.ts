@@ -48,7 +48,7 @@ export class FloorDrawingPreset extends WiredUIPreset
     /**
      * N, NE, E, SE, S, SW, W, NW — the order matters, `updateView()` indexes into it.
      */
-    // TODO(AS3): FloorDrawingPreset.as::floor_editor_border_N, floor_editor_border_NE,
+    // DEVIATION: FloorDrawingPreset.as::floor_editor_border_N, floor_editor_border_NE,
     // floor_editor_border_E, floor_editor_border_SE, floor_editor_border_S,
     // floor_editor_border_SW, floor_editor_border_W, floor_editor_border_NW — plus
     // floor_editor_tile_base and floor_editor_tile_entry — are `[Embed]` asset classes, and
