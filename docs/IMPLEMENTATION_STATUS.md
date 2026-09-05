@@ -49,6 +49,59 @@ single missing member — so 45 commands landed and the number went 304 → 309.
 things is worth less than five covering five, and any reading of this file that treats the total as
 a score will get that backwards.
 
+### Doors and windows were cut by guesswork, and the thickness settings did nothing (2026-09-05)
+
+Four faults in the room's plane renderer, found one behind the other. They are listed in the order
+they were fixed, which is also the order they hid each other.
+
+**`PlaneMaskManager.updateMask()` was a stub that returned `true` without drawing.** Every door and
+window in the port therefore fell back to `getMaskHolePoints()` — a screen-space rectangle one tile
+wide by `DOOR_HEIGHT_TILES = 2.5` tall that never reads `mask.type`, so every opening in the game
+was the same rectangle whatever the artwork said. The manager also never received an asset
+collection: `RoomVisualizationData.initializeAssetCollection()` forwarded textures to the two
+rasterizers and stopped there, so even a working `updateMask()` would have resolved nothing.
+`RoomEngine.onRoomContentReady()` now builds a `GraphicAssetCollection` off the same spritesheet and
+hands it over — masks need an *asset*, not a texture, because a mask has to be positioned and a bare
+canvas carries neither offset nor flip flags.
+
+The measurement that settles whether this half works is a log line, not a screenshot:
+`RoomVisualizationData` reports the resolved mask types at room load. A live room answers
+`29 mask type(s): door, bolly_wdw_wd, hween08_wndw, …`. Zero would mean the artwork never arrives
+and everything downstream is moot; the line exists so nobody has to guess again.
+
+**The room's wall and floor thickness settings reached nothing.** `RoomPlaneParser` has
+`floorThicknessMultiplier` / `wallThicknessMultiplier` and no caller anywhere in the port had ever
+set them, so the room-settings sliders changed a model variable that died there.
+`RoomVisualization.updatePlaneThicknesses()` now reads both and resets the planes, and
+`initializeRoomPlanes()` hands them to the parser before parsing.
+
+Two regressions came out of that fix and are worth keeping written down, because both were the port
+misreading its own order of operations rather than the AS3:
+
+- The call was first placed inside `updatePlaneTexturesAndVisibilities()`, which runs **after**
+  `initializeRoomPlanes()`. `resetRoomPlanes()` then destroyed the planes one line past the rebuild
+  and the room went black about two seconds in. AS3 runs the thickness check at `update()` l.601-609,
+  *before* the rebuild; the ordering is the whole point of where it sits.
+- `resetRoomPlanes()` disposed planes whose textures published sprites still held, and pixi threw
+  `Cannot read properties of null (reading 'alphaMode')` on the next frame. Sprite textures are now
+  detached before the dispose.
+
+**A resolved mask type is not resolved artwork.** With the asset path live, `applyBitmapMasks()`
+recorded a mask as asset-masked whenever `getMask(type)` answered — and `updateMask()` returns
+`true` even when the type has no visualization for that plane's scale and facing, because AS3's
+does. The polygon fallback was skipped for masks that had drawn nothing, so a doorway that used to
+be a crude rectangle became no opening at all. It now asks `getGraphicAsset(scale, normal)` and only
+claims the mask when there is something to draw.
+
+**The doorway reveal is a deliberate deviation, and it is `near \ far`.** Neither AS3 nor Flash
+Habbo draws the inside faces of a cut opening: their mask punches a flat hole through a wall that
+has thickness everywhere else, so an open doorway shows the void behind the room. The port fills it,
+projecting the mask's own alpha twice — once pushed back along the plane normal by the wall
+thickness — and subtracting the far copy from the near one. That subtraction order is the geometry
+of looking through a hole: what you see through is where the two openings overlap, and the rest of
+the near opening is tunnel wall. Written the other way round the band lands *outside* the hole, on
+the solid wall, which is how it shipped first.
+
 ### The WIN63 file-level sweep (2026-09-02) — what is actually left, and the six gaps it found
 
 Counting uncited `.as` files against the primary tree is the wrong measure taken alone, and the raw

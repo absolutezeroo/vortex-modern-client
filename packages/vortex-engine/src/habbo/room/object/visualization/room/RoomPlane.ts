@@ -983,9 +983,14 @@ export class RoomPlane
 
         for(const mask of this._bitmapMasks)
         {
-            // Ask before drawing: an unknown type has no artwork, and leaving it to the polygon is
-            // better than cutting nothing at all.
-            if(manager.getMask(mask.type) === null) continue;
+            // Ask before drawing, and ask for the *asset*, not the type. A known type whose
+            // visualizations hold nothing for this plane's scale and facing draws nothing — and
+            // `updateMask()` returns true all the same, because AS3's does. Recording such a mask as
+            // asset-masked below then skipped the polygon fallback as well, and the wall came out
+            // solid: an opening that used to be cut stopped being cut at all.
+            const planeMask = manager.getMask(mask.type);
+
+            if(planeMask === null || planeMask.getGraphicAsset(geometry.scale, normal) === null) continue;
 
             if(maskCanvas === null) maskCanvas = new OffscreenCanvas(width, height);
 
@@ -1073,8 +1078,10 @@ export class RoomPlane
      *
      * Derived from the mask itself rather than from the hole's corners, which is what makes it work
      * for any shape: the same alpha is projected twice, once pushed back by the wall's thickness,
-     * and the front copy subtracted from the back one. What is left is exactly the band of far face
-     * the near face does not cover — an L for a doorway seen from one side, a frame for a window.
+     * and the **back copy subtracted from the front one**. Looking through a hole in a slab, the
+     * part you actually see through is where the two openings overlap; the rest of the near opening
+     * is tunnel wall. So the band is `near \ far` — an L for a doorway seen from one side, a frame
+     * for a window — and it lies entirely inside the hole, which is what keeps it off the wall.
      */
     // TS-only: no AS3 counterpart; see the DEVIATION above.
     private drawMaskReveals(ctx: CanvasRenderingContext2D, a: number, b: number, c: number, d: number, tx: number, ty: number): void
@@ -1095,13 +1102,14 @@ export class RoomPlane
 
         reveal.clearRect(0, 0, this._width, this._height);
 
-        // The far face: the opening projected with the same matrix, translated by the thickness.
-        reveal.setTransform(a, b, c, d, tx + offset.x, ty + offset.y);
+        // The near opening: everything the viewer can see through the cut at all.
+        reveal.setTransform(a, b, c, d, tx, ty);
         reveal.drawImage(shape, 0, 0);
 
-        // Minus the near face, which is the hole the viewer looks through.
+        // Minus the far opening, which is the part of it that stays see-through. What survives is
+        // the tunnel — inside the hole by construction, so the wall around it is never touched.
         reveal.globalCompositeOperation = 'destination-out';
-        reveal.setTransform(a, b, c, d, tx, ty);
+        reveal.setTransform(a, b, c, d, tx + offset.x, ty + offset.y);
         reveal.drawImage(shape, 0, 0);
 
         // Paint what survives in the wall's side colour.
@@ -1180,18 +1188,8 @@ export class RoomPlane
 
             ctx.globalCompositeOperation = 'source-over';
 
-            // The reveal is OFF, and stays off until it is measured rather than reasoned about.
-            //
-            // It shipped unverified and the doorway went from a black opening to no opening at all,
-            // which is one symptom with two possible causes and no way to tell them apart from the
-            // screen: either the band it fills is wrong and covers the hole, or the openings stopped
-            // being cut for an unrelated reason and the reveal is innocent. Guessing between them
-            // cost two broken rooms already.
-            //
-            // What settles it is the line `RoomVisualizationData` now logs at room load — the mask
-            // types the manager resolved. With that number in hand the reveal is one call away:
-            //   this.drawMaskReveals(ctx, a, b, c, d, tx, ty);
-            // and `drawMaskReveals()` below is left intact and unreferenced for exactly that.
+            // The reveal draws inside the openings the loops above just cut, and only there.
+            this.drawMaskReveals(ctx, a, b, c, d, tx, ty);
         }
 
         // Dispose previous texture to prevent memory leak
