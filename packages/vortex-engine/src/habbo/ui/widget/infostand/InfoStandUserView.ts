@@ -80,6 +80,29 @@ export class InfoStandUserView
         this.createWindow(name);
     }
 
+    /**
+     * AS3 does not hand the asset to the window: it allocates a BitmapData the size of the
+     * *window* and `copyPixels()` the asset into its top-left corner
+     * (`_loc6_.bitmap = new BitmapData(_loc6_.width,_loc6_.height,true,0)` then
+     * `copyPixels(_loc8_,_loc8_.rect,new Point(0,0))`). That distinction is not cosmetic here:
+     * `<bitmap>` windows default to `stretched_x/y = true`, so assigning the raw asset made
+     * `BitmapDataRenderer` scale it to the window — `icon_home` is 11x10 in a 16x15 window, and
+     * the house icon came out blown up and blurry.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::createWindow()
+    private static fitToWindow(bitmap: ImageBitmap, width: number, height: number): ImageBitmap
+    {
+        const canvas = new OffscreenCanvas(Math.max(1, width), Math.max(1, height));
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return bitmap;
+
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(bitmap, 0, 0);
+
+        return canvas.transferToImageBitmap();
+    }
+
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandUserView.as::dispose()
     public dispose(): void
     {
@@ -165,7 +188,7 @@ export class InfoStandUserView
             if(!this._widget.assets) log.warn('infostand: no asset library on the widget when filling home_icon');
             else if(!asset) log.warn('infostand: asset "icon_home" not in the widget library');
             else if(!bitmap) log.warn('infostand: asset "icon_home" has no bitmap content');
-            else homeIcon.bitmap = bitmap;
+            else homeIcon.bitmap = InfoStandUserView.fitToWindow(bitmap, homeIcon.width, homeIcon.height);
 
             homeIcon.procedure = this.onHomeIconClicked;
         }

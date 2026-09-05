@@ -334,9 +334,11 @@ export class ContextInfoView
     /**
      * Paints one named asset onto a bitmap window.
      *
-     * `centered` is AS3's third argument: it allocates a bitmap the size of the *window* and
-     * copies the asset into the middle of it, rather than handing the asset over whole. The two
-     * differ whenever the icon is smaller than its cell, which is exactly the grid case.
+     * `centered` is AS3's third argument, and it only picks the *offset*: both branches there
+     * allocate a BitmapData the size of the *window* and `copyPixels()` the asset into it, at the
+     * centre or at (0, 0). Handing the raw asset over for the uncentered case is not the same
+     * thing — `<bitmap>` windows default to `stretched_x/y = true`, so an asset smaller than its
+     * window came out scaled up instead of sitting in the corner of a transparent buffer.
      */
     // AS3: ContextInfoView.as::setImageAsset() — BitmapData copyPixels → ImageBitmap.
     protected setImageAsset(target: IWindow | null, assetName: string, centered: boolean = false): void
@@ -348,13 +350,6 @@ export class ContextInfoView
 
         if(!content) return;
 
-        if(!centered)
-        {
-            (target as IWindow & { bitmap: ImageBitmap | null }).bitmap = content;
-
-            return;
-        }
-
         const canvas = new OffscreenCanvas(Math.max(1, target.width), Math.max(1, target.height));
         const ctx = canvas.getContext('2d');
 
@@ -363,8 +358,8 @@ export class ContextInfoView
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(
             content,
-            Math.trunc((canvas.width - content.width) / 2),
-            Math.trunc((canvas.height - content.height) / 2)
+            centered ? Math.trunc((canvas.width - content.width) / 2) : 0,
+            centered ? Math.trunc((canvas.height - content.height) / 2) : 0
         );
 
         (target as IWindow & { bitmap: ImageBitmap | null }).bitmap = canvas.transferToImageBitmap();
