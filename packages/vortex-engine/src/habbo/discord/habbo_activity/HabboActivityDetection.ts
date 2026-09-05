@@ -150,7 +150,20 @@ export class HabboActivityDetection extends Component implements IHabboActivityD
         this._messageEvents.push(new WiredSaveSuccessEvent(this.onModifyingWired));
         this._messageEvents.push(new WiredValidationErrorEvent(this.onModifyingWired));
         this._messageEvents.push(new GetGuestRoomResultMessageEvent(this.onGetGuestRoomResult));
+    }
 
+    /**
+     * DEVIATION: AS3 subscribes in the constructor, where its DI has already resolved
+     *   `_communicationManager`. This port resolves dependencies *after* construction, so the same
+     *   loop ran against a null manager and `addMessageEvent()`'s optional chain swallowed all
+     *   three — the events were built and never registered. `WiredMenuController` carries the same
+     *   deviation for the same reason, and `DiscordSettingsController` needed it too: its
+     *   `DiscordPreferences` (2767) was arriving to no handler and being dropped.
+     * AS3: .../habbo_activity/HabboActivityDetection.as::HabboActivityDetection()
+     */
+    // AS3: .../habbo_activity/HabboActivityDetection.as::HabboActivityDetection()
+    protected override initComponent(): void
+    {
         for(const event of this._messageEvents)
         {
             this.addMessageEvent(event);

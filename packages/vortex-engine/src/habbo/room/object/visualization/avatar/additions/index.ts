@@ -6,6 +6,7 @@ export {FloatingHeart} from './FloatingHeart';
 export {FloatingIdleZ} from './FloatingIdleZ';
 export {GameClickTarget} from './GameClickTarget';
 export {GuideStatusBubble} from './GuideStatusBubble';
+export {HabbiconBubble} from './HabbiconBubble';
 export {MutedBubble} from './MutedBubble';
 export {NumberBubble} from './NumberBubble';
 export {TypingBubble} from './TypingBubble';

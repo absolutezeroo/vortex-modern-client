@@ -105,11 +105,6 @@ export class DiscordSettingsController extends Component implements ILinkEventTr
         this._manager = manager;
 
         this._messageEvents.push(new DiscordPreferencesMessageEvent(this.onDiscordPreferences));
-
-        for(const event of this._messageEvents)
-        {
-            this.addMessageEvent(event);
-        }
     }
 
     // AS3: .../settings/DiscordSettingsController.as::onDiscordPreferences()
@@ -169,9 +164,25 @@ export class DiscordSettingsController extends Component implements ILinkEventTr
         this.maybeShowPopup();
     }
 
+    /**
+     * DEVIATION: AS3 registers its message events in the constructor, and `addMessageEvent()` there
+     *   bails out when `_communicationManager` is not set — a guard that never fires, because AS3
+     *   resolves a component's dependencies before its constructor returns. This port injects them
+     *   afterwards, so the same loop ran against a null manager, the optional chain swallowed every
+     *   call, and `DiscordPreferences` (2767) arrived to no handler and was dropped with a warning.
+     *   The events are still *built* in the constructor as AS3 builds them; only the registration
+     *   moves here, which is the first point the dependency exists — the `send()` below already
+     *   relied on that, and it is why the server answered at all.
+     * AS3: .../settings/DiscordSettingsController.as::initComponent()
+     */
     // AS3: .../settings/DiscordSettingsController.as::initComponent()
     protected override initComponent(): void
     {
+        for(const event of this._messageEvents)
+        {
+            this.addMessageEvent(event);
+        }
+
         this.context.addLinkEventTracker(this);
         this._communicationManager?.connection?.send(new GetDiscordPreferencesMessageComposer());
     }

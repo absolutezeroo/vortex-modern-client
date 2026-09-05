@@ -1452,6 +1452,29 @@ come from WIN63's registry alone (checked free of collisions), and every message
 from the controller's use of it, flagged as such at each declaration. Nothing server-side will ever
 send these; the client half is complete regardless.
 
+> **The last sentence stopped being true on 2026-09-05, and the room half landed with it.**
+> `Revision20260701/Headers.cs` now declares **sixteen** habbicon headers — nine composers and seven
+> events, `RoomUseHabbiconMessageComposer = 1547` among them — so the server does send these, and
+> the twelve derived ids were confirmed against it rather than merely uncontradicted. Three of them
+> were being dropped by the client (`UserHabbicons` 3728, `HabbiconShopData` 3765,
+> `UserHabbiconStatusChanged` 2019): `HabbiconController.initComponent()` returns before registering
+> anything unless `habbicons.enabled` is set, and the live `external_variables.json` did not set it.
+> It does now, alongside `habbicons.asset.root`, and a real asset pack is served from
+> `c_images/habbicons/dev/` — whose 33 ids the emulator's seed was renumbered onto (28..60,
+> Habbo's own numbering; migration `20260905170000_AlignHabbiconIdsToAssetPack`). The two
+> vocabularies had overlapped at 28..33 with different meanings, so this was drawing *wrong* icons,
+> not missing ones.
+>
+> The room-side slice is ported: `RoomObjectAvatarHabbiconUpdateMessage`, the
+> `RoomEngine.updateObjectUserAction()` case, `AvatarLogic`'s habbicon branch with its four spin
+> helpers, `AvatarVisualization`'s `ADDITION_ID_HABBICON_BUBBLE` block and spin-offset angle, and the
+> 769-line `HabbiconBubble` — the last of AS3's eleven avatar additions, and the only one that
+> composites its own pixels (silhouette outline, blurred drop shadow, three caches). Flash's
+> `BitmapData` becomes `OffscreenCanvas` + a PixiJS `Texture`; the one deliberate divergence is
+> `BlurFilter(6,6,2)`'s box blur against canvas's gaussian, marked `DEVIATION:` at the method.
+> Verified in the browser against the real pack: 40px frame → 44px outline → 54px shadow and
+> composite, sizes exactly as AS3 computes them.
+
 One recovery did come out of it. `UnseenItemCategory`'s eighth constant was left unnamed with a note
 saying nothing referenced it — `HabbiconController` references it five times
 (`setUnseenItem`/`isUnseen`/`removeUnseen`/`resetCategory`/`getCount`), which fixes what 8 is. It is

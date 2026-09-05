@@ -43,6 +43,7 @@ import {TypingBubble} from './additions/TypingBubble';
 import {GuideStatusBubble} from './additions/GuideStatusBubble';
 import {GameClickTarget} from './additions/GameClickTarget';
 import {NumberBubble} from './additions/NumberBubble';
+import {HabbiconBubble} from './additions/HabbiconBubble';
 import {ExpressionAdditionFactory} from './additions/ExpressionAdditionFactory';
 
 export class AvatarVisualization extends RoomObjectSpriteVisualization implements IAvatarImageListener, IAvatarEffectListener 
@@ -105,7 +106,6 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     private static readonly INITIAL_RESERVED_SPRITES: number = 2;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE (and siblings, l.65-79)
-    // ADDITION_ID_HABBICON_BUBBLE (8) is declared there too; nothing in this port reads it yet.
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_IDLE_BUBBLE
     private static readonly ADDITION_ID_IDLE_BUBBLE: number = 1;
 
@@ -126,6 +126,20 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_GUIDE_STATUS_BUBBLE
     private static readonly ADDITION_ID_GUIDE_STATUS_BUBBLE: number = 7;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::ADDITION_ID_HABBICON_BUBBLE
+    private static readonly ADDITION_ID_HABBICON_BUBBLE: number = 8;
+
+    /**
+     * How far the avatar is turned by a spinning Habbicon, in degrees, applied to both the body and
+     * the head angle. `AvatarLogic` computes it; this only carries it into the angles.
+     *
+     * The AS3 field is obfuscated (`_SafeStr_7233`) and recovered in no tree, so the name is
+     * DERIVED — it happens to match the one `AvatarLogic` uses for the same quantity, which is a
+     * coincidence of the value, not a shared field.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_SafeStr_7233
+    private _habbiconSpinOffset: number = 0;
 
     /** Minimum time between geometry updates in milliseconds. */
     private static readonly GEOMETRY_UPDATE_INTERVAL_MS: number = 41;
@@ -238,6 +252,12 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::_posture
     private _posture: string = '';
 
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::normalizeDirectionAngle()
+    private static normalizeDirectionAngle(angle: number): number
+    {
+        return ((angle % 360) + 360) % 360;
+    }
+
     /**
      * The current avatar posture string (std, sit, lay, mv, etc.).
      */
@@ -300,12 +320,19 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
     {
         if(sprite === null) return;
 
-        if(!sprite.visible || !sprite.assetName)
+        if(!sprite.visible)
         {
             sprite.texture = null;
 
             return;
         }
+
+        // An addition that composes its own pixels has no asset name to look up — `HabbiconBubble`
+        // is the only one, because it is the only addition whose picture is not a shipped asset.
+        // AS3 has no equivalent of this method at all (it assigns `asset` straight from the
+        // library), so the "no name means nothing to draw" rule below is the port's own, and it was
+        // silently wiping the texture such an addition had just set, every frame.
+        if(!sprite.assetName) return;
 
         // Cached by name: this runs once per addition per frame, and `.claude/rules/room.md` is
         // explicit that the render path allocates nothing per frame and caches textures by content
@@ -945,6 +972,47 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
                 }
             }
 
+            // Habbicon bubble addition
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_HABBICON) | 0;
+
+            const habbiconTriggerSequence = model.getNumber(RoomObjectVariableEnum.AVATAR_HABBICON_TRIGGER_SEQUENCE) | 0;
+            const habbiconAddition = this.getAddition(AvatarVisualization.ADDITION_ID_HABBICON_BUBBLE) as HabbiconBubble | null;
+
+            if(numValue > 0)
+            {
+                // The trigger sequence is in the test, not just the id: triggering the *same*
+                // Habbicon twice must replay it, and without this the second trigger would find a
+                // matching bubble already up and do nothing.
+                if(!habbiconAddition
+                    || habbiconAddition.habbiconId !== numValue
+                    || habbiconAddition.triggerSequence !== habbiconTriggerSequence)
+                {
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_HABBICON_BUBBLE);
+                    this.addAddition(new HabbiconBubble(
+                        AvatarVisualization.ADDITION_ID_HABBICON_BUBBLE, numValue, habbiconTriggerSequence, this
+                    ));
+                }
+
+                changed = true;
+            }
+            else
+            {
+                if(habbiconAddition)
+                {
+                    this.removeAddition(AvatarVisualization.ADDITION_ID_HABBICON_BUBBLE);
+                }
+            }
+
+            // Habbicon spin. It turns the avatar, not the bubble, so it only has to be noticed
+            // here; the angles are recomputed further down from the value stored now.
+            numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_HABBICON_SPIN_OFFSET) | 0;
+
+            if(numValue !== this._habbiconSpinOffset)
+            {
+                this._habbiconSpinOffset = numValue;
+                changed = true;
+            }
+
             // Expression addition
             numValue = model.getNumber(RoomObjectVariableEnum.AVATAR_EXPRESSION) | 0;
             const expressionAddition = this.getAddition(AvatarVisualization.ADDITION_ID_EXPRESSION);
@@ -1071,9 +1139,8 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
      * Which way the habbicon bubble should face: 1 (right), -1 (left) or 0 (neither).
      *
      * The eight avatar directions collapse to three, because the bubble's sprites only exist
-     * facing left and right. AS3's caller is `additions/HabbiconBubble.as`, which this port does
-     * not yet have — the accessor is public and self-contained, so it ships ahead of it rather
-     * than leaving the addition with nothing to read when it lands.
+     * facing left and right. `HabbiconBubble` is the caller, and it asks exactly once per bubble:
+     * an avatar that turns while its Habbicon is up must not flip the icon mid-animation.
      */
     // AS3: .../src/com/sulake/habbo/room/object/visualization/avatar/AvatarVisualization.as::get habbiconFacingDirection()
     public get habbiconFacingDirection(): number
@@ -1301,12 +1368,21 @@ export class AvatarVisualization extends RoomObjectSpriteVisualization implement
 
             headAngle = ((headAngle % 360) + 360) % 360;
 
-            if(this._posture === 'sit' && this._effectJustApplied) 
+            if(this._posture === 'sit' && this._effectJustApplied)
             {
                 headAngle = headAngle - ((headAngle % 90) - 45);
             }
 
-            if(bodyAngle !== this._angle || forceUpdate) 
+            // A spinning Habbicon turns the whole avatar, body and head together, on top of
+            // whatever direction it already had — which is why this lands here, after the posture
+            // snapping and before the two angles are compared against what is on screen.
+            if(this._habbiconSpinOffset !== 0)
+            {
+                bodyAngle = AvatarVisualization.normalizeDirectionAngle(bodyAngle + this._habbiconSpinOffset);
+                headAngle = AvatarVisualization.normalizeDirectionAngle(headAngle + this._habbiconSpinOffset);
+            }
+
+            if(bodyAngle !== this._angle || forceUpdate)
             {
                 updated = true;
                 this._angle = bodyAngle;

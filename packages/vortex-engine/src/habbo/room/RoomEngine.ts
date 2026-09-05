@@ -93,6 +93,7 @@ import {RoomObjectAvatarPlayerValueUpdateMessage} from './messages/RoomObjectAva
 import {RoomObjectAvatarExpressionUpdateMessage} from './messages/RoomObjectAvatarExpressionUpdateMessage';
 import {RoomObjectAvatarPlayingGameMessage} from './messages/RoomObjectAvatarPlayingGameMessage';
 import {RoomObjectAvatarGuideStatusUpdateMessage} from './messages/RoomObjectAvatarGuideStatusUpdateMessage';
+import {RoomObjectAvatarHabbiconUpdateMessage} from './messages/RoomObjectAvatarHabbiconUpdateMessage';
 import {RoomObjectAvatarCarryObjectUpdateMessage} from './messages/RoomObjectAvatarCarryObjectUpdateMessage';
 import {RoomObjectAvatarSignUpdateMessage} from './messages/RoomObjectAvatarSignUpdateMessage';
 import {RoomObjectAvatarOwnMessage} from './messages/RoomObjectAvatarOwnMessage';
@@ -5333,23 +5334,9 @@ export class RoomEngine extends Component implements IRoomEngine,
             case RoomObjectVariableEnum.AVATAR_GUIDE_STATUS:
                 message = new RoomObjectAvatarGuideStatusUpdateMessage(value);
                 break;
-            // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::updateObjectUserAction()
-            // "figure_habbicon" builds a RoomObjectAvatarHabbiconUpdateMessage, which this port
-            // does not have. Porting the message alone would be inert, and so would porting the
-            // case: the room-side half of habbicons is one slice of about 900 lines —
-            // `AvatarLogic`'s habbicon branch plus its four spin helpers, `AvatarVisualization`'s
-            // `habbiconFacingDirection` and ADDITION_ID_HABBICON_BUBBLE block, and the 769-line
-            // `HabbiconBubble` addition (the only one of AS3's eleven that is missing).
-            // `HabbiconAssetManager` and the catalog-side album are already ported.
-            // **Sized and deliberately not started**: the one caller, `RoomUI.onRoomUseHabbicon()`,
-            // is gated on `habbicons.enabled`, which this hotel's external variables do not set,
-            // and the emulator declares no habbicon header at all — so none of it could run today.
-            // Both blockers re-checked 2026-09-04: `grep -c habbicon` is 0 against the live
-            // `external_variables.json` and 0 against `Revision20260701/Headers.cs`. The
-            // catalog-side half is complete and does run — `HabbiconAssetManager`,
-            // `ProductIconWidget.setHabbiconResult()` and the purchase dialog all landed that day.
-            // It reached this method before and wrote `figure_habbicon` onto a model nothing reads,
-            // which is why this warns where it used to be silent.
+            case RoomObjectVariableEnum.AVATAR_HABBICON:
+                message = new RoomObjectAvatarHabbiconUpdateMessage(value);
+                break;
             default:
                 log.warn(`updateObjectUserAction: no update message for "${action}"`);
                 break;
