@@ -90,8 +90,19 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
     private _wallType: string | null = null;
     private _landscapeType: string | null = null;
 
+    /**
+     * Base wall thickness in world units, before the room's own multiplier.
+     *
+     * The same constant `RoomPlaneParser` builds the wall's edge planes from — kept in step with it
+     * by value, since the parser's copy is private and this one only sizes the reveal.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/RoomPlaneParser.as::WALL_THICKNESS
+    public static readonly WALL_THICKNESS: number = 0.25;
+
     private _floorThickness: number = NaN;
-    private _wallThickness: number = NaN;
+    /** Multiplied thickness, in world units — see `WALL_THICKNESS` and `updateThickness()`. */
+    // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_wallThickness
+    private _wallThickness: number = RoomVisualization.WALL_THICKNESS;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::_backgroundColor
     private _backgroundColor: number = 0xFFFFFF;
@@ -589,6 +600,11 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 // carries doors and windows.
                 // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateRoomPlanes()
                 plane.maskManager = this._visualizationData.maskManager;
+
+                // TS-only: the depth a cut opening's reveal is drawn to. AS3 keeps the thickness in
+                //   the plane parser, which builds the wall's own edge planes from it and never
+                //   tells a plane; the reveal is drawn by the plane, so it has to know.
+                plane.wallThickness = this._wallThickness;
             }
 
             // Thin walls without texture (AS3 lines 624-626)
@@ -694,6 +710,18 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 wallType ?? '201',
                 landscapeType ?? '1'
             );
+
+            // The room's own wall thickness, which the reveal on a cut opening is drawn to. AS3
+            // reads the same variable here and uses it only to notice a change and rebuild the
+            // planes; the number itself lives in `RoomPlaneParser`, whose `WALL_THICKNESS` this
+            // multiplies. NaN before the room's visualization settings arrive, which reads as zero
+            // and simply draws no reveal.
+            // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::updateThickness()
+            const wallThicknessMultiplier = model.getNumber(RoomObjectVariableEnum.ROOM_WALL_THICKNESS_MULTIPLIER);
+
+            this._wallThickness = Number.isFinite(wallThicknessMultiplier)
+                ? RoomVisualization.WALL_THICKNESS * wallThicknessMultiplier
+                : RoomVisualization.WALL_THICKNESS;
 
             const floorVisible = model.getNumber(RoomObjectVariableEnum.ROOM_FLOOR_VISIBILITY);
             const wallVisible = model.getNumber(RoomObjectVariableEnum.ROOM_WALL_VISIBILITY);

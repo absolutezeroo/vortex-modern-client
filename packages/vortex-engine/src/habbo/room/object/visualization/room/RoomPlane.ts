@@ -50,6 +50,17 @@ export class RoomPlane
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::TYPE_LANDSCAPE
     public static readonly TYPE_LANDSCAPE: number = 3;
 
+    /**
+     * The colour a cut opening's inside faces are filled with.
+     *
+     * `RoomVisualization.WALL_COLOR_SIDE`, the same value the room already paints a wall's own
+     * side-edge planes with — so a doorway's reveal reads as the same material as the wall top and
+     * side beside it, rather than as a new surface.
+     */
+    // TS-only: the reveal has no AS3 counterpart; the colour does.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::WALL_COLOR_SIDE
+    private static readonly REVEAL_COLOR: number = 0xCCCCCC;
+
     private _randomSeed: number = 0;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::_origin
     private _origin: Vector3d;
@@ -198,6 +209,35 @@ export class RoomPlane
     /** Scratch for the masked copy of the texture; reused rather than allocated per frame. */
     // TS-only: AS3 masks its BitmapData in place.
     private _maskedTextureCanvas: HTMLCanvasElement | null = null;
+
+    /**
+     * The combined alpha of this frame's asset-cut openings, in texture space, or null when there
+     * are none. Kept so the reveal can be drawn from the same shape the hole was cut with.
+     */
+    // TS-only: see drawMaskReveals().
+    private _maskShapeCanvas: OffscreenCanvas | null = null;
+
+    /**
+     * How thick this wall is, in world units — `RoomPlaneParser.WALL_THICKNESS` times the room's
+     * own multiplier. Zero on a plane that is not a wall, and on one nobody has told.
+     */
+    // TS-only: AS3 keeps the thickness in the plane *parser*, which builds the wall's edge planes
+    //   from it and never hands it to a plane. The reveal needs it here.
+    private _wallThickness: number = 0;
+
+    // TS-only: see `_wallThickness`.
+    set wallThickness(value: number)
+    {
+        this._wallThickness = value;
+    }
+
+    /** Scratch for the reveal band; reused rather than allocated per frame. */
+    // TS-only: see drawMaskReveals().
+    private _revealCanvas: HTMLCanvasElement | null = null;
+
+    /** Screen-space vector from the wall's near face to its far face, or null when there is none. */
+    // TS-only: see drawMaskReveals().
+    private _revealOffset: {x: number; y: number} | null = null;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::set rasterizer()
     set rasterizer(value: IPlaneRasterizer | null)
@@ -921,6 +961,8 @@ export class RoomPlane
     private applyBitmapMasks(texture: HTMLCanvasElement, geometry: IRoomGeometry): HTMLCanvasElement
     {
         this._assetMaskedTypes.clear();
+        this._maskShapeCanvas = null;
+        this._revealOffset = null;
 
         const manager = this._maskManager;
 
@@ -959,6 +1001,12 @@ export class RoomPlane
             this._assetMaskedTypes.add(mask);
         }
 
+        // Kept for the reveal: it is drawn from the same shape the hole is cut with, so the two can
+        // never disagree about where the opening is. The offset is how far *back* the wall's far
+        // face sits on screen — the plane's own normal, one wall-thickness deep, projected.
+        this._maskShapeCanvas = maskCanvas;
+        this._revealOffset = this.projectThickness(geometry);
+
         if(maskCanvas === null) return texture;
 
         if(this._maskedTextureCanvas === null)
@@ -985,6 +1033,86 @@ export class RoomPlane
         context.globalCompositeOperation = 'source-over';
 
         return this._maskedTextureCanvas;
+    }
+
+    /**
+     * How far back the wall's far face sits on screen, one wall-thickness along the normal.
+     *
+     * Projected rather than assumed: the two wall orientations lean opposite ways in an isometric
+     * room, and the room's own thickness multiplier scales both.
+     */
+    // TS-only: see drawMaskReveals().
+    private projectThickness(geometry: IRoomGeometry): {x: number; y: number} | null
+    {
+        if(this._type !== RoomPlane.TYPE_WALL || this._wallThickness <= 0) return null;
+
+        // Negative: into the wall, away from the viewer — the same sign `RoomPlaneParser` gives its
+        // own thickness vector when it builds the wall's edge planes.
+        const back = Vector3d.sum(this._location, Vector3d.product(this._normal, -this._wallThickness));
+
+        if(back === null) return null;
+
+        const near = geometry.getScreenPoint(this._location);
+        const far = geometry.getScreenPoint(back);
+
+        if(near === null || far === null) return null;
+
+        const offset = {x: far.x - near.x, y: far.y - near.y};
+
+        return (offset.x === 0 && offset.y === 0) ? null : offset;
+    }
+
+    /**
+     * Fills the inside faces of a cut opening — the door's reveal, the jamb.
+     *
+     * DEVIATION: neither AS3 nor Flash Habbo draws this. Their mask punches a flat hole straight
+     *   through a wall that has thickness everywhere else, so an open doorway shows the void behind
+     *   the room rather than the depth of the wall it is cut into. Deliberate addition, asked for
+     *   and confirmed on screen; the wall's own `WALL_COLOR_SIDE` is used so the reveal reads as
+     *   the same material as every other thickness face the room already draws.
+     *
+     * Derived from the mask itself rather than from the hole's corners, which is what makes it work
+     * for any shape: the same alpha is projected twice, once pushed back by the wall's thickness,
+     * and the front copy subtracted from the back one. What is left is exactly the band of far face
+     * the near face does not cover — an L for a doorway seen from one side, a frame for a window.
+     */
+    // TS-only: no AS3 counterpart; see the DEVIATION above.
+    private drawMaskReveals(ctx: CanvasRenderingContext2D, a: number, b: number, c: number, d: number, tx: number, ty: number): void
+    {
+        const shape = this._maskShapeCanvas;
+        const offset = this._revealOffset;
+
+        if(shape === null || offset === null) return;
+
+        if(this._revealCanvas === null) this._revealCanvas = document.createElement('canvas');
+
+        this._revealCanvas.width = this._width;
+        this._revealCanvas.height = this._height;
+
+        const reveal = this._revealCanvas.getContext('2d');
+
+        if(reveal === null) return;
+
+        reveal.clearRect(0, 0, this._width, this._height);
+
+        // The far face: the opening projected with the same matrix, translated by the thickness.
+        reveal.setTransform(a, b, c, d, tx + offset.x, ty + offset.y);
+        reveal.drawImage(shape, 0, 0);
+
+        // Minus the near face, which is the hole the viewer looks through.
+        reveal.globalCompositeOperation = 'destination-out';
+        reveal.setTransform(a, b, c, d, tx, ty);
+        reveal.drawImage(shape, 0, 0);
+
+        // Paint what survives in the wall's side colour.
+        reveal.setTransform(1, 0, 0, 1, 0, 0);
+        reveal.globalCompositeOperation = 'source-in';
+        reveal.fillStyle = `#${(RoomPlane.REVEAL_COLOR & 0xFFFFFF).toString(16).padStart(6, '0')}`;
+        reveal.fillRect(0, 0, this._width, this._height);
+        reveal.globalCompositeOperation = 'source-over';
+
+        // Over the hole, which is transparent by now, so nothing else is disturbed.
+        ctx.drawImage(this._revealCanvas, 0, 0);
     }
 
     private renderTexture(textureBitmap: HTMLCanvasElement): void
@@ -1051,6 +1179,9 @@ export class RoomPlane
             }
 
             ctx.globalCompositeOperation = 'source-over';
+
+            // After the holes and before anything else: the reveal fills part of what was just cut.
+            this.drawMaskReveals(ctx, a, b, c, d, tx, ty);
         }
 
         // Dispose previous texture to prevent memory leak
