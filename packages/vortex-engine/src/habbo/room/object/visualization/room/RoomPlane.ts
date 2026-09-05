@@ -1265,10 +1265,17 @@ export class RoomPlane
 
         if(textureBitmapData?.bitmap)
         {
-            this.renderTexture(this.applyBitmapMasks(textureBitmapData.bitmap, geometry));
+            // One masked copy, two canvases — and both are on screen. `_outputCanvas` feeds
+            // `_textureSprite`; `_bitmapData` feeds `bitmapDataTexture`, which is what
+            // `RoomVisualization` hands to its own published sprites. Passing the raw bitmap to the
+            // second left it cutting every opening with the geometric rectangle whatever artwork had
+            // resolved, and drawing no reveal at all.
+            const masked = this.applyBitmapMasks(textureBitmapData.bitmap, geometry);
+
+            this.renderTexture(masked);
 
             // Also render to _bitmapData canvas for the sprite system
-            this.renderTextureToBitmapData(ctx, textureBitmapData.bitmap);
+            this.renderTextureToBitmapData(ctx, masked);
 
             if(this._textureSprite)
             {
@@ -1422,8 +1429,12 @@ export class RoomPlane
                 }
             }
 
+            // Same split as `renderTexture()`: a mask already cut from its own artwork is out of the
+            // texture, and cutting it again here would take a second, differently-shaped bite.
             for(const mask of this._bitmapMasks)
             {
+                if(this._assetMaskedTypes.has(mask)) continue;
+
                 const maskPoints = this.getMaskHolePoints(mask, leftLen, rightLen);
 
                 if(maskPoints !== null)
@@ -1433,6 +1444,8 @@ export class RoomPlane
             }
 
             ctx.globalCompositeOperation = 'source-over';
+
+            this.drawMaskReveals(ctx, a, b, c, d, tx, ty);
         }
     }
 
