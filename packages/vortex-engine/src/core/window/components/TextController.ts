@@ -1947,12 +1947,20 @@ export class TextController extends WindowController implements ITextWindow
 
         for(const baseLine of baseLines)
         {
-            // Flash wraps whenever `wordWrap` and `multiline` are set; `autoSize` does not disable
-            // it, it only decides which side the field grows on. Requiring autoSize === 'none' here
-            // left every `word_wrap="true" auto_size="left"` field measured as one endless line -
-            // the alert dialog's summary reached 265px inside a 266px container starting at x=27
-            // and was clipped, which is the truncated body text.
-            if(this._wordWrap && this._multiline)
+            // Flash wraps on `wordWrap` alone - `multiline` governs newline handling and input,
+            // not line breaking - and `autoSize` does not disable it either, it only decides which
+            // side the field grows on. Requiring autoSize === 'none' here left every
+            // `word_wrap="true" auto_size="left"` field measured as one endless line - the alert
+            // dialog's summary reached 265px inside a 266px container starting at x=27 and was
+            // clipped, which is the truncated body text.
+            //
+            // Requiring `_multiline` on top of it left the measurement disagreeing with
+            // `TextSkinRenderer`, which wraps on `tw.wordWrap` with no such condition: the infostand
+            // motto (`<input word_wrap="true">`, no `multiline` var) measured as one 141px line, so
+            // `InfoStandUserView.setMotto()`'s `min(textHeight + 5, 50)` sized the box for one line
+            // and the renderer drew two, the second one cut off. The 50px clamp there is AS3's own
+            // proof that this field wraps - a single line can never approach it.
+            if(this._wordWrap)
             {
                 const wrapped = this.wrapLine(baseLine, maxWidth, offset);
 
