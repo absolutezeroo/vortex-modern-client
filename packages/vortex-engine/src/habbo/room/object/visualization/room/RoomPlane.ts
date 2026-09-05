@@ -1075,8 +1075,11 @@ export class RoomPlane
      * for any shape: the same alpha is projected twice, once pushed back by the wall's thickness,
      * and the **back copy subtracted from the front one**. Looking through a hole in a slab, the
      * part you actually see through is where the two openings overlap; the rest of the near opening
-     * is tunnel wall. So the band is `near \ far` — an L for a doorway seen from one side, a frame
-     * for a window — and it lies entirely inside the hole, which is what keeps it off the wall.
+     * is tunnel wall. So the band is `near \ far`, and it lies entirely inside the hole, which is
+     * what keeps it off the wall.
+     *
+     * Subtracted twice, in fact: once at the full offset and once at its horizontal half, which
+     * leaves the jamb and drops the band along the bottom. See the second subtraction for why.
      */
     // TS-only: no AS3 counterpart; see the DEVIATION above.
     private drawMaskReveals(ctx: CanvasRenderingContext2D, a: number, b: number, c: number, d: number, tx: number, ty: number): void
@@ -1105,6 +1108,20 @@ export class RoomPlane
         // the tunnel — inside the hole by construction, so the wall around it is never touched.
         reveal.globalCompositeOperation = 'destination-out';
         reveal.setTransform(a, b, c, d, tx + offset.x, ty + offset.y);
+        reveal.drawImage(shape, 0, 0);
+
+        // And minus the far opening again with only the horizontal half of the offset, which leaves
+        // the jamb and drops the band along the bottom of the hole.
+        //
+        // That band is the opening's lower face, and a doorway does not have one: it is cut all the
+        // way to the floor, so there is no wall material under it and what belongs there is the
+        // floor showing through. Filling it painted a wall-coloured threshold across the doorway.
+        //
+        // ponytail: unconditional, so a window loses the inner face of its sill too — 4px it never
+        //   had before this reveal existed. The precise rule is "no lower face when the opening's
+        //   bottom edge meets the wall's", which needs the mask's placement rectangle plumbed out
+        //   of `PlaneMaskManager.updateMask()`; do that if the sill ever matters.
+        reveal.setTransform(a, b, c, d, tx + offset.x, ty);
         reveal.drawImage(shape, 0, 0);
 
         // Paint what survives in the wall's side colour.
