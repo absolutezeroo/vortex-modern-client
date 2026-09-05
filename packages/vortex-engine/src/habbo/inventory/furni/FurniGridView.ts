@@ -10,6 +10,8 @@ import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 type WritableTextWindow = ITextWindow & {underline: boolean};
 import {WindowMouseEvent as WindowMouseEventClass} from '@core/window/events/WindowMouseEvent';
 import type {GroupItem} from '../items/GroupItem';
+import {FurniGridFilters} from './FurniGridFilters';
+import type {WiredTradeRequirementsModel} from '../wired_trading/requirements/WiredTradeRequirementsModel';
 
 /**
  * Manages the paginated furniture grid (filtering, sorting, paging).
@@ -29,6 +31,20 @@ export class FurniGridView
 
     private static readonly PLACEMENT_NOT_IN_ROOM = 2;
 
+    /**
+     * The main dropdown's selection index, as the filter string AS3 works in.
+     *
+     * The layout's `filter.options` offers three entries in this order; AS3's fourth,
+     * `room_layout`, has no entry in it — `setFilterByWired()` is the only caller that can reach
+     * that one.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilter()
+    private static readonly MAIN_FILTER_BY_SELECTION: readonly string[] = [
+        FurniGridFilters.MAIN_ALL,
+        FurniGridFilters.MAIN_FLOOR_ITEMS,
+        FurniGridFilters.MAIN_WALL_ITEMS
+    ];
+
     private static readonly PAGE_COLOR_ACTIVE = 16711680;
 
     private static readonly PAGE_COLOR_INACTIVE = 0;
@@ -44,10 +60,38 @@ export class FurniGridView
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::_currentPageItems
     private _currentPageItems: GroupItem[] = [];
 
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showFloorItems
-    private _showFloorItems: boolean = true;
-    // AS3: sources/win63_version/habbo/inventory/furni/FurniGridView.as::_showWallItems
-    private _showWallItems: boolean = true;
+    /**
+     * The main dropdown, as AS3's own string: all / floor_items / wall_items / room_layout.
+     *
+     * Replaced a `_showFloorItems`/`_showWallItems` boolean pair on 2026-09-05. Two booleans cannot
+     * express `room_layout` at all, and they got `wall_items` wrong in a way that showed: AS3
+     * excludes wallpaper, floor and landscape from it (`isWallItem && !isRoomLayout`), where the
+     * pair let all three through.
+     *
+     * Name DERIVED: AS3's field is `_SafeStr_8319`, obfuscated; named after the argument
+     * `setFilter()` assigns it from.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilter()
+    private _mainFilter: string = FurniGridFilters.MAIN_ALL;
+
+    /**
+     * The type dropdown — sittable, wired, tradable and the rest.
+     *
+     * Name DERIVED: AS3's field is `_SafeStr_7832`, obfuscated; named after what it holds.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilter()
+    private _typeFilter: string = FurniGridFilters.TYPE_ANY;
+
+    /**
+     * The wired trade the grid is picking an offer for, when it is.
+     *
+     * Non-null only between `setFilterByWired()` and the next `setFilter()`, which clears it — a
+     * grid still filtering against a finished trade would hide furniture for no visible reason.
+     *
+     * Name DERIVED: AS3's field is `_SafeStr_7060`, obfuscated; named after its type.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilterByWired()
+    private _wiredRequirements: WiredTradeRequirementsModel | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::_showingRentedItems
     private _showingRentedItems: boolean = false;
     private _mergeRentFurni: boolean = false;
@@ -116,13 +160,47 @@ export class FurniGridView
         showingNfts: boolean
     ): void
     {
-        this._showFloorItems = placementOrWallFilter === 0 || placementOrWallFilter === 1;
-        this._showWallItems = placementOrWallFilter === 0 || placementOrWallFilter === 2;
+        this._mainFilter = FurniGridView.MAIN_FILTER_BY_SELECTION[placementOrWallFilter]
+            ?? FurniGridFilters.MAIN_ALL;
+        // The type dropdown AS3's second argument comes from is not in this port's layout yet, so
+        // the normal path leaves it open; `setFilterByWired()` is the one caller that sets it.
+        this._typeFilter = FurniGridFilters.TYPE_ANY;
         this._showingRentedItems = showingRentedItems;
         this._mergeRentFurni = mergeRentFurni;
         this._showingNfts = showingNfts;
         this._placementFilter = placementFilter;
         this._searchText = (searchText ?? '').toLowerCase();
+        this._wiredRequirements = null;
+
+        this.update();
+    }
+
+    /**
+     * The grid as a wired trade's furniture picker.
+     *
+     * Four differences from the normal path, all AS3's and all deliberate: rented items are never
+     * shown as a separate bucket (`mergeRentFurni` is forced on, so the rented/not-rented split is
+     * skipped entirely), NFTs are hidden, the placement filter is off — a trade can offer furniture
+     * from anywhere — and every group additionally has to pass the trade's own
+     * `canOfferFurni()`, which is what keeps an item the trade cannot accept out of the picker
+     * rather than letting it be chosen and refused.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilterByWired()
+    setFilterByWired(
+        mainFilter: string,
+        typeFilter: string,
+        searchText: string,
+        requirements: WiredTradeRequirementsModel | null
+    ): void
+    {
+        this._mainFilter = mainFilter;
+        this._typeFilter = typeFilter;
+        this._showingRentedItems = false;
+        this._mergeRentFurni = true;
+        this._showingNfts = false;
+        this._placementFilter = FurniGridView.PLACEMENT_ANYWHERE;
+        this._searchText = (searchText ?? '').toLowerCase();
+        this._wiredRequirements = requirements;
 
         this.update();
     }
@@ -136,18 +214,12 @@ export class FurniGridView
         }
     }
 
-    // DEVIATION: `setFilter()`/`passFilter()` here replace AS3's category-string filter system
-    //   (MAIN_FILTER_IDS all/floor_items/wall_items/room_layout, plus a type list keyed off the
-    //   main selection, fed through passMainFilter()/passTypeFilter()) with a numeric floor/wall
-    //   plus placement model — `_placementFilter`, PLACEMENT_ANYWHERE/IN_ROOM/NOT_IN_ROOM — which
-    //   answers "is this item currently in a room", a question AS3's filters cannot ask.
-    //
-    // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::setFilterByWired()
-    //   is blocked on that substitution, not merely absent. Its caller reads the same two
-    //   dropdowns as the normal path and adds AS3's `WiredTradeRequirementsModel.canOfferFurni()`
-    //   gate, and the numeric model has no slot for either. Restoring
-    //   passMainFilter()/passTypeFilter() and their id lists comes first; mapping the wired mode
-    //   onto a numeric category instead would invent behaviour rather than port it.
+    // The substitution this used to describe is gone as of 2026-09-05: AS3's filter strings and
+    // both of its predicates are ported (`FurniGridFilters`, `passMainFilter`, `passTypeFilter`),
+    // and `setFilterByWired()` above is no longer blocked on anything. What remains of the port's
+    // own model is the placement dropdown alone — `_placementFilter`, which answers "is this item
+    // currently in a room", a question AS3's filters cannot ask — and it now sits *beside* AS3's
+    // clauses in `passFilter()` rather than in place of them.
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::itemsWereUpdated()
     itemsWereUpdated(items: GroupItem[]): void
@@ -340,14 +412,17 @@ export class FurniGridView
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::passFilter()
     private passFilter(item: GroupItem): boolean
     {
-        if(!this._showFloorItems && !item.isWallItem) return false;
+        if(!this.passMainFilter(item)) return false;
 
-        if(!this._showWallItems && item.isWallItem) return false;
+        if(!this.passTypeFilter(item)) return false;
 
         if(!this._mergeRentFurni && this._showingRentedItems !== item.isRented) return false;
 
         if(!this._showingNfts && item.isNft()) return false;
 
+        // DEVIATION: AS3 has no placement filter — this port's layout carries a second dropdown
+        //   answering "is this item currently in a room", which its filter strings cannot express.
+        //   It sits between AS3's own clauses rather than replacing any of them.
         if(this._placementFilter === FurniGridView.PLACEMENT_IN_ROOM && item.flatId === -1) return false;
 
         if(this._placementFilter === FurniGridView.PLACEMENT_NOT_IN_ROOM && item.flatId > -1) return false;
@@ -356,10 +431,66 @@ export class FurniGridView
         {
             const name = item.name.toLowerCase();
             const description = item.description.toLowerCase();
+            // A chest's own name is searched too, and only when it has one: an empty chest name
+            // would otherwise match every query, since `''.indexOf(anything)` is -1 but the guard
+            // AS3 writes is `chestName == "" || chestName.indexOf(...) == -1`.
+            const chestName = (item.stuffData?.chestName ?? '').toLowerCase();
 
-            if(name.indexOf(this._searchText) === -1 && description.indexOf(this._searchText) === -1) return false;
+            if(name.indexOf(this._searchText) === -1
+                && description.indexOf(this._searchText) === -1
+                && (chestName === '' || chestName.indexOf(this._searchText) === -1)) return false;
         }
 
+        if(this._wiredRequirements !== null && !this._wiredRequirements.canOfferFurni(item)) return false;
+
         return true;
+    }
+
+    /**
+     * The main dropdown. `wall_items` deliberately excludes room layout — wallpaper, floor and
+     * landscape are wall items by category and are not what someone picking "wall items" wants.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::passMainFilter()
+    private passMainFilter(item: GroupItem): boolean
+    {
+        switch(this._mainFilter)
+        {
+            case FurniGridFilters.MAIN_ALL: return true;
+            case FurniGridFilters.MAIN_FLOOR_ITEMS: return !item.isWallItem;
+            case FurniGridFilters.MAIN_WALL_ITEMS: return item.isWallItem && !FurniGridFilters.isRoomLayout(item);
+            case FurniGridFilters.MAIN_ROOM_LAYOUT: return FurniGridFilters.isRoomLayout(item);
+            // An unknown filter shows everything rather than nothing: AS3's default, and the safer
+            // failure for a dropdown whose values come from a layout.
+            default: return true;
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniGridView.as::passTypeFilter()
+    private passTypeFilter(item: GroupItem): boolean
+    {
+        switch(this._typeFilter)
+        {
+            case FurniGridFilters.TYPE_ANY: return true;
+            case FurniGridFilters.TYPE_SITTABLE: return FurniGridFilters.isSittable(item);
+            case FurniGridFilters.TYPE_LAYABLE: return FurniGridFilters.isLayable(item);
+            case FurniGridFilters.TYPE_TILES_OR_RUGS: return FurniGridFilters.isTilesOrRugs(item);
+            case FurniGridFilters.TYPE_LTD: return FurniGridFilters.isLtd(item);
+            case FurniGridFilters.TYPE_WIRED: return FurniGridFilters.isWired(item);
+            case FurniGridFilters.TYPE_CREDIT_FURNI: return FurniGridFilters.isCreditFurni(item);
+            case FurniGridFilters.TYPE_CLOTHES: return FurniGridFilters.isClothes(item);
+            case FurniGridFilters.TYPE_PET_FOOD: return FurniGridFilters.isPetFood(item);
+            case FurniGridFilters.TYPE_COLLECTIBLES: return FurniGridFilters.isCollectible(item);
+            case FurniGridFilters.TYPE_TRADABLE: return FurniGridFilters.isTradable(item);
+            case FurniGridFilters.TYPE_NON_TRADABLE: return FurniGridFilters.isNonTradable(item);
+            case FurniGridFilters.TYPE_RECYCLABLE: return FurniGridFilters.isRecyclable(item);
+            case FurniGridFilters.TYPE_WINDOWS: return FurniGridFilters.isWindow(item);
+            case FurniGridFilters.TYPE_DIMMERS: return FurniGridFilters.isDimmer(item);
+            case FurniGridFilters.TYPE_STICKIES: return FurniGridFilters.isStickie(item);
+            case FurniGridFilters.TYPE_PAINTINGS: return FurniGridFilters.isPainting(item);
+            case FurniGridFilters.TYPE_FLOORS: return FurniGridFilters.isFloor(item);
+            case FurniGridFilters.TYPE_WALLPAPERS: return FurniGridFilters.isWallpaper(item);
+            case FurniGridFilters.TYPE_LANDSCAPE: return FurniGridFilters.isLandscape(item);
+            default: return true;
+        }
     }
 }
