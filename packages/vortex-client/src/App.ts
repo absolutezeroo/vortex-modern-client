@@ -1253,14 +1253,13 @@ export class VortexApp
      * and every state change — including the server going away — was logged and dropped.
      * That is why the client sat there fully rendered after the emulator stopped.
      *
-     * Only `setDisconnected()` does anything today, and it only fires on a peer-initiated
-     * close (see HabboCommunicationManager.connectionClosed): a frozen background tab
-     * must not log the player out.
-     *
-     * AS3 hands this to the login flow (`loginFlow.showDisconnected()`), but this port
-     * disposes its LoginFlow once boot is done — there is no live instance to show. A
-     * reload is the honest equivalent: it lands on the same login screen the client
-     * starts from, with no half-torn-down engine left behind.
+     * Nothing here reacts to the disconnect any more. `setDisconnected()` used to reload the
+     * page, but it only fires on a peer-initiated close (see
+     * HabboCommunicationManager.connectionClosed) — an emulator that is simply stopped closes
+     * with 1006 and never reached it, and when it did fire it reloaded on the spot with no
+     * explanation. The disconnect now lands where AS3 puts it, in
+     * `HabboCommunicationDemo.disconnected()`, which alerts with the localized reason and
+     * reloads when the player closes the dialog.
      *
      * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::disconnected()
      */
@@ -1273,12 +1272,7 @@ export class VortexApp
             setError: () => undefined,
             setLoginStep: () => undefined,
             reset: () => undefined,
-            setDisconnected: () =>
-            {
-                log.warn('Server closed the connection - returning to the login screen');
-
-                window.location.reload();
-            }
+            setDisconnected: () => undefined
         });
     }
 

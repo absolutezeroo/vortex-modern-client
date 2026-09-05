@@ -14,6 +14,11 @@ import {
 } from '../messages/outgoing/handshake';
 import {CommunicationUtils} from '@habbo/utils/CommunicationUtils';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
+import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
+import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
+import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
+import {DisconnectReasonMessageEvent} from '../messages/incoming/handshake/DisconnectReasonMessageEvent';
 import type {IHabboCommunicationDemo} from "@habbo/communication/demo/IHabboCommunicationDemo";
 
 const log = Logger.getLogger('habbo.communication.demo.HabboCommunicationDemo');
@@ -49,6 +54,12 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_communication
     private _communication: IHabboCommunicationManager | null = null;
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_windowManager
+    private _windowManager: IHabboWindowManager | null = null;
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_localization
+    private _localization: IHabboLocalizationManager | null = null;
+
     /**
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as communication
 	 */
@@ -80,6 +91,26 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
                     this._communication = manager;
                 },
                 true
+            ),
+            // Both optional on purpose: the demo is the first thing the boot sequence builds, and
+            // a hard dependency on an IID nothing has provided yet locks the component with no log
+            // at all — which would take the login flow down with it. They are only read from
+            // `disconnected()`, long after everything is up.
+            new ComponentDependency(
+                IID_HabboWindowManager,
+                (manager: IHabboWindowManager | null) =>
+                {
+                    this._windowManager = manager;
+                },
+                false
+            ),
+            new ComponentDependency(
+                IID_HabboLocalizationManager,
+                (manager: IHabboLocalizationManager | null) =>
+                {
+                    this._localization = manager;
+                },
+                false
             ),
         ];
     }
@@ -335,6 +366,60 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         {
             this._communication.events.emit('disconnected', reason, reasonText);
         }
+
+        // AS3 branches on the login flow being alive: with one it hands over to
+        // `loginFlow.showDisconnected()`, without one it alerts. This port is always in the second
+        // branch — its LoginFlow is disposed once boot is done — so only the alert is ported, and
+        // `onBufferedDisconnected()` with it.
+        //
+        // Without this the whole disconnect was a log line: the event above has no listener, and
+        // the client sat there fully rendered with a dead socket, dropping every action until the
+        // player thought to reload.
+        const reasonKey = DisconnectReasonMessageEvent.resolveDisconnectedReasonLocalizationKey(reason);
+
+        if(reasonText == null || reasonText.length < 6)
+        {
+            // DEVIATION: AS3 passes the key with its `${}` wrapper straight to getLocalization(),
+            //   which looks up the raw map and misses every time — reasonName renders empty in
+            //   Flash too. Stripping it is what makes the message readable, and it is the only
+            //   thing this line does differently.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::disconnected()
+            reasonText = this._localization?.getLocalization(reasonKey.replace(/^\$\{|\}$/g, '')) ?? '';
+        }
+
+        this._localization?.registerParameter('connection.login.logged_out', 'reason', reason.toString());
+        this._localization?.registerParameter('connection.login.logged_out', 'reasonName', reasonText);
+
+        this.alert(reasonKey, '${connection.login.logged_out}');
+    }
+
+    /**
+	 * Shows a dialog and disposes it when the player closes it.
+	 */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::alert()
+    alert(titleKey: string, messageKey: string): void
+    {
+        if(!this._windowManager)
+        {
+            log.warn(`No window manager to show "${titleKey}" — the dialog is dropped`);
+
+            return;
+        }
+
+        this._windowManager.alert(titleKey, messageKey, 0, (dialog) =>
+        {
+            dialog.dispose();
+
+            // DEVIATION: AS3 closes the dialog and leaves the player on a dead client, because the
+            //   branch that has a login flow already returned them to the login screen. This port
+            //   has no live LoginFlow to return to, so the reload stands in for it: it lands on the
+            //   same login screen the client boots from, with no half-torn-down engine behind it.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::onBufferedDisconnected()
+            if(this._isDisconnected)
+            {
+                window.location.reload();
+            }
+        });
     }
 
     /**
