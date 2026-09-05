@@ -156,6 +156,18 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
         return this._planes.length;
     }
 
+    /**
+     * Every plane the room is built from — floor tiles, walls, landscape.
+     *
+     * Read-only to the caller: `SpriteDataCollector.getRoomPlanes()` projects each one's corners
+     * for the photo and must not be able to reorder the list it is drawing from.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::get planes()
+    get planes(): readonly RoomPlane[]
+    {
+        return this._planes;
+    }
+
     override dispose(): void
     {
         this.resetRoomPlanes();

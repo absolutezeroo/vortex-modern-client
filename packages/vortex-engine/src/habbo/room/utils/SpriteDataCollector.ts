@@ -1,7 +1,7 @@
 // The concrete engine, not `IRoomEngine`, because that is what AS3 takes here
 // (`getFurniData(..., param3:_SafeCls_90, ...)`): `getRoomObjects()` is declared on the class and
 // not on the interface, in AS3 as here.
-import type {IRoomEngineRectangle, RoomEngine} from '@habbo/room/RoomEngine';
+import {RoomEngine, type IRoomEngineRectangle} from '@habbo/room/RoomEngine';
 import type {RoomRenderingCanvas} from '@habbo/room/renderer/RoomRenderingCanvas';
 import {PlaneDrawingData} from '@habbo/room/object/visualization/room/PlaneDrawingData';
 import type {IPlaneDrawingData} from '@room/object/visualization/IPlaneDrawingData';
@@ -9,6 +9,10 @@ import {RoomObjectSpriteData} from '@room/data/RoomObjectSpriteData';
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
 import type {IRoomObjectSpriteVisualization} from '@room/object/visualization/IRoomObjectSpriteVisualization';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import type {RoomPlane} from '@habbo/room/object/visualization/room/RoomPlane';
+import type {RoomVisualization} from '@habbo/room/object/visualization/room/RoomVisualization';
+import type {IPoint} from '@room/utils/IRoomGeometry';
+import {Vector3d} from '@room/utils/Vector3d';
 
 /**
  * Turns the room canvas into the JSON payload the camera sends for server-side rendering.
@@ -141,6 +145,76 @@ export class SpriteDataCollector
         data.posture = sprite.assetPosture ?? '';
 
         return data;
+    }
+
+    /**
+	 * Orders a quad's four projected corners so the receiving renderer reads them as
+	 * top-left, top-right, bottom-left, bottom-right.
+	 *
+	 * The first branch decides which of the two middle points is the *horizontal* neighbour of the
+	 * first — a projected room plane is a parallelogram, so that cannot be assumed from the order
+	 * they were produced in. The two swaps after it put the pair with the larger x first and the
+	 * pair with the larger y first, which is what fixes the winding.
+	 */
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::sortQuadPoints()
+    private static sortQuadPoints(a: IPoint, b: IPoint, c: IPoint, d: IPoint): IPoint[]
+    {
+        let points: IPoint[];
+
+        if(a.x === b.x) points = [a, c, b, d];
+        else if(a.x === c.x) points = [a, b, c, d];
+        else if((b.x < a.x && b.y > a.y) || (b.x > a.x && b.y < a.y)) points = [a, c, b, d];
+        else points = [a, b, c, d];
+
+        if(points[0].x < points[1].x)
+        {
+            points = [points[1], points[0], points[3], points[2]];
+        }
+
+        if(points[0].y < points[2].y)
+        {
+            points = [points[2], points[3], points[0], points[1]];
+        }
+
+        return points;
+    }
+
+    /**
+	 * The room's planes in the order the canvas drew them, keyed back to their drawn sprites.
+	 *
+	 * A plane's z has to come from the *sprite* that drew it, not from the plane, because that is
+	 * the value the furniture sorted against. Planes the canvas never drew — off screen, or hidden
+	 * behind a wall — keep the seed z and are appended after, which is where AS3 leaves them.
+	 */
+    // AS3: .../habbo/room/utils/_SafeCls_1840.as::sortRoomPlanes()
+    private sortRoomPlanes(planes: readonly RoomPlane[], canvas: RoomRenderingCanvas): {plane: RoomPlane; z: number}[]
+    {
+        const remaining = new Map<number, {plane: RoomPlane; z: number}>();
+        const seedZ = 1 + (this._firstSpriteZ ? this._firstSpriteZ : 0);
+
+        for(const plane of planes) remaining.set(plane.uniqueId, {plane, z: seedZ});
+
+        // Ascending by z then reversed, which is AS3's `sortOn("z", NUMERIC)` + `reverse()` — the
+        // frontmost plane first.
+        const drawn = [...canvas.getPlaneSortableSprites()].sort((a, b) => a.z - b.z).reverse();
+        const sorted: {plane: RoomPlane; z: number}[] = [];
+
+        for(const sortable of drawn)
+        {
+            const sprite = sortable.sprite;
+
+            if(sprite === null) continue;
+
+            const entry = remaining.get(sprite.planeId) ?? null;
+
+            if(entry === null) continue;
+
+            remaining.delete(sprite.planeId);
+            entry.z = sortable.z;
+            sorted.push(entry);
+        }
+
+        return sorted.concat([...remaining.values()]);
     }
 
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::isSpriteInViewPort()
@@ -370,17 +444,91 @@ export class SpriteDataCollector
 	 * The room's own planes — floor tiles, walls, landscape.
 	 */
     // AS3: .../habbo/room/utils/_SafeCls_1840.as::getRoomPlanes()
-    getRoomPlanes(viewPort: IRoomEngineRectangle, backgroundColor: number): IPlaneDrawingData[]
+    getRoomPlanes(
+        viewPort: IRoomEngineRectangle,
+        canvas: RoomRenderingCanvas,
+        engine: RoomEngine,
+        backgroundColor: number
+    ): IPlaneDrawingData[]
     {
-        // TODO(AS3): sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/utils/_SafeCls_1840.as::getRoomPlanes()
-        // AS3 projects every `IRoomPlane`'s location/leftSide/rightSide through the canvas geometry,
-        // culls planes whose four corners all fall outside the viewport, and expands each into its
-        // `getDrawingDatas(geometry)` — the per-plane texture columns and masks. `RoomVisualization`
-        // exposes no `planes` accessor and `RoomPlane` has no `getDrawingDatas()`, so only the
-        // background plane is produced. The photo therefore renders the furniture and avatars over
-        // a flat room-coloured backdrop rather than over the tiled floor and walls.
         const planes: IPlaneDrawingData[] = [];
+        const room = engine.getRoomObject(
+            engine.activeRoomId, RoomEngine.OBJECT_ID_ROOM, RoomObjectCategoryEnum.OBJECT_CATEGORY_ROOM
+        );
+        const visualization = (room?.getVisualization() ?? null) as RoomVisualization | null;
 
-        return [this.makeBackgroundPlane(viewPort, backgroundColor, planes)];
+        if(visualization !== null)
+        {
+            const geometry = canvas.geometry;
+
+            for(const {plane, z} of this.sortRoomPlanes(visualization.planes, canvas))
+            {
+                // The three corners the plane's own vectors reach, plus the fourth by adding both:
+                // a plane is an origin and two edges, so its quad is origin, origin+left,
+                // origin+right, origin+left+right.
+                // `Vector3d.sum()` answers null only for a null operand, which a live plane's
+                // vectors are not — but the four projections below can each answer null on their
+                // own, so the whole quad is checked once rather than four times.
+                const leftCorner = Vector3d.sum(plane.location, plane.leftSide);
+                const rightCorner = Vector3d.sum(plane.location, plane.rightSide);
+
+                if(leftCorner === null || rightCorner === null) continue;
+
+                const farCorner = Vector3d.sum(leftCorner, plane.rightSide);
+
+                if(farCorner === null) continue;
+
+                const origin = geometry.getScreenPoint(plane.location);
+                const left = geometry.getScreenPoint(leftCorner);
+                const right = geometry.getScreenPoint(rightCorner);
+                const far = geometry.getScreenPoint(farCorner);
+
+                if(origin === null || left === null || right === null || far === null) continue;
+
+                const corners = [origin, left, right, far];
+                let outsideX = 0;
+                let outsideY = 0;
+
+                for(const corner of corners)
+                {
+                    // Screen points come out centred on the room's origin; the same three offsets
+                    // the renderer applies put them in viewport space.
+                    corner.x += canvas.width / 2 + canvas.screenOffsetX - viewPort.left;
+                    corner.y += canvas.height / 2 + canvas.screenOffsetY - viewPort.top;
+
+                    if(corner.x < 0) outsideX--;
+                    else if(corner.x >= viewPort.width) outsideX++;
+
+                    if(corner.y < 0) outsideY--;
+                    else if(corner.y >= viewPort.height) outsideY++;
+                }
+
+                // All four corners off the *same* side means the plane cannot cross the viewport.
+                // Counting up and down separately is what stops a plane straddling it being culled.
+                if(Math.abs(outsideX) === 4 || Math.abs(outsideY) === 4) continue;
+
+                const sorted = SpriteDataCollector.sortQuadPoints(origin, left, right, far);
+
+                // DEVIATION: AS3 expands each plane into `plane.getDrawingDatas(geometry)` — one
+                //   entry per texture column, with its masks — and stamps the shared corners and z
+                //   onto every one. `RoomPlane.getDrawingDatas()` does not exist here on purpose:
+                //   this port's rasterizer paints straight to a canvas instead of handing back
+                //   asset-name columns (see that method's own DEVIATION on `RoomPlane`). One entry
+                //   per plane carries the geometry — which is what turns the photo's flat backdrop
+                //   into real floor and wall quads — and not the texture breakdown.
+                // AS3: .../habbo/room/utils/_SafeCls_1840.as::getRoomPlanes()
+                const data = new PlaneDrawingData(null, plane.color);
+
+                data.cornerPoints = sorted;
+                data.z = z;
+
+                planes.push(data);
+            }
+        }
+
+        // AS3 unshifts it, so the background is the first entry and everything else sorts over it.
+        planes.unshift(this.makeBackgroundPlane(viewPort, backgroundColor, planes));
+
+        return planes;
     }
 }

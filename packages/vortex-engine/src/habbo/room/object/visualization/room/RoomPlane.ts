@@ -296,6 +296,10 @@ export class RoomPlane
 
     private _uniqueId: number;
 
+    /**
+     * Identity, and the key the photo's plane sort matches a drawn sprite back to: a plane sprite
+     * carries its plane's id in `planeId`.
+     */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/object/visualization/room/RoomPlane.as::get uniqueId()
     get uniqueId(): number
     {
