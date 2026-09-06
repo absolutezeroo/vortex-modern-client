@@ -70,7 +70,22 @@ const cache = new RenderCache(config.cacheMaxEntries, config.cacheTtlMs, disk);
 const roomCache = new RenderCache(config.cacheMaxEntries, config.roomCacheTtlMs);
 const server = createServer({config, avatars, badges, rooms, database, cache, roomCache, diskCache: disk});
 
-await server.listen({host: config.host, port: config.port});
+// A busy port is not a failure here: both dev servers start the imager themselves
+// (`tools/vite-plugin-imager.mjs`) and each probes the port first, so two of them started in the
+// same second is the one case the probe cannot catch. Whoever got there first is serving the same
+// routes — exit quietly rather than dropping a stack in someone's dev terminal.
+try
+{
+    await server.listen({host: config.host, port: config.port});
+}
+catch (error)
+{
+    if((error as NodeJS.ErrnoException)?.code !== 'EADDRINUSE') throw error;
+
+    log.info(`Port ${config.port} is already serving an imager — nothing to do`);
+
+    process.exit(0);
+}
 
 log.info(`vortex-imager listening on http://${config.host}:${config.port}`);
 

@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import {svelte} from '@sveltejs/vite-plugin-svelte';
+import {imagerServer} from '../vortex-imager/tools/vite-plugin-imager.mjs';
 
 // The CMS is a static SPA; everything dynamic is somebody else's service, and each one is proxied so
 // the browser sees a single origin. That matters for /api in particular: the emulator's web API
@@ -19,7 +20,10 @@ import {svelte} from '@sveltejs/vite-plugin-svelte';
 // `host: true` binds 0.0.0.0 so that phone can reach the site at all. This is a dev server on a LAN,
 // not a public listener — but it is a listener, so it stays out of `build`.
 export default defineConfig({
-    plugins: [tailwindcss(), svelte()],
+    // `imagerServer` is serve-only and starts packages/vortex-imager unless something already
+    // holds :8081 — the `/habbo-imaging` proxy below is useless without it, and it was a second
+    // terminal to remember.
+    plugins: [tailwindcss(), svelte(), imagerServer()],
     server: {
         host: true,
         port: 5172,

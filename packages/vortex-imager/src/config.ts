@@ -173,7 +173,9 @@ export function loadConfig(): IImagerConfig
             : {
                 host: env('IMAGER_DB_HOST', '127.0.0.1'),
                 port: envNumber('IMAGER_DB_PORT', 3306),
-                user: env('IMAGER_DB_USER', 'root'),
+                // Deliberately not `root`: an unset user should fail to connect, not connect
+                // with everything. `tools/grant-readonly.sql` creates this account.
+                user: env('IMAGER_DB_USER', 'vortex_imager'),
                 password: env('IMAGER_DB_PASSWORD', ''),
                 database,
                 connectionLimit: envNumber('IMAGER_DB_POOL', 4)

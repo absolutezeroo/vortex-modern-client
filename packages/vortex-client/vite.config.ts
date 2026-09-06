@@ -2,6 +2,7 @@ import {defineConfig} from 'vite';
 import {resolve} from 'path';
 import {engineBundle} from './tools/vite-plugin-engine-bundle.mjs';
 import {perfLog} from './tools/vite-plugin-perf-log.mjs';
+import {imagerServer} from '../vortex-imager/tools/vite-plugin-imager.mjs';
 
 const ENGINE_SRC = resolve(__dirname, '../vortex-engine/src');
 
@@ -37,6 +38,9 @@ export default defineConfig(({command}) => ({
         }),
         // serve-only; receives `:stresstest` runs and writes them to <repo>/perf
         perfLog({repoRoot: resolve(__dirname, '../..')}),
+        // serve-only; brings up packages/vortex-imager unless something already holds :8081, so
+        // the `/habbo-imaging` proxy below has a service to reach without a second terminal
+        imagerServer(),
     ],
     resolve: {
         alias: {

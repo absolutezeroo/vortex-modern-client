@@ -4,3 +4,7 @@
 # Anchored: unanchored `cache/` matches at any depth and swallowed `src/cache/`, the source
 # directory `DiskCache.ts` lives in.
 /cache/
+
+# `tools/pregenerate.mjs` output when no asset root is configured. Same reasoning: a rebuild of
+# the hotel's assets invalidates the lot, and it is ~100 MB of PNGs.
+/static/

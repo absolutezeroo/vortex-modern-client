@@ -21,10 +21,52 @@ PixiJS was in the picture.
 
 ## Running
 
+Nothing, most of the time: `pnpm dev` and `pnpm web` each start the imager themselves
+(`tools/vite-plugin-imager.mjs`), because both dev servers proxy `/habbo-imaging` to it and a
+proxy with nothing behind it is avatars that silently do not draw. The plugin probes :8081 first,
+so whichever you start second — or a service you started by hand — keeps the port.
+
 ```bash
 pnpm imager:dev      # dev server: rebuilds and restarts on change
 pnpm imager:build    # bundle to dist/
 pnpm imager          # run the built bundle
+```
+
+Run those when the imager itself is what you are working on: `imager:dev` restarts on change,
+where the dev-server plugin builds once and leaves it alone.
+
+### Pre-generating
+
+```bash
+pnpm --filter vortex-imager pregenerate --furni --badges --avatars   # add --force to re-render
+```
+
+Bakes the routes to static PNGs, the way a real hotel ships `hof_furni`. It renders nothing
+itself — it asks this service over HTTP, so the baked bytes are the bytes the live route would
+have produced, encoder and parameter defaults included.
+
+The names come from `imagingKey()` in `tools/vite-plugin-imager.mjs`, which is also what serves
+them: both dev servers look in that directory *before* the `/habbo-imaging` proxy, so a baked
+image never reaches the imager at all. Anything not baked — a room, a look changed since the last
+run, a furni nobody generated — falls through and renders live. Baking is a fast path, never the
+only path.
+
+The directory is `IMAGER_STATIC_ROOT`, or `<IMAGER_ASSETS_ROOT>/habbo-imaging` when the imager
+runs on the machine that serves the assets — put it there and Apache/nginx answers those URLs
+with nothing of ours running at all. Failing both, `static/` next to the package.
+
+What goes stale: furni on an asset build (delete the directory), badges when a guild is edited,
+avatars the moment a player changes clothes. A re-run skips what is already on disk, so it costs
+only what changed; `--force` re-renders everything.
+
+### The database account
+
+`tools/grant-readonly.sql` creates `vortex_imager`@`127.0.0.1` with `SELECT` on the seven tables
+`src/db/Database.ts` reads and nothing else. Run it once as root, put the password in `.env`, and
+the service stops holding credentials that could drop the hotel:
+
+```bash
+mysql -u root -p turbo < tools/grant-readonly.sql   # after replacing __PASSWORD__
 ```
 
 `imager:dev` runs two watchers under one command — esbuild rewrites `dist/index.js`, and Node's
