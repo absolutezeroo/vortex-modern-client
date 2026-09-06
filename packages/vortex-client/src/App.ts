@@ -1222,9 +1222,15 @@ export class VortexApp
 
         // 3c. The asset library's own copy of each layout, keyed by the file basename and holding
         // the whole file — see IVortexWindowAssets.libraryLayouts for why this is not `layouts`.
-        // Only the dump's layouts, as before: Vortex's own authored ones (3b) are reached through
-        // buildWidgetLayout() alone, and nothing looks them up by name in the library.
+        //
+        // Vortex's own layouts (3b) go in on top, and this is the only place a dump layout can be
+        // *overridden* rather than merely added to: both maps key by file basename here, so
+        // `src/vortex-layouts/<name>_xml.xml` replaces the dump's `<name>_xml` for every window
+        // built through `assets.getAssetByName()` (`discord_settings_xml` is the first such
+        // override). 3b alone cannot do that — it keys the dump's layouts by their `<layout name>`
+        // attribute, which for this file is `discord_settings`, not `discord_settings_xml`.
         windowAssets.libraryLayouts = readLibraryLayouts(xmlBundle);
+        this.readVortexLayouts(windowAssets.libraryLayouts);
 
         // 4. Images. Both halves go in before the engine boots, because components built during
         // prepareCore() read from both — see registerWindowAssetLibraryContent() in VortexMain.

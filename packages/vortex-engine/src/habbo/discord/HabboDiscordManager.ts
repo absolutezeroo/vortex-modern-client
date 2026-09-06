@@ -43,11 +43,30 @@ export class HabboDiscordManager extends Component implements IHabboDiscordManag
     /**
 	 * AS3: .../discord/HabboDiscordManager.as::initialize()
 	 *
-	 * The Discord application id the presence is published under. AS3 passes it as a literal to
-	 * `rpc.initialize()`; it is named here rather than repeated inline.
+	 * The Discord application id the presence is published under, and Habbo's own. Used only as the
+	 * fallback for `discord.client_id` — see {@link clientId}.
 	 */
     // AS3: .../discord/HabboDiscordManager.as::initialize()
     private static readonly DISCORD_CLIENT_ID: string = '1440237225051947050';
+
+    /**
+	 * DEVIATION: AS3 passes its application id to `rpc.initialize()` as a literal, because AS3 ships
+	 *   one hotel. The port reads `discord.client_id` first and falls back to that literal, which is
+	 *   forced by the transport the port had to substitute: `DiscordRpcSocket` reaches Discord over
+	 *   the local RPC WebSocket, and Discord validates the page's `Origin` against the RPC origins
+	 *   registered on **that application**. Habbo's application lists habbo.com, so another hotel
+	 *   sending Habbo's id is refused at the handshake and nothing is ever published. The AIR
+	 *   extension had no such check — IPC carries no origin — so the literal cost AS3 nothing.
+	 */
+    // AS3: .../discord/HabboDiscordManager.as::initialize()
+    private get clientId(): string
+    {
+        const configured = this.getProperty('discord.client_id');
+
+        return configured !== null && configured.length > 0
+            ? configured
+            : HabboDiscordManager.DISCORD_CLIENT_ID;
+    }
 
     // AS3: .../discord/HabboDiscordManager.as::_localization
     private _localization: IHabboLocalizationManager | null = null;
@@ -112,10 +131,33 @@ export class HabboDiscordManager extends Component implements IHabboDiscordManag
         ];
     }
 
+    /**
+	 * DEVIATION: AS3 initializes the RPC unconditionally, because its transport is a local IPC pipe
+	 *   that either answers or does not. The port's transport is Discord's RPC **WebSocket**, which
+	 *   Discord gates on an origin allow-list held against the application — and the developer
+	 *   portal only exposes that list once Discord has granted the application RPC access, which it
+	 *   effectively no longer does. Measured against application 1546072256810324058 on 2026-09-06:
+	 *   Discord accepted the connection on port 6463, recognised the client id (a bad one closes
+	 *   4000), and closed with `4001 Invalid Origin`. So on a hotel without that grant the handshake
+	 *   can only ever be refused, and initializing anyway costs every Windows/macOS player one
+	 *   rejected socket and one `warn` per session for a feature that cannot run.
+	 *
+	 *   `discord.rpc.enabled` therefore gates the transport, and defaults to off. It does not gate
+	 *   the settings window: `discord.enabled` still shows the dialog, whose four toggles are stored
+	 *   server-side and are unaffected by any of this. Turn it on the day the portal shows "RPC
+	 *   origins" for the application `discord.client_id` names — nothing else has to change.
+	 */
     // AS3: .../discord/HabboDiscordManager.as::initialize()
     initialize(): void
     {
         if(this._rpc === null) return;
+
+        if(!this.getBoolean('discord.rpc.enabled'))
+        {
+            log.debug('discord.rpc.enabled is off; not connecting to Discord');
+
+            return;
+        }
 
         try
         {
@@ -142,7 +184,7 @@ export class HabboDiscordManager extends Component implements IHabboDiscordManag
                 }
             });
 
-            this._rpc.initialize(HabboDiscordManager.DISCORD_CLIENT_ID);
+            this._rpc.initialize(this.clientId);
         }
         catch (error)
         {

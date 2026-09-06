@@ -1,6 +1,7 @@
 import {EventEmitter} from 'eventemitter3';
 
 import {DiscordRichPresenceEvent} from './events/DiscordRichPresenceEvent';
+import {DiscordRpcSocket} from './DiscordRpcSocket';
 
 /**
  * The `flash.events.StatusEvent` the native extension raises. `code` is one of the `EVENT_*`
@@ -29,19 +30,23 @@ type ExtensionContext = {
 /**
  * Discord Rich Presence, driven through an AIR native extension.
  *
- * DEVIATION: `createExtensionContext()` below always returns `null`, so every call this class makes
- *   returns `false` and no presence is ever published. That is not a shortcut — it is what the AS3
- *   itself does outside AIR. `flash.external.ExtensionContext` exists only in the AIR desktop
- *   runtime; in the browser build `createExtensionContext("com.sulake.discord.richpresence", null)`
- *   returns null, the constructor's `else` branch clears `_supported`, and `callContext()` then
- *   short-circuits to `false` on its first line. Discord RPC talks to a local IPC socket
- *   (`\\.\pipe\discord-ipc-0` / `$XDG_RUNTIME_DIR/discord-ipc-0`), which a web page cannot open at
- *   all, so there is no browser equivalent to substitute — only a native host could provide one,
- *   and that host is what `_context` is the seam for.
+ * DEVIATION: AS3 loads `com.sulake.discord.richpresence`, an AIR native extension that speaks to
+ *   Discord's IPC socket (`\\.\pipe\discord-ipc-0` / `$XDG_RUNTIME_DIR/discord-ipc-0`). Neither
+ *   exists in a browser: `flash.external.ExtensionContext` is AIR-only, and a web page cannot open
+ *   a named pipe or a unix socket at all. The port substitutes {@link DiscordRpcSocket}, which
+ *   speaks the same RPC protocol over the Discord client's local WebSocket
+ *   (`ws://127.0.0.1:6463..6472`) — the one transport reachable from a page, and one that still
+ *   asks the player to install nothing beyond Discord.
  *
- *   `isSupported` still reports the platform test faithfully (Windows/macOS), because
- *   `HabboDiscordManager` uses it to decide whether to build the singleton at all, and AS3's web
- *   build answers `true` there too — the instance is created, finds no extension, and stays inert.
+ *   Everything above `_context` is untouched, because the extension's surface is exactly what the
+ *   adapter implements: five `call()` methods and a `status` event. What *does* change is that a
+ *   native `call()` returns its result inline and a socket cannot, so `initialize()` and the three
+ *   presence methods now answer "accepted" rather than "delivered" — see `DiscordRpcSocket`'s
+ *   docblock, and note that the only consumer, `HabboDiscordManager`, already waits for the
+ *   `DISCORD_CONNECTED` status event before it publishes anything.
+ *
+ *   `isSupported` still reports the platform test faithfully (Windows/macOS), which is also where
+ *   the Discord desktop client runs.
  *
  * AS3: sources/WIN63-202607011411-782849652/src/com/sulake/discord/DiscordRichPresence.as
  */
@@ -139,14 +144,20 @@ export class DiscordRichPresence extends EventEmitter
     }
 
     /**
-	 * AS3: `ExtensionContext.createExtensionContext(id, null)`. There is no AIR runtime here and no
-	 * browser API that can reach Discord's local IPC socket, so this is the one place the port
-	 * cannot follow — see the class docblock. A native host would fill it in.
+	 * AS3: `ExtensionContext.createExtensionContext(id, null)`. There is no AIR runtime and no
+	 * extension to load, so the id is unused and the context is {@link DiscordRpcSocket} — the same
+	 * five methods over Discord's local RPC WebSocket instead of over its IPC pipe.
+	 *
+	 * `WebSocket` is the one thing it needs and the one thing a non-browser host might not have
+	 * (a unit test, an SSR pass), so its absence returns null and leaves the class inert exactly as
+	 * an AIR-less runtime did before.
 	 */
     // AS3: .../discord/DiscordRichPresence.as::DiscordRichPresence()
     private static createExtensionContext(_extensionId: string): ExtensionContext | null
     {
-        return null;
+        if(typeof WebSocket === 'undefined') return null;
+
+        return new DiscordRpcSocket();
     }
 
     // AS3: .../discord/DiscordRichPresence.as::dispose()

@@ -86,6 +86,10 @@ export class DiscordSettingsView implements IDisposable
             checkbox?.addEventListener('WE_UNSELECTED', this.onCheckboxChanged);
         }
 
+        // These three resolve to null under the client's own `discord_settings_xml` override, which
+        // drops the "Our servers:" section (see packages/vortex-client/src/vortex-layouts/). Kept as
+        // AS3 writes them: the optional chaining already makes them no-ops, and a hotel that deletes
+        // the override gets the section — and these handlers — back with no code change.
         this.collectiblesServerButton?.addEventListener('WME_CLICK', this.onClickCollectiblesDiscord);
         this.wiredServerButton?.addEventListener('WME_CLICK', this.onClickWiredDiscord);
         this.originsServerButton?.addEventListener('WME_CLICK', this.onClickOriginsDiscord);

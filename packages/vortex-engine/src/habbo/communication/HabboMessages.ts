@@ -2594,8 +2594,9 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(724, AccountPreferencesEvent);
 
         // === DISCORD ===
-        // `_SafeStr_4546[2767] = _SafeCls_2938` in WIN63's registry. The emulator has no Discord
-        // feature at all, so nothing sends this today and `wire-coverage.mjs` counts neither side.
+        // `_SafeStr_4546[2767] = _SafeCls_2938` in WIN63's registry. The emulator implements the
+        // round-trip for real (`DiscordPreferencesHandlers.cs`, backed by `PlayerAccountPreferences`)
+        // — it answers both 2883 and 2304 with this event.
         this._events.set(2767, DiscordPreferencesMessageEvent);
 
         // === PERK ===

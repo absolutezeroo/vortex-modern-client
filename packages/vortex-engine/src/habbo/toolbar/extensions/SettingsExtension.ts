@@ -176,11 +176,9 @@ export class SettingsExtension
     }
 
     /**
-     * Fires the link AS3 fires — and nothing tracks it, because `habbo/discord` is deliberately
-     * unported (see docs/IMPLEMENTATION_STATUS.md). The button that reaches here only exists when
-     * the hotel sets `discord.enabled`, which this one does not, so the dead end is unreachable
-     * rather than latent. Kept as AS3 writes it so that porting `DiscordSettingsController` — which
-     * registers itself as the tracker for `discord/settings/open` — is all it would take.
+     * Fires the link AS3 fires. `DiscordSettingsController` is ported and registers itself as the
+     * tracker for the `discord/settings/` prefix, so this opens the real window — provided the hotel
+     * sets `discord.enabled`, which is what decides whether the button above exists at all.
      */
     // AS3: .../SettingsExtension.as::openDiscordSettingsWindow()
     private openDiscordSettingsWindow(): void
