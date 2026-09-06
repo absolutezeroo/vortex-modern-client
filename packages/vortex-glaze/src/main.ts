@@ -12,6 +12,8 @@ import {WindowGallery} from './ui/windows/WindowGallery';
 import {WindowPalette} from './ui/windows/WindowPalette';
 import {WindowColorPicker} from './ui/windows/WindowColorPicker';
 import {GlazeShortcuts} from './input/GlazeShortcuts';
+import {layoutPngDataUrl} from './ops/ScreenshotOps';
+import {importLayoutXml} from './ops/LayoutSerializer';
 import {Scheduler} from '@core/reactive';
 import type {IFlushEmitter} from '@core/reactive';
 import {HabboWindowTrackingEvent} from '@habbo/window/enum/HabboWindowTrackingEvent';
@@ -104,7 +106,11 @@ async function main(): Promise<void>
 
     log.info(`Ready — ${names.length} layouts, chrome mounted`);
 
-    (window as unknown as { glaze: unknown }).glaze = {runtime, state, chrome, hierarchy, hierarchyControls, property, toolbar, bottomBar, gallery, palette, colorPicker, editorCanvas, shortcuts, surface};
+    // `preview` + `screenshot` are the headless halves of Import Layout and Save Screenshot:
+    // together they let `render.mjs` (see the design-habbo-window skill) push authored XML in
+    // over CDP and pull the cropped pixels back out, with no human clicking and no reload —
+    // the XML need not be a registered layout, or even a file in the project yet.
+    (window as unknown as { glaze: unknown }).glaze = {runtime, state, chrome, hierarchy, hierarchyControls, property, toolbar, bottomBar, gallery, palette, colorPicker, editorCanvas, shortcuts, surface, screenshot: () => layoutPngDataUrl(state), preview: (xml: string, name: string) => importLayoutXml(state, xml, name)};
 }
 
 void main().catch((error) =>

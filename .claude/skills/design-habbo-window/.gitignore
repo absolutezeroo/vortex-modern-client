@@ -1,0 +1,3 @@
+# `render.mjs` writes here by default. Renders are how a design is checked, not what is kept —
+# every one is reproducible from the layout it came from in a couple of seconds.
+shots/
