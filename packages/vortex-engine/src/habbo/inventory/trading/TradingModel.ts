@@ -1,4 +1,5 @@
 import type {ITradingModel} from './ITradingModel';
+import {HabboInventoryTrackingEvent} from '../events/HabboInventoryTrackingEvent';
 import type {IInventoryModel} from '../IInventoryModel';
 import {TradingView} from './TradingView';
 import {TradingNameScamDetector} from './namescam/TradingNameScamDetector';
@@ -462,7 +463,7 @@ export class TradingModel implements ITradingModel, IInventoryModel
         this._view.clearItemLists();
 
         this._inventory?.toggleInventoryPage('furni');
-        this._inventory?.events.emit('HABBO_INVENTORY_TRACKING_EVENT_TRADING');
+        this._inventory?.events.emit(HabboInventoryTrackingEvent.TRADING);
 
         // AS3 shows the warning last, after the window is up, so it lands on top of it.
         if(warningData !== null) this._nameScamWarning.show(warningData);

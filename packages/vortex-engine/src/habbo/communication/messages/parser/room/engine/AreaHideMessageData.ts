@@ -6,8 +6,9 @@
  * Data for area hide furniture zones.
  */
 import type {IMessageDataWrapper} from '@core/communication/messages/IMessageDataWrapper';
+import type {IAreaHideInfo} from '@habbo/room/IAreaHideInfo';
 
-export class AreaHideMessageData
+export class AreaHideMessageData implements IAreaHideInfo
 {
     constructor(wrapper: IMessageDataWrapper)
     {

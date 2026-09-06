@@ -17,7 +17,8 @@ import {formatPurseAmount} from './purse/PurseAmountFormatter';
  *
  * In AS3 this creates a window from XML showing credits, duckets, and diamonds,
  * listens for purse balance events, and routes click events to catalog pages.
- * In Vortex, the UI rendering is handled by SolidJS; this manages state.
+ * The port does the same: it builds the window from the layout and routes the clicks. (This line
+ * used to say the rendering was "handled by SolidJS", which was never true of this port.)
  *
  * @see sources/win63_version/habbo/toolbar/extensions/PurseAreaExtension.as
  */

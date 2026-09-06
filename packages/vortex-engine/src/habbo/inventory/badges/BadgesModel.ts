@@ -1,4 +1,5 @@
 import type {IConnection} from '@core/communication/connection/IConnection';
+import {HabboInventoryTrackingEvent} from '@habbo/inventory/events/HabboInventoryTrackingEvent';
 import {SetActivatedBadgesComposer} from '@habbo/communication/messages/outgoing/inventory/SetActivatedBadgesComposer';
 import type {IBadgeData, BadgeFilterType, IBadgesModel} from './IBadgesModel';
 import {BadgeFilter} from './IBadgesModel';
@@ -632,7 +633,7 @@ export class BadgesModel implements IBadgesModel, IInventoryModel, IBadgeSelecti
     {
         if(category === 'badges' && (this._controller?.isVisible ?? false))
         {
-            this._controller?.events.emit('HABBO_INVENTORY_TRACKING_EVENT_BADGES');
+            this._controller?.events.emit(HabboInventoryTrackingEvent.BADGES);
         }
     }
 

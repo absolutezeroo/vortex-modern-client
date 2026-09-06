@@ -46,6 +46,7 @@ import {IID_HabboGameManager} from '@iid/IIDHabboGameManager';
 import type {IHabboGameManager} from '@habbo/game/IHabboGameManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from './object/RoomObjectCategoryEnum';
+import {RoomObjectOperationEnum} from './object/RoomObjectOperationEnum';
 import {RoomObjectAvatarSelectedMessage} from './messages/RoomObjectAvatarSelectedMessage';
 import {RoomObjectSelectedMessage} from './messages/RoomObjectSelectedMessage';
 import {RoomObjectVisibilityUpdateMessage} from './messages/RoomObjectVisibilityUpdateMessage';
@@ -2094,7 +2095,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         this.setSelectedObjectData(
             this._activeRoomId, itemId, category, new Vector3d(-100, -100), direction,
-            'OBJECT_PLACE', type, extra, stuffData as IStuffData | null, state, animFrame, posture
+            RoomObjectOperationEnum.OBJECT_PLACE, type, extra, stuffData as IStuffData | null, state, animFrame, posture
         );
         this.setObjectMoverIconSprite(type, category, false, extra, posture);
         this.setObjectMoverIconSpriteVisible(false);
@@ -2801,7 +2802,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             const operation = selectedObjectData.operation;
 
-            if(operation !== 'OBJECT_MOVE' && operation !== 'OBJECT_PLACE')
+            if(operation !== RoomObjectOperationEnum.OBJECT_MOVE && operation !== RoomObjectOperationEnum.OBJECT_PLACE)
             {
                 return;
             }
@@ -2821,11 +2822,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(data === null) return;
 
-        if(data.operation === 'OBJECT_PLACE')
+        if(data.operation === RoomObjectOperationEnum.OBJECT_PLACE)
         {
             this.handleObjectPlace(roomId, cache.tileEvent, cache.wallEvent);
         }
-        else if(data.operation === 'OBJECT_MOVE')
+        else if(data.operation === RoomObjectOperationEnum.OBJECT_MOVE)
         {
             this.handleObjectMove(roomId, cache.tileEvent, cache.wallEvent);
         }
@@ -2841,7 +2842,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(data === null) return false;
         if(data.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE) return false;
-        if(data.operation !== 'OBJECT_MOVE' && data.operation !== 'OBJECT_PLACE') return false;
+        if(data.operation !== RoomObjectOperationEnum.OBJECT_MOVE && data.operation !== RoomObjectOperationEnum.OBJECT_PLACE) return false;
 
         const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
@@ -3204,13 +3205,13 @@ export class RoomEngine extends Component implements IRoomEngine,
         switch(action)
         {
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_ROTATE_POSITIVE"/"OBJECT_ROTATE_NEGATIVE" case
-            case 'OBJECT_ROTATE_POSITIVE':
-            case 'OBJECT_ROTATE_NEGATIVE': {
+            case RoomObjectOperationEnum.OBJECT_ROTATE_POSITIVE:
+            case RoomObjectOperationEnum.OBJECT_ROTATE_NEGATIVE: {
                 if(!object || !this._connection) return false;
 
                 const controller = object as IRoomObjectController;
 
-                const forward = action === 'OBJECT_ROTATE_POSITIVE';
+                const forward = action === RoomObjectOperationEnum.OBJECT_ROTATE_POSITIVE;
                 const nextDirection = this.getValidRoomObjectDirection(controller, forward);
                 const stackingMap = this.getFurniStackingHeightMap(this._activeRoomId);
 
@@ -3236,7 +3237,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_PET" case — pick up a
             // monsterplant, sent via roomSession.pickUpPet(webID) resolved from the room index.
-            case 'OBJECT_PICKUP_PET': {
+            case RoomObjectOperationEnum.OBJECT_PICKUP_PET: {
                 const userData = session?.userDataManager?.getUserDataByIndex(objectId) ?? null;
 
                 if(session === null || userData === null) return false;
@@ -3247,7 +3248,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             }
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_PICKUP_BOT" case — connection.send(
             // new _SafeCls_3108(webID)) (id 2743).
-            case 'OBJECT_PICKUP_BOT': {
+            case RoomObjectOperationEnum.OBJECT_PICKUP_BOT: {
                 // Mirrors the pet branch above: AS3 resolves the user data and sends its webID,
                 // not the room-object id. The server answers it (RemoveBotFromFlatMessageHandler
                 // → BotRemovedFromInventory/BotAddedToInventory), so the bot really does come back
@@ -3262,8 +3263,8 @@ export class RoomEngine extends Component implements IRoomEngine,
 
                 return true;
             }
-            case 'OBJECT_PICKUP':
-            case 'OBJECT_EJECT': {
+            case RoomObjectOperationEnum.OBJECT_PICKUP:
+            case RoomObjectOperationEnum.OBJECT_EJECT: {
                 if(this._connection) 
                 {
                     this._connection.send(new PickupObjectMessageComposer(objectId, category));
@@ -3277,7 +3278,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 return this.disposeRoomObject(this._activeRoomId, objectId, category);
             }
             // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE" case
-            case 'OBJECT_MOVE': {
+            case RoomObjectOperationEnum.OBJECT_MOVE: {
                 // AS3 puts no category condition on this case at all, because it can finish a move
                 // for all three, and neither does this port any more. Floor furni (10) and
                 // bots/plants (100) go through handleObjectMove()'s tile arm, which treats the two
@@ -3290,7 +3291,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
                 this.setObjectAlphaMultiplier(controller, 0.5);
                 this.setSelectedObjectData(
-                    this._activeRoomId, objectId, category, controller.getLocation(), controller.getDirection(), 'OBJECT_MOVE'
+                    this._activeRoomId, objectId, category, controller.getLocation(), controller.getDirection(), RoomObjectOperationEnum.OBJECT_MOVE
                 );
                 this.setObjectMoverIconSprite(objectId, category, true);
                 this.setObjectMoverIconSpriteVisible(false);
@@ -3338,7 +3339,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(object === null) return false;
 
-        if(action !== 'OBJECT_SAVE_STUFF_DATA')
+        if(action !== RoomObjectOperationEnum.OBJECT_SAVE_STUFF_DATA)
         {
             log.warn(`could not modify room object data, unknown operation ${action}`);
         }
@@ -6546,13 +6547,13 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         if(data === null) return;
 
-        if(data.operation === 'OBJECT_MOVE' || data.operation === 'OBJECT_MOVE_TO') 
+        if(data.operation === RoomObjectOperationEnum.OBJECT_MOVE || data.operation === RoomObjectOperationEnum.OBJECT_MOVE_TO) 
         {
             const object = this.getRoomObject(roomId, data.id, data.category) as IRoomObjectController | null;
 
             if(object !== null) 
             {
-                if(data.operation !== 'OBJECT_MOVE_TO' && data.loc !== null && data.dir !== null) 
+                if(data.operation !== RoomObjectOperationEnum.OBJECT_MOVE_TO && data.loc !== null && data.dir !== null) 
                 {
                     object.setLocation(data.loc);
                     object.setDirection(data.dir);
@@ -6561,7 +6562,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 this.setObjectAlphaMultiplier(object, 1);
             }
         }
-        else if(data.operation === 'OBJECT_PLACE')
+        else if(data.operation === RoomObjectOperationEnum.OBJECT_PLACE)
         {
             // AS3: _SafeCls_1821.as::resetSelectedObjectData() switches the ghost's disposal on its
             // category — 10 furniture, 20 wall item, 100 user. Only the furniture arm was ported, so
@@ -7698,7 +7699,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
 
         this.updateSelectedObjectData(
-            roomId, data.id, data.category, data.loc, data.dir, 'OBJECT_MOVE_TO',
+            roomId, data.id, data.category, data.loc, data.dir, RoomObjectOperationEnum.OBJECT_MOVE_TO,
             data.typeId, data.instanceData, data.stuffData, data.state, data.animFrame, data.posture
         );
         this.setObjectAlphaMultiplier(object, 1);
@@ -8844,7 +8845,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const selectedObjectData = this._roomInstanceData.get(roomId)?.selectedObjectData ?? null;
 
-        if(selectedObjectData === null || selectedObjectData.operation !== 'OBJECT_PLACE')
+        if(selectedObjectData === null || selectedObjectData.operation !== RoomObjectOperationEnum.OBJECT_PLACE)
         {
             if(category === RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE)
             {
@@ -8916,11 +8917,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(selectedObjectData !== null)
             {
-                if(selectedObjectData.operation === 'OBJECT_PLACE')
+                if(selectedObjectData.operation === RoomObjectOperationEnum.OBJECT_PLACE)
                 {
                     this.handleObjectPlace(this._activeRoomId, {tileX, tileY}, null);
                 }
-                else if(selectedObjectData.operation === 'OBJECT_MOVE')
+                else if(selectedObjectData.operation === RoomObjectOperationEnum.OBJECT_MOVE)
                 {
                     this.handleObjectMove(this._activeRoomId, {tileX, tileY}, null);
                 }
@@ -8936,7 +8937,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             const selectedObjectData = this._roomInstanceData.get(this._activeRoomId)?.selectedObjectData ?? null;
 
-            if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_PLACE')
+            if(selectedObjectData !== null && selectedObjectData.operation === RoomObjectOperationEnum.OBJECT_PLACE)
             {
                 // AS3: _SafeCls_1821.as::placeObject() — sends the ghost's own current
                 // (already tile-snapped/direction-validated) location, then disposes it;
@@ -8947,7 +8948,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                 // arm, so the placement is on the floor.
                 this.placeObject(this._activeRoomId, true, false, event.eventId);
             }
-            else if(selectedObjectData !== null && selectedObjectData.operation === 'OBJECT_MOVE')
+            else if(selectedObjectData !== null && selectedObjectData.operation === RoomObjectOperationEnum.OBJECT_MOVE)
             {
                 // AS3: _SafeCls_1821.as::modifyRoomObject() "OBJECT_MOVE_TO" case
                 this.confirmObjectMove(this._activeRoomId);
@@ -9019,11 +9020,11 @@ export class RoomEngine extends Component implements IRoomEngine,
 
         const operation = selectedObjectData.operation;
 
-        if(operation !== 'OBJECT_PLACE' && operation !== 'OBJECT_MOVE') return;
+        if(operation !== RoomObjectOperationEnum.OBJECT_PLACE && operation !== RoomObjectOperationEnum.OBJECT_MOVE) return;
 
         if(event.type === RoomObjectMouseEvent.ROE_MOUSE_MOVE)
         {
-            if(operation === 'OBJECT_PLACE')
+            if(operation === RoomObjectOperationEnum.OBJECT_PLACE)
             {
                 this.handleObjectPlace(this._activeRoomId, null, event);
             }
@@ -9034,7 +9035,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         }
         else if(event.type === RoomObjectMouseEvent.ROE_MOUSE_CLICK)
         {
-            if(operation === 'OBJECT_PLACE')
+            if(operation === RoomObjectOperationEnum.OBJECT_PLACE)
             {
                 this.placeObject(this._activeRoomId, false, true, event.eventId);
             }
@@ -9118,7 +9119,7 @@ export class RoomEngine extends Component implements IRoomEngine,
 
             if(selectedObjectData !== null)
             {
-                if(selectedObjectData.operation === 'OBJECT_PLACE')
+                if(selectedObjectData.operation === RoomObjectOperationEnum.OBJECT_PLACE)
                 {
                     // This path exists only because the ghost captured a click AS3's ghost would
                     // have let through, so there is no tile/wall event here to read the surface
@@ -9131,7 +9132,7 @@ export class RoomEngine extends Component implements IRoomEngine,
                     return;
                 }
 
-                if(selectedObjectData.operation === 'OBJECT_MOVE')
+                if(selectedObjectData.operation === RoomObjectOperationEnum.OBJECT_MOVE)
                 {
                     this.confirmObjectMove(this._activeRoomId);
 
@@ -9219,7 +9220,7 @@ export class RoomEngine extends Component implements IRoomEngine,
             && (objType === 'monsterplant' || objType === 'rentable_bot')
             && event.shiftKey && !event.ctrlKey && !event.altKey)
         {
-            if(this.modifyRoomObject(objId, category, 'OBJECT_ROTATE_POSITIVE')) return;
+            if(this.modifyRoomObject(objId, category, RoomObjectOperationEnum.OBJECT_ROTATE_POSITIVE)) return;
         }
 
         if(!this.isGameMode && category === RoomObjectCategoryEnum.OBJECT_CATEGORY_USER
@@ -9228,7 +9229,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             // CTRL-only click picks it up — bot → OBJECT_PICKUP_BOT (AS3 line 721), plant →
             // OBJECT_PICKUP_PET (line 732).
-            this.modifyRoomObject(objId, category, objType === 'rentable_bot' ? 'OBJECT_PICKUP_BOT' : 'OBJECT_PICKUP_PET');
+            this.modifyRoomObject(objId, category, objType === 'rentable_bot' ? RoomObjectOperationEnum.OBJECT_PICKUP_BOT : RoomObjectOperationEnum.OBJECT_PICKUP_PET);
 
             return;
         }

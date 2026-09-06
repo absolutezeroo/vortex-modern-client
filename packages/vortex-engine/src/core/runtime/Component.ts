@@ -3,6 +3,7 @@ import {getIIDName, type IID} from './IID';
 import type {IDisposable} from './IDisposable';
 import type {IContext, InterfaceCallback, IUpdateReceiver} from './IContext';
 import type {ComponentDependency} from './ComponentDependency';
+import {LockEvent} from './events/LockEvent';
 import type {AssetLoaderStruct, IAsset, IAssetLibrary} from '@core/assets';
 import {Logger} from '@core/utils/Logger';
 
@@ -653,7 +654,15 @@ export class Component implements IDisposable
         {
             this._locked = false;
 
-            this._events.emit(ComponentEvents.INTERNAL_UNLOCKED, this);
+            // AS3 dispatches `new LockEvent("_INTERNAL_EVENT_UNLOCKED", this)`, and its context
+            // reads the component back off `unknown`. This port's context closes over the component
+            // instead, so the payload is the event AS3 sends *and* the component AS3's handler digs
+            // out of it — both spellings work for a listener.
+            this._events.emit(
+                ComponentEvents.INTERNAL_UNLOCKED,
+                this,
+                new LockEvent(ComponentEvents.INTERNAL_UNLOCKED, this)
+            );
         }
     }
 

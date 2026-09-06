@@ -9,6 +9,9 @@ import {Logger} from '@core/utils/Logger';
 
 // Existing message events
 import {RoomEntryInfoMessageEvent} from '@habbo/communication/messages/incoming/room/engine/RoomEntryInfoMessageEvent';
+import type {
+    RoomEntryInfoMessageParser
+} from '@habbo/communication/messages/parser/room/engine/RoomEntryInfoMessageParser';
 import {
     CloseConnectionMessageEvent
 } from '@habbo/communication/messages/incoming/room/session/CloseConnectionMessageEvent';
@@ -448,12 +451,7 @@ export class QuestMessageHandler implements IDisposable
 
         if(!parser) return;
 
-        this._engine.roomCompetitionController?.onCompetitionVotingInfo(
-            parser.goalId,
-            parser.goalCode,
-            parser.votesRemaining,
-            parser.isVotingAllowedForUser
-        );
+        this._engine.roomCompetitionController?.onCompetitionVotingInfo(parser);
     }
 
     /**
@@ -468,22 +466,22 @@ export class QuestMessageHandler implements IDisposable
 
         if(!parser) return;
 
-        this._engine.roomCompetitionController?.onCompetitionEntrySubmitResult(
-            parser.result,
-            parser.goalCode,
-            parser.goalId
-        );
+        this._engine.roomCompetitionController?.onCompetitionEntrySubmitResult(parser);
     }
 
     /**
 	 * Handle room entry
 	 */
     // AS3: .../src/com/sulake/habbo/quest/_SafeCls_1951.as::onRoomEnter()
-    private onRoomEnter(_event: IMessageEvent): void
+    private onRoomEnter(event: IMessageEvent): void
     {
         if(!this._engine) return;
 
-        this._engine.roomCompetitionController?.onRoomEnter(0);
+        // `owner` is the whole reason the competition controller wants this message: it decides
+        // whether the banner offers to submit the room or to vote for it. It used to be passed 0.
+        const parser = event.parser as RoomEntryInfoMessageParser | null;
+
+        this._engine.roomCompetitionController?.onRoomEnter(parser?.owner ?? false);
         this._engine.currentlyInRoom = true;
     }
 

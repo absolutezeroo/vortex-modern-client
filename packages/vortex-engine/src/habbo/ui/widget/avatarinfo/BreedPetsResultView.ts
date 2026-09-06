@@ -25,6 +25,7 @@ import {FurnitureCategory} from '@habbo/inventory/enum/FurnitureCategory';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {IRoomObject} from '@room/object/IRoomObject';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomObjectOperationEnum} from '@habbo/room/object/RoomObjectOperationEnum';
 import {Vector3d} from '@room/utils/Vector3d';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
@@ -39,7 +40,7 @@ export class BreedPetsResultView implements IDisposable, IGetImageListener
     private static readonly PREVIEW_SCALE: number = 64;
 
     // AS3: BreedPetsResultView.as::modifyRoomObject(..., "OBJECT_PICKUP")
-    private static readonly OBJECT_PICKUP: string = 'OBJECT_PICKUP';
+    private static readonly OBJECT_PICKUP: string = RoomObjectOperationEnum.OBJECT_PICKUP;
 
     // AS3: BreedPetsResultView.as::_window
     private _window: IFrameWindow | null = null;

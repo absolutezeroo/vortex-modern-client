@@ -14,6 +14,7 @@
  * `mainContainer.getChildByName(...)` never finds them).
  */
 import type {EventEmitter} from 'eventemitter3';
+import {RoomObjectPlacementSource} from '@habbo/room/enum/RoomObjectPlacementSource';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
@@ -697,7 +698,7 @@ export class InfoStandWidget extends RoomWidgetBase
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/ui/widget/infostand/InfoStandWidget.as::onRoomObjectPlaced()
     private onRoomObjectPlaced = (event: RoomWidgetRoomObjectPlaceEvent): void =>
     {
-        if(event.placementSource !== 'info_stand' || !event.placedInRoom) return;
+        if(event.placementSource !== RoomObjectPlacementSource.INFO_STAND || !event.placedInRoom) return;
 
         const connection = this.handler.container?.connection ?? null;
         const furniData = this._furniData;
@@ -727,7 +728,7 @@ export class InfoStandWidget extends RoomWidgetBase
     public requestItemToMover(): void
     {
         this.handler.container?.roomEngine?.initializeRoomObjectInsert(
-            'info_stand', -this._furniData.bcOfferId, this._furniData.category,
+            RoomObjectPlacementSource.INFO_STAND, -this._furniData.bcOfferId, this._furniData.category,
             this._furniData.classId, this._furniData.extraParam, null
         );
     }

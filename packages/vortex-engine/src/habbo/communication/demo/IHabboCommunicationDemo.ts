@@ -50,7 +50,8 @@ export interface IHabboCommunicationDemo
     /**
 	 * Handle disconnection
 	 *
-	 * In AS3 this shows a UI alert via localization - we emit the event for SolidJS to handle.
+	 * In AS3 this shows a UI alert via localization; the port emits the event and the client's own
+	 * login screen renders it.
 	 *
 	 * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as disconnected()
 	 */

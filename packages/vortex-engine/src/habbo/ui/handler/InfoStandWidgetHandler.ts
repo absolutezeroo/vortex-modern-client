@@ -14,6 +14,7 @@
  */
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomObjectOperationEnum} from '@habbo/room/object/RoomObjectOperationEnum';
 import {RoomSessionUserFigureUpdateEvent} from '@habbo/session/events/RoomSessionUserFigureUpdateEvent';
 import {RoomSessionFavouriteGroupUpdateEvent} from '@habbo/session/events/RoomSessionFavouriteGroupUpdateEvent';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
@@ -1225,16 +1226,16 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
         switch(message.type) 
         {
             case RoomWidgetFurniActionMessage.ROTATE:
-                container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, 'OBJECT_ROTATE_POSITIVE');
+                container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, RoomObjectOperationEnum.OBJECT_ROTATE_POSITIVE);
                 break;
             case RoomWidgetFurniActionMessage.MOVE:
-                container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, 'OBJECT_MOVE');
+                container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, RoomObjectOperationEnum.OBJECT_MOVE);
                 break;
             case RoomWidgetFurniActionMessage.PICKUP:
                 this.pickupObjectWithConfirmation(message.furniId, message.furniCategory);
                 break;
             case RoomWidgetFurniActionMessage.EJECT:
-                container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, 'OBJECT_EJECT');
+                container.roomEngine.modifyRoomObject(message.furniId, message.furniCategory, RoomObjectOperationEnum.OBJECT_EJECT);
                 break;
             case RoomWidgetFurniActionMessage.USE:
                 container.roomEngine.useRoomObjectInActiveRoom(message.furniId, message.furniCategory);
@@ -1281,7 +1282,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
                 }
 
                 container.roomEngine.modifyRoomObjectDataWithMap(
-                    message.furniId, message.furniCategory, 'OBJECT_SAVE_STUFF_DATA', data
+                    message.furniId, message.furniCategory, RoomObjectOperationEnum.OBJECT_SAVE_STUFF_DATA, data
                 );
                 break;
             }
@@ -1313,7 +1314,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
 
                     if(event.type === 'WE_OK')
                     {
-                        container.roomEngine?.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
+                        container.roomEngine?.modifyRoomObject(furniId, furniCategory, RoomObjectOperationEnum.OBJECT_PICKUP);
                     }
                 }
             );
@@ -1321,7 +1322,7 @@ export class InfoStandWidgetHandler implements IRoomWidgetHandler, IGetImageList
             return;
         }
 
-        container.roomEngine.modifyRoomObject(furniId, furniCategory, 'OBJECT_PICKUP');
+        container.roomEngine.modifyRoomObject(furniId, furniCategory, RoomObjectOperationEnum.OBJECT_PICKUP);
     }
 
     /**

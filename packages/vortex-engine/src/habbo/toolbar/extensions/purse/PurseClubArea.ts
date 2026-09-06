@@ -10,7 +10,7 @@ const log = Logger.getLogger('habbo.toolbar.extensions.purse.PurseClubArea');
  *
  * In AS3 this extends CurrencyIndicatorBase to show club days remaining,
  * club icon (HC/VIP), and handles club status changes with animation.
- * In Vortex, UI rendering is handled by SolidJS.
+ * The port does the same, through `CurrencyIndicatorBase`'s own window.
  *
  * @see sources/win63_version/habbo/toolbar/extensions/purse/PurseClubArea.as
  */

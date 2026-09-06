@@ -15,7 +15,7 @@ import {formatPurseAmount} from '../PurseAmountFormatter';
  * In AS3 this extends CurrencyIndicatorBase to display seasonal currency
  * balance, listens for activity point balance events, and opens the catalog
  * page on click. Handles custom colors from configuration.
- * In Vortex, UI rendering is handled by SolidJS.
+ * The port does the same, through `CurrencyIndicatorBase`'s own window.
  *
  * @see sources/win63_version/habbo/toolbar/extensions/purse/indicators/SeasonalCurrencyIndicator.as
  */

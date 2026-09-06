@@ -1,4 +1,5 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
+import {HabboInventoryTrackingEvent} from '@habbo/inventory/events/HabboInventoryTrackingEvent';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
@@ -235,7 +236,7 @@ export class CollectiblesModel implements ICollectiblesModel
     {
         if(category === 'collectibles' && this._controller.isVisible)
         {
-            this._controller.events.emit('HABBO_INVENTORY_TRACKING_EVENT_COLLECTIBLES');
+            this._controller.events.emit(HabboInventoryTrackingEvent.COLLECTIBLES);
             this.requestNftAssets();
             this._view.updateContainerVisibility();
         }

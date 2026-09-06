@@ -8,6 +8,18 @@ import type {Texture} from 'pixi.js';
  * image instead, and the renderer on the other side fills a rectangle with it. Without this those
  * sprites serialise as whatever tint the sprite carries, which for an untinted photo is white.
  *
+ * The other three public members stay out, and each claim below is checkable in the primary tree:
+ *
+ * - `drawQuad()` and `fillTriangle()` have **no call site anywhere** — `grep -rn "drawQuad\|
+ *   fillTriangle" com/sulake/` finds only `drawQuad` calling `fillTriangle` inside this file.
+ *   They are a software rasteriser for a textured quad, written against `BitmapData.setPixel()`
+ *   per pixel, and nothing in the client ever asked for one.
+ * - `colorize()` has exactly one caller, `RoomPlane.blend()`, and `blend()` has exactly two — both
+ *   inside `RoomPlane.getDrawingDatas()`, the method this port deviates from (the rasterizer paints
+ *   straight to a canvas instead of returning asset-name columns; see the DEVIATION on `RoomPlane`
+ *   and on `SpriteDataCollector.getRoomPlanes()`). Its arithmetic is a per-channel multiply, which
+ *   is what the port's `sprite.color = plane.color` already does to the finished plane.
+ *
  * @see sources/WIN63-202607011411-782849652/src/com/sulake/habbo/utils/Canvas.as
  */
 export class Canvas

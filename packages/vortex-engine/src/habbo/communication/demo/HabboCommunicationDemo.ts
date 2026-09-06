@@ -1,5 +1,7 @@
-import {Component, ComponentDependency} from '@core/runtime';
+import {Component, ComponentDependency, ComponentEvents} from '@core/runtime';
 import type {IContext} from '@core/runtime';
+import {ErrorEvent} from '@core/runtime/events/ErrorEvent';
+import {ErrorPopupCtrl} from './ErrorPopupCtrl';
 import {Logger} from '@core/utils/Logger';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import {isRoomViewerMode} from '@habbo/configuration/enum/HabboComponentFlags';
@@ -29,8 +31,8 @@ const log = Logger.getLogger('habbo.communication.demo.HabboCommunicationDemo');
  * Orchestrates the login/connection flow. Creates and manages IncomingMessages
  * for handling handshake, authentication, ping/pong, and error routing.
  *
- * In AS3 this also manages the login screen UI (HabboLoginDemoScreen),
- * which we skip since the UI is handled by SolidJS.
+ * In AS3 this also manages the login screen UI (HabboLoginDemoScreen). The port's login screen is
+ * its own thing under `vortex-client/src/login/` — this class stays the connection half.
  *
  * @see source_as_win63/habbo/communication/demo/HabboCommunicationDemo.as
  */
@@ -46,9 +48,99 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
     private _isLoggedIn: boolean = false;
     private _authenticationStarted: boolean = false;
 
+    /** Derived name — `_SafeStr_6742`: the modal that shows a core error to the user. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_SafeStr_6742
+    private _errorPopup: ErrorPopupCtrl | null = null;
+
     constructor(context: IContext)
     {
         super(context);
+
+        // AS3 builds it in the constructor and subscribes to the core's error bus in
+        // `initComponent()`. Both are kept: the popup outlives every reconnect, so a second
+        // `initComponent()` must not build a second one.
+        this._errorPopup = new ErrorPopupCtrl(context);
+
+        context.events.on(ComponentEvents.ERROR, this.onCoreError);
+    }
+
+    /**
+     * Maintenance-shaped categories disconnect with the maintenance reason; everything else goes to
+     * the popup. The list is AS3's, verbatim and unsorted.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::onCoreError()
+    private onCoreError = (event: {message: string; fatal: boolean; code: number; error?: Error}): void =>
+    {
+        const errorEvent = new ErrorEvent(
+            ComponentEvents.ERROR, event.message, event.fatal, event.code, event.error ?? null
+        );
+
+        switch(errorEvent.category)
+        {
+            case 30:
+            case 29:
+            case 1:
+            case 3:
+            case 20:
+            case 8:
+            case 12:
+            case 7:
+                if(errorEvent.critical && !this.isExcludeFromCrashing(errorEvent.category))
+                {
+                    this.disconnected(
+                        -2,
+                        this._localization?.getLocalization('disconnected.reason.maintenance', '') ?? ''
+                    );
+                }
+                break;
+            default:
+                this.handleNonMaintenanceCoreError(errorEvent);
+        }
+    };
+
+    /**
+     * AS3's first `if` here is an empty body — a comparison of `error.errorID` against `category`
+     * whose branch was stripped by the compiler — so it is not transcribed.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::handleNonMaintenanceCoreError()
+    private handleNonMaintenanceCoreError(event: ErrorEvent): void
+    {
+        const suppressed = this.isExcludeFromWarnings(event.category)
+            || (!event.critical && !this.getBoolean('error_handling.show_error.include_non_critical'));
+
+        if(!suppressed && this.getBoolean('error_handling.show_error'))
+        {
+            this._errorPopup?.onError(event, this.getBoolean('error_handling.show_stacktrace'));
+        }
+
+        if(event.critical
+            && !this.isExcludeFromCrashing(event.category)
+            && this.getBoolean('error_handling.crash_on_critical_error'))
+        {
+            this.disconnected(-1, DisconnectReasonMessageEvent.resolveDisconnectedReasonLocalizationKey(-1));
+        }
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::isExcludeFromWarnings()
+    private isExcludeFromWarnings(category: number): boolean
+    {
+        return this.isExcludedFromListProperty(category, 'error_handling.exclude_warnings');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::isExcludeFromCrashing()
+    private isExcludeFromCrashing(category: number): boolean
+    {
+        return this.isExcludedFromListProperty(category, 'error_handling.exclude_crashing');
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::isExcludedFromListProperty()
+    private isExcludedFromListProperty(category: number, property: string): boolean
+    {
+        const list = this.getProperty(property);
+
+        if(!list) return false;
+
+        return list.split(',').indexOf(category.toString()) !== -1;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/communication/demo/_SafeCls_98.as::_communication
@@ -502,6 +594,14 @@ export class HabboCommunicationDemo extends Component implements IHabboCommunica
         {
             this._incomingMessages.dispose();
             this._incomingMessages = null;
+        }
+
+        this.context.events.off(ComponentEvents.ERROR, this.onCoreError);
+
+        if(this._errorPopup)
+        {
+            this._errorPopup.dispose();
+            this._errorPopup = null;
         }
 
         this._communication = null;

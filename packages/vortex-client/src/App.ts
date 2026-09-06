@@ -632,7 +632,7 @@ declare global
 /**
  * VortexApp — Canvas-based application shell.
  *
- * Replaces the SolidJS rendering pipeline with a single `<canvas>` element.
+ * The whole client renders into a single `<canvas>` element.
  * The engine's WindowRenderer composites all window layers into an OffscreenCanvas,
  * which is then drawn onto the DOM canvas via requestAnimationFrame. Mouse events
  * on the canvas are hit-tested against the window tree and dispatched to the

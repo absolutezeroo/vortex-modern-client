@@ -1,4 +1,5 @@
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import {HabboInventoryTrackingEvent} from '@habbo/inventory/events/HabboInventoryTrackingEvent';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
@@ -168,7 +169,7 @@ export class BotsModel implements IBotsModel
     {
         if(category === 'bots' && this._controller.isVisible)
         {
-            this._controller.events.emit('HABBO_INVENTORY_TRACKING_EVENT_BOTS');
+            this._controller.events.emit(HabboInventoryTrackingEvent.BOTS);
         }
     }
 

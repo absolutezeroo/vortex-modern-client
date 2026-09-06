@@ -23,6 +23,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomObjectOperationEnum} from '@habbo/room/object/RoomObjectOperationEnum';
 import {
     GetExtendedProfileByNameMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileByNameMessageComposer';
@@ -589,7 +590,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
                 if(roomObject !== null)
                 {
                     this._roomEngine?.modifyRoomObject(
-                        roomObject.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE, 'OBJECT_PICKUP'
+                        roomObject.getId(), RoomObjectCategoryEnum.OBJECT_CATEGORY_FURNITURE, RoomObjectOperationEnum.OBJECT_PICKUP
                     );
                 }
             }

@@ -81,8 +81,8 @@ export interface IHabboFreeFlowChatEvents
  * Main free flow chat component. Extends Component and implements IHabboFreeFlowChat.
  *
  * Manages the chat history buffer, event handlers for room chat and session lifecycle,
- * and user chat preferences. The VIEW layer (SolidJS) listens to the chatEvents emitter
- * for reactive UI updates.
+ * and user chat preferences. The ported chat windows listen to the `chatEvents` emitter for
+ * updates.
  *
  * Dependencies:
  * - IHabboCommunicationManager (required)

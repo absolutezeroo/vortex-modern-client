@@ -13,6 +13,7 @@ export * from './DailyTasksTaskUpdateMessageEventParser';
 export * from './DailyTasksTasksAddedMessageEventParser';
 export * from './EpicPopupMessageParser';
 export * from './HallOfFameEntryData';
+export * from './CitizenshipQuestPromoEnabledMessageEventParser';
 export * from './QuestCancelledMessageEventParser';
 export * from './QuestCompletedMessageEventParser';
 export * from './QuestDailyMessageParser';

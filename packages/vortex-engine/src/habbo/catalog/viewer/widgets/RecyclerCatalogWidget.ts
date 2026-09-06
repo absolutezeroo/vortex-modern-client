@@ -9,6 +9,7 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {ImageResult} from '@habbo/room/ImageResult';
 import type {ISelectedRoomObjectData} from '@habbo/room/ISelectedRoomObjectData';
+import {RoomObjectOperationEnum} from '@habbo/room/object/RoomObjectOperationEnum';
 import type {HabboCatalog} from '../../HabboCatalog';
 import {HabboCatalogUtils} from '../../HabboCatalogUtils';
 import type {IRecycler} from '../../recycler/IRecycler';
@@ -358,7 +359,7 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
 
                 if(objectData != null)
                 {
-                    if(objectData.operation !== 'OBJECT_PLACE')
+                    if(objectData.operation !== RoomObjectOperationEnum.OBJECT_PLACE)
                     {
                         this.page.viewer.catalog.windowManager?.alert(
                             '${generic.alert.title}', '${catalog.alert.recycler.inventory}', 0, (dialog) => dialog.dispose());

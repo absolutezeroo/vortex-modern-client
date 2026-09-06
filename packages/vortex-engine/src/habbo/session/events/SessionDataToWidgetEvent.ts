@@ -1,17 +1,16 @@
+import {SessionDataEvent} from './SessionDataEvent';
+
 /**
  * Session data event forwarded to widgets.
  *
  * @see sources/win63_version/habbo/session/events/SessionDataToWidgetEvent.as
  */
-export class SessionDataToWidgetEvent
+export class SessionDataToWidgetEvent extends SessionDataEvent
 {
     static readonly PURCHASABLE_STYLES_UPDATED: string = 'SDTWE_PURCHASABLE_STYLES_UPDATED';
 
-    constructor(
-        public readonly type: string,
-        public readonly bubbles: boolean = false,
-        public readonly cancelable: boolean = false
-    )
+    constructor(type: string, bubbles: boolean = false, cancelable: boolean = false)
     {
+        super(type, bubbles, cancelable);
     }
 }

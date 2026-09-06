@@ -7,7 +7,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
  * Interface for FurniModel
  *
  * Based on AS3 com.sulake.habbo.inventory.furni.FurniModel (ENGINE only)
- * No events - UI updates handled by SolidJS stores via registerMessageEvent
+ * No events of its own: the ported `FurniView` window reads the model when a message updates it.
  */
 export interface IFurniModel
 {

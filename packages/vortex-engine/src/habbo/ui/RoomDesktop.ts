@@ -45,6 +45,7 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IUserData} from '@habbo/session/IUserData';
 import {RoomObjectVariableEnum} from '@habbo/room/object/RoomObjectVariableEnum';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
+import {RoomObjectOperationEnum} from '@habbo/room/object/RoomObjectOperationEnum';
 import {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 import type {IRoomDesktop} from './IRoomDesktop';
 import type {IRoomWidgetMessageListener} from './IRoomWidgetMessageListener';
@@ -1677,19 +1678,19 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineObjectEvent.REOE_REQUEST_MOVE:
                 if(this.checkFurniManipulationRights(event.roomId, event.objectId, event.category))
                 {
-                    this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_MOVE');
+                    this._roomEngine?.modifyRoomObject(event.objectId, event.category, RoomObjectOperationEnum.OBJECT_MOVE);
                 }
 
                 return;
             case RoomEngineObjectEvent.REOE_REQUEST_ROTATE:
                 if(this.checkFurniManipulationRights(event.roomId, event.objectId, event.category))
                 {
-                    this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_ROTATE_POSITIVE');
+                    this._roomEngine?.modifyRoomObject(event.objectId, event.category, RoomObjectOperationEnum.OBJECT_ROTATE_POSITIVE);
                 }
 
                 return;
             case RoomEngineObjectEvent.REOE_REQUEST_PICKUP:
-                this._roomEngine?.modifyRoomObject(event.objectId, event.category, 'OBJECT_PICKUP');
+                this._roomEngine?.modifyRoomObject(event.objectId, event.category, RoomObjectOperationEnum.OBJECT_PICKUP);
 
                 return;
             // AS3: RoomDesktop.as::processRoomObjectEvent() "RETWE_REQUEST_TROPHY" (line 1249) —

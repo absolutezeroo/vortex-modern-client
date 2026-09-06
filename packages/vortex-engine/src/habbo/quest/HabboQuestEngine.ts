@@ -245,6 +245,18 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         return this._sessionDataManager;
     }
 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get navigator()
+    get navigator(): IHabboNewNavigator | null
+    {
+        return this._navigator;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::get tracking()
+    get tracking(): IHabboTracking | null
+    {
+        return this._tracking;
+    }
+
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_questController
     private _questController: QuestController | null = null;
 
@@ -554,7 +566,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
     showAchievements(): void
     {
         // AS3 (HabboQuestEngine.as:514) calls achievementController.show(). The old
-        // emit('showAchievements') targeted a SolidJS UI that no longer exists.
+        // emit('showAchievements') targeted a UI layer this port never had.
         this._achievementController?.show();
     }
 

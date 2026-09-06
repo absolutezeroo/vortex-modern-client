@@ -74,6 +74,7 @@ export class HabboPagesViewer implements ILinkEventTracker
 	 *   (it ships XML layouts and PNG skins, not stylesheets). The pages render with the
 	 *   controller's own link/paragraph styling instead of habbopedia's.
 	 */
+    // AS3: .../habbo/window/utils/habbopedia/HabboPagesViewer.as::styleSheet
     // AS3: .../habbo/window/utils/habbopedia/HabboPagesViewer.as::set visible()
     private set visible(value: boolean)
     {

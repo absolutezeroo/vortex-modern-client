@@ -247,9 +247,12 @@ export class HabboToolbar extends Component implements IHabboToolbar
     /**
 	 * The extension view container for toolbar extensions
 	 *
-	 * In the AS3 version this was an ExtensionView (Flash window container).
-	 * In Vortex, extensions are handled by the SolidJS UI layer.
-	 * This returns null as the UI layer manages the extension view.
+	 * Built lazily on first read, as AS3 does — the window manager is an optional dependency and is
+	 * not there yet when the toolbar is constructed. It is null only while that is still true.
+	 *
+	 * (This comment used to say the view was "handled by the SolidJS UI layer" and that the getter
+	 * "returns null". Both were false — see `project_no_solidjs`: there is no SolidJS in this port,
+	 * and every toolbar extension attaches to the real `ExtensionView` returned below.)
 	 */
     // AS3: .../src/com/sulake/habbo/toolbar/HabboToolbar.as::get extensionView()
     get extensionView(): IExtensionView | null

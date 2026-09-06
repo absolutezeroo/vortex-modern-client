@@ -333,6 +333,7 @@ import {
     DailyTasksActiveListMessageEvent,
     DailyTasksTaskUpdateMessageEvent,
     DailyTasksTasksAddedMessageEvent,
+    CitizenshipQuestPromoEnabledMessageEvent,
     QuestCancelledMessageEvent,
     QuestCompletedMessageEvent,
     QuestDailyMessageEvent,
@@ -2899,6 +2900,10 @@ export class HabboMessages implements IMessageConfiguration
         this._events.set(1390, SeasonalQuestsMessageEvent); // _SafeCls_2664 → onSeasonalQuests
         this._events.set(1272, QuestCompletedMessageEvent); // _SafeCls_3714 → onQuestCompleted
         this._events.set(1425, QuestCancelledMessageEvent); // _SafeCls_3681 → onQuestCancelled
+        // 1584 is WIN63-only: neither `win63_version` nor the emulator's Headers.cs carries it, so
+        // both the event and its payload-less parser are named from their single subscriber,
+        // `CitizenshipVipQuestsPromoExtension.onCitizenshipQuestPromoEnabled()`.
+        this._events.set(1584, CitizenshipQuestPromoEnabledMessageEvent); // _SafeCls_3105
 
         // === DAILY TASKS ===
         // The three events habbo/quest/dailytasks/DailyTasksController.as registers in its

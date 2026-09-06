@@ -4388,6 +4388,93 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Three views that were never ported, and the member worklist emptied — 2026-09-06.**
+  A pass driven by re-running the four measures rather than by reading this file. Two of them came
+  back clean and stay that way: `wire-coverage.mjs` reports 0 send gaps and 0 recv gaps, and
+  `todo-inventory.mjs` reports **1** `TODO(AS3)` in the whole repo. What the other two found:
+
+  **`as3-member-coverage.mjs`: 17 absent public members → 0, in both buckets.** Five files carried
+  them, and only one
+  was a real gap. `RoomPlaneParser`'s five `getPlaneMask*()` accessors were missing **and so was
+  their caller** — `RoomVisualization.createPlanesAndSprites()` never replayed the parser's
+  rectangle masks onto the plane, which left `RoomPlane.addRectangleMask()` ported with no call site
+  anywhere. Both halves are in. Note the chain is inert in this build for a reason worth writing
+  down: `RoomPlaneData.addMask()` has no call site in the primary tree either, so `maskCount` is 0
+  for every plane the current server produces. It is wired end to end so a future producer works the
+  day it lands, not because anything calls it today. The other twelve were documentation debt, each
+  now carrying the check that justifies it — `Canvas.colorize/drawQuad/fillTriangle` (the last two
+  have no AS3 call site at all; `colorize` serves only the deviated `getDrawingDatas()` path),
+  `_SafeCls_4404.getObjectCache/removeObjectCache` (present as `getObjectSpriteCache()` /
+  `disposeObjectSpriteCache()`, now traced), `HabboPagesViewer.styleSheet` (a `DEVIATION:` that was
+  missing its mandatory `AS3:` line), and the disconnect-reason table. `reasonString()` was ported
+  for real, and writing its marker is worth repeating as method: it went in as a `TODO(AS3)` naming
+  `handleWebLogout()` as the unported consumer, `todo-inventory.mjs --stale` immediately flagged it
+  because `HabboWebTools` and `HabboProperty.LOGOUT_URL` both already exist, and checking that
+  turned up the real answer — `handleWebLogout()` has **no call site in AS3 either**; its only
+  occurrence is its own declaration. The marker is a `DEVIATION:` with that grep written into it.
+  A TODO whose blocker is already lifted is exactly what that flag is for.
+
+  **Three "handled by SolidJS" shells were real gaps — and thirteen were not.** The marker that
+  `project_no_solidjs` warns about needs a second test before it means anything: compare the AS3
+  file's window usage against the port's. Ten of the sixteen classes carrying the phrase build their
+  windows perfectly well. Three did not, and all three are now ported:
+
+  - **`RoomCompetitionController`** — 169 lines of `log.debug()` where AS3 has 550 with 34 window
+    references. The whole banner: the two-page layout, the seven-way result switch, the required-furni
+    grid with its cloned slots and async icons, the two-key localisation lookup, the 3s opt-out
+    timer. Nothing was blocking it — `RoomCompetition.xml` ships, all three composers and both
+    events exist, and `QuestMessageHandler` already routed to it. Its two entry points now take the
+    parser instead of flattened arguments, and `onRoomEnter()` gets the real `owner` flag where it
+    used to be passed a literal `0` — the flag that decides submit-vs-vote mode.
+  - **`OfferExtension`** and **`CitizenshipVipQuestsPromoExtension`** — same shape. Both layouts
+    ship; `VideoOfferExtension` was already the model to copy. The VIP-quests one also needed its
+    trigger: header **1584** was registered nowhere. It is WIN63-only (absent from `win63_version`
+    *and* from the emulator's `Headers.cs`) and payload-less, so its event and parser are named from
+    their single subscriber and say so at the declaration.
+
+  **The comment that made this take twice as long.** `HabboToolbar.extensionView`'s doc block said
+  extensions were "handled by the SolidJS UI layer" and that the getter "returns null". It lazily
+  builds a real `ExtensionView`, and every toolbar extension attaches to it. All sixteen mentions
+  are corrected; the three that remain say, deliberately, that the old claim was false.
+
+  **The twelve-file tail, closed in the same pass.** Counting readable `com/sulake/` filenames with
+  no `AS3:` citation *and* no TS file of the same name gave **106**, of which ~95 are deliberate (36
+  `*Bootstrap`, the profiler/AIR/Flash-platform set, the 12 dead notification-feed files). The real
+  remainder was twelve, and all twelve are in — the count now reads **94**:
+
+  - **Three interfaces the port implemented structurally**: `ISortableSprite` and `IRoomPlane`
+    (`room/object/visualization/`) and `IAreaHideInfo` (`habbo/room/`), now declared and implemented
+    by `SortableSprite`, `RoomPlane` and `AreaHideMessageData`. `IRoomPlane` drops AS3's sixth
+    member, `getDrawingDatas()`, and says why at the declaration: `RoomPlane` deliberately does not
+    have it, so including it would make the interface unimplementable by its only implementor.
+  - **Five constant holders whose values were already inline**, which is the half that mattered.
+    `RoomObjectOperationEnum`'s twelve operations were spelled as bare `'OBJECT_PLACE'` /
+    `'OBJECT_MOVE'` strings at ~40 sites across `RoomEngine`, `RoomDesktop`,
+    `InfoStandWidgetHandler`, `CatalogObjectMover`, `RecyclerCatalogWidget`, `PresentFurniWidget`
+    and `BreedPetsResultView`; `HabboInventoryTrackingEvent`'s nine at seven; `RoomObjectPlacementSource`
+    and `AvatarEditorEvent` likewise. Every one now goes through the enum, so a typo is a compile
+    error rather than an event nobody receives. `AvatarBodyPartType` is the fifth — four of its six
+    constants are `_SafeStr_N` and are named from their values (`leftitem`, `rightarm`, …), said so
+    at each declaration.
+  - **Three event classes**: `SessionDataEvent` (now the base `SessionDataToWidgetEvent` extends,
+    which is what AS3 has), `FriendBarSelectionEvent`, and `LockEvent` — the last carried by
+    `Component.unlock()`'s internal signal, alongside the component the port's `ComponentContext`
+    already closes over.
+  - **`ErrorPopupCtrl`** (217 l.), the modal that shows a core error with its stack trace behind a
+    copy button, **and its whole trigger chain**, which was the actual gap: `HabboCommunicationDemo`
+    now builds one in its constructor as AS3 does and subscribes to `ComponentEvents.ERROR`, with
+    `onCoreError()` / `handleNonMaintenanceCoreError()` / `isExcludeFromWarnings()` /
+    `isExcludeFromCrashing()` / `isExcludedFromListProperty()` ported beside it — the eight
+    maintenance-shaped categories disconnect, everything else reaches the popup. Three deviations,
+    each named at its member: `mx.utils.Base64Encoder` becomes `TextEncoder` + `btoa` (UTF-8 first,
+    because `btoa` is latin-1 only), AIR's `Clipboard` becomes the async clipboard API, and
+    `error.getStackTrace()` becomes `Error.stack`. The layout comes from the window manager's own
+    map rather than `assets.getAssetByName()`, because this port constructs the demo without an
+    asset library.
+
+  The five `ui/widget/messages/` classes are **not** on the list that remains: none of them is
+  constructed anywhere in the primary tree.
+
 - 🆕 **A second face for the Fish-O-Pedia — 2026-09-06, and the first caller `isActiveAt()` ever
   had.** `vortex_fishopedia_hub_xml` + `FishopediaHubView` (≈700 l.): a zone rail, a species grid
   with a locked overlay and a "biting now" marker, a species panel carrying rarity/level/weight

@@ -31,7 +31,7 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
  * Manages furniture inventory data
  *
  * Based on AS3 com.sulake.habbo.inventory.furni.FurniModel (ENGINE only)
- * UI is the ported FurniView window (see task #14), not SolidJS.
+ * UI is the ported FurniView window.
  */
 export class FurniModel implements IFurniModel
 {

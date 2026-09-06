@@ -6,6 +6,7 @@ import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import type {ISelectedRoomObjectData} from '@habbo/room/ISelectedRoomObjectData';
 import type {ImageResult} from '@habbo/room/ImageResult';
+import {RoomObjectOperationEnum} from '@habbo/room/object/RoomObjectOperationEnum';
 
 /**
  * Drag-ghost-icon helper: while the user is placing a purchased/moved furni item and the mouse
@@ -78,7 +79,7 @@ export class CatalogObjectMover implements IGetImageListener
         switch(event.type)
         {
             case 'WME_MOVE': {
-                if(objectData == null || objectData.operation !== 'OBJECT_PLACE') return;
+                if(objectData == null || objectData.operation !== RoomObjectOperationEnum.OBJECT_PLACE) return;
 
                 const stageX = mouseEvent.stageX;
                 const stageY = mouseEvent.stageY;

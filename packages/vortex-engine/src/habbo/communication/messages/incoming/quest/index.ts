@@ -6,6 +6,7 @@ export * from './DailyTasksActiveListMessageEvent';
 export * from './DailyTasksTaskUpdateMessageEvent';
 export * from './DailyTasksTasksAddedMessageEvent';
 export * from './EpicPopupMessageEvent';
+export * from './CitizenshipQuestPromoEnabledMessageEvent';
 export * from './QuestCancelledMessageEvent';
 export * from './QuestCompletedMessageEvent';
 export * from './QuestDailyMessageEvent';

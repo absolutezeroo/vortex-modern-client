@@ -1679,7 +1679,9 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return true;
     }
 
-    private getObjectSpriteCache(objectId: string): IObjectSpriteCache 
+    /** Get-or-create, exactly as AS3's does; the cache holder itself is folded into this class. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::getObjectCache()
+    private getObjectSpriteCache(objectId: string): IObjectSpriteCache
     {
         let cache = this._objectSpriteCaches.get(objectId);
 
@@ -1780,7 +1782,8 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         return cache.screenLoc;
     }
 
-    private disposeObjectSpriteCache(objectId: string): void 
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::removeObjectCache()
+    private disposeObjectSpriteCache(objectId: string): void
     {
         const cache = this._objectSpriteCaches.get(objectId);
 

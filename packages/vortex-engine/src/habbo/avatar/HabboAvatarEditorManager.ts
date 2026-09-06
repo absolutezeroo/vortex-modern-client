@@ -32,6 +32,7 @@ import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import {IID_RoomEngine} from '@iid/IIDRoomEngine';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {AvatarEditorIdEnum} from './enum/AvatarEditorIdEnum';
+import {AvatarEditorEvent} from './enum/AvatarEditorEvent';
 import {AvatarEditorMessageHandler} from './AvatarEditorMessageHandler';
 import {AvatarEditorView} from './AvatarEditorView';
 import {HabboAvatarEditor} from './HabboAvatarEditor';
@@ -53,7 +54,7 @@ export class HabboAvatarEditorManager extends Component
 {
     // AS3: .../avatar/HabboAvatarEditorManager.as::AVATAR_EDITOR_READY
     // Name DERIVED: the event type AS3 raises once the renderer reports ready.
-    public static readonly AVATAR_EDITOR_READY: string = 'AVATAR_EDITOR_READY';
+    public static readonly AVATAR_EDITOR_READY: string = AvatarEditorEvent.AVATAR_EDITOR_READY;
 
     // AS3: .../avatar/HabboAvatarEditorManager.as::LINK_PATTERN
     private static readonly LINK_PATTERN: string = 'avatareditor/';

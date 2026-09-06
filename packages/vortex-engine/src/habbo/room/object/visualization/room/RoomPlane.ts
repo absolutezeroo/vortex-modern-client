@@ -11,6 +11,7 @@ import {Graphics, Sprite, Texture} from 'pixi.js';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {IVector3d} from '@room/utils/IVector3d';
 import type {IRoomGeometry} from '@room/utils/IRoomGeometry';
+import type {IRoomPlane} from '@room/object/visualization/IRoomPlane';
 import type {IPlaneRasterizer} from './rasterizer/IPlaneRasterizer';
 import type {PlaneBitmapData} from './utils/PlaneBitmapData';
 import {Randomizer} from './utils/Randomizer';
@@ -42,7 +43,7 @@ interface IRoomPlaneRectangleMask
 
 let planeUniqueIdCounter = 1;
 
-export class RoomPlane
+export class RoomPlane implements IRoomPlane
 {
     public static readonly TYPE_UNDEFINED: number = 0;
     public static readonly TYPE_WALL: number = 1;

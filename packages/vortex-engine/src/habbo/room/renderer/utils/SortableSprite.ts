@@ -10,8 +10,9 @@
  * @see sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/SortableSprite.as
  */
 import type {IRoomObjectSprite} from '@room/object/visualization/IRoomObjectSprite';
+import type {ISortableSprite} from '@room/object/visualization/ISortableSprite';
 
-export class SortableSprite 
+export class SortableSprite implements ISortableSprite
 {
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/room/renderer/utils/SortableSprite.as::Z_INFINITY
     public static readonly Z_INFINITY: number = 100000000;

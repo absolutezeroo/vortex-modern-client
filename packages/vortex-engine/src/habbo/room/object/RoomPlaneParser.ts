@@ -673,6 +673,88 @@ export class RoomPlaneParser
         return RoomPlaneData.PLANE_UNDEFINED;
     }
 
+    /**
+     * The rectangle masks cut out of a plane — a door or a window opening, in the plane's own
+     * left/right side units.
+     *
+     * These five delegate to `RoomPlaneData`, whose whole mask tier was already ported;
+     * `RoomVisualization.createPlanesAndSprites()` is the one caller, and it replays them onto the
+     * plane with `addRectangleMask()`. That call was missing, which left `RoomPlane`'s
+     * `_rectangleMasks` permanently empty and `addRectangleMask()` with no call site at all.
+     *
+     * They answer 0 / -1 out of range exactly as AS3 does, and `maskCount` is 0 for every plane the
+     * *current* build produces: `RoomPlaneData.addMask()` has no call site in the primary tree
+     * either, so the only thing that can fill this list is a future producer. The chain is wired
+     * end to end so that producer works the day it lands, rather than being one more thing to find.
+     */
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneMaskCount()
+    getPlaneMaskCount(index: number): number
+    {
+        const plane = this.getPlane(index);
+        if(plane !== null)
+        {
+            return plane.maskCount;
+        }
+        return 0;
+    }
+
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneMaskLeftSideLoc()
+    getPlaneMaskLeftSideLoc(index: number, maskIndex: number): number
+    {
+        const plane = this.getPlane(index);
+        if(plane !== null)
+        {
+            return plane.getMaskLeftSideLoc(maskIndex);
+        }
+        return -1;
+    }
+
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneMaskRightSideLoc()
+    getPlaneMaskRightSideLoc(index: number, maskIndex: number): number
+    {
+        const plane = this.getPlane(index);
+        if(plane !== null)
+        {
+            return plane.getMaskRightSideLoc(maskIndex);
+        }
+        return -1;
+    }
+
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneMaskLeftSideLength()
+    getPlaneMaskLeftSideLength(index: number, maskIndex: number): number
+    {
+        const plane = this.getPlane(index);
+        if(plane !== null)
+        {
+            return plane.getMaskLeftSideLength(maskIndex);
+        }
+        return -1;
+    }
+
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneMaskRightSideLength()
+    getPlaneMaskRightSideLength(index: number, maskIndex: number): number
+    {
+        const plane = this.getPlane(index);
+        if(plane !== null)
+        {
+            return plane.getMaskRightSideLength(maskIndex);
+        }
+        return -1;
+    }
+
+    // DEVIATION: the port is handed an already-built parser instead of the XML round-trip AS3 goes
+    //   through, so neither the reader nor the writer has anything to do. `RoomLogic.initialize()`
+    //   takes this `RoomPlaneParser` where AS3 takes an `XML` and stores `room_plane_xml` on the
+    //   model; `RoomEngine` puts the same instance under `ROOM_PLANE_PARSER` and
+    //   `RoomVisualization.initializeRoomPlanes()` reads that object. The check behind the claim:
+    //   AS3's `initializeFromXML()` parses `tileMap`/`holeMap` and then calls
+    //   `initializeFromTileData()` — which this port has and calls directly — so the XML carries no
+    //   information the parser did not already hold. `getXML()` exists only to feed that reader
+    //   back (`RoomEngine`, `RoomPreviewer`, `GameArenaView` all pass the serialised parser to
+    //   `initializeRoom()`), and those call sites pass the parser itself here.
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::initializeFromXML()
+    // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getXML()
+
     // AS3: .../src/com/sulake/habbo/room/object/RoomPlaneParser.as::getPlaneSecondaryNormals()
     getPlaneSecondaryNormals(index: number): IVector3d[]
     {

@@ -1,4 +1,5 @@
 import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
+import {HabboInventoryTrackingEvent} from './events/HabboInventoryTrackingEvent';
 import {Component, ComponentDependency, type IContext} from '@core/runtime';
 // Vortex-only: the fishing tab. Optional — the inventory works unchanged without it.
 import {IID_HabboFishing} from '@iid/IIDHabboFishing';
@@ -287,7 +288,7 @@ const log = Logger.getLogger('habbo.inventory.HabboInventory');
  *
  * Based on AS3 com.sulake.habbo.inventory.HabboInventory (ENGINE only)
  * UI is the ported window system (InventoryMainView), matching the AS3
- * class hierarchy — not SolidJS stores (SolidJS isn't a project dependency).
+ * class hierarchy.
  */
 export class HabboInventory extends Component implements IHabboInventory, ILinkEventTracker
 {
@@ -1348,7 +1349,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
     {
         for(const model of this._inventories.getValues()) model.closingInventoryView();
 
-        this.events.emit('HABBO_INVENTORY_TRACKING_EVENT_CLOSED');
+        this.events.emit(HabboInventoryTrackingEvent.CLOSED);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/HabboInventory.as::toggleInventoryPage()
@@ -1372,7 +1373,7 @@ export class HabboInventory extends Component implements IHabboInventory, ILinkE
         }
         else
         {
-            this.events.emit('HABBO_INVENTORY_TRACKING_EVENT_CLOSED');
+            this.events.emit(HabboInventoryTrackingEvent.CLOSED);
         }
     }
 

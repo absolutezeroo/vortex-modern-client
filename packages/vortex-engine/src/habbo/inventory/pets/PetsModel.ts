@@ -1,4 +1,5 @@
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import {HabboInventoryTrackingEvent} from '@habbo/inventory/events/HabboInventoryTrackingEvent';
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
@@ -178,7 +179,7 @@ export class PetsModel implements IPetsModel
     {
         if(category === 'pets' && this._controller.isVisible)
         {
-            this._controller.events.emit('HABBO_INVENTORY_TRACKING_EVENT_PETS');
+            this._controller.events.emit(HabboInventoryTrackingEvent.PETS);
         }
     }
 

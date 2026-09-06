@@ -653,6 +653,22 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 }
             }
 
+            // The parser's own rectangle masks, replayed onto the plane. AS3 runs this loop for
+            // every plane it keeps, right before pushing it, and it is what gave `addRectangleMask()`
+            // its only caller — without it the method was ported and unreachable.
+            // AS3: .../src/com/sulake/habbo/room/object/visualization/room/RoomVisualization.as::createPlanesAndSprites()
+            const maskCount = planeParser.getPlaneMaskCount(i);
+
+            for(let maskIndex = 0; maskIndex < maskCount; maskIndex++)
+            {
+                plane.addRectangleMask(
+                    planeParser.getPlaneMaskLeftSideLoc(i, maskIndex),
+                    planeParser.getPlaneMaskRightSideLoc(i, maskIndex),
+                    planeParser.getPlaneMaskLeftSideLength(i, maskIndex),
+                    planeParser.getPlaneMaskRightSideLength(i, maskIndex)
+                );
+            }
+
             this._planeIndexMap.set(i, this._planes.length);
             this._planes.push(plane);
         }

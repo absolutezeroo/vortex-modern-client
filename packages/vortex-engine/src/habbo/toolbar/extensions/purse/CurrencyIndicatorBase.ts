@@ -35,7 +35,7 @@ export interface ICurrencyIndicator
  * In AS3 this manages a window with an icon, text, hover colors, and
  * animations for currency value changes. Sub-classes override setAmount(),
  * onContainerClick(), and registerUpdateEvents(). In Vortex, rendering is
- * handled by SolidJS; this manages state and animation logic.
+ * done here too: this class owns its window and its animation.
  *
  * @see sources/win63_version/habbo/toolbar/extensions/purse/CurrencyIndicatorBase.as
  */
