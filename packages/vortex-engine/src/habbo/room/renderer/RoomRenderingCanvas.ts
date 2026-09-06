@@ -301,12 +301,6 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     private _geometry: RoomGeometry;
 
     /**
-     * How far above its tile's floor an object has to sit before it counts as resting on furniture
-     * rather than on the ground. Same tolerance `RoomEngine.fixedUserLocation()` uses to decide the
-     * same question.
-     */
-    // TS-only: see the DEVIATION in renderObject().
-    /**
 	 * Above this, a sprite's pixels are not read back to average them.
 	 *
 	 * It is a cost ceiling, not a correctness one: the read is a full upload-and-scan per sprite,
@@ -315,7 +309,27 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/cache/_SafeCls_4404.as::MAX_SIZE_FOR_AVG_COLOR
     private static readonly MAX_SIZE_FOR_AVG_COLOR: number = 200;
 
+    /**
+     * How far above its tile's floor an object has to sit before it counts as resting on furniture
+     * rather than on the ground. Same tolerance `RoomEngine.fixedUserLocation()` uses to decide the
+     * same question.
+     */
+    // TS-only: see the DEVIATION in renderObject().
     private static readonly STACK_EPSILON: number = 0.02;
+
+    /**
+     * Depth an object resting on furniture is pulled forward, per unit of height above its own
+     * floor — enough to outrank the layers of whatever holds it up. The DEVIATION in
+     * {@link renderObject} has the reasoning; this is where the number comes from.
+     *
+     * Measured against the furni pack, not guessed. A support's most-forward layer sits at
+     * `z / -1000 * sqrt(0.5)`, so the lift has to beat `|forward| / stackHeight` for that support:
+     * `hc_exe_table` needs **2.127** and 06751d42 shipped 2.0, which is why one of its nine layers
+     * kept cutting through `classic3_floor2` after the fix that was supposed to have settled it.
+     * `scripts/check-stack-depth.mjs` recomputes this over every furni and fails on that pair.
+     */
+    // TS-only: see the DEVIATION in renderObject().
+    private static readonly STACK_LIFT: number = 2.5;
 
     /**
      * The floor's own altitude at a tile, excluding anything stacked on it — `RoomEngine` wires this
@@ -1412,7 +1426,6 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         cache.updateId = updateId;
         cache.screenX = screenX;
         cache.screenY = screenY;
-        cache.screenZ = baseZ;
 
         // DEVIATION: an object resting on furniture drops the *backward* half of its layer offsets,
         //   so it outranks the thing holding it up. A positive layer offset sinks a sprite behind
@@ -1433,9 +1446,22 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         //   ground in front of it. The floor's altitude at the object's own tile is the datum, and
         //   only the canvas can reach it, which is why this is here and not in FurnitureVisualization.
         //
-        //   It applies to the sprite offsets and to nothing else. Biasing the object's *base* depth
-        //   by height instead cannot work: one scalar cannot both outrank another object's layers
-        //   (which reach +/-3) and stay inside its own tile (worth 0.7071).
+        //   Dropping the offsets is half of it, and on its own it does nothing here. Measured from
+        //   the pack: `classic3_floor2` carries z=-4000/-8000, so +2.828/+5.657 - the clamp takes
+        //   both to 0. `hc_exe_table` carries z=1000..3000, which through SizeData's `z / -1000` is
+        //   *negative*: -0.707 .. -2.127. Six of its nine layers are therefore still in front of a
+        //   clamped 0, and the rug went back under the table it stands on. Clamping cannot reach
+        //   them - the offsets it removes are the stacked object's own, and the ones that beat it
+        //   belong to the support. So the object's base depth is pulled forward as well, by
+        //   STACK_LIFT per unit of height above its floor, which is the only term that moves it
+        //   past a layer of something else.
+        //
+        //   ponytail: one scalar, and it cannot be universally right - it has to outrank another
+        //   object's layers (which reach +/-5.66) while a tile step is worth only 0.7071. 2.5
+        //   clears `hc_exe_table`'s 2.127 with margin; the price is that a stacked object leaks
+        //   ~3.5 tiles forward against objects on the ground in front of it. Ceiling, and the
+        //   upgrade path: a per-tile stack order instead of one depth scalar.
+        //   `scripts/check-stack-depth.mjs` reports what the constant covers over the whole pack.
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/room/renderer/_SafeCls_3073.as::renderObject()
         //
         //   A negative floor height is not a floor: `RoomPlaneParser` writes TILE_BLOCKED (-110) and
@@ -1447,6 +1473,14 @@ export class RoomRenderingCanvas implements IRoomRenderingCanvasInterface
         const location = object.getLocation();
         const floorHeight = this.floorHeightAt?.(Math.round(location.x), Math.round(location.y)) ?? location.z;
         const stacked = floorHeight >= 0 && (location.z - floorHeight) > RoomRenderingCanvas.STACK_EPSILON;
+
+        if(stacked)
+        {
+            baseZ -= RoomRenderingCanvas.STACK_LIFT * (location.z - floorHeight);
+        }
+
+        // After the lift, so the early-out above compares the depth the sprites are actually given.
+        cache.screenZ = baseZ;
 
         const spriteCount = visualization.spriteCount;
         let localCount = 0;
