@@ -84,6 +84,9 @@ export class RewardTrackController extends Component implements IRewardTrackCont
     /** Derived name — `_SafeStr_5633` (from `get tracks()`). */
     // AS3: RewardTrackController.as::_SafeStr_5633
     private _tracks: RewardTrack[] = [];
+    // TS-only: which track `activeTrack` resolves to; null means "let it pick". Held as an id
+    //   rather than a reference because `onRewardTracks()` rebuilds every RewardTrack object.
+    private _activeTrackId: string | null = null;
 
     /** Derived name — `_SafeStr_5978`: the per-track window cache, keyed by track id. */
     // AS3: RewardTrackController.as::_SafeStr_5978
@@ -577,6 +580,45 @@ export class RewardTrackController extends Component implements IRewardTrackCont
         return this._tracks;
     }
 
+    /**
+     * The track the toolbar opens, and the one the header's season picker starts on.
+     *
+     * Defaults to the first track the server sent that is not finished, falling back to the first
+     * of the list when they all are — so a hotel running one season at a time never has to say
+     * which it is, and one running several gets the one still in progress.
+     */
+    // DEVIATION: AS3 has no notion of a selected track. Its toolbar hardcodes the id
+    //   `introduction` (ProgMenuController.as::onSubMenuItemClick) because that build shipped a
+    //   single, permanent track; the protocol has always carried a *list*, and every other layer
+    //   here is already id-driven — `linkReceived()` opens `parts[2]`, views are cached per id.
+    //   This adds the one piece the seasonal case needs and changes nothing for a single track.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/rewardtrack/RewardTrackController.as::get tracks()
+    get activeTrack(): RewardTrack | null
+    {
+        if(this._activeTrackId !== null)
+        {
+            const selected = this.getTrackById(this._activeTrackId);
+
+            if(selected !== null) return selected;
+        }
+
+        return this._tracks.find((track) => !track.complete) ?? this._tracks[0] ?? null;
+    }
+
+    // TS-only: the season picker writes here; see `activeTrack`.
+    set activeTrack(track: RewardTrack | null)
+    {
+        this._activeTrackId = track?.id ?? null;
+    }
+
+    // DEVIATION: see `activeTrack` — the interface half, so callers outside the reward track can
+    //   open the season in progress without depending on the RewardTrack model.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/rewardtrack/IRewardTrackController.as
+    get activeTrackId(): string | null
+    {
+        return this.activeTrack?.id ?? null;
+    }
+
     // AS3: RewardTrackController.as::get localizationManager()
     get localizationManager(): IHabboLocalizationManager | null
     {
@@ -611,6 +653,7 @@ export class RewardTrackController extends Component implements IRewardTrackCont
 
         this._messageEvents = [];
         this._tracks = [];
+        this._activeTrackId = null;
         this._communicationManager = null;
         this._windowManager = null;
         this._localizationManager = null;

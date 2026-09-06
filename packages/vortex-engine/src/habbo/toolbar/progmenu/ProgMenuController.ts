@@ -50,8 +50,19 @@ export class ProgMenuController extends AbstractSubMenuController
                 this.toolbar?.context.createLinkEvent('badge_leaderboard/0/-1/0');
                 break;
             case 'introduction':
-                this.toolbar?.context.createLinkEvent('reward_track/open/introduction');
+            {
+                // DEVIATION: AS3 sends the literal `reward_track/open/introduction`, because that
+                //   build shipped exactly one, permanent track named `introduction`. The protocol
+                //   has always carried a list (`RewardTracksMessageEvent` sends `tracks[]`) and
+                //   every other layer is already id-driven, so this opens whichever season is in
+                //   progress instead. With a single track configured the result is identical.
+                // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/toolbar/progmenu/ProgMenuController.as::onSubMenuItemClick()
+                const trackId = this.toolbar?.questEngine?.rewardTrack?.activeTrackId ?? null;
+
+                if(trackId !== null) this.toolbar?.context.createLinkEvent(`reward_track/open/${trackId}`);
+
                 break;
+            }
             case 'quests':
                 this.toolbar?.questEngine?.showQuests();
                 break;

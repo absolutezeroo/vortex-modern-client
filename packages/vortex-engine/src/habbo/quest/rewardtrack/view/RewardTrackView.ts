@@ -22,6 +22,9 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IScrollableListWindow} from '@core/window/components/IScrollableListWindow';
+import type {ITabButtonWindow} from '@core/window/components/ITabButtonWindow';
+import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
+import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 import type {RewardTrack} from '../data/RewardTrack';
 import type {RewardTrackPrize} from '../data/RewardTrackPrize';
@@ -151,6 +154,8 @@ export class RewardTrackView implements IDisposable, IUpdateReceiver
             this._headerView = new RewardTrackHeaderView(controller, header, track);
         }
 
+        this.buildSeasonTabs(controller);
+
         if(taskInfo !== null && this._levelTemplate !== null)
         {
             this._taskDetailsView = new RewardTrackTaskDetailsView(
@@ -219,6 +224,7 @@ export class RewardTrackView implements IDisposable, IUpdateReceiver
     public show(): void
     {
         this._headerView?.refreshOwnAvatar();
+        this.syncSeasonTabSelection();
 
         const window = this._window as unknown as IWindow | null;
 
@@ -426,6 +432,117 @@ export class RewardTrackView implements IDisposable, IUpdateReceiver
     }
 
     // AS3: RewardTrackView.as::dispose()
+    /**
+     * One tab per reward track the server sent, above the header — the hotel's seasons.
+     *
+     * The whole strip is hidden when there is a single track, so a hotel running one permanent
+     * track looks exactly as AS3 does. Selecting a tab reopens the window on that track;
+     * `RewardTrackController` caches a view per track id, so switching back is instant.
+     *
+     * Follows `TopViewSelector`, the navigator's own tab code: clone the layout's template button,
+     * give it a caption, an id and a procedure, then hand it to the context.
+     */
+    // DEVIATION: no AS3 counterpart. That build shipped one permanent track and its window has no
+    //   selector at all; the protocol has always sent a list (`RewardTracksMessageEvent.tracks[]`)
+    //   and the emulator serves every visible track, including a finished season whose claims are
+    //   still open — so two are on screen together by design. The tab strip is added by
+    //   `vortex-layouts/reward_track_main_xml.xml`; see App.ts step 3c for how that override works.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/TopViewSelector.as::refresh()
+    private buildSeasonTabs(controller: RewardTrackController): void
+    {
+        const context = this.seasonTabContext;
+
+        if(context === null) return;
+
+        const template = (context as unknown as IWindowContainer).findChildByName('season_tab_button');
+
+        if(template === null) return;
+
+        // The template is a layout node, not a tab: it is detached either way, so the single-track
+        // case leaves no stray button behind.
+        ((template as unknown as IWindow).parent as unknown as IWindowContainer | null)
+            ?.removeChild(template as unknown as IWindow);
+
+        const tracks = controller.tracks;
+
+        if(tracks.length < 2)
+        {
+            (context as unknown as IWindow).visible = false;
+            (template as unknown as IWindow).dispose();
+
+            return;
+        }
+
+        for(let i = 0; i < tracks.length; i++)
+        {
+            const tab = (template as unknown as IWindow).clone() as unknown as ITabButtonWindow;
+
+            tab.caption = `\${reward_track.${tracks[i].id}.name}`;
+            tab.id = i;
+            tab.procedure = this.onSeasonTabClicked;
+
+            context.addTabItem(tab);
+
+            // The theme ran in the constructor, before these tabs existed, so each clone is painted
+            // as it is added. That is what puts the strip in the season's colours instead of the
+            // window chrome's grey — `RewardTrackTheme` recolours by tag, and the template carries
+            // RECOLORABLE_MEDIUM.
+            this._theme?.applyTo(tab as unknown as IWindow);
+        }
+
+        this.syncSeasonTabSelection();
+        (template as unknown as IWindow).dispose();
+    }
+
+    /**
+     * Marks the tab of the track this window shows.
+     *
+     * Called from `show()` as well as at build time, and that is the point: `openRewardTrack()`
+     * keeps one window per track and re-attaches it rather than rebuilding, so a view that was
+     * already constructed never runs `buildSeasonTabs()` again. Without this the strip kept
+     * whatever it was showing when it was last on screen, and only a second click put it right.
+     */
+    // DEVIATION: no AS3 counterpart — see buildSeasonTabs().
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/TopViewSelector.as::selectTabByIndex()
+    private syncSeasonTabSelection(): void
+    {
+        const context = this.seasonTabContext;
+
+        if(context === null || context.selector === null) return;
+
+        const index = this._controller?.tracks.findIndex((t) => t.id === this._track?.id) ?? -1;
+
+        if(index < 0) return;
+
+        const tab = context.getTabItemAt(index);
+
+        if(tab !== null) (context.selector as unknown as {setSelected(item: IWindow): void}).setSelected(tab);
+    }
+
+    // DEVIATION: no AS3 counterpart — see buildSeasonTabs().
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/view/TopViewSelector.as::topViewSelectorButtonProcedure()
+    private onSeasonTabClicked = (event: WindowEvent, window: IWindow): void =>
+    {
+        if(event.type !== 'WME_CLICK') return;
+
+        const chosen = this._controller?.tracks[window.id] ?? null;
+
+        if(chosen === null || chosen.id === this._track?.id) return;
+
+        // Recorded before reopening so the toolbar's Progression entry, which reads `activeTrack`,
+        // follows the season the player is actually looking at.
+        if(this._controller !== null) this._controller.activeTrack = chosen;
+
+        this._controller?.openRewardTrack(chosen.id);
+    };
+
+    // DEVIATION: no AS3 counterpart — see buildSeasonTabs().
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/rewardtrack/view/RewardTrackView.as
+    private get seasonTabContext(): ITabContextWindow | null
+    {
+        return (this._window?.findChildByName('season_tab_context') ?? null) as unknown as ITabContextWindow | null;
+    }
+
     public dispose(): void
     {
         if(this._disposed) return;

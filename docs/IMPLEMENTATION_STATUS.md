@@ -4473,7 +4473,38 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
-- 🆕 **Three views that were never ported, and the member worklist emptied — 2026-09-06.**
+- 🆕 **Reward-track seasons: the toolbar stopped opening one hardcoded id — 2026-09-06.**
+  `ProgMenuController` sent the literal `reward_track/open/introduction`, faithfully, because that
+  is what AS3 does — the 2026 build shipped a single permanent track by that name. Nothing else in
+  the stack shared that assumption: `RewardTracksMessageEvent` has always carried `tracks[]`,
+  `linkReceived()` already opened `parts[2]`, and `RewardTrackController` already cached a view per
+  track id. The emulator is further ahead still — `PlayerRewardTrackGrain.BuildVisibleTracksAsync()`
+  serves every visible track ordered by `sort_order`, and `AcceptsClaimsAt()` keeps a finished
+  season served while its claims are open, so **two seasons on screen at once is its nominal
+  behaviour**. The client was the only layer that could not reach the second one.
+
+  Added: `RewardTrackController.activeTrack`/`activeTrackId` (first incomplete track, falling back
+  to the first — held as an **id**, because `onRewardTracks()` rebuilds every `RewardTrack` on each
+  message), a tab per season above the header following `TopViewSelector`'s clone-the-template
+  pattern, and two interfaces widened so the toolbar can reach the controller at all. The strip
+  hides itself for a single-track hotel, so that case stays identical to AS3.
+
+  Two things worth carrying forward. `syncSeasonTabSelection()` runs from `show()`, not only at
+  build time: `openRewardTrack()` re-attaches a cached window rather than rebuilding it, so a view
+  constructed earlier never runs `buildSeasonTabs()` again — without it the strip kept whatever it
+  last showed and only a second click corrected it. And the tab's tint was settled **at the pixels,
+  not by eye**: `tab_button` does honour `color` (a red probe proved it after a thumbnail suggested
+  otherwise), but its skin desaturates — `#cfe2f9` in renders `#bac3c8`, against `#c4c2b8` for the
+  default. None of the 45 shipped `tab_button`s carries a colour, so a themed tab is off the beaten
+  path; `RECOLORABLE_MEDIUM` is as far as the skin allows.
+
+  The layout is an override in `src/vortex-layouts/`, the only place a dump layout can be *replaced*
+  (App.ts step 3c) — `window-layouts/` is gitignored and rewritten by the asset build. New keys live
+  in `tools/locale-overrides/rewardtrack.en.txt`: a track with no `reward_track.<id>.name` renders
+  its own key string, and since `track_title_txt` is multiline word-wrapped 18px bold, a
+  35-character key wraps to three lines and overruns the header.
+
+- **Three views that were never ported, and the member worklist emptied — 2026-09-06.**
   A pass driven by re-running the four measures rather than by reading this file. Two of them came
   back clean and stay that way: `wire-coverage.mjs` reports 0 send gaps and 0 recv gaps, and
   `todo-inventory.mjs` reports **1** `TODO(AS3)` in the whole repo. What the other two found:
