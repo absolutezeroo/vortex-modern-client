@@ -42,6 +42,7 @@ import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 
 import {FishingPediaView} from './ui/FishingPediaView';
+import {FishopediaHubView} from './ui/FishopediaHubView';
 import {FishingStaticWindowView} from './ui/FishingStaticWindowView';
 
 import {FishingDefinitions} from './FishingDefinitions';
@@ -172,8 +173,11 @@ export class HabboFishing extends Component implements ILinkEventTracker
     // TS-only: Vortex-only component — raises the catch and new-species bubbles.
     private _notifications: IHabboNotifications | null = null;
 
-    // TS-only: Vortex-only component — built on the first `:fishpedia`, then reused.
+    // TS-only: Vortex-only component — built on the first `:fishpedia/book`, then reused.
     private _pedia: FishingPediaView | null = null;
+
+    // TS-only: Vortex-only component — built on the first `:fishpedia`, then reused.
+    private _hub: FishopediaHubView | null = null;
 
     /** The converted store and derby windows, built on first use. See `openStaticWindow`. */
     // TS-only: Vortex-only component.
@@ -230,10 +234,15 @@ export class HabboFishing extends Component implements ILinkEventTracker
     }
 
     /**
-     * Opens Origins' own Fish-O-Pedia, built on first use.
+     * Opens the Fish-O-Pedia, built on first use.
      *
      * Opened by the me-menu entry, by the wooden sign in the room, and by `:fishpedia` — the three
      * routes all land here. See `docs/vortex-original/fishing.md` §23.
+     *
+     * **This is the hub, not the book.** Both exist: {@link FishopediaHubView} is the album-styled
+     * face and is what the three routes now reach, while {@link openPediaBook} still opens Origins'
+     * own two-page reproduction, which nothing else in the tree replaces and which
+     * `scripts/origins/generate-fishopedia-layout.py` still generates.
      */
     // TS-only: Vortex-only fishing system — no AS3 counterpart.
     public openPedia(): void
@@ -241,6 +250,32 @@ export class HabboFishing extends Component implements ILinkEventTracker
         if(this._windowManager === null)
         {
             log.warn('No window manager yet; the Fish-O-Pedia cannot open.');
+
+            return;
+        }
+
+        this._hub ??= new FishopediaHubView(
+            this._windowManager,
+            this.assets,
+            this._localizations,
+            this
+        );
+
+        this._hub.open();
+    }
+
+    /**
+     * Opens Origins' own two-page Fish-O-Pedia, reached by `:fishpedia/book`.
+     *
+     * Kept reachable rather than deleted: it is the faithful reproduction of the real client's book,
+     * and a complete thing nobody connects is this port's most common defect.
+     */
+    // TS-only: Vortex-only fishing system — no AS3 counterpart.
+    public openPediaBook(): void
+    {
+        if(this._windowManager === null)
+        {
+            log.warn('No window manager yet; the Fish-O-Pedia book cannot open.');
 
             return;
         }
@@ -312,11 +347,12 @@ export class HabboFishing extends Component implements ILinkEventTracker
         return 'fishpedia/';
     }
 
-    /** Only `fishpedia/open` for now; anything else under the prefix is ignored, not guessed at. */
+    /** `fishpedia/book` reaches Origins' book; anything else unknown is ignored, not guessed at. */
     // TS-only: `ILinkEventTracker` — Vortex-only system, no AS3 counterpart.
     public linkReceived(link: string): void
     {
-        if(link === 'fishpedia/open' || link === 'fishpedia/show') this.openPedia();
+        if(link === 'fishpedia/book') this.openPediaBook();
+        else if(link === 'fishpedia/open' || link === 'fishpedia/show') this.openPedia();
     }
 
     // TS-only: Vortex-only accessor — the definition tables, shared with whatever draws them.
@@ -336,6 +372,19 @@ export class HabboFishing extends Component implements ILinkEventTracker
     public getRecord(speciesId: number): FishingRecord | null
     {
         return this._records.get(speciesId) ?? null;
+    }
+
+    /**
+     * Every record held, heaviest personal best first.
+     *
+     * `getRecord()` answers for one species, which is all the book ever needs because it walks the
+     * species table and asks per entry. The hub's Records tab is the other way round — it lists what
+     * has been caught and nothing else — so it needs the map itself.
+     */
+    // TS-only: Vortex-only accessor.
+    public get allRecords(): FishingRecord[]
+    {
+        return [...this._records.values()].sort((a, b) => b.bestWeight - a.bestWeight);
     }
 
     // TS-only: Vortex-only accessor.
@@ -619,6 +668,18 @@ export class HabboFishing extends Component implements ILinkEventTracker
         this._messageEvents = [];
         this._records.clear();
         this._widget = null;
+
+        // Every window this component built, including the ones that predate the hub: each holds a
+        // window tree parented to a desktop, so dropping the reference alone leaves it on screen.
+        this._hub?.dispose();
+        this._hub = null;
+        this._pedia?.dispose();
+        this._pedia = null;
+
+        for(const view of this._staticWindows.values()) view.dispose();
+
+        this._staticWindows.clear();
+
         this._definitions.dispose();
         this._playerState = EMPTY_STATE;
 

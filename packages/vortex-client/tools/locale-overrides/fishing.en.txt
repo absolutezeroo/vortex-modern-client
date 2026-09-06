@@ -223,3 +223,63 @@ vortex.fishing.derby.registration_unavailable=Fishing Derby registration is unav
 # The me-menu entry. Origins opens the book from the wooden sign in the room; this port keeps that
 # and adds a menu entry, because a sign only exists in a fishing room.
 vortex.fishing.memenu=Fish-O-Pedia
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+# The Fish-O-Pedia hub — `src/vortex-layouts/vortex_fishopedia_hub_xml.xml`, the album-styled second
+# face for the same data. Origins has no such window, so every key here is Vortex's own and the
+# wording is DERIVED, not recovered.
+#
+# Only what the hub says and the book does not is listed. The hub reuses, rather than restates:
+# `memenu` (its title), `book.caught` (its subtitle), `book.level_required`, `book.detail_prompt`,
+# `book.detail_hours`, `derby.weight`, `derby.count`, and every zone/species/rod name key.
+
+vortex.fishing.hub.level=Level
+vortex.fishing.hub.rod=Rod
+vortex.fishing.hub.xp_progress=%current% / %next% XP
+# Shown instead of the above once no threshold is left above the player's XP. The seeded level table
+# is 1, 5, 10, 15, 20, 25, 30, 40, 50 … — NOT contiguous — so "the next level" has to be the next
+# threshold; asking for `level + 1` finds nothing at level 1 and printed "157 / 0 XP" over a full bar.
+vortex.fishing.hub.xp_max=%current% XP · max
+# The purse, then today's earnings against the cap the server enforces.
+vortex.fishing.hub.tokens=%amount%  ·  %today%/%cap% today
+
+vortex.fishing.hub.tab.fish=Fish
+vortex.fishing.hub.tab.rods=Rods
+vortex.fishing.hub.tab.records=Records
+
+# The stat table in the species panel. These are bare labels — the book's `xp_label`/`tokens_label`
+# carry Origins' trailing colon, which this table's right-aligned values do not want.
+vortex.fishing.hub.stat.level=Level required
+vortex.fishing.hub.stat.xp=XP
+vortex.fishing.hub.stat.tokens=Tokens
+vortex.fishing.hub.stat.best=Personal best
+
+# The rods tab.
+vortex.fishing.hub.rods_intro=Rod quality is a separate progression from your level: it multiplies normal and Golden catches, and improves your chance of triggering Hook Havoc.
+vortex.fishing.hub.rod_threshold=Unlocked at %xp% XP
+vortex.fishing.hub.rod_equipped=Equipped
+vortex.fishing.hub.rod.catch=Catch
+vortex.fishing.hub.rod.golden=Golden
+vortex.fishing.hub.rod.havoc=Hook Havoc
+
+# The records table's column heads.
+vortex.fishing.hub.col.species=Species
+vortex.fishing.hub.col.best=Best
+vortex.fishing.hub.col.date=On
+
+# Value formats. The layout's numeric captions are placeholders the view overwrites, but the unit,
+# the multiplier prefix and the percent sign around those numbers are text and DO translate — a view
+# that concatenates them in code hardcodes English punctuation. The weight unit itself stays
+# `derby.weight_unit`, so a hotel switching to another unit changes one line.
+# Dates are not here: a date is formatted by the runtime's own locale, not by a key.
+vortex.fishing.hub.value.weight=%amount% %unit%
+vortex.fishing.hub.value.weight_range=%min% – %max% %unit%
+vortex.fishing.hub.value.multiplier=x%factor%
+vortex.fishing.hub.value.percent=%percent% %
+
+# Zone blurbs. FishingZoneDefinition has no description column — the hub derives the key by
+# appending `.desc` to the zone's own `name_key`, so an operator who adds a zone adds its blurb the
+# same way it adds the name.
+vortex.fishing.zone.infobus_park.desc=The starting jetty. The catches are modest, but the rod levels fast and the zone stays open at every level.
+vortex.fishing.zone.port_hana.desc=Open water past the harbour wall. Heavier species, and the first place a Golden Fish is worth chasing.
+vortex.fishing.zone.snouthill_pier.desc=The deep pier. Everything here is rare, slow to bite, and worth the wait.
