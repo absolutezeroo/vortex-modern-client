@@ -108,6 +108,10 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
 
     private _widgetLayouts: Map<string, string> = new Map();
 
+    // TS-only: bound on the snapshot drain loop in renderWindowSnapshot(). Eight is well past what
+    //   a settling tree needs (measured: two) and still returns promptly if one never settles.
+    private static readonly MAX_SNAPSHOT_RENDER_PASSES: number = 8;
+
     // AS3: .../src/com/sulake/habbo/window/HabboWindowManagerComponent.as::_windowRenderer
     private _windowRenderer: WindowRenderer | null = null;
     private _windowComposite: WindowComposite | null = null;
@@ -1224,10 +1228,39 @@ export class HabboWindowManager extends Component implements IHabboWindowManager
     /**
      * Renders a single window (and its children) into its own scratch
      * canvas, optionally darkened. See WindowComposite.renderWindowToCanvas().
+     *
+     * The render queue is drained first, which this did not do — it composited whatever the
+     * buffers happened to hold, so a snapshot taken before the frame's own `render()` caught
+     * half-drawn windows. `compositeLayers()` beside it always did call `render()`; this one was
+     * the odd one out, and the difference is invisible until you compare two snapshots.
+     *
+     * Draining loops because rendering *causes* invalidation: a text window measures itself and
+     * resizes, an asset finishes loading and marks its bitmap dirty, a list re-lays out its rows.
+     * One pass leaves that second wave for the next frame — which is exactly the non-determinism
+     * that made the Glaze screenshot harness return two different images for the same layout from
+     * identical code. The bound stops a pathological invalidate-on-render loop from hanging the
+     * caller; reaching it means the tree never settles and is worth knowing about.
      */
+    // TS-only: AS3 has no snapshot path — Flash's display list drew the window tree directly.
     public renderWindowSnapshot(window: IWindow, width: number, height: number, darken: boolean = false): OffscreenCanvas | null
     {
         if(!this._windowComposite) return null;
+
+        if(this._windowRenderer)
+        {
+            let passes = 0;
+
+            do
+            {
+                this._windowRenderer.render();
+            }
+            while(this._windowRenderer.hasPendingUpdates() && ++passes < HabboWindowManager.MAX_SNAPSHOT_RENDER_PASSES);
+
+            if(passes >= HabboWindowManager.MAX_SNAPSHOT_RENDER_PASSES)
+            {
+                log.warn(`Window tree still dirty after ${passes} render passes; snapshot may be incomplete`);
+            }
+        }
 
         return this._windowComposite.renderWindowToCanvas(window, width, height, darken);
     }

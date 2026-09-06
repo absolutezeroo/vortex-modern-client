@@ -5,6 +5,9 @@ import type {IGraphicContext} from './IGraphicContext';
 import {applyInnerGlows, windowFiltersToCss, windowInnerGlowFilters} from './WindowFilterCss';
 import {WindowType} from '../enum/WindowType';
 import {WindowParam} from '../enum/WindowParam';
+import {Logger} from '@core/utils/Logger';
+
+const log = Logger.getLogger('core.window.WindowComposite');
 
 type DrawBufferResolver = (window: IWindow) => OffscreenCanvas | null;
 
@@ -24,6 +27,8 @@ type DeferredComposite = {
     offsetY: number;
     clip: ClipRect | null;
     visibleRegion: ClipRect | null;
+    /** The cascaded context alpha in force where this window was held back. */
+    alpha: number;
 };
 
 /**
@@ -48,6 +53,69 @@ export class WindowComposite
     // approximation is needed here (unlike buildColorTransformFilter() below,
     // which combines multipliers/offsets/alpha and can't map 1:1 to filters).
     private static readonly MODAL_DARKEN_FILTER: string = 'brightness(25%)';
+
+    /**
+     * Flash blend modes mapped onto their Canvas2D `globalCompositeOperation` equivalents.
+     *
+     * Flash's names line up with the CSS compositing spec for every mode both support. The ones
+     * absent here — `subtract`, `invert`, `alpha`, `erase`, `layer`, `shader` — have no Canvas2D
+     * counterpart at all.
+     */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::render()
+    private static readonly BLEND_MODES: Readonly<Record<string, GlobalCompositeOperation>> = {
+        normal: 'source-over',
+        add: 'lighter',
+        multiply: 'multiply',
+        screen: 'screen',
+        overlay: 'overlay',
+        darken: 'darken',
+        lighten: 'lighten',
+        difference: 'difference',
+        hardlight: 'hard-light'
+    };
+
+    /**
+     * The blend mode a `BLEND_*` tag asks for, as a Canvas2D composite operation.
+     *
+     * AS3 scans every tag and keeps the last one starting with `BLEND_`, lowercasing the remainder
+     * and handing it to `BitmapData.draw()`. A mode Canvas2D cannot express is reported and falls
+     * back to normal — `warn`, because the window then renders differently from what the layout
+     * asked for while throwing nothing.
+     */
+    // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::render()
+    private static blendModeOf(window: IWindow): GlobalCompositeOperation
+    {
+        const tags = window.tags;
+
+        if(!tags) return 'source-over';
+
+        let mode = 'normal';
+
+        for(const tag of tags)
+        {
+            if(tag.indexOf('BLEND_') === 0) mode = tag.substring(6).toLowerCase();
+        }
+
+        if(mode === 'normal') return 'source-over';
+
+        const resolved = WindowComposite.BLEND_MODES[mode];
+
+        if(!resolved)
+        {
+            if(!WindowComposite.WARNED_BLEND_MODES.has(mode))
+            {
+                WindowComposite.WARNED_BLEND_MODES.add(mode);
+                log.warn(`Flash blend mode '${mode}' has no Canvas2D equivalent; drawing normally`);
+            }
+
+            return 'source-over';
+        }
+
+        return resolved;
+    }
+
+    // TS-only: the warning above is per-window-per-frame without it, which is thousands a second.
+    private static readonly WARNED_BLEND_MODES: Set<string> = new Set<string>();
 
     // TS-only: distinguishes a plain pre-rendered bitmap (drawable straight
     // into the composite) from an externally-managed PixiJS DisplayObject
@@ -284,7 +352,8 @@ export class WindowComposite
         offsetY: number,
         inheritedClip: ClipRect | null,
         inheritedVisibleRegion: ClipRect | null = null,
-        deferred: DeferredComposite[] | null = null
+        deferred: DeferredComposite[] | null = null,
+        inheritedAlpha: number = 1
     ): void
     {
         if(!window.visible) return;
@@ -416,11 +485,36 @@ export class WindowComposite
         // below already carries the offset MATRIX.tx/ty applied, so only the alpha
         // half needs reproducing here, via globalAlpha before that same drawImage call.
         // Apply blend (opacity)
-        const blend = window.blend;
+        //
+        // `inheritedAlpha` is the one property of the window system that genuinely cascades.
+        // `GraphicContext.set blend` writes `this.alpha` on the context *Sprite*, and a Sprite's
+        // alpha covers its child container — so an own-context window's blend also dims every
+        // own-context descendant. AS3 never puts a shared-context window's blend on a context at
+        // all (`WindowRendererItem.invalidate()` case 16 returns before the assignment for one), so
+        // that half stays confined to its own blit; see `childAlpha` below.
+        //
+        // Neither `filters` nor the dynamic-style `colorTransform` cascades, in AS3 either: both go
+        // on `getDisplayObject()`, the Bitmap alone. Measured over the 783 shipped layouts, 54
+        // windows have blend<1 with real children and 52 carry param 16, so this reaches two —
+        // `own_avatar_decorating` and `room_tools_toolbar_xml`.
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/GraphicContext.as::set blend()
+        const blend = inheritedAlpha * window.blend;
 
         if(blend < 1)
         {
             ctx.globalAlpha = blend;
+        }
+
+        // The other half of that same `param5.draw()` call: its `blendMode` argument, which AS3
+        // reads off a `BLEND_*` tag. 14 shipped layouts declare one and the port has been dropping
+        // all of them — 8 `BLEND_ADD`, plus 3 `BLEND_SUBTRACT` and 3 `BLEND_INVERT` that Canvas2D
+        // cannot express and `blendModeOf()` reports rather than fake.
+        // AS3: .../src/com/sulake/core/window/graphics/WindowRendererItem.as::render()
+        const blendMode = WindowComposite.blendModeOf(window);
+
+        if(blendMode !== 'source-over')
+        {
+            ctx.globalCompositeOperation = blendMode;
         }
 
         // Bitmap wrappers apply the colour/dynamic-style transform exactly inside
@@ -499,6 +593,11 @@ export class WindowComposite
         const ownDeferred: DeferredComposite[] = [];
         const collector = ownsContext ? ownDeferred : deferred;
 
+        // Only an own-context window hands its blend down — that is the one AS3 puts on the context
+        // Sprite, whose alpha covers the child container. A shared-context window's blend lives in
+        // its own blit, so its children inherit whatever the last context owner above them set.
+        const childAlpha = ownsContext ? blend : inheritedAlpha;
+
         const container = window as unknown as IWindowContainer;
 
         if(typeof container.numChildren === 'number')
@@ -533,12 +632,15 @@ export class WindowComposite
 
                 if(collector !== null && !child.testParamFlag(WindowParam.USE_PARENT_GRAPHIC_CONTEXT))
                 {
-                    collector.push({window: child, offsetX: absX, offsetY: absY, clip: effectiveClip, visibleRegion});
+                    collector.push({
+                        window: child, offsetX: absX, offsetY: absY, clip: effectiveClip, visibleRegion,
+                        alpha: childAlpha
+                    });
 
                     continue;
                 }
 
-                this.compositeWindow(ctx, child, absX, absY, effectiveClip, visibleRegion, collector);
+                this.compositeWindow(ctx, child, absX, absY, effectiveClip, visibleRegion, collector, childAlpha);
             }
         }
 
@@ -550,7 +652,8 @@ export class WindowComposite
             for(const entry of ownDeferred)
             {
                 this.compositeWindow(
-                    ctx, entry.window, entry.offsetX, entry.offsetY, entry.clip, entry.visibleRegion, null
+                    ctx, entry.window, entry.offsetX, entry.offsetY, entry.clip, entry.visibleRegion, null,
+                    entry.alpha
                 );
             }
         }

@@ -183,6 +183,16 @@ export class GraphicContext implements IGraphicContext
      *
      * AS3 builds a `Shape` and assigns it as the display object's `mask`; with
      * no display list the rectangle itself is what a compositor needs.
+     *
+     * **Nothing reads this today, and that is not an oversight to fix by wiring it up.** AS3 masks
+     * a FORCE_CLIPPING context's display object to its visible region, which is a *clip*; the port
+     * arrives at the same result arithmetically instead, in `WindowComposite.compositeWindow()`,
+     * which intersects `effectiveClip` down the walk and calls `ctx.clip()` per window. Reinstating
+     * a real mask here would clip the same pixels twice.
+     *
+     * It is kept, rather than deleted, because it is the one place that records what AS3's mask
+     * *was* — the day the per-context buffer tree lands (see IMPLEMENTATION_STATUS.md → "Not yet
+     * done"), the mask belongs on the context's own surface and this is the value it needs.
      */
     // Derived name: the Shape AS3 assigns as the display object mask is
     // _SafeStr_4905 (_Str_3303 in the 2016 tree); no tree recovers it.

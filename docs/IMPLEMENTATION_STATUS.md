@@ -4369,10 +4369,95 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 - **`WindowComposite` is a one-pass bridge, not AS3's per-`BitmapData` tree.** The clip fix above
   reproduces AS3's *clip* result without allocating a surface per graphic-context-owning window. The
   fully structural port — an `OffscreenCanvas` per own-context window, mirroring AS3's `BitmapData`
-  tree — is deferred. It is the only thing that would also make a per-context `colorTransform` tint a
-  whole rendered subtree (today the CSS-filter approximation applies only to a window's own buffer,
-  not its children). It is a full render-path rewrite with per-frame allocation/caching and broad
+  tree — is deferred. It is a full render-path rewrite with per-frame allocation/caching and broad
   regression surface, so it is its own deliberate task, not a rider on a bug fix.
+
+  **Attempted 2026-09-06 and reverted. Read this before trying again — the reason written here for
+  four months was wrong, and the real obstacle is somewhere else entirely.**
+
+  *The old justification was false.* This entry used to claim the rewrite "is the only thing that
+  would also make a per-context `colorTransform` tint a whole rendered subtree". AS3 does no such
+  thing: `WindowController.as::applyDynamicStyleByState()` l.1334 assigns the transform to
+  `getGraphicContext().getDisplayObject().transform.colorTransform` — the `Bitmap` child, not the
+  context `Sprite` — and `GraphicContext.as`'s `filters` override forwards to `getDisplayObject()`
+  too. Neither cascades in Flash either. The port already matches.
+
+  *What actually cascades is `blend`, and it is worth 2 windows.* `GraphicContext.set blend` writes
+  `this.alpha` on the context Sprite, which does cover the child container and therefore every
+  own-context descendant. Measured across the 783 shipped layouts: 54 windows have `blend < 1` and
+  real children, **52 of which carry param 16** — so AS3 routes their blend through the blit
+  (`alphaMultiplier`) and does not cascade either, exactly as the port does. The genuine gap is
+  `own_avatar_decorating.xml` and `room_tools_toolbar_xml.xml`. Two.
+
+  *The real reason to do the rewrite is allocation, and nobody had written it down.* The port gives
+  every rendered window its own `OffscreenCanvas`; AS3 allocates a `BitmapData` only per
+  graphic context. Counting the shipped layouts: 10,348 windows carry param 16 against 1,196 that
+  own a context — **~9.7x more surfaces than AS3 would hold**. That, not fidelity, is the case for
+  doing this.
+
+  *What the attempt got right, and the one fix worth keeping.* The rewrite itself was structurally
+  sound — cold renders came back visually identical. It broke only things that update *after* the
+  first render, and the cause was a change made in passing, not the shared buffer: `invalidate()`
+  case 4 was made "faithful" to AS3, which reports no redraw for a visible own-context window
+  because moving a Flash `Sprite` moves its pixels for free. The port has no display list — the
+  composite blits the context buffer at the window's coordinates — so a move that queues no render
+  never reaches the screen. That emptied the Navigator's room list, truncated the catalogue menu and
+  left the room previewer behind when the inventory was dragged. `case 4` must stay
+  `changed = true` unconditionally, and it needs a `DEVIATION:` saying why.
+
+  *Where it actually stalled.* With that fixed, one class of defect remained: text windows that
+  share their parent's context rendered blank (window titles, static labels), while text windows
+  owning a context were fine. Ruled out by measurement, not reasoning — `render()` never bails for
+  want of a target (0 occurrences), the composite reaches and draws every one of them
+  (49,786 visits, 49,786 draws), `render()` runs before `composite()`, and
+  `getDrawLocationAndClipRegion()` correctly yields `(0,0)` for an own-context window. The
+  outstanding lead is that an own-context window gets an implicit refresh every frame —
+  `setDrawRegion()` always returns its buffer, which sets `_refresh = true` — and a shared-context
+  window never does, so if it is ever drawn blank it stays blank. Before the rewrite *every* window
+  had a context, so every window had that implicit refresh.
+
+  **Three method notes, and the third invalidates work in this very entry.**
+
+  1. The probe that produced the "skin buffer is empty" reading only recorded each window's *first*
+     blit, so it could not distinguish "empty" from "empty at first". Verify a probe measures the
+     moment you think it does.
+  2. Vite serves `vortex-engine` sources to Glaze through an alias while the browser caches modules
+     per tab: a reload is not enough. Open a fresh tab, or you will measure the previous build and
+     believe it.
+  3. **The screenshot harness was not deterministic, and nothing had ever checked that it was —
+     because the bug was in the engine.** `HabboWindowManager.renderWindowSnapshot()` composited
+     the window buffers *without draining the render queue*, where `compositeLayers()` two methods
+     up always called `render()` first. A snapshot therefore captured whatever the buffers held,
+     current or not depending on where the frame's own render landed. One `render()` is not enough
+     either: rendering causes invalidation (text measures and resizes, an asset finishes loading, a
+     list re-lays out), so it now loops until `hasPendingUpdates()` clears, bounded at 8 passes —
+     two is what a settling tree actually needs. Same layout, identical code: **3 runs gave 2
+     different images before, 5 runs give 5 identical after.**
+
+     This was never only a test-harness problem. `ModalDialog`'s desktop darkening,
+     `EditorCanvasLayer` and Glaze's PNG export all go through that method and could all capture a
+     half-drawn frame.
+
+     Every byte-level conclusion drawn before that fix is void — including "the alpha cascade
+     empties `notification`", which reverted a change that was in fact correct. **A comparison
+     harness that has not been shown to reproduce itself is not evidence.**
+
+  The full attempt is saved as `%TEMP%\window-composite-rewrite.patch` (822 lines).
+
+  **Landed separately, because none of it depends on the rewrite:**
+
+  - **The `blend` cascade.** `compositeWindow()` threads an `inheritedAlpha` that only an
+    own-context window passes down, matching `GraphicContext.set blend` writing `this.alpha` on the
+    context Sprite. Re-verified on the fixed harness: exactly the two layouts the layout-level
+    measure predicted change (`own_avatar_decorating`, `room_tools_toolbar_xml`) and the three
+    controls — `notification`, `memenu_effect_inactive`, `notification_gift_alert` — are
+    byte-identical. Prediction and measurement agreeing is what makes it safe.
+  - **The `BLEND_*` tags**, which the port had been dropping entirely — 14 shipped layouts declare
+    one, 8 of them `BLEND_ADD`; the 3 `BLEND_SUBTRACT` / 3 `BLEND_INVERT` that Canvas2D cannot
+    express warn once instead of rendering silently wrong.
+  - **`GraphicContext.maskRectangle`** now says at its declaration why it has no reader and must not
+    be given one: AS3's mask is a clip `compositeWindow()` already applies arithmetically, so wiring
+    it would clip the same pixels twice.
 
 - **The branch is lightly tested.** 35 commits; chat and the window system have been exercised live,
   the rest has not.
