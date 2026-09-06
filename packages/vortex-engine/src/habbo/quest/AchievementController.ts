@@ -3,6 +3,7 @@ import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
+import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
@@ -1046,6 +1047,7 @@ export class AchievementController implements IDisposable
 
         const widget = widgetWindow.widget as IBadgeImageWidget;
 
+        AchievementController.showLoadingIcon(widgetWindow);
         widget.badgeId = this.getAchievedBadgeId(achievement);
         widget.greyscale = !achievement.firstLevelAchieved;
         widgetWindow.visible = true;
@@ -1060,9 +1062,25 @@ export class AchievementController implements IDisposable
 
         const widget = widgetWindow.widget as IBadgeImageWidget;
 
+        AchievementController.showLoadingIcon(widgetWindow);
         widget.badgeId = this.getAchievedBadgeId(achievement);
         widget.greyscale = !achievement.firstLevelAchieved;
         widgetWindow.visible = true;
+    }
+
+    /**
+     * Both AS3 refresh helpers park the loading icon on the widget's own bitmap before handing it a
+     * new badge id. Without it a badge that never loads (a missing album1584 gif, or the empty badge
+     * code an ill-behaved server sends) leaves the *previous* badge on screen — the detail panel then
+     * shows one achievement's artwork under another's name.
+     */
+    // AS3: AchievementController.as::refreshBadgeImage()
+    private static showLoadingIcon(widgetWindow: IWidgetWindow): void
+    {
+        const root = widgetWindow.rootWindow as unknown as IWindowContainer | null;
+        const bitmap = (root?.findChildByName('bitmap') ?? null) as IStaticBitmapWrapperWindow | null;
+
+        if(bitmap !== null) bitmap.assetUri = 'common_loading_icon';
     }
 
     // AS3: AchievementController.as::switchIntoPendingLevel()

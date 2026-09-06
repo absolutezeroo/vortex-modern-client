@@ -866,17 +866,19 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
 
     /**
 	 * Set a category's `category_pic_bitmap` child to its category image
-	 * ("achcategory_<code>_active"/"_inactive" for the big grid-cell picture, depending on
-	 * whether the category has any progress; "achicon_<code>" for the small header icon).
+	 * ("ach_category_<code>" for the big grid-cell picture, "achicon_<code>" for the small
+	 * header icon).
 	 *
-	 * Both crypted trees (WIN63-202607011411 and win63_version) decompile the `big` branch
-	 * as a flat "ach_category_" + code literal with no active/inactive ternary — the same
-	 * class of literal corruption already documented in BadgeImageWidget.ts's .gif/.png
-	 * fix. The unobfuscated 2016 PRODUCTION tree preserves the real literal and ternary;
-	 * ported from there since a decompiler string-literal bug doesn't get "fixed" by a
-	 * decade of subsequent client changes the way behavior can.
+	 * This used to append the 2016 PRODUCTION build's `_active`/`_inactive` ternary, on the
+	 * theory that both 2026 trees had lost it to literal corruption. They had not: 2016 asks
+	 * for a different asset family entirely (`achcategory_`, no underscore), and the two 2026
+	 * trees agree on a bare `ach_category_`. The tile geometry settles it — `ach_category_
+	 * identity.png` is 90x55 and, centred in the layout's 86x72 `category_pic_bitmap` box at
+	 * y=27, puts its green ribbon on rows 71..86 of the tile, exactly under `completion_txt`
+	 * (y=70, height 14). The `_active` variants are 68x64, which drops the ribbon 6px and
+	 * leaves the counter floating above it.
 	 */
-    // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/quest/HabboQuestEngine.as::_Str_21694()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/quest/HabboQuestEngine.as::setupAchievementCategoryImage()
     setupAchievementCategoryImage(container: IWindowContainer, category: AchievementCategory, big: boolean): void
     {
         const bitmap = container.findChildByName('category_pic_bitmap') as unknown as
@@ -885,7 +887,7 @@ export class HabboQuestEngine extends Component implements IHabboQuestEngine, IL
         if(bitmap === null) return;
 
         const name = big
-            ? `ach_category_${category.code}_${category.getProgress() > 0 ? 'active' : 'inactive'}`
+            ? `ach_category_${category.code}`
             : `achicon_${category.code}`;
 
         bitmap.assetUri = '';
