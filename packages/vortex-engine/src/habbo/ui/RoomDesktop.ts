@@ -1809,6 +1809,16 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
             case RoomEngineObjectEvent.REOE_DESELECTED:
                 translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED;
                 break;
+            // AS3: RoomDesktop.as::processRoomObjectEvent() l.1216-1221. The engine has emitted
+            // REOE_MOUSE_ENTER/LEAVE all along and nothing translated them, so
+            // RWROUE_OBJECT_ROLL_OVER and _ROLL_OUT were declared constants that no code raised
+            // and none listened for — and hovering a user or a furni showed no name.
+            case RoomEngineObjectEvent.REOE_MOUSE_ENTER:
+                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_ROLL_OVER;
+                break;
+            case RoomEngineObjectEvent.REOE_MOUSE_LEAVE:
+                translatedType = RoomWidgetRoomObjectUpdateEvent.OBJECT_ROLL_OUT;
+                break;
             // AS3: RoomDesktop.as::processRoomObjectEvent() ("REOE_PLACED") — the one arm of this
             // switch that builds a *subclass* of the update event, because where the thing landed
             // and who started the drag do not fit the four fields the base carries.

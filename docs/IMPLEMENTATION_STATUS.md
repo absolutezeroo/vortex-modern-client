@@ -4645,6 +4645,31 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   match ANY of them — keeping only the last made files that DO handle a case read as missing it.
   50 raw hits down to 22.
 
+  **A fourth and a fifth measure, and the feature the fifth found.** Constants first: for every
+  `AS3:` trace naming a constant, compare the value on both sides — a renamed constant is a style
+  question, a constant with the wrong VALUE is silent, and that is how the avatar editor's save
+  once stopped reaching the landing view. **505 compared, 0 disagreements** — and the count matters
+  as much as the zero: an earlier run of the same script reported "0 mismatches" while comparing
+  nothing at all, because the report did not say how many pairs it had looked at. (Its one apparent
+  hit was also its own bug: AS3 writes `DEFAULT_ALPHA:int = 0xFF` and the number regex captured the
+  leading `0`.)
+
+  Then subscriptions: the events the AS3 a file is traced to registers for, that the port never
+  names. 310 compared across 104 files, 22 files with a gap, and the first one opened a **whole
+  feature that did not exist: the hover name**.
+
+  - `AvatarInfoWidget` never handled `RWROUE_OBJECT_ROLL_OVER` / `_ROLL_OUT`, so nothing asked the
+    room for a hovered object's name;
+  - `RoomDesktop` never translated `REOE_MOUSE_ENTER` / `_LEAVE` into them, so the events could not
+    have arrived anyway — though `RoomEngine` had been emitting both all along and `RoomUI` had
+    been forwarding them;
+  - and `RWONE_TYPE`, the *reply* carrying the name, had no branch either, so even a wired request
+    would have gone unanswered.
+
+  Three links of one chain, each independently absent. Hovering a user in the room now shows their
+  name again, and `_openedFromMemenu` — carrying a comment saying AS3 "reads it nowhere in this
+  file" — turns out to be read exactly twice, in the two arms that had never been ported.
+
   **One method note.** The first pass at this reported "our factory has 42 cases against AS3's 79"
   and it was wrong twice over: the 79 counted two different switches, and the probe that produced it
   had its regex mangled by shell escaping, so it reported `room` and `tile_cursor` as unhandled on a

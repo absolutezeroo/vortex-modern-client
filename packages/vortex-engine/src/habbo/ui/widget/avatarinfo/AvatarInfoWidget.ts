@@ -49,6 +49,7 @@ import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
+import {RoomWidgetRoomObjectNameEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectNameEvent';
 import {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent';
 import {RoomWidgetPetStatusUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetStatusUpdateEvent';
 import {RoomWidgetPetLevelUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetLevelUpdateEvent';
@@ -154,10 +155,22 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
 
     /**
      * Derived name — `_SafeStr_6130`: set when the bubble was opened by the toolbar's me-menu
-     * rather than by a click on the avatar. AS3 writes it here and reads it nowhere in this file.
+     * rather than by a click on the avatar.
+     *
+     * It reads it twice, in the roll-over and roll-out arms (`AvatarInfoWidget.as` l.600 and
+     * l.611) — this comment used to say AS3 read it nowhere, which was true only because those
+     * two arms had never been ported.
      */
     // AS3: AvatarInfoWidget.as::_SafeStr_6130
     private _openedFromMemenu: boolean = false;
+
+    /**
+     * The object the pointer is currently over, so roll-out only dismisses the name it raised.
+     *
+     * Derived name — AS3's `_SafeStr_7543`.
+     */
+    // AS3: AvatarInfoWidget.as::_SafeStr_7543
+    private _rolledOverObjectId: number = -1;
 
     /** Derived name — `_SafeStr_5843`: the small name bubble, kept between opens. */
     // AS3: AvatarInfoWidget.as::_SafeStr_5843
@@ -761,6 +774,82 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
         this.close();
         this.removeUseProductViews();
         this.removeBreedPetViews();
+    };
+
+    /**
+     * The answer to the `GET_OBJECT_NAME` the roll-over above asks for: the room replies with the
+     * object's name and this raises the tag.
+     *
+     * Without it the request went out and nothing consumed the reply, which is the other half of
+     * why hovering showed nothing. AS3 restricts it to users (category 100); furni names come back
+     * on the same event and are the infostand's business, not the bubble's.
+     */
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (RWONE_TYPE case)
+    private onObjectName = (event: RoomWidgetRoomObjectNameEvent): void =>
+    {
+        if(event.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) return;
+
+        // AS3 passes `false` for allowNameChange and `null` for the user data: a hover raises the
+        // name only, never the context menu that a click raises.
+        this.prepareUserView(event.userId, event.userName, event.roomIndex, false, false);
+    };
+
+    /**
+     * Whether a menu is open on the bubble, in which case hovering another object must not
+     * disturb it.
+     *
+     * AS3 spells this as five `is` tests; it is the same list, and it is the reason a hover does
+     * not steal the bubble from an open avatar or pet menu.
+     */
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (the shared guard of both roll arms)
+    private hasMenuView(): boolean
+    {
+        return this._activeView instanceof AvatarMenuView
+            || this._activeView instanceof OwnAvatarMenuView
+            || this._activeView instanceof OwnPetMenuView
+            || this._activeView instanceof NewUserHelpView
+            || this._activeView instanceof RentableBotMenuView;
+    }
+
+    /**
+     * The pointer entered an object: ask the room for its name, which comes back as
+     * `RoomWidgetRoomObjectNameEvent` and raises the small name tag.
+     *
+     * Neither this nor its roll-out counterpart was ported, and the desktop never translated
+     * `REOE_MOUSE_ENTER` either, so hovering a user or a furni showed nothing at all.
+     */
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (RWROUE_OBJECT_ROLL_OVER case)
+    private onObjectRollOver = (event: RoomWidgetRoomObjectUpdateEvent): void =>
+    {
+        if(this._openedFromMemenu || this.hasMenuView()) return;
+
+        this._rolledOverObjectId = event.id;
+
+        this.messageListener?.processWidgetMessage(
+            new RoomWidgetRoomObjectMessage(
+                RoomWidgetRoomObjectMessage.GET_OBJECT_NAME,
+                event.id,
+                event.category
+            )
+        );
+    };
+
+    /**
+     * The pointer left: dismiss the name, but only the one this hover raised, and only while the
+     * view is not the own-avatar one whose name is editable.
+     */
+    // AS3: AvatarInfoWidget.as::updateEventHandler() (RWROUE_OBJECT_ROLL_OUT case)
+    private onObjectRollOut = (event: RoomWidgetRoomObjectUpdateEvent): void =>
+    {
+        if(this._openedFromMemenu || this.hasMenuView()) return;
+
+        if(event.id !== this._rolledOverObjectId) return;
+
+        if(this._activeView !== null && !this._activeView.allowNameChange)
+        {
+            this.removeView(this._activeView, false);
+            this._rolledOverObjectId = -1;
+        }
     };
 
     // AS3: AvatarInfoWidget.as::updateEventHandler() (RWROUE_OBJECT_SELECTED case)
@@ -1620,6 +1709,9 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
             [RoomWidgetInventoryUpdatedMessage.INVENTORY_UPDATED, this.onInventoryUpdated],
             [RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onObjectDeselected],
             [RoomWidgetRoomObjectUpdateEvent.OBJECT_SELECTED, this.onObjectSelected],
+            [RoomWidgetRoomObjectUpdateEvent.OBJECT_ROLL_OVER, this.onObjectRollOver],
+            [RoomWidgetRoomObjectUpdateEvent.OBJECT_ROLL_OUT, this.onObjectRollOut],
+            [RoomWidgetRoomObjectNameEvent.OBJECT_NAME, this.onObjectName],
             [RoomWidgetPetInfoUpdateEvent.PET_INFO, this.onPetInfoUpdate],
             [RoomWidgetPetStatusUpdateEvent.PET_STATUS_UPDATE, this.onPetStatusUpdate],
             [RoomWidgetPetLevelUpdateEvent.PET_LEVEL_UPDATE, this.onPetLevelUpdate],
