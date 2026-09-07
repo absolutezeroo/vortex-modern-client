@@ -1,7 +1,12 @@
 import {EventEmitter} from 'eventemitter3';
 import {Logger} from '@core/utils/Logger';
+import {AssetLibrary} from '@core/assets/AssetLibrary';
+import {AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
+import {Core} from '@core/Core';
 import {FurnitureData} from './FurnitureData';
 
+import type {AssetLoaderEvent} from '@core/assets/loaders/AssetLoaderEvent';
+import type {IContext} from '@core/runtime/IContext';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IFurnitureData} from './IFurnitureData';
 
@@ -42,6 +47,22 @@ export class FurnitureDataParser
     private _critical: boolean;
     private _events: EventEmitter<IFurnitureDataParserEvents> = new EventEmitter();
     private _disposed: boolean = false;
+    /**
+     * The library the download runs through, and the reason dispose() can stop it.
+     *
+     * The port used to `await fetch(url)` with nothing owning the request, so a parser replaced by
+     * SessionDataManager.initFurnitureData() resumed after its await and wrote into the maps its
+     * own dispose() had just nulled — `TypeError: Cannot read properties of null (reading 'set')`
+     * out of storeItem(), and the manager left with no furniture data at all.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_assetLibrary
+    private _assetLibrary: AssetLibrary | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::MAX_DOWNLOAD_RETRIES
+    private static readonly MAX_DOWNLOAD_RETRIES: number = 2;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_url
+    private _url: string | null = null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_downloadRetriesLeft
+    private _downloadRetriesLeft: number = 0;
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::FurnitureDataParser()
     constructor(
@@ -59,6 +80,23 @@ export class FurnitureDataParser
         this._wallItemsByName = wallItemsByName;
         this._localization = localization;
         this._critical = critical;
+        // AS3: `_SafeStr_6050 = new AssetLibrary("FurniDataParserAssetLib")`. The port's
+        // AssetLibrary is a Component and needs the context AS3's does not.
+        this._assetLibrary = new AssetLibrary(Core.instance as IContext, 'FurniDataParserAssetLib');
+    }
+
+    /**
+     * AS3 is a static helper on the class; same here.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::appendRetryParam()
+    private static appendRetryParam(url: string, retry: number): string
+    {
+        if(url.indexOf('?') > 0)
+        {
+            return url + '&retry=' + retry;
+        }
+
+        return url + '?retry=' + retry;
     }
 
     get events(): EventEmitter<IFurnitureDataParserEvents>
@@ -67,75 +105,165 @@ export class FurnitureDataParser
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::loadData()
-    async loadData(url: string): Promise<void>
+    loadData(url: string): void
     {
-        try
-        {
-            const downloadStart = performance.now();
-            const response = await fetch(url);
+        this._url = url;
+        this._downloadRetriesLeft = FurnitureDataParser.MAX_DOWNLOAD_RETRIES;
 
-            if(!response.ok)
+        this.requestData(url);
+    }
+
+    /**
+     * AS3 drops any "furnidata" asset already in the library before loading the next one, which is
+     * what makes a retry — and a second loadData() on the same parser — legal: without it
+     * loadAssetFromFile() would throw on the name it registered the first time.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::requestData()
+    private requestData(url: string): void
+    {
+        if(this._assetLibrary === null) return;
+
+        // `hasAsset()` rather than `getAssetByName()`: the latter warns on a miss, and a miss is the
+        // expected answer on the first request.
+        if(this._assetLibrary.hasAsset('furnidata'))
+        {
+            const existing = this._assetLibrary.getAssetByName('furnidata');
+
+            if(existing !== null)
             {
-                throw new Error(`Failed to load furniture data: ${response.status}`);
+                const removed = this._assetLibrary.removeAsset(existing);
+
+                if(removed !== null) removed.dispose();
+            }
+        }
+
+        const downloadStart = performance.now();
+        const loader = this._assetLibrary.loadAssetFromFile('furnidata', url, 'text/plain');
+
+        // AS3 registers two listeners on the AssetLoaderStruct, one per event type, and drops both
+        // in removeLoaderListeners(). This port's struct emits every type under one `event` name,
+        // so the pair is a single handler split on `event.type`, retired by one `off()`.
+        const onEvent = (event: AssetLoaderEvent): void =>
+        {
+            if(event.type !== AssetLoaderEventType.COMPLETE && event.type !== AssetLoaderEventType.ERROR) return;
+
+            // AS3: parseFurnitureData()/furnitureDataError() both open with removeLoaderListeners().
+            loader.events.off('event', onEvent);
+
+            // Disposing the library takes the loader with it, but an event already queued can still
+            // land. Flash severs the dispatcher on disposal so AS3 never sees one; this guard is the
+            // port's, and it is what stops a replaced parser writing into its own nulled maps.
+            if(this._disposed) return;
+
+            if(event.type === AssetLoaderEventType.ERROR)
+            {
+                this.onMalformedData(event.status);
+                return;
             }
 
-            const data = await response.text();
+            const content = this._assetLibrary?.getAssetByName('furnidata')?.content ?? null;
+            const data = typeof content === 'string' ? content : null;
+
+            if(data === null || data.length === 0)
+            {
+                this.onMalformedData(event.status);
+                return;
+            }
 
             log.info(`Furnidata downloaded in ${Math.round(performance.now() - downloadStart)} ms`);
 
-            this.parseFurnitureData(data);
+            if(!this.parseFurnitureData(data))
+            {
+                this.onMalformedData(event.status);
+                return;
+            }
 
             log.info(`Parsed ${this._floorItems.size} floor items, ${this._wallItems.size} wall items`);
             this._events.emit('FDP_furniture_data_ready');
-        }
-        catch (error)
+        };
+
+        loader.events.on('event', onEvent);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::retryLoadIfPossible()
+    private retryLoadIfPossible(): boolean
+    {
+        if(this._url === null || this._downloadRetriesLeft <= 0)
         {
-            const err = error instanceof Error ? error : new Error(String(error));
-
-            if(this._critical)
-            {
-                log.error('Failed to parse furniture data:', err);
-            }
-            else
-            {
-                log.warn(`Failed to parse furniture data: ${err.message}`);
-            }
-
-            this._events.emit('FDP_furniture_data_error', err);
+            return false;
         }
+
+        const url = FurnitureDataParser.appendRetryParam(this._url, this._downloadRetriesLeft);
+
+        this._downloadRetriesLeft--;
+        this.requestData(url);
+
+        return true;
+    }
+
+    /**
+     * AS3 also calls `HabboWebTools.logEventLog("furnituredata malformed data " + status)` here.
+     * That reports to Habbo's own telemetry endpoint and has no counterpart to report to.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::onMalformedData()
+    private onMalformedData(status: number): void
+    {
+        if(this.retryLoadIfPossible())
+        {
+            return;
+        }
+
+        const err = new Error(`XML furni data was malformed (status ${status})`);
+
+        Core.error('XML furni data was malformed', this._critical, 12);
+        this._events.emit('FDP_furniture_data_error', err);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseFurnitureData()
-    private parseFurnitureData(data: string): void
+    private parseFurnitureData(data: string): boolean
     {
+        // AS3 returns Boolean from parseXmlFormat() alone and routes a false to onMalformedData();
+        // the JSON branch is the port's, so it answers the same way rather than throwing out of the
+        // loader callback where nothing would catch it.
         if(data.charAt(0) === '<')
         {
-            this.parseXmlFormat(data);
-            return;
+            return this.parseXmlFormat(data);
         }
 
         const trimmed = data.trim();
 
         if(trimmed.charAt(0) === '{' || trimmed.charAt(0) === '[')
         {
-            this.parseJsonFormat(JSON.parse(trimmed) as Record<string, unknown>);
-            return;
+            try
+            {
+                this.parseJsonFormat(JSON.parse(trimmed) as Record<string, unknown>);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
         this.parseLingoFormat(data);
+
+        return true;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseXmlFormat()
-    private parseXmlFormat(data: string): void
+    private parseXmlFormat(data: string): boolean
     {
         // This runs synchronously on the main thread (as AS3's does), so its cost is a frozen
-        // client — worth being able to attribute. The download time is logged by loadData().
+        // client — worth being able to attribute. The download time is logged by requestData().
         const domStart = performance.now();
         const document = new DOMParser().parseFromString(data, 'text/xml');
 
+        // AS3 wraps `new XML(param1)` in try/catch and returns false, which sends the caller to
+        // onMalformedData() and its two retries. Throwing here instead skipped the retries.
         if(document.getElementsByTagName('parsererror').length > 0)
         {
-            throw new Error('XML furni data was malformed');
+            return false;
         }
 
         const buildStart = performance.now();
@@ -159,6 +287,8 @@ export class FurnitureDataParser
         log.info(`Furnidata XML: ${(data.length / 1048576).toFixed(1)} MB, `
             + `DOM parse ${Math.round(buildStart - domStart)} ms, `
             + `item build ${Math.round(done - buildStart)} ms`);
+
+        return true;
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::parseFloorItem()
@@ -810,12 +940,23 @@ export class FurnitureDataParser
     {
         if(this._disposed) return;
 
+        // Set before the library goes, so the loader callback can tell "replaced on purpose" from
+        // a real failure if one is already queued.
+        this._disposed = true;
+
+        // AS3: `if(_assetLibrary){ _assetLibrary.dispose(); _assetLibrary = null; }` — this is what
+        // stops the download. Nothing else in this method could.
+        if(this._assetLibrary !== null)
+        {
+            this._assetLibrary.dispose();
+            this._assetLibrary = null;
+        }
+
         this._events.removeAllListeners();
         this._floorItems = null as unknown as Map<number, IFurnitureData>;
         this._wallItems = null as unknown as Map<number, IFurnitureData>;
         this._floorItemsByName = null as unknown as Map<string, number[]>;
         this._wallItemsByName = null as unknown as Map<string, number[]>;
         this._localization = null;
-        this._disposed = true;
     }
 }

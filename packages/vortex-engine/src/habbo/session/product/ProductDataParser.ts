@@ -1,7 +1,12 @@
 import {EventEmitter} from 'eventemitter3';
 import {Logger} from '@core/utils/Logger';
+import {AssetLibrary} from '@core/assets/AssetLibrary';
+import {AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
+import {Core} from '@core/Core';
 import {ProductData} from './ProductData';
 
+import type {AssetLoaderEvent} from '@core/assets/loaders/AssetLoaderEvent';
+import type {IContext} from '@core/runtime/IContext';
 import type {IProductData} from './IProductData';
 
 const log = Logger.getLogger('habbo.session.product.ProductDataParser');
@@ -37,12 +42,73 @@ export class ProductDataParser
     // AS3: sources/PRODUCTION-201601012205-226667486/src/com/sulake/habbo/session/product/ProductDataParser.as::_products
     private _products: Map<string, IProductData>;
     private _disposed: boolean = false;
+    /**
+     * The library the download runs through — disposing it is how AS3 (and now this) stops a
+     * request when SessionDataManager.initProductData() replaces the parser. The port used to
+     * `await fetch(url)` with nothing owning it, so a replaced parser still finished and refilled
+     * the map a newer one already owned. See FurnitureDataParser, where the same gap crashed.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_assetLibrary
+    private _assetLibrary: AssetLibrary | null;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::MAX_DOWNLOAD_RETRIES
+    private static readonly MAX_DOWNLOAD_RETRIES: number = 2;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_url
+    private _url: string;
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_downloadRetriesLeft
+    private _downloadRetriesLeft: number;
 
     constructor(url: string, products: Map<string, IProductData>)
     {
         this._products = products;
+        this._assetLibrary = new AssetLibrary(Core.instance as IContext, 'ProductDataParserAssetLib');
+        this._url = url;
+        this._downloadRetriesLeft = ProductDataParser.MAX_DOWNLOAD_RETRIES;
 
-        this.loadData(url);
+        this.requestData(url);
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::appendRetryParam()
+    private static appendRetryParam(url: string, retry: number): string
+    {
+        if(url.indexOf('?') > 0)
+        {
+            return url + '&retry=' + retry;
+        }
+
+        return url + '?retry=' + retry;
+    }
+
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::retryLoadIfPossible()
+    private retryLoadIfPossible(): boolean
+    {
+        if(this._downloadRetriesLeft <= 0)
+        {
+            return false;
+        }
+
+        const url = ProductDataParser.appendRetryParam(this._url, this._downloadRetriesLeft);
+
+        this._downloadRetriesLeft--;
+        this.requestData(url);
+
+        return true;
+    }
+
+    /**
+     * AS3 also calls `HabboWebTools.logEventLog("productdata malformed data " + status)`, which
+     * reports to Habbo's telemetry and has no counterpart here. Note its `true`: product data is
+     * unconditionally critical, where furnidata's criticality is a constructor flag.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::onMalformedData()
+    private onMalformedData(status: number): void
+    {
+        if(this.retryLoadIfPossible())
+        {
+            return;
+        }
+
+        Core.error('XML Product data was malformed', true, 7);
+        this._events.emit('PDP_product_data_error', new Error(`XML Product data was malformed (status ${status})`));
     }
 
     private _events: EventEmitter<IProductDataParserEvents> = new EventEmitter();
@@ -60,35 +126,89 @@ export class ProductDataParser
     {
         if(this._disposed) return;
 
-        this._events.removeAllListeners();
         this._disposed = true;
+
+        // AS3: `if(_assetLibrary){ _assetLibrary.dispose(); _assetLibrary = null; }` — the request
+        // goes with the library.
+        if(this._assetLibrary !== null)
+        {
+            this._assetLibrary.dispose();
+            this._assetLibrary = null;
+        }
+
+        this._events.removeAllListeners();
     }
 
     /**
 	 * Load and parse product data from URL
 	 * @see source_as_win63/habbo/session/product/ProductDataParser.as constructor
 	 */
-    private async loadData(url: string): Promise<void>
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::requestData()
+    private requestData(url: string): void
+    {
+        if(this._assetLibrary === null) return;
+
+        // `hasAsset()` first: getAssetByName() warns on a miss, and a miss is the expected answer
+        // until a retry re-requests under the same name.
+        if(this._assetLibrary.hasAsset('productdata'))
+        {
+            const existing = this._assetLibrary.getAssetByName('productdata');
+
+            if(existing !== null)
+            {
+                const removed = this._assetLibrary.removeAsset(existing);
+
+                if(removed !== null) removed.dispose();
+            }
+        }
+
+        const loader = this._assetLibrary.loadAssetFromFile('productdata', url, 'text/plain');
+
+        // One handler for AS3's two listeners; this port's struct emits every type under `event`.
+        const onEvent = (event: AssetLoaderEvent): void =>
+        {
+            if(event.type !== AssetLoaderEventType.COMPLETE && event.type !== AssetLoaderEventType.ERROR) return;
+
+            // AS3: removeLoaderListeners(), first line of both handlers.
+            loader.events.off('event', onEvent);
+
+            if(this._disposed) return;
+
+            if(event.type === AssetLoaderEventType.ERROR)
+            {
+                this.onMalformedData(event.status);
+                return;
+            }
+
+            const content = this._assetLibrary?.getAssetByName('productdata')?.content ?? null;
+            const body = typeof content === 'string' ? content : null;
+
+            if(body === null)
+            {
+                this.onMalformedData(event.status);
+                return;
+            }
+
+            this.parseBody(url, body);
+        };
+
+        loader.events.on('event', onEvent);
+    }
+
+    private parseBody(url: string, body: string): void
     {
         try
         {
-            const response = await fetch(url);
-
-            if(!response.ok)
-            {
-                throw new Error(`Failed to load product data: ${response.status}`);
-            }
-
             // AS3 reads the body as text and dispatches on its first non-space
             // character — the format is never assumed from the URL or a header.
             // Calling response.json() outright meant Habbo's own productdata.txt
             // parsed as zero products.
-            const body = await response.text();
             const trimmed = body.replace(/^\s+/, '');
 
             if(trimmed.length === 0)
             {
-                throw new Error('Product data was empty');
+                this.onMalformedData(0);
+                return;
             }
 
             if(trimmed.charAt(0) === '<')
@@ -129,8 +249,10 @@ export class ProductDataParser
         }
         catch (error)
         {
-            log.error('Failed to parse product data:', error);
-            this._events.emit('PDP_product_data_error', error as Error);
+            // A body that arrived but would not parse is AS3's malformed case: retry twice, then
+            // Core.error. Throwing out of the loader callback would reach nothing.
+            log.warn(`Failed to parse product data: ${error instanceof Error ? error.message : String(error)}`);
+            this.onMalformedData(0);
         }
     }
 
