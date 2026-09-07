@@ -5,6 +5,7 @@ import type {IAvatarImageListener} from './IAvatarImageListener';
 import type {AvatarStructure} from './AvatarStructure';
 import type {AssetAliasCollection} from './alias/AssetAliasCollection';
 import {AvatarAssetDownloadLibrary} from './AvatarAssetDownloadLibrary';
+import {Core} from '@core/Core';
 import {Logger} from '@core/utils/Logger';
 
 const log = Logger.getLogger('habbo.avatar.AvatarAssetDownloadManager');
@@ -463,11 +464,19 @@ export class AvatarAssetDownloadManager extends EventEmitter
         // Remove from mandatory libs if applicable
         const mandatoryIndex = this._mandatoryLibs.indexOf(library.libraryName);
 
-        if(mandatoryIndex !== -1) 
+        if(mandatoryIndex !== -1)
         {
             this._mandatoryLibs.splice(mandatoryIndex, 1);
 
-            if(this._mandatoryLibs.length === 0 && this._mandatoryLibrariesReadyCallback !== null) 
+            // AS3 lists these same two libraries a second time, as core asset-libraries in the
+            // config document HabboAir hands to `readConfigDocument()`, and it is the core's copy
+            // that drives the loading bar between CORE_RATIO and 1.0. Here the core does not
+            // fetch them — this manager does — so the completion is reported back to it, which
+            // is what decrements `getNumberOfFilesPending()` and emits the progress event
+            // VortexMain.onProgressEvent() listens for.
+            Core.instance?.updateLoadingProcess(library.libraryName, 'complete');
+
+            if(this._mandatoryLibs.length === 0 && this._mandatoryLibrariesReadyCallback !== null)
             {
                 const callback = this._mandatoryLibrariesReadyCallback;
 

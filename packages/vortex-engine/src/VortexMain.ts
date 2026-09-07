@@ -1,3 +1,4 @@
+import {EventEmitter} from 'eventemitter3';
 import {HabboConfigurationManager} from '@habbo/configuration/HabboConfigurationManager';
 import {HabboCommunicationManager} from '@habbo/communication/HabboCommunicationManager';
 import {HabboCommunicationDemo} from '@habbo/communication/demo/HabboCommunicationDemo';
@@ -182,6 +183,32 @@ export class VortexMain implements IVortexMain
      */
     // AS3: .../src/binaryData/HabboAir.as::_completedInitSteps
     private _completedInitSteps: number = 0;
+    /**
+     * Denominator of the progress fraction: the core's asset-library files plus INIT_STEPS.
+     *
+     * AS3 seeds it to INIT_STEPS and overwrites it in prepareCore() the moment the config
+     * document has been read, so the bar is spread over the files as well as the three steps —
+     * which is what makes the last step land on exactly 1.0. The port used the bare INIT_STEPS
+     * constant as the denominator and so could only ever show 73%, 87% or 100%.
+     */
+    // AS3: .../src/binaryData/HabboAir.as::_totalInitSteps (name derived: the denominator of updateProgressBar())
+    private _totalInitSteps: number = VortexMain.INIT_STEPS;
+    /**
+     * Core asset-library files finished so far, counted into the same fraction as the steps.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as _loadedFiles
+     */
+    // AS3: .../src/binaryData/HabboAir.as::_loadedFiles
+    private _loadedFiles: number = 0;
+    /**
+     * Receives the core's `progress` / `complete` library events.
+     *
+     * AS3 passes `this` to `readConfigDocument()` — HabboAir is itself an EventDispatcher and
+     * listens on itself. VortexMain is not a dispatcher, so it hands the core a dedicated
+     * emitter and listens on that.
+     */
+    // AS3: .../src/binaryData/HabboAir.as::addEventListener("progress", onProgressEvent)
+    private readonly _loadingEvents: EventEmitter = new EventEmitter();
     /**
      * Whether the room engine has finished initialization.
      *
@@ -628,6 +655,22 @@ export class VortexMain implements IVortexMain
         // because this port's core never emits it — `CoreComponentContextEvents` has RUNNING and
         // REBOOT only, and `onCoreError()` is reached through `Vortex.reportCrash` instead.
         ctx.events.on(CoreComponentContextEvents.REBOOT, this.onCoreReboot);
+
+        // AS3: addEventListener("progress", onProgressEvent) / ("complete", onCompleteEvent), then
+        // `_core.readConfigDocument(<config><asset-libraries><library url="hh_human_body.swf"/>
+        // <library url="hh_human_item.swf"/></asset-libraries>…</config>, this)`, and only then
+        // `_totalInitSteps = getNumberOfFilesPending() + getNumberOfFilesLoaded() + INIT_STEPS`.
+        //
+        // The whole progress path was ported into CoreComponentContext — the counters,
+        // updateLoadingProcess(), the LibraryProgressEvent — and nobody called it, so both
+        // counters read 0 and the bar had only the three init steps to move on. The two
+        // mandatory avatar libraries are downloaded here by AvatarAssetDownloadManager rather
+        // than by the core, so that is where the matching updateLoadingProcess() call lives.
+        this._loadingEvents.on('progress', this.onProgressEvent);
+
+        ctx.readConfigDocument({'asset-libraries': ['hh_human_body', 'hh_human_item']}, this._loadingEvents);
+
+        this._totalInitSteps = ctx.getNumberOfFilesPending() + ctx.getNumberOfFilesLoaded() + VortexMain.INIT_STEPS;
 
         // Set target FPS from ticker
         ctx.targetFps = this._application!.ticker.maxFPS || 60;
@@ -1362,11 +1405,27 @@ export class VortexMain implements IVortexMain
     {
         if(this._loadingScreen != null) 
         {
-            const progress = VortexMain.CORE_RATIO + ((this._completedInitSteps / VortexMain.INIT_STEPS) * (1 - VortexMain.CORE_RATIO));
+            const progress = VortexMain.CORE_RATIO + (((this._completedInitSteps + this._loadedFiles) / this._totalInitSteps) * (1 - VortexMain.CORE_RATIO));
 
             this._loadingScreen.updateLoadingBar(progress);
         }
     }
+
+    /**
+     * A core asset library finished loading — re-read the counter and repaint the bar.
+     *
+     * @see sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as onProgressEvent()
+     */
+    // AS3: .../src/binaryData/HabboAir.as::onProgressEvent()
+    private onProgressEvent = (): void =>
+    {
+        const ctx = Core.instance as CoreComponentContext | null;
+
+        if(ctx === null) return;
+
+        this._loadedFiles = ctx.getNumberOfFilesLoaded();
+        this.updateProgressBar();
+    };
 
     /**
      * Called when the configuration manager has loaded.
