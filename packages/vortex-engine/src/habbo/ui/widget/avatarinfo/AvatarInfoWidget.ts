@@ -336,6 +336,14 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     {
         if(event.category !== RoomObjectCategoryEnum.OBJECT_CATEGORY_USER) return;
 
+        // AS3 closes the open bubble too (`RWROUE_USER_REMOVED`, l.806-809), and the port only
+        // did the name-bubble loop below — so a user who walked out left their info bubble
+        // standing over an empty tile, still offering to trade with them.
+        if(this._activeView !== null && this._activeView.roomIndex === event.objectId)
+        {
+            this.removeView(this._activeView, false);
+        }
+
         for(const view of [...this._avatarNameBubbles.values()])
         {
             if(view.objectId === event.objectId) this.removeView(view, false);

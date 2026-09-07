@@ -4670,6 +4670,22 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   name again, and `_openedFromMemenu` — carrying a comment saying AS3 "reads it nowhere in this
   file" — turns out to be read exactly twice, in the two arms that had never been ported.
 
+  **Three more out of the same 22, before the list stops paying.** No new tool — the fifth measure's
+  own output, worked down:
+
+  - **`HabboLocalizationManager` waited on two events nothing raises.** It listened for `'loaded'`
+    and `'failed'`; `CoreLocalizationManager` emits `LocalizationEvent.LOCALIZATION_LOADED` /
+    `_FAILED`, whose values are AS3's own `LOCALIZATION_EVENT_*` strings. So neither arm had ever
+    run: the ready flag stayed set, `complete` was never announced onward, and a failed gamedata
+    load never crashed the client the way AS3 makes it. The client boots and localises anyway,
+    which is exactly why nobody noticed.
+  - **`AvatarInfoWidget` left the bubble standing when its user walked out.** Its removal handler
+    did the name-bubble loop and not AS3's first half — the open info view is closed too when the
+    removed object is the one it describes.
+  - **`WindowMouseOperator` never listened for `WE_DESTROYED`.** AS3 ends the operation when the
+    dragged window is destroyed under it; without it the operator keeps a disposed window and keeps
+    operating on it.
+
   **One method note.** The first pass at this reported "our factory has 42 cases against AS3's 79"
   and it was wrong twice over: the 79 counted two different switches, and the probe that produced it
   had its regex mangled by shell escaping, so it reported `room` and `tile_cursor` as unhandled on a

@@ -8,6 +8,7 @@ import type {IHabboLocalizationManager} from './IHabboLocalizationManager';
 import {BadgeBaseAndLevel} from './BadgeBaseAndLevel';
 import {HabboCommunicationEvent, type HabboCommunicationEventType} from '@habbo/communication/enum';
 import {HabboConfigurationFlags} from '@habbo/configuration/enum/HabboConfigurationFlags';
+import {LocalizationEvent} from '@core/localization/LocalizationEvent';
 
 const log = Logger.getLogger('habbo.localization.HabboLocalizationManager');
 
@@ -320,15 +321,23 @@ export class HabboLocalizationManager extends CoreLocalizationManager implements
 
         this._isLocalizationInitialized = true;
 
-        this.events.once('loaded', () =>
+        // The two names the base manager actually emits. This listened for `'loaded'` and
+        // `'failed'`, which nothing anywhere raises — `CoreLocalizationManager` emits
+        // `LocalizationEvent.LOCALIZATION_LOADED` / `_FAILED`, whose values are AS3's own
+        // `LOCALIZATION_EVENT_*` strings. So neither arm had ever run: the ready flag stayed
+        // set, `complete` was never announced, and a failed gamedata load never crashed the
+        // client the way AS3 makes it.
+        this.events.once(LocalizationEvent.LOCALIZATION_LOADED, () =>
         {
             this._isLocalizationInitialized = false;
             log.info('Localizations ready');
 
+            // AS3: `localizationsReady()` dispatches a plain `complete` outward, which is what
+            // the rest of the boot waits on.
             this.events.emit('complete');
         });
 
-        this.events.once('failed', () =>
+        this.events.once(LocalizationEvent.LOCALIZATION_FAILED, () =>
         {
             this._isLocalizationInitialized = false;
             Core.crash('Failed loading gamedata hashes', 8);

@@ -1,3 +1,4 @@
+import {WindowEvent} from '../events/WindowEvent';
 import type {IWindow} from '../IWindow';
 import type {WindowController} from '../WindowController';
 
@@ -70,11 +71,23 @@ export class WindowMouseOperator
         {
             this._window = window as WindowController;
             this.getMousePositionRelativeTo(window, this._mouse, this._offset);
+            // A window can be closed mid-drag — a dialog dismissed by a server message, a widget
+            // disposed by the room changing. AS3 listens for it and ends the operation
+            // (`WindowMouseOperator.as` l.74 and l.140-143); without it the operator keeps
+            // dragging a disposed window by a reference nothing will clear.
+            this._window.addEventListener(WindowEvent.WE_DESTROYED, this._onWindowDestroyed);
             this._active = true;
         }
 
         return previous;
     }
+
+    /** Ends the operation on the window that has just gone away. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::clientWindowDestroyed()
+    private _onWindowDestroyed = (): void =>
+    {
+        if(this._window !== null) this.end(this._window);
+    };
 
     /**
 	 * End the mouse operation on a window.
@@ -91,6 +104,7 @@ export class WindowMouseOperator
         {
             if(this._window === window)
             {
+                this._window.removeEventListener(WindowEvent.WE_DESTROYED, this._onWindowDestroyed);
                 this._window = null;
                 this._active = false;
             }
