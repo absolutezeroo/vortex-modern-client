@@ -195,6 +195,11 @@ export class ProductDataParser
         loader.events.on('event', onEvent);
     }
 
+    /**
+     * The body of AS3's parseProductsData() after it has pulled the text off the loader — split out
+     * because the port reads that text from the library instead of from an AssetLoaderStruct.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::parseProductsData()
     private parseBody(url: string, body: string): void
     {
         try
