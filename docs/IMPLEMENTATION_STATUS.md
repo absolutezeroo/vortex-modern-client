@@ -4544,6 +4544,64 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Six gaps the four measures cannot see, found by asking a different question — 2026-09-07.**
+  With `wire-coverage`, `as3-member-coverage`, `todo-inventory` and `audit-as3-traces` all green,
+  the honest answer to "is anything left" was still yes, because every one of them asks whether a
+  member **exists**. None asks whether anything ever reaches it. The question that does:
+
+  ```sh
+  # exported classes nothing else in the port names (index.ts re-exports ignored)
+  # 41 of 4,495 — then triage each against "does AS3 itself construct it?"
+  ```
+
+  41 candidates, and the triage is most of the work: a class AS3 declares and never builds is dead
+  on both sides, and a class the port implements differently (object literals instead of the class)
+  is not a gap either. **Six were real:**
+
+  - **`furniture_cuboid` had no case in `RoomObjectVisualizationFactory`.** The class was ported and
+    the enum entry was there; every cuboid furni fell through to the default and drew as a plain
+    static one. The factory now matches AS3's 40/40.
+  - **`LandscapeRasterizer` and `WallAdRasterizer` were never constructed.** AS3's
+    `RoomVisualizationData` builds four rasterizers; the port built two, so the room's landscape
+    planes — the scenery seen through every window — were created with no rasterizer at all, and
+    billboard planes were not created at all: `RoomVisualization` had no branch for plane type 4 and
+    dropped them at its `continue`. Both classes were ported in full and reachable from nothing.
+  - **The moodlight told nobody its state.** `FurnitureRoomDimmerLogic` was `useObject()` and
+    nothing else, raising `ROWRE_OPEN_WIDGET` where AS3 raises `ROWRE_DIMMER`. AS3 also has
+    `update()`, `processUpdateMessage()`, `dispose()` and `dispatchColorUpdateEvent()`, which parses
+    `state,preset,effect,#rrggbb,brightness` out of the furni's own data string. Both ends were
+    already waiting: `RoomObjectDimmerStateUpdateEvent` was ported and dispatched by nobody, and
+    `FurnitureDimmerWidgetHandler` listens for `RoomEngineDimmerStateEvent.CYCLED` on a channel
+    nothing emitted on. The translation in the middle — AS3's `handleObjectDimmerStateEvent()` — is
+    in `RoomEngine` now.
+  - **`ToolbarHoverCtrl` was unreachable, under a comment saying it should be.**
+    `HabboNavigator.showToolbarHover()` was an empty body explaining that the method is "empty in
+    every AS3 implementor". `HabboNavigator.as` l.855-860 builds the controller and shows it. The
+    controller was also typed against `IHabboTransitionalNavigator`, which `HabboNavigator` does not
+    implement — so its only AS3 caller could not have called it even if the body had been written.
+  - **Room creation was unreachable through its own reply.** `onCanCreateRoom()` logged the result
+    code and returned. AS3 opens the create dialog on 0, and otherwise registers the room-limit
+    parameter and shows `SimpleAlertView` for a VIP or `ClubPromoAlertView` for everyone else —
+    which is why that view had no caller.
+  - **`getFigureStringWithFigureIds()` reset colours.** It passed `[0]` where AS3 passes the
+    colours the figure already has for that part type, so swapping a part through the figure-id path
+    silently repainted it.
+
+  **What the same sweep says is NOT a gap**, so the next run does not re-triage it: `RoomLayout`,
+  `RoomPlaneBitmapMask` and `RoomPlaneRectangleMask` are implemented as object literals at their
+  call sites; `Combo`/`MoveBy`/`ResizeTo` belong to the AS3 Motion framework this port replaced in
+  `HintManager`; `LibraryLoadedEvent` is short-circuited into a direct call on the alias collection;
+  `FurniturePetCustomizationLogic` is a class AS3's own factory never maps (it maps that type to
+  `FurniturePetProductLogic`, exactly as the port does); `WindowMessage`, `WindowTouchEvent` and
+  `MeMenuChatSettingsView` are constructed nowhere in the primary tree either. The sweep went 41 →
+  35, and the 35 are enums compared by value, DTOs, and the above.
+
+  **One method note.** The first pass at this reported "our factory has 42 cases against AS3's 79"
+  and it was wrong twice over: the 79 counted two different switches, and the probe that produced it
+  had its regex mangled by shell escaping, so it reported `room` and `tile_cursor` as unhandled on a
+  screen that had just shown them handled. Written as a file rather than a `node -e` string, the
+  same comparison said **one**. A probe that disagrees with something you can see is the probe.
+
 - 🆕 **Text is rasterised from the outline now, and the gap with Flash was vertical — 2026-09-07.**
   Three attempts at this were reverted before (a from-scratch SDF rasteriser, `truffle-text`, and the
   binary glyph atlas), all three judged by eye. This one is judged by a number, and the harness is

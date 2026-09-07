@@ -36,6 +36,7 @@ import {FurnitureHabboWheelVisualization} from './visualization/furniture/Furnit
 import {FurnitureValRandomizerVisualization} from './visualization/furniture/FurnitureValRandomizerVisualization';
 import {FurnitureQueueTileVisualization} from './visualization/furniture/FurnitureQueueTileVisualization';
 import {FurniturePartyBeamerVisualization} from './visualization/furniture/FurniturePartyBeamerVisualization';
+import {FurnitureCuboidVisualization} from './visualization/furniture/FurnitureCuboidVisualization';
 import {FurnitureGiftWrappedVisualization} from './visualization/furniture/FurnitureGiftWrappedVisualization';
 import {FurnitureCounterClockVisualization} from './visualization/furniture/FurnitureCounterClockVisualization';
 import {FurnitureScoreBoardVisualization} from './visualization/furniture/FurnitureScoreBoardVisualization';
@@ -238,6 +239,12 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 
             case RoomObjectVisualizationEnum.FURNITURE_PARTY_BEAMER:
                 return new FurniturePartyBeamerVisualization();
+
+            // The class was ported and the enum entry was there; only this line
+            // was missing, so every `furniture_cuboid` fell through to the
+            // default and drew as a plain static furni.
+            case RoomObjectVisualizationEnum.FURNITURE_CUBOID:
+                return new FurnitureCuboidVisualization();
 
             case RoomObjectVisualizationEnum.FURNITURE_GIFT_WRAPPED:
                 return new FurnitureGiftWrappedVisualization();

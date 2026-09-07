@@ -45,6 +45,7 @@ import type {CompetitionRoomsData, EventCategory, GuestRoomData} from '../commun
 import type {IHabboCommunicationManager} from '../communication/IHabboCommunicationManager';
 import {IID_HabboCommunicationManager} from "@iid/IIDHabboCommunicationManager";
 import {Logger} from '@core/utils/Logger';
+import {ToolbarHoverCtrl} from './toolbar/ToolbarHoverCtrl';
 
 // Composers
 import {
@@ -75,6 +76,12 @@ export class HabboNavigator extends Component implements IHabboNavigator
     private _roomSessionManager: IRoomSessionManager | null = null;
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_toolbar
     private _toolbar: IHabboToolbar | null = null;
+
+    // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_toolbarHoverCtrl
+    // Name DERIVED: the AS3 field is `_SafeStr_5581`; named for the class it holds.
+    // Built on first hover, exactly as AS3 does — the room list it shows is not worth a window
+    // for a session that never hovers the navigator button.
+    private _toolbarHover: ToolbarHoverCtrl | null = null;
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_windowManager
     private _windowManager: IHabboWindowManager | null = null;
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::_localization
@@ -1011,22 +1018,48 @@ export class HabboNavigator extends Component implements IHabboNavigator
     }
 
     /**
-     * The toolbar's navigator-button hover. Empty in every AS3 implementor — the toolbar drives
-     * its own hover — but part of the interface, so it is declared rather than missing.
+     * The toolbar's navigator-button hover.
+     *
+     * This used to be an empty body under a comment saying it was "empty in every AS3
+     * implementor — the toolbar drives its own hover". It is not: `HabboNavigator.as` l.855-860
+     * builds a `ToolbarHoverCtrl` on first use and shows it, and the controller was ported in
+     * full and reachable from nothing.
      */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::showToolbarHover()
-    showToolbarHover(_point: { readonly x: number; readonly y: number } | number, _y: number = 0): void
+    showToolbarHover(point: { readonly x: number; readonly y: number } | number, y: number = 0): void
     {
+        if(this._toolbarHover === null) this._toolbarHover = new ToolbarHoverCtrl(this);
+
+        this._toolbarHover.show(
+            typeof point === 'number' ? point : point.x,
+            typeof point === 'number' ? y : point.y
+        );
     }
 
+    /**
+     * AS3's argument is unnamed and selects `hideDelayed()` when true, so it reads as "let it
+     * linger", not "hide it now" — which is what the port's old `_immediate` name implied.
+     */
     // AS3: .../src/com/sulake/habbo/navigator/HabboNavigator.as::hideToolbarHover()
-    hideToolbarHover(_immediate: boolean = false): void
+    hideToolbarHover(delayed: boolean = false): void
     {
+        if(this._toolbarHover === null) return;
+
+        if(delayed) this._toolbarHover.hideDelayed();
+        else this._toolbarHover.hide();
     }
 
     override dispose(): void
     {
         if(this.disposed) return;
+
+        // Built lazily by showToolbarHover(), so it owns a window only if the
+        // navigator button was ever hovered.
+        if(this._toolbarHover !== null)
+        {
+            this._toolbarHover.dispose();
+            this._toolbarHover = null;
+        }
 
         // Unsubscribe from toolbar events
         if(this._toolbar) 

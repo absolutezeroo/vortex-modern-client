@@ -345,9 +345,13 @@ export class AvatarRenderManager extends Component implements IAvatarRenderManag
         {
             const partSet = this._structure.figureData.getFigurePartSet(setId);
 
-            if(partSet) 
+            if(partSet)
             {
-                figure.updatePart(partSet.type, setId, [0]);
+                // AS3 saves the part with the colours the figure ALREADY has for that type
+                // (`_SafeCls_582.as` l.407: `savePartData(type, id, getColourIds(type))`). Passing
+                // [0] here reset the colour of every part this method touched, so swapping a hat
+                // through the figure-id path silently repainted it.
+                figure.updatePart(partSet.type, setId, figure.getPartColorIds(partSet.type) ?? [0]);
             }
         }
 

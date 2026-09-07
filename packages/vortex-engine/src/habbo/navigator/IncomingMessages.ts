@@ -61,6 +61,7 @@ import {QuitMessageComposer} from '../communication/messages/outgoing/room/sessi
 import {HabboWebTools} from '../utils/HabboWebTools';
 import {HabboToolbarEvent} from '../toolbar/events/HabboToolbarEvent';
 import {SimpleAlertView} from './SimpleAlertView';
+import {ClubPromoAlertView} from './ClubPromoAlertView';
 import {AlertView} from './AlertView';
 import {
     BannedUsersFromRoomEvent,
@@ -599,7 +600,32 @@ export class IncomingMessages
         if(!parser) return;
 
         log.debug(`Can create room: code=${parser.resultCode}, limit=${parser.roomLimit}`);
-        // Handle room creation permission check result
+
+        const transitional = this._navigator.transitionalNavigator;
+
+        if(transitional === null) return;
+
+        // Result 0 is "go ahead". Everything else is the room limit, and AS3 tells the user which
+        // of two ways depending on whether they already pay for the privilege.
+        if(parser.resultCode === 0)
+        {
+            transitional.roomCreateViewCtrl?.show();
+
+            return;
+        }
+
+        this._navigator.registerParameter('navigator.createroom.limitreached', 'limit', `${parser.roomLimit}`);
+
+        const alert = this._navigator.sessionData?.hasVip === true
+            ? new SimpleAlertView(transitional, '${navigator.createroom.error}', '${navigator.createroom.limitreached}')
+            : new ClubPromoAlertView(
+                transitional,
+                '${navigator.createroom.error}',
+                '${navigator.createroom.limitreached}',
+                '${navigator.createroom.vippromo}'
+            );
+
+        alert.show();
     }
 
     private onCanCreateRoomEvent(event: IMessageEvent): void

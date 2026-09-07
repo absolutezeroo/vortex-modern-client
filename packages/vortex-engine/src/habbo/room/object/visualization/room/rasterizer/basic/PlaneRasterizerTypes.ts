@@ -10,6 +10,9 @@ export interface IAssetRoomVisualizationData
     floorData?: IAssetPlaneVisualizationData;
     wallData?: IAssetPlaneVisualizationData;
     landscapeData?: IAssetPlaneVisualizationData;
+    // AS3 reads this alongside the other three (RoomVisualizationData.as l.136-141); the port had
+    // no field for it, so the wall-ad rasterizer had nothing to initialise from.
+    wallAdData?: IAssetPlaneVisualizationData;
     maskData?: unknown;
 }
 

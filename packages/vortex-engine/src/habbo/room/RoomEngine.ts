@@ -133,6 +133,8 @@ import {RoomObjectGroupBadgeUpdateMessage} from './messages/RoomObjectGroupBadge
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import {RoomObjectRoomAdEvent} from './events/RoomObjectRoomAdEvent';
 import {RoomObjectBadgeAssetEvent} from './events/RoomObjectBadgeAssetEvent';
+import {RoomObjectDimmerStateUpdateEvent} from './events/RoomObjectDimmerStateUpdateEvent';
+import {RoomEngineDimmerStateEvent} from './events/RoomEngineDimmerStateEvent';
 import {RoomObjectFurniIconAssetEvent} from './events/RoomObjectFurniIconAssetEvent';
 import {RoomObjectFurniIconUpdateMessage} from './messages/RoomObjectFurniIconUpdateMessage';
 import {FurniIconImageReadyEvent} from '@habbo/session/events/FurniIconImageReadyEvent';
@@ -8301,6 +8303,15 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             this.handleObjectWidgetRequestEvent(event, this._activeRoomId);
         }
+        // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectDimmerStateEvent()
+        // The moodlight's own state, on its way to the room and to the dimmer widget. Both ends
+        // were already ported — `FurnitureRoomDimmerLogic` raises it and
+        // `FurnitureDimmerWidgetHandler` listens for the engine event below — and this translation
+        // in the middle was the only thing missing, so the widget never learned the light's state.
+        else if(event instanceof RoomObjectDimmerStateUpdateEvent)
+        {
+            this.handleObjectDimmerStateEvent(event, this._activeRoomId);
+        }
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectGroupBadgeEvent()
         else if(event instanceof RoomObjectBadgeAssetEvent)
         {
@@ -8601,6 +8612,31 @@ export class RoomEngine extends Component implements IRoomEngine,
      * `_SafeCls_1821` is AS3's RoomObjectEventHandler, which this port folded into RoomEngine —
      * the same class that already implements IRoomRenderingCanvasMouseListener here.
      */
+    /**
+     * The moodlight's state, from the room object to the room engine's own event bus.
+     *
+     * AS3 guards on the connection being live, which is what keeps a state event from a room
+     * being torn down out of the widget's hands.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_1821.as::handleObjectDimmerStateEvent()
+    private handleObjectDimmerStateEvent(event: RoomObjectDimmerStateUpdateEvent, roomId: number): void
+    {
+        if(this._connection === null) return;
+
+        this.events.emit(
+            RoomEngineDimmerStateEvent.CYCLED,
+            new RoomEngineDimmerStateEvent(
+                roomId,
+                event.objectId,
+                event.state,
+                event.presetId,
+                event.effectId,
+                event.color,
+                event.brightness
+            )
+        );
+    }
+
     private handleObjectWidgetRequestEvent(event: RoomObjectWidgetRequestEvent, roomId: number): void
     {
         const objectId = event.objectId;

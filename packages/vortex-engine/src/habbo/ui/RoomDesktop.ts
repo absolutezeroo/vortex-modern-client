@@ -57,6 +57,7 @@ import {ColorTransitioner} from '@room/utils/ColorTransitioner';
 import type {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from './widget/events/RoomWidgetRoomObjectUpdateEvent';
+import {RoomWidgetRoomViewUpdateEvent} from './widget/events/RoomWidgetRoomViewUpdateEvent';
 import type {RoomEngineObjectPlacedEvent} from '@habbo/room/events/RoomEngineObjectPlacedEvent';
 import {RoomWidgetRoomObjectPlaceEvent} from './widget/events/RoomWidgetRoomObjectPlaceEvent';
 import {RoomDesktopMouseZoomEnableEvent} from './widget/events/RoomDesktopMouseZoomEnableEvent';
@@ -1541,9 +1542,29 @@ export class RoomDesktop implements IRoomDesktop, IRoomWidgetMessageListener, IR
         this._widgets.set(type, widget);
         this.addUpdateListener(handler);
 
-        if(widget.mainWindow) 
+        if(widget.mainWindow)
         {
             this._layoutManager.addWidgetWindow(type, widget.mainWindow);
+        }
+
+        // The chat input is the one widget that changes how much of the screen the room gets, so
+        // AS3 announces the new rectangle after adding it — and only after that one.
+        //
+        // Nothing listens for it, in this port or in the AS3: `RWRVUE_ROOM_VIEW_SIZE_CHANGED`
+        // appears in `RoomDesktop.as` and in the event class and nowhere else. It is dispatched
+        // because the desktop's event bus is public and a widget may subscribe; leaving the
+        // dispatch out is what made `RoomWidgetRoomViewUpdateEvent` a class nothing could reach.
+        if(type === 'RWE_CHAT_INPUT_WIDGET')
+        {
+            const viewRect = this._layoutManager.roomViewRect;
+
+            if(viewRect)
+            {
+                this._desktopEvents.emit(
+                    RoomWidgetRoomViewUpdateEvent.ROOM_VIEW_SIZE_CHANGED,
+                    new RoomWidgetRoomViewUpdateEvent(RoomWidgetRoomViewUpdateEvent.ROOM_VIEW_SIZE_CHANGED, viewRect)
+                );
+            }
         }
 
         log.debug(`Widget created: ${type}`);

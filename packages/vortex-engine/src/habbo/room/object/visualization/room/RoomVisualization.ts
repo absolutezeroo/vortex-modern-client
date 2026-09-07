@@ -542,6 +542,9 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
 
             let planeType: number;
             let color: number;
+            // AS3 gives the billboard the WALL plane type and tells the two apart only by which
+            // rasterizer it hands over, so the branch below has to carry the distinction itself.
+            let isBillboard = false;
 
             // Map type and color according to AS3 createPlanesAndSprites (lines 607-668)
             if(type === RoomPlaneData.PLANE_FLOOR)
@@ -599,6 +602,32 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                     color = RoomVisualization.LANDSCAPE_COLOR_BOTTOM;
                 }
             }
+            // AS3: .../RoomVisualization.as::updateRoomPlanes() l.442-468. The port had no branch
+            // for it at all, so every billboard plane fell through the `continue` below and was
+            // never created. Its colours are the landscape ones and its plane type is WALL — both
+            // straight from the AS3 — and only its rasterizer differs.
+            else if(type === RoomPlaneData.PLANE_BILLBOARD)
+            {
+                planeType = RoomPlane.TYPE_WALL;
+                isBillboard = true;
+
+                if(normal !== null && normal.x === 0 && normal.y === 0)
+                {
+                    color = RoomVisualization.LANDSCAPE_COLOR_BOTTOM;
+                }
+                else if(normal !== null && normal.y > 0)
+                {
+                    color = RoomVisualization.LANDSCAPE_COLOR_TOP;
+                }
+                else if(normal !== null && normal.y === 0)
+                {
+                    color = RoomVisualization.LANDSCAPE_COLOR_SIDE;
+                }
+                else
+                {
+                    color = RoomVisualization.LANDSCAPE_COLOR_BOTTOM;
+                }
+            }
             else
             {
                 continue;
@@ -626,7 +655,19 @@ export class RoomVisualization extends RoomObjectSpriteVisualization
                 }
                 else if(planeType === RoomPlane.TYPE_WALL)
                 {
-                    plane.rasterizer = this._visualizationData.wallRasterizer;
+                    // A billboard is a wall-typed plane (AS3 passes 1 as the type,
+                    // RoomVisualization.as l.444) that draws through its own rasterizer, so the
+                    // choice cannot be made on the plane type alone.
+                    plane.rasterizer = isBillboard
+                        ? this._visualizationData.wallAdRasterizr
+                        : this._visualizationData.wallRasterizer;
+                }
+                else if(planeType === RoomPlane.TYPE_LANDSCAPE)
+                {
+                    // AS3: .../RoomVisualization.as::updateRoomPlanes() l.436-439. Without this a
+                    // landscape plane had no rasterizer at all and drew nothing — the scenery
+                    // behind every window.
+                    plane.rasterizer = this._visualizationData.landscapeRasterizer;
                 }
 
                 // Every plane, whatever its type: AS3 assigns it outside the rasterizer branch

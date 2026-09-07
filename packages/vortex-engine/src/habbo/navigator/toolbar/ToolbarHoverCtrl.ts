@@ -1,3 +1,4 @@
+import type {HabboNavigator} from '@habbo/navigator/HabboNavigator';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
@@ -25,7 +26,7 @@ export class ToolbarHoverCtrl
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_disposed
     private _disposed: boolean = false;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_navigator
-    private _navigator: IHabboTransitionalNavigator | null;
+    private _navigator: IHabboTransitionalNavigator | HabboNavigator | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/toolbar/ToolbarHoverCtrl.as::_window
     private _window: IWindowContainer | null = null;
     private _itemList: IItemListWindow | null = null;
@@ -35,7 +36,16 @@ export class ToolbarHoverCtrl
     private _hideTimeout: ReturnType<typeof setTimeout> | null = null;
     private _isHovering: boolean = false;
 
-    constructor(navigator: IHabboTransitionalNavigator) 
+    /**
+     * Typed against the concrete navigator, as AS3 is (`ToolbarHoverCtrl.as` l.43 takes
+     * `HabboNavigator`).
+     *
+     * It was typed against `IHabboTransitionalNavigator` here, which `HabboNavigator` does not
+     * implement — so the only class AS3 ever constructs this from could not, and the controller
+     * sat unreachable. The four members it actually uses (`getXmlWindow`, `getText`, `data`,
+     * `goToPrivateRoom`) are all on both.
+     */
+    constructor(navigator: IHabboTransitionalNavigator | HabboNavigator)
     {
         this._navigator = navigator;
 
