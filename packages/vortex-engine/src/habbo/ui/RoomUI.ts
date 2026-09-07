@@ -95,6 +95,7 @@ import {RoomEngineRoomAdEvent} from '@habbo/room/events/RoomEngineRoomAdEvent';
 import {RoomEngineAreaHideStateWidgetEvent} from '@habbo/room/events/RoomEngineAreaHideStateWidgetEvent';
 import {RoomEngineSoundMachineEvent} from '@habbo/room/events/RoomEngineSoundMachineEvent';
 import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
+import {RoomEngineDimmerStateEvent} from '@habbo/room/events/RoomEngineDimmerStateEvent';
 import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
 // Internal
@@ -538,6 +539,11 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineEvent.REE_NORMAL_MODE, this.roomEngineEventHandler, this);
                         engine.events.on(RoomEngineEvent.REE_GAME_MODE, this.roomEngineEventHandler, this);
                         engine.events.on('RERCE_ROOM_COLOR', this.roomEventHandler, this);
+                        // The moodlight's state, on its way to the dimmer widget. AS3 subscribes
+                        // it here (RoomUI.as l.189) and forwards it to the desktop, which is the
+                        // router to the handlers — without this hop the handler declares the event
+                        // in getProcessedEvents() and is never called with it.
+                        engine.events.on(RoomEngineDimmerStateEvent.CYCLED, this.roomEventHandler, this);
                         engine.events.on('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
                         engine.events.on('REE_ROOM_ZOOM', this.roomEventHandler, this);
                         // AS3: RoomUI.as:200-333 — every entry of the same table routed to
@@ -1120,6 +1126,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._roomEngine.events.off(RoomEngineEvent.REE_NORMAL_MODE, this.roomEngineEventHandler, this);
             this._roomEngine.events.off(RoomEngineEvent.REE_GAME_MODE, this.roomEngineEventHandler, this);
             this._roomEngine.events.off('RERCE_ROOM_COLOR', this.roomEventHandler, this);
+            this._roomEngine.events.off(RoomEngineDimmerStateEvent.CYCLED, this.roomEventHandler, this);
             this._roomEngine.events.off('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
             this._roomEngine.events.off('REE_ROOM_ZOOM', this.roomEventHandler, this);
 
@@ -1275,6 +1282,33 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
         this._windowManager?.alert(errorTitle, errorMessage, 0, (dialog) => dialog.dispose());
     }
 
+    /**
+     * Which toolbar a room shows.
+     *
+     * The port set `HTE_STATE_ROOM_VIEW` unconditionally. AS3 has a new-user branch in front of
+     * it: with `nux.lobbies.enabled` set and the session data saying this is a real newcomer, the
+     * toolbar takes one of two NUX states depending on whether the room is their own — which is
+     * how the onboarding toolbar differs from the ordinary one. Both flags were already on the
+     * port's interfaces (`isRealNoob`, `isNoobRoom`); only the branch and the two enum members
+     * were missing.
+     */
+    // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::defineToolbarState()
+    private defineToolbarState(session: IRoomSession | null): void
+    {
+        if(this._toolbar === null) return;
+
+        if(this.getBoolean('nux.lobbies.enabled') && this._sessionDataManager?.isRealNoob === true)
+        {
+            this._toolbar.setToolbarState(session?.isNoobRoom === true
+                ? HabboToolbarEnum.TOOLBAR_STATE_NOOB_NOT_HOME
+                : HabboToolbarEnum.TOOLBAR_STATE_NOOB_HOME);
+
+            return;
+        }
+
+        this._toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_ROOM_VIEW);
+    }
+
     // AS3: .../src/com/sulake/habbo/ui/RoomUI.as::roomSessionStateEventHandler()
     private roomSessionStateEventHandler(event: RoomSessionEvent): void
     {
@@ -1306,12 +1340,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             case RoomSessionEvent.RSE_STARTED: {
                 log.debug(`Session started for room ${event.session.roomId}`);
 
-                // Switch toolbar to room view mode
-                // AS3: RoomUI.defineToolbarState()
-                if(this._toolbar) 
-                {
-                    this._toolbar.setToolbarState(HabboToolbarEnum.TOOLBAR_STATE_ROOM_VIEW);
-                }
+                this.defineToolbarState(event.session);
 
                 // Disable the landing view (hotel view page)
                 if(this._landingView) 
@@ -1492,12 +1521,27 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             }
 
             case 'RERCE_ROOM_COLOR': {
-                if(desktop) 
+                if(desktop)
                 {
                     const colorEvent = event as RoomEngineRoomColorEvent;
 
-                    desktop.setRoomViewColor(colorEvent.color, colorEvent.light);
+                    // "Colorize background only" means the room VIEW keeps its neutral tint and
+                    // only the backdrop takes the colour — AS3 passes white at full brightness
+                    // rather than the event's own colour (RoomUI.as l.999-1002). The flag was
+                    // carried on the event and read by nobody, so those furni tinted the whole
+                    // room.
+                    if(colorEvent.backgroundOnly) desktop.setRoomViewColor(0xFFFFFF, 255);
+                    else desktop.setRoomViewColor(colorEvent.color, colorEvent.light);
                 }
+
+                break;
+            }
+
+            // AS3: RoomUI.as::roomEventHandler() l.1020-1022. The desktop is the router to the
+            // widget handlers, and `FurnitureDimmerWidgetHandler` declares this event in its
+            // `getProcessedEvents()` — this is the hop that gets it there.
+            case RoomEngineDimmerStateEvent.CYCLED: {
+                desktop?.processEvent(event);
 
                 break;
             }

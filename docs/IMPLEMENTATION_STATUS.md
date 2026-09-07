@@ -4622,6 +4622,29 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   port doing the same work in a different member (`SetActivatedBadgesComposer` builds its array in
   the constructor rather than in `getMessageArray()`).
 
+  **A third measure: switches that handle fewer branches than the AS3 they are traced to.** The
+  `furniture_cuboid` find generalised — for every TS file with a `switch`, take the AS3 file it
+  cites most often and check each of that file's `case` labels against the port, through the enum
+  members the port spells them as. 22 files, three real:
+
+  - **`RoomUI` never forwarded `REDSE_ROOM_COLOR` to the desktop**, which is the router to the
+    widget handlers. So the moodlight chain rebuilt above was still one hop short: the state
+    reached the engine's bus and `FurnitureDimmerWidgetHandler` declared the event in its
+    `getProcessedEvents()`, and nothing ever called it with one.
+  - **`RERCE_ROOM_COLOR` ignored `backgroundOnly`.** AS3 passes white at full brightness for a
+    background-only colourisation instead of the event's own colour, so those furni were tinting
+    the whole room view. The flag was on the event and read by nobody.
+  - **`defineToolbarState()` did not exist.** The port set `HTE_STATE_ROOM_VIEW` unconditionally
+    where AS3 has a new-user branch in front of it — `nux.lobbies.enabled` plus `isRealNoob`
+    selects one of two NUX toolbar states depending on `isNoobRoom`. Every piece was already on
+    the port's interfaces and in its enum; only the branch was missing.
+
+  The tool needed three fixes of its own before it was worth reading, all the same shape as the
+  others: constants declared as `public static readonly FOO: string = 'foo'` were not being
+  collected (only `FOO: 'foo'`), and a value declared under several names across the port must
+  match ANY of them — keeping only the last made files that DO handle a case read as missing it.
+  50 raw hits down to 22.
+
   **One method note.** The first pass at this reported "our factory has 42 cases against AS3's 79"
   and it was wrong twice over: the 79 counted two different switches, and the probe that produced it
   had its regex mangled by shell escaping, so it reported `room` and `tile_cursor` as unhandled on a
