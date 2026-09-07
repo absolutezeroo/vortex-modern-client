@@ -10221,7 +10221,7 @@ export class RoomEngine extends Component implements IRoomEngine,
         this._contentLoader.iconListener = this;
 
         // AS3: var_1634.initialize(events, this)
-        this._contentLoader.initialize(this.events, this.assets, this._configurationManager);
+        this._contentLoader.initialize(this.events, this._configurationManager);
 
         if(this._sessionDataManager)
         {
