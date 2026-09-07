@@ -192,13 +192,67 @@ export class SeparatorWidget implements ISeparatorWidget
     }
 
     /**
-     * Refresh the separator rendering based on current layout.
+     * Draws the line: the separator art tiled down the middle of the canvas, with a transparent
+     * hole punched wherever a visible child sits on it.
+     *
+     * This body used to be empty under a comment saying "the UI layer handles rendering based on
+     * stored state". There is no such rendering — `separator` appears nowhere in `core/window` —
+     * and the widget stores no drawing state to render from, so the line simply did not exist in
+     * any of the 47 shipped layouts that use one.
      */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/widgets/SeparatorWidget.as::refresh()
-    private refresh(): void 
+    private refresh(): void
     {
-        // AS3: Redraws the separator BitmapData with tiled border images
-        // and punch-through holes for children. In TS, the UI layer
-        // handles rendering based on stored state.
+        if(this._disposed || this._canvas === null) return;
+
+        const width = Math.max(1, this._canvas.width);
+        const height = Math.max(1, this._canvas.height);
+        const canvas = new OffscreenCanvas(width, height);
+        const ctx = canvas.getContext('2d');
+
+        if(ctx === null) return;
+
+        const asset = this._windowManager?.resourceManager?.getAsset(
+            this._vertical ? SeparatorWidget.BORDER_IMAGE_VERTICAL : SeparatorWidget.BORDER_IMAGE_HORIZONTAL
+        ) ?? null;
+
+        if(asset !== null)
+        {
+            // Centred on the cross axis and repeated along the long one. The -1 is AS3's: the art
+            // is two pixels wide and it wants the seam on the boundary, not beside it.
+            if(this._vertical)
+            {
+                const x = (width / 2) - 1;
+
+                for(let y = 0; y < height; y += asset.height) ctx.drawImage(asset, x, y);
+            }
+            else
+            {
+                const y = (height / 2) - 1;
+
+                for(let x = 0; x < width; x += asset.width) ctx.drawImage(asset, x, y);
+            }
+        }
+
+        // A child sitting on the line hides the part of it that it covers, rather than drawing
+        // over it — which is what lets a labelled separator read as a break in the rule.
+        const iterator: IIterator | null = this._children?.iterator() ?? null;
+
+        if(iterator !== null)
+        {
+            // `next()` returning null is the end, and `reset()` first because the iterator is the
+            // container's own and may be mid-walk.
+            iterator.reset();
+
+            for(let child = iterator.next(); child !== null; child = iterator.next())
+            {
+                if(!child.visible) continue;
+
+                ctx.clearRect(child.x, child.y, child.width, child.height);
+            }
+        }
+
+        (this._canvas as unknown as {bitmap: ImageBitmap | null}).bitmap = canvas.transferToImageBitmap();
+        this._canvas.invalidate();
     }
 }

@@ -4596,6 +4596,32 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
   `MeMenuChatSettingsView` are constructed nowhere in the primary tree either. The sweep went 41 →
   35, and the 35 are enums compared by value, DTOs, and the above.
 
+  **A second measure, and the widget it found.** The same idea applied to bodies rather than
+  classes: for every method carrying an `AS3:` trace, compare the AS3 body's line count to ours,
+  and report where AS3 is substantial and ours is empty. That is the shape of two of the six above,
+  so it should find more — and it did, once the tool stopped lying. Four rounds of false positives
+  came first, each worth knowing:
+
+  - The port splits one long AS3 method across several TS methods that all trace to it, so every
+    slice reads as a stub against the whole. **Aggregate by AS3 member.**
+  - `if(...)` matches "identifier followed by a paren", so the line after any mid-method `AS3:`
+    comment reads as a declaration — that is how a fully implemented
+    `AvatarLogic.processUpdateMessage()` came back as a 1-line stub.
+  - An interface member and an overload signature have no body at all; both end in `;`.
+  - **An inline object type in a signature (`rect: { x: number }`) opens and closes a brace**, so a
+    counter that starts at the declaration line calls that the whole body. This one alone reported
+    `GraphicContext.setDrawRegion()` and every method with an object parameter as a 0-line stub.
+
+  From 121 hits to 11, of which one was real: **`SeparatorWidget.refresh()` was empty**, under a
+  comment saying "the UI layer handles rendering based on stored state". There is no such
+  rendering — `separator` appears nowhere in `core/window` — and the widget stores no drawing state
+  to render from, so the line did not exist in any of the **47 shipped layouts** that use one. It
+  now tiles `illumina_light_separator_horizontal`/`_vertical` down the middle and punches a
+  transparent hole for each visible child, as AS3 does. The other ten are documented deviations
+  (`IlluminaBorderWidget.refresh()` draws through the skin CSS), constructors that delegate, or the
+  port doing the same work in a different member (`SetActivatedBadgesComposer` builds its array in
+  the constructor rather than in `getMessageArray()`).
+
   **One method note.** The first pass at this reported "our factory has 42 cases against AS3's 79"
   and it was wrong twice over: the 79 counted two different switches, and the probe that produced it
   had its regex mangled by shell escaping, so it reported `room` and `tile_cursor` as unhandled on a
