@@ -4677,8 +4677,17 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     and `'failed'`; `CoreLocalizationManager` emits `LocalizationEvent.LOCALIZATION_LOADED` /
     `_FAILED`, whose values are AS3's own `LOCALIZATION_EVENT_*` strings. So neither arm had ever
     run: the ready flag stayed set, `complete` was never announced onward, and a failed gamedata
-    load never crashed the client the way AS3 makes it. The client boots and localises anyway,
-    which is exactly why nobody noticed.
+    load never crashed the client the way AS3 makes it.
+
+    **What that cost, precisely.** `VortexMain.addInitializationProgressListeners()` subscribes to
+    that `complete` and `onLocalizationComplete()` is one of exactly three `_completedInitSteps++`
+    against `INIT_STEPS = 3`. The counter therefore stopped at 2, and
+    `updateProgressBar()` computes `CORE_RATIO + (completed / 3) * (1 - CORE_RATIO)` — so **the
+    loading bar never reached 100%**, every session, before the client took over. Its other job,
+    setting `WindowParser.localizationResolver`, was already being done by
+    `HabboWindowManager` l.316, which is why captions localised regardless and nothing looked
+    wrong. AS3 dispatches a plain `"complete"` here (`HabboLocalizationManager.as` l.277), so the
+    outward name is faithful; only the two inward ones were wrong.
   - **`AvatarInfoWidget` left the bubble standing when its user walked out.** Its removal handler
     did the name-bubble loop and not AS3's first half — the open info view is closed too when the
     removed object is the one it describes.
