@@ -1,6 +1,34 @@
 import {Logger} from '@core/utils/Logger';
 
 /**
+ * The text engine the atlas draws through, injected by the client.
+ *
+ * The engine package deliberately does not depend on it. Its implementation
+ * (truffle-text) carries WebAssembly, which the dev-time engine pre-bundle
+ * cannot swallow, and `vortex-engine` otherwise has three dependencies. The
+ * shape below is exactly `SaffronText`'s, so the client hands one over as-is.
+ */
+export interface ITextEngine
+{
+    // TS-only: the whole interface is this port's seam, so none of it is in AS3.
+    registerFont(descriptor: {family: string; data: ArrayBuffer; bold?: boolean; italic?: boolean}): unknown;
+
+    // TS-only: measuring has to go through whatever draws, or a field auto-sizes to a width nothing occupies.
+    measure(text: string, style: Record<string, unknown>): {
+        textWidth: number;
+        metrics: {ascent: number; descent: number; height: number};
+    };
+
+    // TS-only: Flash's TextField rasterised itself; Canvas2D has to be handed pixels.
+    renderToBuffer(text: string, style: Record<string, unknown>, options?: {padding?: number}): {
+        width: number;
+        height: number;
+        data: Uint8ClampedArray;
+        layout: {textWidth: number; lines: Array<{baseline: number}>};
+    };
+}
+
+/**
  * A single baked glyph inside an atlas page.
  */
 interface IGlyph
@@ -95,7 +123,16 @@ export class GlyphAtlas
      * the window debugger has a button for it.
      */
     // TS-only: the atlas has no AS3 counterpart, so neither does its default.
-    private static readonly ENABLED_BY_DEFAULT: boolean = false;
+    //
+    // Back ON as of 2026-09-07, but for a different path than the one the
+    // paragraph above switched off. That one thresholded a supersampled
+    // `fillText()` to binary and the capture disproved it. This one rasterises
+    // the glyph OUTLINE with the face's own hinting (see `registerFont()`),
+    // which the same harness measures at 0.11 mean coverage error against the
+    // real client where `fillText()` sits at 0.17. With no face registered
+    // `bakeGlyph()` falls back to the old path, so the switch is only ever as
+    // live as the fonts handed in.
+    private static readonly ENABLED_BY_DEFAULT: boolean = true;
 
     public static get enabled(): boolean
     {
@@ -134,11 +171,95 @@ export class GlyphAtlas
      */
     public static handles(antiAliasType: string): boolean
     {
-        return GlyphAtlas.enabled && antiAliasType === 'normal';
+        // With a registered face the atlas rasterises the outline itself, and
+        // that path is the one measured against the real client — so it takes
+        // `advanced` too, which is 47 of the 65 shipped styles.
+        return GlyphAtlas.enabled && (antiAliasType === 'normal' || GlyphAtlas._families.size > 0);
     }
 
     private static _registry: Map<string, GlyphAtlas> = new Map();
+    // TS-only: the injected rasteriser, and the families it has been given.
+    private static _engine: ITextEngine | null = null;
+
+    // TS-only: what `resolveFamily()` checks before claiming a font string.
+    private static _families: Set<string> = new Set();
     private static _fontListenerAttached: boolean = false;
+
+    /**
+     * Hands the atlas the actual font file behind a CSS family, so glyphs can
+     * be rasterised from their outlines instead of through `fillText()`.
+     *
+     * Measured against captures of the real Flash client (the harness is
+     * `packages/vortex-client/text-lab.html`, with its captures beside it):
+     * `fillText()` sits at a mean coverage error of 0.15-0.17 per pixel against
+     * Flash where two captures of the SAME renderer sit at 0.045, and the
+     * difference is not anti-aliasing — Flash's glyphs are a whole pixel taller
+     * at identical widths, because its advanced AA grid-fits cap and x-height
+     * to the pixel grid. Rasterising the outline with the face's own TrueType
+     * hinting reproduces most of that: 0.11 against 0.17 on the same label.
+     *
+     * TS-only: AS3 has no counterpart. Flash Player embedded the font and did
+     * this internally; the port has to be handed the bytes.
+     */
+    /** Hands the atlas the implementation it draws through. Client-side wiring. */
+    // TS-only: Flash Player embedded its own rasteriser; this port is given one.
+    public static setTextEngine(engine: ITextEngine | null): void
+    {
+        GlyphAtlas._engine = engine;
+        GlyphAtlas._families.clear();
+        GlyphAtlas.invalidateAll();
+    }
+
+    // TS-only: AS3 embedded its fonts in the SWF; here the bytes arrive from the asset bundle.
+    public static registerFont(family: string, weight: string, style: string, data: ArrayBuffer): void
+    {
+        if(!GlyphAtlas._engine)
+        {
+            GlyphAtlas.LOGGER.warn(`No text engine set; ${family} stays on ctx.fillText().`);
+
+            return;
+        }
+
+        try
+        {
+            GlyphAtlas._engine.registerFont({
+                family,
+                data,
+                bold: weight === 'bold' || Number(weight) >= 600,
+                italic: style === 'italic'
+            });
+            GlyphAtlas._families.add(family.toLowerCase());
+        }
+        catch (error)
+        {
+            GlyphAtlas.LOGGER.warn(`Could not register ${family} ${weight} ${style} with the text engine.`, error);
+        }
+    }
+
+    /**
+     * The CSS shorthand the window system builds is always
+     * `[style] [weight] <size>px <family>`, so this reads the tokens rather
+     * than parsing CSS in general. Returns null when the family was never
+     * registered, which is what keeps the `fillText()` fallback reachable.
+     */
+    // TS-only: AS3 names a font face directly; the port carries a CSS shorthand.
+    private static resolveFamily(fontString: string): {family: string; bold: boolean; italic: boolean} | null
+    {
+        const match = /^\s*(.*?)(\d+(?:\.\d+)?)px\s+(.+)$/.exec(fontString);
+
+        if(!match) return null;
+
+        const modifiers = match[1].toLowerCase();
+        const family = match[3].trim().replace(/^["']|["']$/g, '').split(',')[0].trim().replace(/^["']|["']$/g, '');
+
+        if(!GlyphAtlas._families.has(family.toLowerCase())) return null;
+
+        return {
+            family,
+            bold: /(^|\s)(bold|[6-9]00)(\s|$)/.test(modifiers),
+            italic: modifiers.includes('italic')
+        };
+    }
 
     /**
      * Supersampling factor used for the `"normal"` (aliased) path. Only affects
@@ -187,6 +308,28 @@ export class GlyphAtlas
     /** Cap on simultaneously cached tint colours per atlas. */
     private static readonly MAX_TINTS: number = 24;
 
+    /** Cap on cached rendered strings per atlas, cleared wholesale when hit. */
+    // TS-only: the cache is this port's, so its bound is too.
+    private static readonly MAX_STRINGS: number = 512;
+
+    /**
+     * Where the pen sits inside a buffer the engine hands back, in pixels.
+     *
+     * Settled by eye in the running client against a value that could not be
+     * derived: 2.5 is the offset at which labels land where `fillText()` used
+     * to put them. Callers that clip a line to its own box must allow for it —
+     * see `overhangLeft`, and the navigator tab whose "P" was being shaved off.
+     */
+    // TS-only: a property of the injected rasteriser, which AS3 did not have.
+    private static readonly PEN_INSET: number = 2.5;
+
+    /** How far left of the pen a drawn string can reach. */
+    // TS-only: Flash clipped inside the TextField; the port clips around the blit.
+    public static get overhangLeft(): number
+    {
+        return Math.ceil(GlyphAtlas.PEN_INSET);
+    }
+
     private readonly _fontString: string;
     private readonly _fontSize: number;
     private readonly _antiAliasType: string;
@@ -194,6 +337,18 @@ export class GlyphAtlas
     private readonly _thickness: number;
     private readonly _gridFit: boolean;
     private readonly _alphaLut: Uint8Array;
+    /** Non-null when the family is registered and truffle-text draws this atlas. */
+    // TS-only: the style handed to the injected rasteriser, which AS3 had no seam for.
+    private readonly _style: Record<string, unknown> | null;
+
+    /** Rendered strings, keyed by colour and text — see `drawText()`. */
+    // TS-only: Flash re-rasterised on every paint; this port caches instead.
+    private _strings: Map<string, {
+        canvas: OffscreenCanvas;
+        baseline: number;
+        width: number;
+        originX: number;
+    }> = new Map();
 
     private _canvas: OffscreenCanvas;
     private _ctx: OffscreenCanvasRenderingContext2D;
@@ -230,6 +385,23 @@ export class GlyphAtlas
         this._thickness = thickness;
         this._gridFit = gridFitType === 'pixel';
         this._alphaLut = this.buildAlphaLut();
+        const resolved = GlyphAtlas.resolveFamily(fontString);
+
+        // The AS3 text-quality fields map one-for-one onto truffle-text's own
+        // style, which is what makes this a hand-over rather than a
+        // translation: `antiAliasType`, `gridFitType`, `sharpness` and
+        // `thickness` are the names Flash uses and the names it takes.
+        this._style = resolved === null ? null : {
+            fontFamily: resolved.family,
+            size: fontSize,
+            bold: resolved.bold,
+            italic: resolved.italic,
+            antiAliasType: this._antiAliasType,
+            gridFitType: gridFitType,
+            sharpness,
+            thickness,
+            engineMode: 'air-generative'
+        };
 
         this._canvas = new OffscreenCanvas(GlyphAtlas.PAGE_WIDTH, GlyphAtlas.INITIAL_PAGE_HEIGHT);
         this._ctx = this._canvas.getContext('2d', {willReadFrequently: true}) as OffscreenCanvasRenderingContext2D;
@@ -247,6 +419,24 @@ export class GlyphAtlas
         {
             this._ascent = Math.ceil(fontSize * 0.8);
             this._lineHeight = Math.ceil(fontSize);
+        }
+
+        // With the text engine drawing, the ascent has to be ITS ascent.
+        // `fontBoundingBoxAscent` is the browser's idea of the face's box —
+        // Ubuntu's is notoriously tall, which is the whole reason
+        // `FlashTextMetrics` exists — and every `textBaseline = 'top'` caller
+        // positions its line by adding this number. Leaving the browser's value
+        // in place shifts every such line down by the difference between two
+        // renderers' notions of a font box.
+        if(this._style && GlyphAtlas._engine)
+        {
+            const engineMetrics = GlyphAtlas._engine.measure('Mg', this._style).metrics;
+
+            if(engineMetrics && engineMetrics.ascent > 0)
+            {
+                this._ascent = Math.ceil(engineMetrics.ascent);
+                this._lineHeight = Math.ceil(engineMetrics.height || (engineMetrics.ascent + engineMetrics.descent));
+            }
         }
     }
 
@@ -338,6 +528,12 @@ export class GlyphAtlas
     {
         if(!text) return 0;
 
+        if(this._style)
+        {
+            return (GlyphAtlas._engine as ITextEngine)
+                .measure(text, {...this._style, letterSpacing: spacing}).textWidth;
+        }
+
         let width = 0;
         let count = 0;
 
@@ -372,9 +568,19 @@ export class GlyphAtlas
     {
         if(!text) return 0;
 
+        if(this._style) return this.drawTextThroughEngine(ctx, text, x, y, color, spacing, maxX);
+
+        // Bake first, tint second. `tint()` snapshots the page and caches that
+        // snapshot against `_version`, and `getGlyph()` bumps the version when
+        // it bakes — so tinting before the loop hands back a page that predates
+        // the glyphs this very call is about to add, and the first draw of any
+        // string comes out blank. It stayed hidden while the atlas was off.
+        for(const char of text) this.getGlyph(char);
+
         const page = this.tint(color);
         const baseline = ctx.textBaseline === 'alphabetic' ? y : y + this._ascent;
-        const originY = this._gridFit ? Math.round(baseline) : baseline;
+        const snap = this._gridFit;
+        const originY = snap ? Math.round(baseline) : baseline;
         let pen = x;
 
         for(const char of text)
@@ -385,12 +591,14 @@ export class GlyphAtlas
 
             if(glyph.hasInk)
             {
-                const originX = this._gridFit ? Math.round(pen) : pen;
+                const originX = snap ? Math.round(pen) : pen;
 
                 ctx.drawImage(
                     page,
                     glyph.x, glyph.y, glyph.width, glyph.height,
-                    originX + glyph.offsetX, originY + glyph.offsetY, glyph.width, glyph.height
+                    snap ? Math.round(originX + glyph.offsetX) : originX + glyph.offsetX,
+                    snap ? Math.round(originY + glyph.offsetY) : originY + glyph.offsetY,
+                    glyph.width, glyph.height
                 );
             }
 
@@ -398,6 +606,123 @@ export class GlyphAtlas
         }
 
         return pen - x;
+    }
+
+    /**
+     * The measured path: the whole string is handed to truffle-text, whose
+     * generative engine reproduces Flash's Saffron rasteriser.
+     *
+     * Against captures of the real client (`packages/vortex-client/text-lab.html`)
+     * it lands at a mean coverage error of **0.0025 to 0.06** per pixel across
+     * eight labels, where every other approach tried — `fillText()`, outline
+     * fill, supersampling, our own vertical and horizontal grid fits, and
+     * FreeType-style hinting through `text-shaper` — sat between 0.086 and 0.21.
+     * Two captures of the *same* renderer sit at 0.045, so most of those eight
+     * are inside the noise floor of "the same picture twice".
+     *
+     * The cache is per rendered STRING rather than per glyph: the engine shapes
+     * and grid-fits the run as a whole, so slicing it into glyphs and
+     * re-assembling them here would throw away the part that makes it match.
+     * UI text repeats heavily — a label redrawn every frame with the same
+     * content is one `drawImage()` after the first frame.
+     */
+    // TS-only: the port's stand-in for Flash rasterising its own TextField.
+    private drawTextThroughEngine(
+        ctx: OffscreenCanvasRenderingContext2D,
+        text: string,
+        x: number,
+        y: number,
+        color: string,
+        spacing: number,
+        maxX: number
+    ): number
+    {
+        const key = `${color}|${spacing}|${text}`;
+        let entry = this._strings.get(key);
+
+        if(!entry)
+        {
+            const engine = GlyphAtlas._engine as ITextEngine;
+            const style = {...this._style, letterSpacing: spacing, color: GlyphAtlas.toColorNumber(color)};
+
+            const buffer = engine.renderToBuffer(text, style);
+            const canvas = new OffscreenCanvas(Math.max(1, buffer.width), Math.max(1, buffer.height));
+            const target = canvas.getContext('2d') as OffscreenCanvasRenderingContext2D;
+
+            // The engine hands back a plain RGBA run; `ImageData` insists on a
+            // view over a non-shared buffer, which a copy trivially satisfies.
+            const pixels = target.createImageData(buffer.width, buffer.height);
+
+            pixels.data.set(buffer.data);
+            target.putImageData(pixels, 0, 0);
+
+            entry = {
+                canvas,
+                baseline: buffer.layout.lines[0]?.baseline ?? this._ascent,
+                width: buffer.layout.textWidth,
+                // The pen is NOT the buffer's left edge: the engine insets its
+                // buffer. Blitting at the pen without this shifted every string
+                // right, and the harness could not see it — it aligns both
+                // sides on their ink bounding box, which cancels a constant
+                // offset exactly. The value is measured in the live client
+                // rather than derived: `buffer.width - textWidth` says 4.45 and
+                // is wrong, because the buffer's right edge sits tight against
+                // the text while its left carries both the inset and the first
+                // glyph's side bearing.
+                originX: GlyphAtlas.PEN_INSET
+            };
+
+            if(this._strings.size >= GlyphAtlas.MAX_STRINGS) this._strings.clear();
+
+            this._strings.set(key, entry);
+        }
+
+        // A bitmap drawn at a fractional coordinate is resampled, which would
+        // put back the blur this path exists to remove.
+        const baseline = ctx.textBaseline === 'alphabetic' ? y : y + this._ascent;
+
+        if(x + entry.width <= maxX)
+        {
+            // Still tunable from the console — `globalThis.__vortexTextNudge =
+            // {x: 1}`, then reopen a window — because the inset was settled by
+            // eye and a future version of the engine could move it.
+            const nudge = (globalThis as unknown as {__vortexTextNudge?: {x?: number; y?: number}}).__vortexTextNudge;
+
+            // Rounded AFTER the inset, not before: a bitmap drawn at a
+            // fractional coordinate is resampled, which is the blur this whole
+            // path exists to remove.
+            ctx.drawImage(
+                entry.canvas,
+                Math.round(x - entry.originX + (nudge?.x ?? 0)),
+                Math.round(baseline - entry.baseline + (nudge?.y ?? 0))
+            );
+        }
+
+        return entry.width;
+    }
+
+    /** `#rrggbb` / `rgba(...)` to the 0xRRGGBB the engine takes. */
+    // TS-only: AS3 carried colours as uints throughout; only Canvas2D needs the string form.
+    private static toColorNumber(color: string): number
+    {
+        const hex = /^#([0-9a-f]{6})$/i.exec(color.trim());
+
+        if(hex) return parseInt(hex[1], 16);
+
+        const short = /^#([0-9a-f]{3})$/i.exec(color.trim());
+
+        if(short)
+        {
+            const [r, g, b] = short[1].split('');
+
+            return parseInt(`${r}${r}${g}${g}${b}${b}`, 16);
+        }
+
+        const rgb = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i.exec(color);
+
+        if(rgb) return (Number(rgb[1]) << 16) | (Number(rgb[2]) << 8) | Number(rgb[3]);
+
+        return 0;
     }
 
     /**

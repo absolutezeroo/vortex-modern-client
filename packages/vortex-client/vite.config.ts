@@ -42,6 +42,21 @@ export default defineConfig(({command}) => ({
         // the `/habbo-imaging` proxy below has a service to reach without a second terminal
         imagerServer(),
     ],
+    // The text engine is reached through a subpath export from inside the
+    // engine bundle, which Vite's dep scanner does not crawl — without this it
+    // serves a 404 for the optimised chunk.
+    optimizeDeps: {
+        include: ['truffle-text/generative'],
+        // Their WASM is fetched relative to the module that owns it. Bundled
+        // into a dep chunk, that URL points at `.vite/deps/`, where the file is
+        // not — and under a base the SPA fallback answers with index.html, so
+        // the loader reports a corrupt module rather than a 404.
+        exclude: ['harfbuzzjs', '@zkl2333/freetype-wasm'],
+        // truffle-text and harfbuzzjs both `await` at module top level, which
+        // the optimiser's default es2020 target refuses outright — the dev
+        // server exits rather than serving a broken chunk.
+        esbuildOptions: {target: 'esnext'},
+    },
     resolve: {
         alias: {
             '@/assets': resolve(__dirname, 'src/assets'),

@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vortex text lab</title>
+<style>
+    :root { color-scheme: light; }
+    body { margin: 0; padding: 16px; font: 13px/1.5 system-ui, sans-serif; background: #f2f2f0; color: #222; }
+    h1 { font-size: 15px; margin: 0 0 4px; }
+    p.note { margin: 0 0 12px; max-width: 84ch; color: #555; }
+    table { border-collapse: collapse; background: #fff; margin-bottom: 20px; }
+    th, td { border: 1px solid #d8d8d4; padding: 6px 8px; text-align: left; vertical-align: top; }
+    th { background: #eceae4; font-weight: 600; }
+    canvas { display: block; image-rendering: pixelated; }
+    .num { font: 12px/1.4 ui-monospace, Consolas, monospace; white-space: pre; }
+    .best { background: #e7f5e7; }
+    #drop { border: 2px dashed #bbb; padding: 8px; text-align: center; color: #666; margin-bottom: 12px; }
+    #drop.over { border-color: #4a90d9; }
+    #ref canvas { cursor: crosshair; }
+</style>
+</head>
+<body>
+
+<h1>Vortex text lab — Flash parity</h1>
+<p class="note">
+    Ways of putting the same string on a canvas, compared <b>pixel by pixel</b> against a capture of
+    the real Flash client. The number that matters is <b>MAE</b>: mean absolute coverage error per
+    pixel, after aligning both on their ink bounding box. A signature (share of partly-covered
+    pixels) is shown too, but on its own it is misleading — Chrome's <code>fillText</code> pushes
+    coverage toward the extremes, so it can score "less anti-aliased" than Flash while looking
+    blurrier, because its spread lands below the threshold rather than above it.
+</p>
+
+<div id="drop">Drop another 1:1 PNG capture here (no scaling, no JPEG)</div>
+<div id="ref"></div>
+<p class="note" id="refnote">Drag a box over one label in the capture to make it the reference.</p>
+
+<div id="out"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js"
+        integrity="sha512-Ro+jjHMdfC0ZYcLjWhxVxZtGWFbIGsfvZbVCU3EYCr/aP4dIyzHkSeuhF3wQHb43wz2UCs0M7o16+lAC3/muYA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+const ZOOM = 8;
+
+/** Supersampling factor for the 'super' mode. */
+const SUPER = 8;
+
+/** The reference capture's own label, so a diff is possible at all. */
+let SAMPLE = 'Furniture';
+
+/** Only used when a whole panel is dropped in; the shipped crops are one label. */
+let refCrop = {x: 0, y: 0, w: 9999, h: 9999};
+
+// The face `identify()` recognised in the default capture. Keep the list short:
+// the page renders every mode for every style on load.
+const STYLES = [
+    {name: 'Ubuntu 12 (advanced)', file: 'Ubuntu.ttf', css: '12px "Ubuntu"', size: 12, aa: 'advanced'}
+];
+
+const MODES = [
+    {key: 'fill',  label: 'fillText (what the client does today)'},
+    {key: 'geom',  label: 'fillText + geometricPrecision, no kerning'},
+    {key: 'path',  label: 'Path2D outline fill'},
+    {key: 'super', label: `fillText ${SUPER}× + box downsample`},
+    {key: 'grid',  label: 'fillText per glyph, pen snapped to whole pixels (gridFitType: pixel)'},
+    {key: 'gridpath', label: 'Path2D per glyph, pen snapped to whole pixels'},
+    {key: 'vfit', label: 'Path2D + vertical grid fit (baseline / x-height / cap height on whole pixels)'},
+    {key: 'xyfit', label: 'vertical grid fit + every outline x snapped to a whole pixel'},
+    {key: 'stemfit', label: 'vertical grid fit + on-curve x snapped, control points left alone'},
+    {key: 'engine', label: 'the engine\'s own GlyphAtlas — what the client actually draws'},
+    {key: 'truffle', label: 'truffle-text 2, generative Saffron engine'}
+];
+
+/**
+ * Flash's vertical grid fit, which is the single largest measured difference
+ * against the real client: on identical strings at identical widths its glyphs
+ * are a whole pixel taller than ours — cap height 9 rows against 8, x-height 7
+ * against 6. Ubuntu 12's cap height is 8.32px, which Chrome renders as 8 solid
+ * rows and a faint one, and Flash renders as 9.
+ *
+ * `gridFitType: pixel` is documented as forcing "strong horizontal and vertical
+ * lines to fit to a pixel grid", and the SWF format carries DefineFontAlignZones
+ * for exactly this purpose. The port has no such zones — the fonts arrive as
+ * TTFs — so the zones are taken from the face's own metrics: the baseline, the
+ * x-height and the cap height. Heights are rounded UP rather than to nearest,
+ * because that is what the captures show (8.32 -> 9, not 8).
+ *
+ * Between the anchors the outline is stretched linearly, which is what a hinter
+ * does with a blue zone. It is not Saffron; it is the part of Saffron that the
+ * measurement says accounts for the visible pixel.
+ */
+function verticalFit(font, size)
+{
+    const os2 = font.parsed.tables.os2;
+    const upem = font.parsed.unitsPerEm;
+    const xHeight = ((os2 && os2.sxHeight) || upem * 0.52) / upem * size;
+    const capHeight = ((os2 && os2.sCapHeight) || upem * 0.7) / upem * size;
+    const anchors = [
+        {from: 0, to: 0},
+        {from: xHeight, to: Math.ceil(xHeight)},
+        {from: capHeight, to: Math.ceil(capHeight)}
+    ].sort((a, b) => a.from - b.from);
+
+    // Height above the baseline in, snapped height out; linear between anchors
+    // and along the last segment's slope beyond them, so descenders and
+    // accents follow the same stretch instead of jumping.
+    return (height) =>
+    {
+        for(let i = 1; i < anchors.length; i++)
+        {
+            if(height <= anchors[i].from || i === anchors.length - 1)
+            {
+                const a = anchors[i - 1];
+                const b = anchors[i];
+                const span = b.from - a.from;
+
+                if(span <= 0) return height;
+
+                return a.to + (height - a.from) * (b.to - a.to) / span;
+            }
+        }
+
+        return height;
+    };
+}
+
+/** Pen positions for one string, advance by advance, optionally snapped. */
+function pen(font, size, snap)
+{
+    const scale = size / font.parsed.unitsPerEm;
+    const out = [];
+    let x = 2;
+    let previous = null;
+
+    for(const ch of SAMPLE)
+    {
+        const glyph = font.parsed.charToGlyph(ch);
+
+        if(previous) x += font.parsed.getKerningValue(previous, glyph) * scale;
+
+        out.push({ch, glyph, x: snap ? Math.round(x) : x});
+        x += glyph.advanceWidth * scale;
+        previous = glyph;
+    }
+
+    return out;
+}
+
+// The engine's real atlas, so the last row of every table is not a
+// reimplementation of the client but the client's own code path.
+const {GlyphAtlas} = await import('@core/window/utils/GlyphAtlas');
+
+// truffle-text 2, "Saffron-class rendering with certified Flash replay", on
+// FreeType-WASM + HarfBuzz. Version 1 was evaluated and reverted in July on its
+// legacy replay path; this is the generative engine, and it is measured here
+// rather than argued about.
+const {SaffronText} = await import('truffle-text/generative');
+const truffle = SaffronText.fromFonts([]);
+
+// The engine takes its rasteriser by injection, exactly as App.ts does it, so
+// the "engine" row below is the client's real path and not a stand-in.
+GlyphAtlas.setTextEngine(truffle);
+
+const fonts = new Map();
+
+async function loadFont(file)
+{
+    if(fonts.has(file)) return fonts.get(file);
+
+    // Relative to this page: the dev server serves the client under a base
+    // ('/client/'), so an origin-root path gets index.html back with a 200.
+    const url = new URL(`./src/assets/webfonts/${file}`, location.href).href;
+    const buffer = await (await fetch(url)).arrayBuffer();
+    const parsed = opentype.parse(buffer);
+    const family = file.replace(/\.ttf$/, '');
+    const face = new FontFace(family, buffer);
+
+    await face.load();
+    document.fonts.add(face);
+    // The engine resolves a face from the CSS font string, so it has to be
+    // registered under the family the lab will ask for.
+    GlyphAtlas.registerFont(family, /bold/i.test(file) ? 'bold' : 'normal', 'normal', buffer);
+    truffle.registerFont({family, data: buffer.slice(0)});
+    fonts.set(file, {parsed, family});
+
+    return fonts.get(file);
+}
+
+// --- coverage maps ----------------------------------------------------------
+//
+// Everything is compared as coverage in [0,1], never as pixels: our renders
+// carry alpha, the capture carries luminance over an opaque button face, and
+// the only way those two are the same quantity is by normalising both.
+
+/** {w, h, a: Float32Array} of coverage, cropped to the ink and its bbox. */
+function tighten(w, h, at)
+{
+    let x0 = w;
+    let y0 = h;
+    let x1 = -1;
+    let y1 = -1;
+
+    for(let y = 0; y < h; y++)
+    {
+        for(let x = 0; x < w; x++)
+        {
+            // A tenth of a pixel of ink is the faintest thing either side can
+            // agree on; below that the capture's own noise dominates.
+            if(at(x, y) < 0.1) continue;
+
+            if(x < x0) x0 = x;
+
+            if(y < y0) y0 = y;
+
+            if(x > x1) x1 = x;
+
+            if(y > y1) y1 = y;
+        }
+    }
+
+    if(x1 < 0) return {w: 0, h: 0, a: new Float32Array(0), x0: 0, y0: 0};
+
+    const cw = x1 - x0 + 1;
+    const ch = y1 - y0 + 1;
+    const a = new Float32Array(cw * ch);
+
+    for(let y = 0; y < ch; y++) for(let x = 0; x < cw; x++) a[y * cw + x] = at(x0 + x, y0 + y);
+
+    return {w: cw, h: ch, a, x0, y0};
+}
+
+function coverageFromCanvas(ctx, w, h)
+{
+    const {data} = ctx.getImageData(0, 0, w, h);
+
+    return tighten(w, h, (x, y) => data[(y * w + x) * 4 + 3] / 255);
+}
+
+function coverageFromCapture(ctx, crop)
+{
+    const {data} = ctx.getImageData(crop.x, crop.y, crop.w, crop.h);
+    const lum = (x, y) =>
+    {
+        const i = (y * crop.w + x) * 4;
+
+        return (data[i] * 299 + data[i + 1] * 587 + data[i + 2] * 114) / 1000;
+    };
+
+    // The face is NOT a single brightness: a Habbo button is a vertical
+    // gradient, and taking the crop's brightest pixel as the face made every
+    // row below the top read as ~14% ink — enough to swallow the whole crop
+    // into the "ink" bounding box. The face is therefore per row, and it is the
+    // MEDIAN rather than the max: text is a minority of any row, so the median
+    // is the face itself and is immune to both the gradient and a stray glyph.
+    const face = [];
+    let darkest = 255;
+    let lightest = 0;
+
+    for(let y = 0; y < crop.h; y++)
+    {
+        const row = [];
+
+        for(let x = 0; x < crop.w; x++)
+        {
+            const l = lum(x, y);
+
+            row.push(l);
+
+            if(l < darkest) darkest = l;
+
+            if(l > lightest) lightest = l;
+        }
+
+        row.sort((a, b) => a - b);
+        face.push(row[row.length >> 1]);
+    }
+
+    // Polarity: Habbo has white labels on dark buttons as well as dark labels on
+    // light ones, and they are not the same measurement. The ink is whichever
+    // extreme sits furthest from the face, not whichever is darker.
+    const median = [...face].sort((a, b) => a - b)[face.length >> 1];
+    const ink = (lightest - median) > (median - darkest) ? lightest : darkest;
+
+    return tighten(crop.w, crop.h, (x, y) =>
+    {
+        const span = ink - face[y];
+
+        if(Math.abs(span) < 1) return 0;
+
+        return Math.min(1, Math.max(0, (lum(x, y) - face[y]) / span));
+    });
+}
+
+/**
+ * Mean absolute coverage error against the reference, minimised over a small
+ * offset search: both sides are cropped to their ink, but a glyph can still sit
+ * a pixel off if one rasteriser rounds the pen differently.
+ */
+function compare(mine, ref)
+{
+    if(!mine.w || !ref.w) return {mae: NaN, dx: 0, dy: 0};
+
+    let best = {mae: Infinity, dx: 0, dy: 0};
+
+    for(let dy = -2; dy <= 2; dy++)
+    {
+        for(let dx = -2; dx <= 2; dx++)
+        {
+            const w = Math.max(mine.w, ref.w);
+            const h = Math.max(mine.h, ref.h);
+            let sum = 0;
+
+            for(let y = 0; y < h; y++)
+            {
+                for(let x = 0; x < w; x++)
+                {
+                    const a = (x < mine.w && y < mine.h) ? mine.a[y * mine.w + x] : 0;
+                    const bx = x - dx;
+                    const by = y - dy;
+                    const b = (bx >= 0 && by >= 0 && bx < ref.w && by < ref.h) ? ref.a[by * ref.w + bx] : 0;
+
+                    sum += Math.abs(a - b);
+                }
+            }
+
+            const mae = sum / (w * h);
+
+            if(mae < best.mae) best = {mae, dx, dy};
+        }
+    }
+
+    return best;
+}
+
+/** Share of inked pixels that are neither faint nor solid. Context, not verdict. */
+function signature(cov)
+{
+    let ink = 0;
+    let partial = 0;
+
+    for(const a of cov.a)
+    {
+        if(a <= 0.25) continue;
+
+        ink++;
+
+        if(a < 0.75) partial++;
+    }
+
+    return ink ? partial / ink : 0;
+}
+
+// --- renders ----------------------------------------------------------------
+
+function draw(mode, style, font)
+{
+    const w = 300;
+    const h = Math.ceil(style.size * 2.4);
+    const canvas = document.createElement('canvas');
+
+    canvas.width = w;
+    canvas.height = h;
+
+    const ctx = canvas.getContext('2d', {willReadFrequently: true});
+    const baseline = Math.round(style.size * 1.2);
+    const cssFor = (scale) => style.css
+        .replace(/"[^"]+"/, `"${font.family}"`)
+        .replace(/(\d+)px/, (_, n) => `${Number(n) * scale}px`);
+
+    ctx.fillStyle = '#000';
+    ctx.textBaseline = 'alphabetic';
+
+    if(mode === 'super')
+    {
+        // Render big, then average each SUPER×SUPER block: that average IS the
+        // pixel's coverage, which is what a vector rasteriser computes.
+        const big = new OffscreenCanvas(w * SUPER, h * SUPER);
+        const bctx = big.getContext('2d', {willReadFrequently: true});
+
+        bctx.fillStyle = '#000';
+        bctx.textBaseline = 'alphabetic';
+        bctx.font = cssFor(SUPER);
+        bctx.fillText(SAMPLE, 2 * SUPER, baseline * SUPER);
+
+        const src = bctx.getImageData(0, 0, big.width, big.height).data;
+        const out = ctx.createImageData(w, h);
+
+        for(let y = 0; y < h; y++)
+        {
+            for(let x = 0; x < w; x++)
+            {
+                let sum = 0;
+
+                for(let sy = 0; sy < SUPER; sy++)
+                {
+                    for(let sx = 0; sx < SUPER; sx++)
+                    {
+                        sum += src[(((y * SUPER + sy) * big.width) + x * SUPER + sx) * 4 + 3];
+                    }
+                }
+
+                out.data[(y * w + x) * 4 + 3] = Math.round(sum / (SUPER * SUPER));
+            }
+        }
+
+        ctx.putImageData(out, 0, 0);
+    }
+    else if(mode === 'path')
+    {
+        const path = font.parsed.getPath(SAMPLE, 2, baseline, style.size, {kerning: style.aa !== 'normal'});
+
+        ctx.fill(new Path2D(path.toPathData(3)));
+    }
+    else if(mode === 'truffle')
+    {
+        truffle.drawText(ctx, SAMPLE, {
+            x: 2,
+            y: baseline,
+            style: {
+                fontFamily: font.family,
+                size: style.size,
+                color: '#000000',
+                engineMode: 'air-generative'
+            }
+        });
+    }
+    else if(mode === 'engine')
+    {
+        const atlas = GlyphAtlas.get(
+            style.css.replace(/"[^"]+"/, `"${font.family}"`),
+            style.size,
+            style.aa,
+            style.sharpness ?? 0,
+            style.thickness ?? 0,
+            'pixel'
+        );
+
+        ctx.textBaseline = 'alphabetic';
+        atlas.drawText(ctx, SAMPLE, 2, baseline, '#000000', 0);
+    }
+    else if(mode === 'vfit' || mode === 'xyfit' || mode === 'stemfit')
+    {
+        const fit = verticalFit(font, style.size);
+        const base = Math.round(baseline);
+        const path = font.parsed.getPath(SAMPLE, 2, base, style.size, {kerning: true});
+
+        // Horizontal grid fit, crudely: a real hinter moves stem EDGES, which
+        // needs stem detection per glyph. This snaps every x instead, which is
+        // the cheapest thing that could possibly work — and the lab is here to
+        // say whether it does before anyone builds the real one.
+        if(mode === 'xyfit' || mode === 'stemfit')
+        {
+            // A stem in Ubuntu at these sizes is a straight segment, so rounding
+            // the ON-CURVE points snaps stems while leaving a bowl's curvature
+            // to its control points. Rounding those too (xyfit) scores better on
+            // coverage error and visibly squares the round letters.
+            const keys = mode === 'xyfit' ? ['x', 'x1', 'x2'] : ['x'];
+
+            for(const cmd of path.commands)
+            {
+                for(const key of keys)
+                {
+                    if(cmd[key] !== undefined) cmd[key] = Math.round(cmd[key]);
+                }
+            }
+        }
+
+        // Remap every coordinate the path carries. opentype emits M/L/Q/C/Z with
+        // named points, so the y of each is rewritten in place rather than
+        // through a matrix, which could not be piecewise.
+        for(const cmd of path.commands)
+        {
+            for(const key of ['y', 'y1', 'y2'])
+            {
+                if(cmd[key] !== undefined) cmd[key] = base - fit(base - cmd[key]);
+            }
+        }
+
+        ctx.fill(new Path2D(path.toPathData(3)));
+    }
+    else if(mode === 'grid' || mode === 'gridpath')
+    {
+        ctx.font = cssFor(1);
+
+        for(const {ch, glyph, x} of pen(font, style.size, true))
+        {
+            if(mode === 'grid') ctx.fillText(ch, x, baseline);
+            else ctx.fill(new Path2D(glyph.getPath(x, baseline, style.size).toPathData(3)));
+        }
+    }
+    else
+    {
+        ctx.font = cssFor(1);
+
+        if(mode === 'geom')
+        {
+            ctx.textRendering = 'geometricPrecision';
+            ctx.fontKerning = 'none';
+        }
+
+        ctx.fillText(SAMPLE, 2, baseline);
+    }
+
+    return {canvas, ctx, w, h};
+}
+
+/** Coverage rendered as grey, so a capture and a canvas can be looked at alike. */
+function paint(cov)
+{
+    const canvas = document.createElement('canvas');
+
+    canvas.width = Math.max(1, cov.w) * ZOOM;
+    canvas.height = Math.max(1, cov.h) * ZOOM;
+
+    const ctx = canvas.getContext('2d');
+
+    for(let y = 0; y < cov.h; y++)
+    {
+        for(let x = 0; x < cov.w; x++)
+        {
+            const v = Math.round(255 * (1 - cov.a[y * cov.w + x]));
+
+            ctx.fillStyle = `rgb(${v},${v},${v})`;
+            ctx.fillRect(x * ZOOM, y * ZOOM, ZOOM, ZOOM);
+        }
+    }
+
+    return canvas;
+}
+
+let refCov = null;
+
+async function render()
+{
+    const out = document.getElementById('out');
+
+    out.innerHTML = '';
+
+    if(refCov)
+    {
+        const table = document.createElement('table');
+
+        table.innerHTML = '<tr><th>reference crop</th><th>coverage</th></tr>';
+
+        const row = table.insertRow();
+
+        row.insertCell().innerHTML = `<span class="num">${refCov.w}×${refCov.h}\nsignature ${signature(refCov).toFixed(3)}</span>`;
+        row.insertCell().appendChild(paint(refCov));
+        out.appendChild(table);
+    }
+
+    for(const style of STYLES)
+    {
+        const font = await loadFont(style.file);
+        const table = document.createElement('table');
+
+        table.innerHTML = `<tr><th colspan="4">${style.name} — “${SAMPLE}”</th></tr>` +
+            '<tr><th>mode</th><th>MAE vs reference</th><th>1× / coverage at 8×</th><th></th></tr>';
+
+        const scores = [];
+
+        for(const mode of MODES)
+        {
+            const {canvas, ctx, w, h} = draw(mode.key, style, font);
+            const cov = coverageFromCanvas(ctx, w, h);
+            const score = refCov ? compare(cov, refCov) : {mae: NaN, dx: 0, dy: 0};
+
+            scores.push(score.mae);
+
+            const row = table.insertRow();
+
+            row.dataset.mode = mode.key;
+            row.insertCell().textContent = mode.label;
+            row.insertCell().innerHTML = `<span class="num">MAE ${Number.isNaN(score.mae) ? '—' : score.mae.toFixed(4)}` +
+                `\nink ${cov.w}×${cov.h}\noffset ${score.dx},${score.dy}\nsignature ${signature(cov).toFixed(3)}</span>`;
+            row.insertCell().appendChild(canvas);
+            row.insertCell().appendChild(paint(cov));
+        }
+
+        const best = Math.min(...scores.filter((n) => !Number.isNaN(n)));
+
+        [...table.rows].forEach((row) =>
+        {
+            const i = MODES.findIndex((m) => m.key === row.dataset.mode);
+
+            if(i >= 0 && scores[i] === best) row.classList.add('best');
+        });
+
+        out.appendChild(table);
+    }
+}
+
+// --- reference capture ------------------------------------------------------
+
+let refCtx = null;
+let refName = '';
+
+function useCrop(crop)
+{
+    refCrop = crop;
+    refCov = coverageFromCapture(refCtx, crop);
+
+    document.getElementById('refnote').textContent =
+        `${refName} — reference crop ${crop.w}×${crop.h} at (${crop.x},${crop.y}), ` +
+        `ink box ${refCov.w}×${refCov.h}. Drag a box over another label to switch reference; ` +
+        `set SAMPLE in the page source to that label's text.`;
+
+    return render();
+}
+
+async function showReference(source, name)
+{
+    const bitmap = await createImageBitmap(source);
+    const canvas = document.createElement('canvas');
+
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    refName = `${name} ${bitmap.width}×${bitmap.height}`;
+
+    const ctx = canvas.getContext('2d', {willReadFrequently: true});
+
+    ctx.drawImage(bitmap, 0, 0);
+    refCtx = ctx;
+
+    const view = document.createElement('canvas');
+
+    view.width = canvas.width * ZOOM;
+    view.height = canvas.height * ZOOM;
+
+    const vctx = view.getContext('2d');
+
+    vctx.imageSmoothingEnabled = false;
+    vctx.drawImage(canvas, 0, 0, view.width, view.height);
+
+    const host = document.getElementById('ref');
+
+    host.innerHTML = '';
+    host.appendChild(view);
+
+    let start = null;
+
+    view.addEventListener('pointerdown', (e) =>
+    {
+        const r = view.getBoundingClientRect();
+
+        start = {x: (e.clientX - r.left) / ZOOM, y: (e.clientY - r.top) / ZOOM};
+    });
+
+    view.addEventListener('pointerup', (e) =>
+    {
+        if(!start) return;
+
+        const r = view.getBoundingClientRect();
+        const end = {x: (e.clientX - r.left) / ZOOM, y: (e.clientY - r.top) / ZOOM};
+        const crop = {
+            x: Math.max(0, Math.floor(Math.min(start.x, end.x))),
+            y: Math.max(0, Math.floor(Math.min(start.y, end.y))),
+            w: Math.max(1, Math.round(Math.abs(end.x - start.x))),
+            h: Math.max(1, Math.round(Math.abs(end.y - start.y)))
+        };
+
+        start = null;
+        crop.w = Math.min(crop.w, canvas.width - crop.x);
+        crop.h = Math.min(crop.h, canvas.height - crop.y);
+        useCrop(crop);
+    });
+
+    // The shipped captures are single labels, so the whole image is the crop
+    // until someone drags a smaller one out of a full panel.
+    await useCrop({
+        x: 0,
+        y: 0,
+        w: Math.min(refCrop.w, canvas.width),
+        h: Math.min(refCrop.h, canvas.height)
+    });
+}
+
+const drop = document.getElementById('drop');
+
+drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', (e) =>
+{
+    e.preventDefault();
+    drop.classList.remove('over');
+
+    const file = e.dataTransfer.files[0];
+
+    if(file) showReference(file, file.name);
+});
+
+// Ships with the page: a capture of the real Flash client's room-tools panel,
+// so the comparison is reproducible instead of depending on someone still
+// having the screenshot. The default crop is its "Paramètres" label.
+/**
+ * Which (font, size, mode) actually reproduces the reference? Archaeology on
+ * the layout only yields a numeric window style, not the text style, so the
+ * cheaper question is asked here: sweep the candidates and rank them by the
+ * only thing that matters, per-pixel coverage error.
+ */
+async function sweep(files = ['Volter.ttf', 'Volter Bold.ttf', 'Ubuntu.ttf', 'Ubuntu-b.ttf', 'Ubuntu-m.ttf'],
+                     sizes = [9, 10, 11, 12, 13], limit = 14)
+{
+    const rows = [];
+
+    for(const file of files)
+    {
+        const font = await loadFont(file);
+
+        for(const size of sizes)
+        {
+            const style = {file, css: `${size}px "${font.family}"`, size, aa: 'normal'};
+
+            for(const mode of MODES)
+            {
+                const {ctx, w, h} = draw(mode.key, style, font);
+                const cov = coverageFromCanvas(ctx, w, h);
+                const {mae, dx, dy} = compare(cov, refCov);
+
+                rows.push({
+                    who: `${file} ${size}px ${mode.key}`,
+                    ink: `${cov.w}×${cov.h}`,
+                    mae: Number(mae.toFixed(4)),
+                    off: `${dx},${dy}`
+                });
+            }
+        }
+    }
+
+    rows.sort((a, b) => a.mae - b.mae);
+
+    return rows.slice(0, limit).map((r) => `${r.mae}  ${r.ink.padStart(6)}  ${r.off.padStart(6)}  ${r.who}`).join('\n') +
+        `\n\nreference ink ${refCov.w}×${refCov.h}, signature ${signature(refCov).toFixed(3)}`;
+}
+
+/**
+ * Flash's `advanced` anti-aliasing is Saffron: a distance field with continuous
+ * stroke modulation, whose two knobs are exactly `sharpness` and `thickness`.
+ * CSM maps a distance to alpha as `clamp((d - t) * k + 0.5)`, and a coverage
+ * map is a usable stand-in for `d` around the edge (`d ≈ coverage - 0.5`).
+ *
+ * So instead of guessing what `sharpness: 80, thickness: -15` mean — the port's
+ * current divisors say at their declaration that they are DERIVED — fit `k` and
+ * `t` against the capture and see whether the fit beats plain fillText at all.
+ */
+async function fitCSM(file = 'Ubuntu-m.ttf', size = 12, mode = 'super')
+{
+    const font = await loadFont(file);
+    const style = {file, css: `${size}px "${font.family}"`, size, aa: 'advanced'};
+    const {ctx, w, h} = draw(mode, style, font);
+    const base = coverageFromCanvas(ctx, w, h);
+    let best = {mae: Infinity, k: 1, t: 0};
+
+    for(let k = 1; k <= 10; k += 0.25)
+    {
+        for(let t = -0.30; t <= 0.30; t += 0.02)
+        {
+            const curved = {
+                w: base.w,
+                h: base.h,
+                a: base.a.map((a) => Math.min(1, Math.max(0, (a - 0.5 - t) * k + 0.5)))
+            };
+            const {mae} = compare(curved, refCov);
+
+            if(mae < best.mae) best = {mae, k, t};
+        }
+    }
+
+    return `CSM fit on ${file} ${size}px: k=${best.k.toFixed(2)} t=${best.t.toFixed(2)} -> MAE ${best.mae.toFixed(4)}`;
+}
+
+/**
+ * Every shipped capture, with the string it holds. Tight crops of a single
+ * label: the whole image is the reference, no drag needed.
+ */
+// Empty since the shipped captures were removed. Add entries here — a filename
+// beside this page, the string it holds, and the face it was identified as — to
+// bring `sweepAll()`, `comparePairs()`, `identify()` and `fitAll()` back.
+const REFERENCES = [];
+
+/** Coverage of one shipped capture, whole image. */
+async function loadReference(ref)
+{
+    const blob = await (await fetch(new URL(`./text-lab-references/${ref.file}`, location.href))).blob();
+    const bitmap = await createImageBitmap(blob);
+    const canvas = document.createElement('canvas');
+
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+
+    const ctx = canvas.getContext('2d', {willReadFrequently: true});
+
+    ctx.drawImage(bitmap, 0, 0);
+
+    return {ctx, cov: coverageFromCapture(ctx, {x: 0, y: 0, w: bitmap.width, h: bitmap.height})};
+}
+
+/**
+ * The measurement everything else was a proxy for: the same label, same string,
+ * captured from both clients, diffed pixel against pixel. No synthetic render
+ * in the middle, so nothing here depends on the lab modelling either client
+ * correctly.
+ */
+async function comparePairs()
+{
+    const lines = [];
+
+    for(const mine of REFERENCES.filter((r) => r.client !== 'flash'))
+    {
+        const theirs = REFERENCES.find((r) => r.client === 'flash' && r.text === mine.text);
+
+        if(!theirs) continue;
+
+        const a = await loadReference(mine);
+        const b = await loadReference(theirs);
+        const {mae, dx, dy} = compare(a.cov, b.cov);
+
+        lines.push(
+            `[${mine.client}] “${mine.text}”  MAE ${mae.toFixed(4)}  offset ${dx},${dy}  ` +
+            `habbo ${b.cov.w}×${b.cov.h} sig ${signature(b.cov).toFixed(3)}  ` +
+            `ours ${a.cov.w}×${a.cov.h} sig ${signature(a.cov).toFixed(3)}`
+        );
+    }
+
+    return lines.join('\n');
+}
+
+/** Run the sweep against every shipped capture and report the top matches. */
+async function sweepAll(files, sizes)
+{
+    const report = [];
+
+    for(const ref of REFERENCES)
+    {
+        const blob = await (await fetch(new URL(`./text-lab-references/${ref.file}`, location.href))).blob();
+        const bitmap = await createImageBitmap(blob);
+        const canvas = document.createElement('canvas');
+
+        canvas.width = bitmap.width;
+        canvas.height = bitmap.height;
+
+        const ctx = canvas.getContext('2d', {willReadFrequently: true});
+
+        ctx.drawImage(bitmap, 0, 0);
+        refCtx = ctx;
+        SAMPLE = ref.text;
+        refCov = coverageFromCapture(ctx, {x: 0, y: 0, w: bitmap.width, h: bitmap.height});
+
+        report.push(`=== [${ref.client}] ${ref.file} “${ref.text}” ${bitmap.width}×${bitmap.height}, ` +
+            `ink ${refCov.w}×${refCov.h}, signature ${signature(refCov).toFixed(3)}\n` +
+            await sweep(files, sizes, 5));
+    }
+
+    return report.join('\n\n');
+}
+
+/**
+ * Fit the CSM curve on every Flash capture and see whether the parameters
+ * AGREE. One fit proves nothing — a two-parameter curve can improve almost any
+ * mismatch. Five labels across three weights and both polarities landing on the
+ * same (k, t) would mean the curve is Flash's, not the fit's.
+ */
+async function fitAll(mode = 'super')
+{
+    const lines = [];
+
+    for(const ref of REFERENCES)
+    {
+        if(ref.client !== 'flash') continue;
+
+        SAMPLE = ref.text;
+        refCov = (await loadReference(ref)).cov;
+
+        // The face each label was identified as by sweepAll.
+        const {file, size} = ref.face;
+
+        lines.push(`${ref.file.padEnd(24)} ${await fitCSM(file, size, mode)}`);
+    }
+
+    return lines.join('\n');
+}
+
+/**
+ * Which face and size is this label, judged on SHAPE ALONE?
+ *
+ * Ranking candidates by MAE cannot answer that when the two sides disagree
+ * about anti-aliasing: every candidate here is anti-aliased, the capture is
+ * nearly binary, and the coverage error from that swamps the difference between
+ * one face and another. So both sides are thresholded at half coverage first —
+ * what is left is the glyph shapes — and scored by intersection over union.
+ */
+function mask(cov)
+{
+    const out = new Uint8Array(cov.a.length);
+
+    for(let i = 0; i < cov.a.length; i++) out[i] = cov.a[i] >= 0.5 ? 1 : 0;
+
+    return {w: cov.w, h: cov.h, a: out};
+}
+
+function iou(a, b)
+{
+    let best = 0;
+
+    for(let dy = -2; dy <= 2; dy++)
+    {
+        for(let dx = -2; dx <= 2; dx++)
+        {
+            let inter = 0;
+            let union = 0;
+            const w = Math.max(a.w, b.w);
+            const h = Math.max(a.h, b.h);
+
+            for(let y = 0; y < h; y++)
+            {
+                for(let x = 0; x < w; x++)
+                {
+                    const p = (x < a.w && y < a.h) ? a.a[y * a.w + x] : 0;
+                    const bx = x - dx;
+                    const by = y - dy;
+                    const q = (bx >= 0 && by >= 0 && bx < b.w && by < b.h) ? b.a[by * b.w + bx] : 0;
+
+                    if(p || q) union++;
+
+                    if(p && q) inter++;
+                }
+            }
+
+            if(union && inter / union > best) best = inter / union;
+        }
+    }
+
+    return best;
+}
+
+async function identify(refFile, files = ['Volter.ttf', 'Volter Bold.ttf', 'Ubuntu.ttf', 'Ubuntu-b.ttf', 'Ubuntu-m.ttf', 'Ubuntu-C.ttf', 'Ubuntu-thick-b.ttf'],
+                        sizes = [9, 10, 11, 12, 13, 14])
+{
+    const ref = REFERENCES.find((r) => r.file === refFile);
+
+    SAMPLE = ref.text;
+
+    const target = mask((await loadReference(ref)).cov);
+    const rows = [];
+
+    for(const file of files)
+    {
+        const font = await loadFont(file);
+
+        for(const size of sizes)
+        {
+            const style = {file, css: `${size}px "${font.family}"`, size, aa: 'normal'};
+            const {ctx, w, h} = draw('path', style, font);
+            const mine = mask(coverageFromCanvas(ctx, w, h));
+
+            rows.push({who: `${file} ${size}px`, ink: `${mine.w}×${mine.h}`, iou: iou(mine, target)});
+        }
+    }
+
+    rows.sort((a, b) => b.iou - a.iou);
+
+    return `${refFile} “${ref.text}” target mask ${target.w}×${target.h}\n` +
+        rows.slice(0, 8).map((r) => `  IoU ${r.iou.toFixed(3)}  ${r.ink.padStart(6)}  ${r.who}`).join('\n');
+}
+
+/** A candidate's coverage as text, for reading letterforms rather than scores. */
+async function maskMap(file, size, text, mode = 'path')
+{
+    const font = await loadFont(file);
+    const previous = SAMPLE;
+
+    SAMPLE = text;
+
+    const style = {file, css: `${size}px "${font.family}"`, size, aa: 'normal'};
+    const {ctx, w, h} = draw(mode, style, font);
+    const cov = coverageFromCanvas(ctx, w, h);
+
+    SAMPLE = previous;
+
+    let out = `${file} ${size}px ${mode} — ink ${cov.w}×${cov.h}\n`;
+
+    for(let y = 0; y < cov.h; y++)
+    {
+        let line = '';
+
+        for(let x = 0; x < cov.w; x++)
+        {
+            const a = cov.a[y * cov.w + x];
+
+            line += a >= 0.5 ? '#' : a >= 0.2 ? '+' : '.';
+        }
+
+        out += line + '\n';
+    }
+
+    return out;
+}
+
+/** The same, for a shipped capture. */
+async function captureMap(refFile)
+{
+    const ref = REFERENCES.find((r) => r.file === refFile);
+    const cov = (await loadReference(ref)).cov;
+
+    let out = `${refFile} “${ref.text}” — ink ${cov.w}×${cov.h}\n`;
+
+    for(let y = 0; y < cov.h; y++)
+    {
+        let line = '';
+
+        for(let x = 0; x < cov.w; x++)
+        {
+            const a = cov.a[y * cov.w + x];
+
+            line += a >= 0.5 ? '#' : a >= 0.2 ? '+' : '.';
+        }
+
+        out += line + '\n';
+    }
+
+    return out;
+}
+
+/**
+ * Every `textBaseline = 'top'` caller positions its line by adding the atlas'
+ * ascent, so a disagreement between the browser's font box and the engine's own
+ * ascent moves that line. This lists both for the faces and sizes the shipped
+ * styles actually use.
+ */
+async function ascentAudit()
+{
+    const rows = [];
+
+    for(const [file, sizes] of [
+        ['Volter.ttf', [9, 18]],
+        ['Volter Bold.ttf', [9, 18]],
+        ['Ubuntu.ttf', [10, 11, 12, 13, 14, 16, 18, 24]],
+        ['Ubuntu-b.ttf', [12, 13, 14, 18]],
+        ['Ubuntu-m.ttf', [12, 13]]
+    ])
+    {
+        const font = await loadFont(file);
+
+        for(const size of sizes)
+        {
+            const fontString = `${size}px "${font.family}"`;
+            const probe = document.createElement('canvas').getContext('2d');
+
+            probe.font = fontString;
+
+            const browser = Math.ceil(probe.measureText('Mg').fontBoundingBoxAscent);
+            const engine = Math.ceil(truffle.measure('Mg', {
+                fontFamily: font.family, size, engineMode: 'air-generative'
+            }).metrics.ascent);
+
+            if(browser !== engine) rows.push(`  ${file} ${size}px: browser ${browser} vs engine ${engine}  (shift ${engine - browser})`);
+        }
+    }
+
+    return rows.length ? 'ascent disagreements:\n' + rows.join('\n') : 'no ascent disagreement on any shipped size';
+}
+
+/**
+ * Where does the engine put the pen inside the buffer it hands back? The MAE
+ * table cannot answer that — it aligns both sides on their ink box, which
+ * cancels a constant offset — and a wrong answer shifts every string in the
+ * client while every number here stays green.
+ */
+async function originProbe(file = 'Ubuntu.ttf', size = 12, text = 'Furniture')
+{
+    const font = await loadFont(file);
+    const style = {fontFamily: font.family, size, color: 0x000000, engineMode: 'air-generative'};
+    const lines = [];
+
+    for(const padding of [undefined, 0])
+    {
+        const buffer = padding === undefined
+            ? truffle.renderToBuffer(text, style)
+            : truffle.renderToBuffer(text, style, {padding});
+        let firstInk = -1;
+        let firstRow = -1;
+
+        for(let x = 0; x < buffer.width && firstInk < 0; x++)
+        {
+            for(let y = 0; y < buffer.height; y++)
+            {
+                if(buffer.data[((y * buffer.width) + x) * 4 + 3] > 0) { firstInk = x; break; }
+            }
+        }
+
+        for(let y = 0; y < buffer.height && firstRow < 0; y++)
+        {
+            for(let x = 0; x < buffer.width; x++)
+            {
+                if(buffer.data[((y * buffer.width) + x) * 4 + 3] > 0) { firstRow = y; break; }
+            }
+        }
+
+        lines.push(`padding ${padding === undefined ? 'default' : padding}: buffer ${buffer.width}×${buffer.height}, ` +
+            `textWidth ${buffer.layout.textWidth.toFixed(2)}, baseline ${buffer.layout.lines[0]?.baseline}, ` +
+            `first ink at x=${firstInk} y=${firstRow}`);
+    }
+
+    // And the other API: where does drawText() put the ink relative to the
+    // (x, y) it is given? That is the convention the atlas has to match.
+    const canvas = document.createElement('canvas');
+
+    canvas.width = 120;
+    canvas.height = 60;
+
+    const ctx = canvas.getContext('2d', {willReadFrequently: true});
+
+    truffle.drawText(ctx, text, {x: 20, y: 30, style});
+
+    const {data} = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let minX = canvas.width;
+    let minY = canvas.height;
+    let maxY = -1;
+
+    for(let y = 0; y < canvas.height; y++)
+    {
+        for(let x = 0; x < canvas.width; x++)
+        {
+            if(data[((y * canvas.width) + x) * 4 + 3] === 0) continue;
+
+            if(x < minX) minX = x;
+
+            if(y < minY) minY = y;
+
+            if(y > maxY) maxY = y;
+        }
+    }
+
+    lines.push(`drawText at (20,30): ink starts x=${minX} (dx ${minX - 20}), rows ${minY}..${maxY} (dy ${minY - 30})`);
+
+    return lines.join('\n');
+}
+
+/** Why the engine row draws what it draws — the alias only resolves inside this module. */
+async function engineProbe(file = 'Ubuntu.ttf', size = 12)
+{
+    const font = await loadFont(file);
+    const fontString = `${size}px "${font.family}"`;
+    const atlas = GlyphAtlas.get(fontString, size, 'advanced', 0, 0, 'pixel');
+    const canvas = document.createElement('canvas');
+
+    canvas.width = 200;
+    canvas.height = 32;
+
+    const ctx = canvas.getContext('2d', {willReadFrequently: true});
+
+    ctx.textBaseline = 'alphabetic';
+
+    const advanced = atlas.drawText(ctx, 'Furniture', 2, 16, '#000000', 0);
+    const {data} = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let ink = 0;
+
+    for(let i = 3; i < data.length; i += 4) if(data[i]) ink++;
+
+    return JSON.stringify({
+        fontString,
+        enabled: GlyphAtlas.enabled,
+        handlesAdvanced: GlyphAtlas.handles('advanced'),
+        measured: atlas.measure('Furniture', 0),
+        advanced,
+        ascent: atlas.ascent,
+        ink
+    });
+}
+
+globalThis.__textLab = {useCrop, sweep, sweepAll, fitCSM, fitAll, comparePairs, identify, maskMap, captureMap, originProbe, ascentAudit,
+    engineProbe, setSample: (s) => { SAMPLE = s; return render(); }};
+
+// Nothing ships beside this page any more: the reference captures were removed
+// once the port landed. Drop a 1:1 PNG of a single label to compare against.
+await render();
+</script>
+</body>
+</html>

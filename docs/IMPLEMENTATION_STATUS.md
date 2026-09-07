@@ -1,6 +1,8 @@
 # Vortex - Implementation Status
 
-> **Last updated**: 2026-08-13 (full re-measure of every table; previous full pass 2026-07-28)
+> **Last updated**: 2026-09-07 (snapshot re-measured and the four tools re-run; previous full
+> re-measure of every *module* table 2026-08-13 — those rows below still carry their 2026-08-13
+> figures and several are known stale, see "Current Priorities")
 > **Method**: filesystem snapshot plus targeted AS3/TS directory counts. Module rows count the
 > **primary** tree (`WIN63-…-782849652/src/com/sulake/`) recursively against the matching TS
 > directory. Message rows are the one exception: the primary tree keeps almost every
@@ -23,25 +25,38 @@
 
 ## Snapshot
 
-| Metric                                                        | 2026-07-19    | 2026-07-28    | 2026-08-13    |
+| Metric                                                        | 2026-07-28    | 2026-08-13    | 2026-09-07    |
 |---------------------------------------------------------------|---------------|---------------|---------------|
 | Primary AS3 — `WIN63-…-782849652/src/com/sulake/`              | 3,345 `.as`   | 3,345 `.as`   | 3,345 `.as`   |
 | Primary AS3 — `WIN63-…-782849652/src/unknowns/` (also client)  | 1,839 `.as`   | 1,839 `.as`   | 1,839 `.as`   |
 | Secondary AS3 — `win63_version/`                               | 4,783 `.as`   | 4,783 `.as`   | 4,783 `.as`   |
 | Tertiary AS3 — `PRODUCTION-…/src/com/sulake/`                  | 4,029 `.as`   | 4,029 `.as`   | 4,029 `.as`   |
-| Engine TypeScript files                                        | 2,857 `.ts`   | 3,482 `.ts`   | **4,540** `.ts` |
-| Client TypeScript files                                        | 22 `.ts`      | 21 `.ts`      | **64** `.ts`  |
-| Shipped window layouts (`src/assets/window-layouts/`)          | 857 `.json`   | **783** `.xml`  | 783 `.xml`    |
-| Shipped window skins (`src/assets/window-skins/`)              | 133 `.json`   | 133 `.xml`      | 133 `.xml`    |
-| Vortex-authored layouts / skins (`src/vortex-layouts`, `src/vortex-skins`) | — | 4 / 0 | 3 / 0 |
-| Engine `AS3:` trace comments                                   | 4,666         | 34,795        | **38,115**    |
-| Engine `TODO(AS3)` markers                                     | 265           | 327           | **323**       |
+| Engine TypeScript files                                        | 3,482 `.ts`   | 4,540 `.ts`   | **5,452** `.ts` |
+| Client TypeScript files                                        | 21 `.ts`      | 64 `.ts`      | **57** `.ts`  |
+| Shipped window layouts (`src/assets/window-layouts/`)          | **783** `.xml`  | 783 `.xml`  | **788** `.xml` |
+| Shipped window skins (`src/assets/window-skins/`)              | 133 `.xml`      | 133 `.xml`  | 133 `.xml`    |
+| Vortex-authored layouts / skins (`src/vortex-layouts`, `src/vortex-skins`) | 4 / 0 | 3 / 0 | **17 / 1** |
+| Engine `AS3:` trace comments                                   | 34,795        | 38,115        | **54,266** (+1,033 client) |
+| `TODO(AS3)` markers, both packages                             | 327           | 323           | **1**         |
 
-Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the 2026-08-13 column
-above is the script's figure (**323** `TODO(AS3)`, plus 57 other TODOs and 29 markers the script
-flags as possibly-stale candidates — see the 2026-08-09 note under "TODO inventory"). A bare
-`grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and inflates the count
-by roughly 80.
+Re-measure `TODO(AS3)` with `node scripts/todo-inventory.mjs`, not `grep -c`: the 2026-09-07 column
+above is the script's figure (**1** `TODO(AS3)`, plus 21 other TODOs and **0** possibly-stale
+candidates). A bare `grep -rn --include=*.ts packages` reads `packages/*/dist/**/*.d.ts` too and
+inflates the count by roughly 80.
+
+**All four measures are green as of 2026-09-07, and that is the honest headline of this file.**
+`wire-coverage.mjs`: 0 send gaps, 0 recv gaps. `as3-member-coverage.mjs`: 0 absent public/protected
+members in either bucket. `todo-inventory.mjs`: 1 marker. `audit-as3-traces.mjs`: 17,608 citations,
+0 unresolvable paths, 0 unannotated derived names. The file-level sweep re-run the same day gives 96
+readable primary-tree basenames with neither a citation nor a same-named TS file, and **none of them
+is work**: 26 `*Bootstrap` wrappers `VortexMain` replaces with direct DI, the profiler/AIR/Flash-platform
+set (`Profiler*`, `*Pane`, `NativeApplicationProxy`, `ZipFileLoader`, `DisplayAsset`,
+`CachedAssetLoader`, `Base64`, `ClassUtils`, `MouseWheelEnabler`), the 12 dead notification-feed
+files, and 5 `RoomWidget*Message` classes whose only occurrence in the primary tree is their own
+declaration.
+
+What none of that measures is whether the code is *right*: 9,590 members are present but carry no
+per-member trace, so their correctness is attested by nothing. Live exercise is the remaining axis.
 
 **The count is not the goal, and it moved the wrong way on purpose.** The chat-command pass replaced
 one marker reading *"~50 slash commands … don't exist in this port yet"* with six that each name a
@@ -161,8 +176,14 @@ Closed in this pass:
 - **`HabboLandingView`'s `HTIE_ICON_GAMES` case**, the landing-view half of the pair whose navigator
   half was ported.
 
-Still open and deliberately so: **Discord Rich Presence** (7 files — manager, IID, presence,
-activity detection/state, settings controller and view), absent from the port entirely.
+~~Still open and deliberately so: **Discord Rich Presence**~~ — **closed 2026-09-06** (`3fa9ffb3`).
+`habbo/discord/` holds the manager, its IID, `habbo_activity/` (detection + state) and `settings/`
+(controller + view); AS3's ANE talking to the local Discord IPC pipe becomes the local RPC
+WebSocket, the only transport a browser can reach. Two gates, and they are different: the transport
+sits behind `discord.rpc.enabled` (default off — Discord closes the socket `4001 Invalid Origin`
+unless the application has an RPC-origins grant it no longer hands out; measured 2026-09-06, see the
+`DEVIATION:` on `initialize()`), while the settings dialog sits behind `discord.enabled` and works
+regardless.
 
 Two notes for whoever re-runs this. The measure has one systematic false positive worth knowing
 about: an obfuscated file ported under a recovered name reads as "absent" by basename unless its TS
@@ -2492,6 +2513,31 @@ There is no reliable single global percentage right now. Raw file counts underco
 File counts re-measured 2026-08-13; the prose in each row carries its own dates and is only
 rewritten where the count moved enough to make it wrong.
 
+**The TS column below is 2026-08-13 and every engine row has moved since.** Re-measured
+2026-09-07, same method (recursive `.as` under `WIN63-…/src/com/sulake/<module>/` against
+recursive `.ts` under `vortex-engine/src/<module>/`), only the rows that changed:
+
+| Module | AS3 | TS 2026-08-13 → 2026-09-07 | | Module | AS3 | TS 2026-08-13 → 2026-09-07 |
+|---|---|---|---|---|---|---|
+| `core/` | 371 | 363 → **376** | | `habbo/help` | 34 | 37 → **43** |
+| `core/window` | 254 | 257 → **262** | | `habbo/moderation` | 43 | 43 → **46** |
+| `iid/` | 60 | 54 → **65** | | `habbo/quest` | 64 | 29 → **75** |
+| `room/` root | 80 | 67 → **73** | | `habbo/groups` | 31 | 35 → **36** |
+| `habbo/room` | 328 | 320 → **349** | | `habbo/friendbar` | 146 | 137 → **140** |
+| `habbo/session` | 84 | 90 → **93** | | `habbo/notifications` | 34 | 18 → **27** |
+| `habbo/navigator` | 83 | 98 → **99** | | `habbo/freeflowchat` | 33 | 35 → **40** |
+| `habbo/window` | 110 | 100 → **114** | | `habbo/utils` | 28 | 23 → **25** |
+| `habbo/ui` | 369 | 300 → **369** | | `habbo/discord` | 8 | *(absent)* → **9** |
+| `habbo/avatar` | 140 | 155 → **160** | | `habbo/roomevents` | 448 | 395 → **451** |
+| `habbo/inventory` | 73 | 80 → **95** | | | | |
+| `habbo/catalog` | 265 | 206 → **273** | | | | |
+
+Unchanged: `habbo/game` 63/62, `habbo/toolbar` 41/49, `habbo/friendlist` 40/41, `habbo/messenger` 12/15,
+`habbo/advertisement` 5/7, `habbo/campaign` 5/7, `habbo/tracking` 10/10, `habbo/sound` 29/32,
+`habbo/nux` 4/5, `habbo/phonenumber` 7/8, `habbo/userclassification` 1/2. The caveat at the top of
+this file still applies to every number here: a TS count at or above the AS3 count means files
+exist, nothing more.
+
 | Area / module              | AS3 files | TS files | Current status                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 |----------------------------|-----------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `core/`                    | 371       | 363      | Advanced. `core/window` is heavily ported; runtime/assets/communication still need targeted parity audits before being called final.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -2753,6 +2799,28 @@ Two same-named messages are *not* a conflict: `ChangeUserName` is 879 for the on
 
 ## Current Priorities
 
+> **State of play, 2026-09-07.** Every numbered priority below is closed as a *porting* question —
+> re-verified item by item on that date, and the strikethroughs and "closed since" notes in them are
+> the evidence. What is genuinely left is three things, none of which is a missing file:
+>
+> 1. **The `WindowComposite` structural rewrite.** The only open architecture task. The case for it
+>    is allocation, not fidelity: 10,348 shipped windows carry param 16 against 1,196 that own a
+>    graphic context, so the port holds ~9.7x the surfaces AS3 would. Attempted and reverted
+>    2026-09-06 — read "Not yet done" before trying again; the lead is that a shared-context window
+>    never gets the implicit refresh `setDrawRegion()` hands an own-context one, so one drawn blank
+>    stays blank. The 822-line attempt is at `%TEMP%\window-composite-rewrite.patch`.
+> 2. **Exercising the client live.** The four measures answer "is anything missing", never "is
+>    anything right" — and 9,590 members are present with no per-member trace, so nothing attests to
+>    their behaviour. This is now the highest-yield work by a distance.
+> 3. **The emulator.** 97 of its 555 handlers accept and drop (snow war 20/20, camera 5/5,
+>    crafting 5/5). Those screens open, send, and receive nothing — client-side there is nothing
+>    left to port for them.
+>
+> Deliberate non-ports, so they are not re-opened: the 12 dead notification-feed files (flag off
+> *and* controller never constructed in AS3), the `*Bootstrap`/profiler/AIR set, the 5
+> `ui/widget/messages/` classes nothing constructs, `QuestCompleted`'s twinkle animation, and
+> `AvatarScaleType.SMALL` in the imager (this asset build ships no `sh_*` at all).
+
 Re-ranked **2026-08-03**, biggest product gap first.
 
 > **Read priority 0 first.** Three days of this week went on features that were already ported and
@@ -2838,10 +2906,11 @@ Re-ranked **2026-08-03**, biggest product gap first.
 2. **Finish `habbo/roomevents`**. The enumerated remainder has been worked through — send gaps,
    `VariableManagementDetailController`, the `chests` tab, the sandbox donation tool, the reward
    notification, the contract editors, `wiredChest` and `wired_trading/transactions/` have all
-   landed, and `wired_trading` is complete. What is left is the `WiredMenuEvent` toolbar dispatch,
-   three `HabboUserDefinedRoomEvents` UI helpers nothing calls yet, and Bloc C's 16 `TODO(AS3)`s —
-   several of which Bloc E has now unblocked. Re-measure the file count before quoting one; the old
-   395/448 predates seven slices.
+   landed, and `wired_trading` is complete. ~~What is left is the `WiredMenuEvent` toolbar dispatch
+   … and Bloc C's 16 `TODO(AS3)`s~~ — **all closed; verified 2026-09-07**: `BottomBarLeft` and
+   `HabboToolbar` both carry `onWiredMenuEvent()`, and `habbo/roomevents` holds **0** `TODO(AS3)`
+   (the repo holds 1 in total). Re-measure the file count before quoting one; the old 395/448
+   predates seven slices.
 3. ~~**Whole modules still at zero**: `habbo/game` — 0/63~~ — **closed 2026-09-01 at 61/63**, with
    the snow-war message tier (56 files) and the room-object tier (5) alongside it. The two files
    left are constants holders nothing references. What remains for snow war is server-side: the
@@ -2856,12 +2925,14 @@ Re-ranked **2026-08-03**, biggest product gap first.
    per-category count. **`game` started 2026-08-28** — the engine-side deterministic foundation
    first, then the whole DTO tier: all 13 `parser/game/snowwar/data/` classes plus the 15 game-object
    and event DTOs they need out of `src/unknowns/`, then the 8-file arena tier, then the tile grid
-   and all seven game objects, then the eight replayable events — **37 of 63, all guarded by
-   `scripts/check-snowwar.mjs`, which exercises queue → pulse → apply → stage end to end**. See the
-   five top entries under "Recent Work Recorded" for the dependency order the rest has to follow.
-   `SnowWarEngine` (1,444 l.) is next and is the last thing any of this stubs out; behind it sit
-   `ui/` (7), `leaderboard/` (7), `KeyboardControl`, the 825-line incoming-message handler and
-   `HabboGameManager`.
+   and all seven game objects, then the eight replayable events — all guarded by
+   `scripts/check-snowwar.mjs`, which exercises queue → pulse → apply → stage end to end.
+   **Finished 2026-09-01 and re-verified 2026-09-07: 62 TS for 63 AS3.** `SnowWarEngine`,
+   `KeyboardControl`, `ui/`, `leaderboard/`, the 825-line incoming-message handler and
+   `HabboGameManager` are all in. What is left for snow war is **server-side**: the emulator's
+   20 handlers are empty stubs, so nothing can be played end to end. The remaining protocol
+   batches on this line were closed too — `wire-coverage.mjs` reads 0 send gaps and 0 recv gaps
+   as of 2026-09-07.
 5. ~~**Retire the parity-audit backlog**~~ — **closed.** The 2026-07-17 audit is fully worked:
    25/26 real criticals fixed (one deliberately not acted on), 94/94 majors (3 of them false
    positives) and 48/48 open minors. See the audit section's own closing paragraph. The rule it
@@ -4473,6 +4544,98 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **Text is rasterised from the outline now, and the gap with Flash was vertical — 2026-09-07.**
+  Three attempts at this were reverted before (a from-scratch SDF rasteriser, `truffle-text`, and the
+  binary glyph atlas), all three judged by eye. This one is judged by a number, and the harness is
+  checked in: `packages/vortex-client/text-lab.html`, driven by captures of the **real Flash client**.
+  It compares by MAE — mean absolute coverage error per pixel after aligning both sides on their ink
+  bounding box — and `globalThis.__textLab` exposes the tools that produced everything below.
+  **The captures themselves were deleted once the port landed**, at the user's call, so every number
+  in this entry is a record rather than something the page will reproduce on open: drop a fresh 1:1
+  PNG of a single label on it and fill in `REFERENCES` to bring the batch tools back.
+
+  **The scale that makes the numbers readable:** two captures of the *same* renderer sit at **0.045**.
+  `fillText()` against Flash sat at **0.15-0.21**.
+
+  **What the difference actually was.** Not anti-aliasing: on identical strings, same face, same width
+  to the pixel, Flash's glyphs are a **whole pixel taller** — cap height 9 rows against 8, x-height 7
+  against 6. That is `gridFitType: pixel`, which Adobe documents as applying only when
+  `antiAliasType` is `ADVANCED` — 47 of the 65 shipped styles. Chrome renders Ubuntu 12's 8.32px cap
+  height as 8 solid rows and a faint one; Flash rounds it up to 9.
+
+  **What was ruled out, each by measurement rather than reasoning:**
+  - *The fonts.* Every one of the 9 distinct faces embedded in the WIN63 dump maps to a shipped
+    `webfonts/*.ttf` with 0-1 differing outlines and 1-2 differing advances out of ~400.
+  - *`ctx.textRendering = 'geometricPrecision'` and `ctx.fontKerning`* — identical to the decimal.
+  - *Snapping the pen to whole pixels* — worse on every capture. Flash grid-fits the outline, not the
+    pen.
+  - *A fitted CSM curve for `sharpness`/`thickness`* — the fitted parameters scattered from k=1.25 to
+    k=10 across captures, so it was absorbing noise, not recovering Flash's curve.
+
+  **What shipped, and it is not any of the above.** Every approach in this entry — outline fill,
+  supersampling, our own vertical and horizontal grid fits, FreeType-style hinting through
+  `text-shaper` — landed between 0.086 and 0.13. Then the user asked whether someone had already
+  done this, and the answer was **`truffle-text` 2.0.0**: *"Deterministic Saffron-class text
+  rendering with HarfBuzz shaping and certified Flash replay"*, MIT, on FreeType-WASM. Measured
+  against the eight Flash captures its generative engine gives **0.0025, 0.0104, 0.0187, 0.0420,
+  0.0437, 0.0456, 0.0581, 0.0601** — first on every one by a factor of 2 to 8, and half of them
+  below the 0.045 that two captures of the *same* renderer score. Its `TextStyle` takes
+  `antiAliasType`, `gridFitType`, `sharpness` and `thickness` under those names, so the AS3 fields
+  the port already parses are handed straight through.
+
+  **Note this is the library a July session installed, wired and reverted** — on its v1 legacy
+  replay path, which had calibration for ~35 style/colour pairs and a blurry fallback. v2's
+  generative engine is a different thing. The lesson is not "re-try rejected libraries"; it is that
+  the rejection had no measurement behind it, and this one does.
+
+  **Shape of the port.** `GlyphAtlas` is back ON and its cache is now per rendered STRING, not per
+  glyph: the engine shapes and grid-fits a run as a whole, so slicing it into glyphs and
+  re-assembling them would throw away the part that matches. `vortex-engine` does **not** depend on
+  truffle-text — its WebAssembly cannot pass through the dev-time engine pre-bundle, and the package
+  otherwise has three dependencies — so the atlas declares an `ITextEngine` interface shaped exactly
+  like `SaffronText` and `App.ts` injects one. With no engine set, the old `fillText` bake still
+  runs.
+
+  **Verified end to end**: `text-lab.html`'s last row calls the engine's own `GlyphAtlas` through
+  the same injection App.ts uses, and reads **0.0165**.
+
+  **Two placement bugs the harness was structurally unable to catch, and the reason.** MAE aligns
+  both sides on their ink bounding box before comparing, which **cancels a constant offset exactly**
+  — so it read 0.0165 while every string in the client sat 2.5px to the right. Both were found by
+  looking at the client, not at the numbers:
+
+  - *Where the pen is inside the buffer.* The engine insets the buffer it returns; `padding: 0`
+    does not change it, and `buffer.width - textWidth` says 4.45 and is wrong, because the right
+    edge sits tight against the text while the left carries the inset **and** the first glyph's
+    side bearing. The value is 2.5, settled by eye in the running client against a live
+    `globalThis.__vortexTextNudge`, which is still there for the next time the engine moves it.
+    Round *after* subtracting it: a bitmap on a fractional coordinate is resampled, which puts back
+    the blur the whole change exists to remove.
+  - *The clip started at the pen.* `TextSkinRenderer` clipped each line to `rect(x, …)`, which now
+    shaves the 2.5px the string reaches to the left of its pen — the navigator's first tab read
+    "ublic". All four clip rects allow `GlyphAtlas.overhangLeft`, and only while the atlas draws.
+
+  Also wired: **`onBoardingHcUi/display/TextField.ts`**, whose header comment used to say `advanced`
+  text deliberately stayed on `fillText()`. That reason expired with this change — the atlas is no
+  longer a thresholding rasteriser for `normal` — so the login screen measures and draws through it,
+  falling back when the family is not registered. **`VortexLoadingScreen` is deliberately not wired**:
+  it draws in `Arial, Helvetica, sans-serif`, which is not one of the registered faces and is not a
+  Habbo font, so routing it through the atlas would resolve nothing and change nothing.
+
+  **A pre-existing engine bug the change exposed.** `drawText()` called `tint()` — which snapshots the
+  atlas page and caches it against `_version` — *before* baking the glyphs of the string it was about
+  to draw. `getGlyph()` bumps the version when it bakes, so the first draw of any string blitted from
+  a page that predated its own glyphs and came out **blank**. Inert while the atlas was off; it is
+  why the lab's engine row rendered nothing until the bake was moved ahead of the tint.
+
+  **Two things to know before touching the build.** truffle-text and harfbuzzjs both `await` at
+  module top level, which Vite's dependency optimiser refuses at its default `es2020` target — the
+  dev server *exits* rather than serving a broken chunk; `optimizeDeps.esbuildOptions.target` is
+  now `esnext`. And their WebAssembly is fetched relative to the module that owns it, so both
+  packages are in `optimizeDeps.exclude`: bundled into a dep chunk that URL points at `.vite/deps/`,
+  where the file is not, and under a base the SPA fallback answers with `index.html` — the loader
+  then reports a corrupt module rather than a 404.
+
 - 🆕 **Reward-track seasons: the toolbar stopped opening one hardcoded id — 2026-09-06.**
   `ProgMenuController` sent the literal `reward_track/open/introduction`, faithfully, because that
   is what AS3 does — the 2026 build shipped a single permanent track by that name. Nothing else in
@@ -5557,8 +5720,13 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
       space. `ExternalInterface.call("FlashExternalInterface.updateName", …)` became the same dotted
       lookup on `window` that `MallOfferExternalInterfaceHelper` already uses: the contract is the
       host page's, so the string stays exactly as it was, and a page that defines nothing is inert.
-  - **`habbo/discord` (9 files, 1,448 l.) is a deliberate non-port, and this is the reasoning so it
-    is not re-opened.** Its 3 sweep hits are `HabboActivityDetection` subscribing `WiredSaveSuccess`,
+  - ~~**`habbo/discord` (9 files, 1,448 l.) is a deliberate non-port**~~ — **overturned and ported
+    2026-09-06 (`3fa9ffb3`); see the 2026-09-02 sweep entry above.** The reasoning below is kept
+    because it was right about everything except its conclusion: the AIR native extension really has
+    no browser equivalent, but Discord's **local RPC WebSocket** does, and that is what the port
+    talks to. The paragraph is what "deliberate non-port" looks like when the blocker is a transport
+    nobody had gone looking for a replacement for.
+    Its 3 sweep hits are `HabboActivityDetection` subscribing `WiredSaveSuccess`,
     `WiredValidationError` and `GetGuestRoomResult` — purely to work out which `HabboActivityState`
     (chilling / gaming / trading / dancing / building / creating_wired …) to publish. What it
     publishes to is `com.sulake.discord.DiscordRichPresence`, and that is
@@ -5826,8 +5994,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 - 🆕 **`habbo/moderation` — the mod-tool window cycle: the module is complete**, 2026-08-18.
   24 → 38 TS files. The eight remaining window controllers plus `IssueHandler` and the four
   held-back action classes, which form one dependency cycle and had to land together, along with the
-  listener plumbing they need. **Only the new mod tool (`_SafeCls_1981` + 6 tabs, ~1 110 l.) is
-  still open**, and it is independent.
+  listener plumbing they need. ~~**Only the new mod tool (`_SafeCls_1981` + 6 tabs, ~1 110 l.) is
+  still open**~~ — **that landed too; verified 2026-09-07**: `moderation/NewModerationTool.ts` plus
+  `moderation/new_mod_tool_tabs/`.
   - **`ModerationMessageHandler` had no listener plumbing at all.** AS3 holds six listener lists and
     dispatches to them from `onUserInfo`, `onRoomInfo`, `onRoomVisits`, `onRoomUserClassification`,
     the three chatlog handlers and both room enter/exit handlers. Every one of those was a
@@ -5937,8 +6106,8 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     `ChatlogCtrl` → `UserInfoFrameCtrl` → `UserInfoCtrl` → `ChatlogCtrl` — so nothing in it compiles
     until all nine (~3 200 l.) exist, along with the four held-back action classes they construct.
   - **Closed** by the two entries above: the controller cycle and the issue browser both shipped
-    the same day, along with the four held-back action classes. Only the new mod tool
-    (`_SafeCls_1981` + its 6 tabs, ~1 110 l.) is still open.
+    the same day, along with the four held-back action classes. The new mod tool
+    (`_SafeCls_1981` + its 6 tabs, ~1 110 l.) followed and is in as well.
 
 - 🆕 **The reward track — controller and views: the module is complete**, 2026-08-18.
   `habbo/quest/rewardtrack/` is 19 more TS files (controller + 18 under `view/`, ~1 900 l. of AS3),
@@ -6515,9 +6684,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     manager, session data manager) — a hard dependency on an unprovided IID locks a component
     forever with no log. `HabboCommunicationManager.initComponent()` creates the connection object
     eagerly, so the handler finds one to subscribe against.
-  - Still open: the two AS3 consumers. `RoomUI` and `HabboFreeFlowChat` both take
-    `IIDHabboModeration` as an optional dependency (`RoomUI.as:508`,
-    `HabboFreeFlowChat.as:212`); neither port declares it, so nothing yet *uses* the manager.
+  - ~~Still open: the two AS3 consumers~~ — **closed since; verified 2026-09-07.** Both
+    `RoomUI` and `HabboFreeFlowChat` now declare `IID_HabboModeration` as an optional dependency,
+    as `RoomUI.as:508` / `HabboFreeFlowChat.as:212` do.
 
 - ✅ **Chat flood control (incoming 3614)**, 2026-08-08. `FloodControlMessageParser` (one int, the
   seconds) + `FloodControlMessageEvent`, header **3614** from WIN63's registry
@@ -6614,10 +6783,9 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
     `"id x y rot"` for floor and `"id :w=…"` for wall. The stickie branch
     (`furniture_is_stickie` → `PlacePostItMessageComposer`) is reachable now that the wall string is,
     and is wired.
-  - **Still open**: *moving* an already-placed wall item. `modifyRoomObject()`'s `OBJECT_MOVE` still
-    refuses category 20 — that one needs the move composer (`_SafeCls_2682`, `id + locationString`),
-    which is not ported. Also left as TODOs in `placeObject()`: the `free_placement_room` alert and
-    `setPlacedObjectData()`.
+  - ~~**Still open**: *moving* an already-placed wall item~~ — **closed since; verified 2026-09-07.**
+    `MoveWallItemMessageComposer` is ported and sent from `RoomEngine`, and both `placeObject()`
+    TODOs are gone: the `free_placement_room` alert and `setPlacedObjectData()` are implemented.
 
 - ✅ **`vortex-imager` — external avatar + guild-badge imager, and two engine bugs it exposed**,
   2026-08-07. New package `packages/vortex-imager`: a Fastify service answering the

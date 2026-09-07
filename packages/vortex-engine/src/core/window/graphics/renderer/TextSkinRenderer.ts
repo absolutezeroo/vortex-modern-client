@@ -831,6 +831,23 @@ export class TextSkinRenderer extends SkinRenderer
         return Math.floor(top + safeHeight - descent);
     }
 
+    /**
+     * How far left of the pen the line may reach, so the clip does not shave
+     * it off.
+     *
+     * The atlas draws a whole rendered string as one bitmap whose pen sits a
+     * couple of pixels inside it, so a clip that starts exactly at the pen cuts
+     * the first glyph — which is what took the "P" off the navigator's first
+     * tab and left it reading "ublic". Zero when the atlas is not drawing,
+     * because `fillText()` starts at the pen.
+     */
+    // TS-only: Flash clipped inside the TextField itself; this is the Canvas2D
+    // port's equivalent, and the overhang is this port's own.
+    protected get clipOverhang(): number
+    {
+        return this._atlas ? GlyphAtlas.overhangLeft : 0;
+    }
+
     // TS-only: replaces Flash's own glyph stroking.
     protected drawTextLine(
         ctx: OffscreenCanvasRenderingContext2D,
@@ -855,7 +872,7 @@ export class TextSkinRenderer extends SkinRenderer
         {
             ctx.save();
             ctx.beginPath();
-            ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+            ctx.rect(x - this.clipOverhang, resolvedClipY, maxWidth + this.clipOverhang, resolvedClipHeight);
             ctx.clip();
 
             // With no spacing the clip alone bounds the line, exactly as the
@@ -874,7 +891,7 @@ export class TextSkinRenderer extends SkinRenderer
         {
             ctx.save();
             ctx.beginPath();
-            ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+            ctx.rect(x - this.clipOverhang, resolvedClipY, maxWidth + this.clipOverhang, resolvedClipHeight);
             ctx.clip();
             ctx.fillText(text, x, y);
             ctx.restore();
@@ -887,7 +904,7 @@ export class TextSkinRenderer extends SkinRenderer
 
         ctx.save();
         ctx.beginPath();
-        ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+        ctx.rect(x - this.clipOverhang, resolvedClipY, maxWidth + this.clipOverhang, resolvedClipHeight);
         ctx.clip();
 
         for(let i = 0; i < text.length; i++)
@@ -945,7 +962,7 @@ export class TextSkinRenderer extends SkinRenderer
 
         ctx.save();
         ctx.beginPath();
-        ctx.rect(x, resolvedClipY, maxWidth, resolvedClipHeight);
+        ctx.rect(x - this.clipOverhang, resolvedClipY, maxWidth + this.clipOverhang, resolvedClipHeight);
         ctx.clip();
 
         let drawX = x;

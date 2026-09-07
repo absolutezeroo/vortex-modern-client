@@ -9,10 +9,15 @@
  *   from them (`alignAnchors`, `lineUpVertically`, and `Button`'s caption centring). Assigning
  *   `width = textWidth` after `autoSize` is AS3 stripping Flash's 2px gutter, so the port measures
  *   without one.
- * - `antiAliasType = "advanced"` — deliberately NOT routed through the engine's glyph atlas. The
- *   atlas exists for Flash's `"normal"` rasteriser; `"advanced"` text stays on `fillText()`, which
- *   is also what the atlas itself documents (see `core/window/utils/GlyphAtlas.ts`).
+ * - `antiAliasType = "advanced"` — routed through the engine's glyph atlas since 2026-09-07. That
+ *   used to say the opposite, and the reason it gave stopped being true: the atlas was a
+ *   thresholding rasteriser for Flash's `"normal"` and is now truffle-text's Saffron engine, which
+ *   is measured against captures of the real client on `advanced` text specifically. With the
+ *   family unregistered the atlas hands the line back to `fillText()`, so this stays safe on a
+ *   screen that draws before the webfonts are in.
  */
+import {GlyphAtlas} from '@core/window/utils/GlyphAtlas';
+
 import {DisplayObject} from './DisplayObject';
 import {Rectangle} from './Geom';
 
@@ -305,6 +310,7 @@ export class TextField extends DisplayObject
         const lineHeight = this.lineHeight;
         const ascent = Math.round(format.size * 0.8);
         const boxWidth = this._width > 0 ? this._width : this.textWidth;
+        const atlas = TextField.atlasFor(format);
 
         for(let i = 0; i < this._lines.length; i++)
         {
@@ -321,7 +327,11 @@ export class TextField extends DisplayObject
                 x = boxWidth - TextField.measureLine(line, format);
             }
 
-            context.fillText(line, x, y);
+            // The atlas is typed against the window system's offscreen contexts;
+            // this screen paints on a real canvas, and the two are identical for
+            // everything drawText() touches.
+            if(atlas) atlas.drawText(context as unknown as OffscreenCanvasRenderingContext2D, line, x, y, context.fillStyle as string, 0);
+            else context.fillText(line, x, y);
 
             if(format.underline)
             {
@@ -407,10 +417,33 @@ export class TextField extends DisplayObject
         return `${style}${weight}${format.size}px '${format.font}', Arial, Helvetica, sans-serif`;
     }
 
+    /**
+     * TS-only: the atlas for a format, or null when it is not drawing this
+     * family — an unregistered face, or the screen painting before the fonts
+     * are in, both of which fall back to `fillText()`.
+     *
+     * `LoaderUI` sets `antiAliasType = "advanced"` and nothing else, so the
+     * quality arguments are Flash's own defaults: no sharpness or thickness
+     * bias, and `gridFitType = "pixel"`.
+     */
+    private static atlasFor(format: ITextFormat): GlyphAtlas | null
+    {
+        if(!GlyphAtlas.handles('advanced')) return null;
+
+        return GlyphAtlas.get(TextField.toCssFont(format), format.size, 'advanced', 0, 0, 'pixel');
+    }
+
     /** TS-only: measures one line through the shared context. */
     private static measureLine(line: string, format: ITextFormat): number
     {
         if(line.length === 0) return 0;
+
+        // Measuring any other way than the renderer draws auto-sizes the field
+        // to a width nothing will occupy — and `LoaderUI` lays the whole login
+        // screen out from these numbers.
+        const atlas = TextField.atlasFor(format);
+
+        if(atlas) return atlas.measure(line, 0);
 
         if(!TextField._measureContext)
         {

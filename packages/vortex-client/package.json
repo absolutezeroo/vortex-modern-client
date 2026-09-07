@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "eventemitter3": "^5.0.1",
-    "vortex-engine": "workspace:*",
-    "pixi.js": "^8.6.6"
+    "pixi.js": "^8.6.6",
+    "vortex-engine": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -27,6 +27,7 @@
     "esbuild": "^0.25.12",
     "sass-embedded": "^1.97.3",
     "sharp": "^0.34.5",
+    "truffle-text": "^2.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.0"
   }

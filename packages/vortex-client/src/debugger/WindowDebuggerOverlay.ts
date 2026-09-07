@@ -156,7 +156,7 @@ function createAtlasButton(): HTMLButtonElement
     };
 
     button.className = 'hwd-copy-btn';
-    button.title = 'Glyph atlas for antiAliasType="normal" text. Off routes it through ctx.fillText() like "advanced" — reopen a window if some text does not repaint.';
+    button.title = 'Glyph atlas: rasterises glyph outlines with the face\'s own hinting, for both antiAliasType values. Off routes every style through ctx.fillText() — reopen a window if some text does not repaint.';
     button.addEventListener('click', () =>
     {
         GlyphAtlas.enabled = !GlyphAtlas.enabled;
