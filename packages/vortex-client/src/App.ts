@@ -26,7 +26,6 @@ import {LoginFlow} from './login/LoginFlow';
 import {OnBoardingHcFlow} from './onBoardingHc/OnBoardingHcFlow';
 import {Stage} from './onBoardingHcUi/display/Stage';
 import {LoginAssets} from './onBoardingHcUi/LoginAssets';
-import {ChangelogWindow} from './changelog/ChangelogWindow';
 import {installWindowDebugger} from './debugger/WindowDebuggerOverlay';
 import {
     type IWindowLayoutXmlData,
@@ -887,27 +886,16 @@ export class VortexApp
     private _enginePromise: Promise<typeof Vortex.instance> | null = null;
     private _imageBundle: AssetBundle | null = null;
     private _xmlBundle: AssetBundle | null = null;
-    private _changelogWindow: ChangelogWindow | null = null;
     private _uninstallWindowDebugger: (() => void) | null = null;
 
-    /** Last hovered window for OVER/OUT tracking. */
-    private _lastHoveredWindow: IWindow | null = null;
+    /** PROBE (remove with the log in `forwardToRoomEngine`): one-shot, so mousemove cannot spam. */
+    private _roomForwardProbeFired: boolean = false;
 
     /** Whether the mouse button is currently down. */
     private _mouseDown: boolean = false;
 
     /** The window that received the last DOWN event (for drag/UP tracking). */
     private _mouseDownWindow: IWindow | null = null;
-
-    /** Double-click detection: timestamp/window/position of the last synthesized CLICK. */
-    private _lastClickTime: number = 0;
-    private _lastClickWindow: IWindow | null = null;
-    private _lastClickX: number = 0;
-    private _lastClickY: number = 0;
-
-    /** Max gap (ms) and pointer travel (px) between two clicks to count as a double-click. */
-    private static readonly DOUBLE_CLICK_MS: number = 350;
-    private static readonly DOUBLE_CLICK_DIST: number = 8;
 
     /** Document-level mousemove handler (for drag/scale). */
     private _docMoveHandler: ((e: MouseEvent) => void) | null = null;
@@ -995,12 +983,6 @@ export class VortexApp
 
         this._imageBundle = imageBundle;
         this._xmlBundle = xmlBundle;
-
-        // Mount the "What's New" changelog button now, not after login/connect —
-        // it's an independent DOM overlay (not a room/toolbar window) and should stay
-        // visible even while stuck on the login flow or waiting on the backend.
-        this._changelogWindow = new ChangelogWindow();
-        this._changelogWindow.mount();
 
         // AS3: HabboAir.as::createLoginFlowOrLoadingScreen() — with no SSO ticket the login
         // flow is shown and _loadingScreen is never created, which makes the very next call,
@@ -1490,12 +1472,6 @@ export class VortexApp
         this._uninstallWindowDebugger?.();
         this._uninstallWindowDebugger = null;
 
-        if(this._changelogWindow)
-        {
-            this._changelogWindow.dispose();
-            this._changelogWindow = null;
-        }
-
         // Stop render loop
         if(this._animFrameId) 
         {
@@ -1512,6 +1488,8 @@ export class VortexApp
             this._canvas.removeEventListener('mousedown', this._onMouseDown);
             this._canvas.removeEventListener('mousemove', this._onMouseMove);
             this._canvas.removeEventListener('mouseup', this._onMouseUp);
+            this._canvas.removeEventListener('click', this._onClick);
+            this._canvas.removeEventListener('dblclick', this._onDblClick);
             this._canvas.removeEventListener('wheel', this._onWheel);
             this._canvas.removeEventListener('contextmenu', this._onContextMenu);
         }
@@ -1543,7 +1521,6 @@ export class VortexApp
         this._canvas?.remove();
         this._canvas = null;
         this._ctx = null;
-        this._lastHoveredWindow = null;
         this._mouseDownWindow = null;
         this._isInRoom = false;
         this._activeRoomId = -1;
@@ -1653,9 +1630,26 @@ export class VortexApp
     /**
      * Forwards a mouse event to the room engine via RoomDesktop.
      * Called when no UI window intercepted the event and we are in a room.
+     *
+     * PROBE (remove once answered): this is a *second* path into `canvasMouseHandler()`. The first
+     * is AS3's own — `RoomDesktop` subscribes its `_canvasWrapper` to CLICK/DOUBLE_CLICK/MOVE/DOWN/
+     * UP/UP_OUTSIDE (`RoomDesktop.ts:1165-1170`) and its `canvasWindowEventHandler` translates the
+     * `WindowMouseEvent` and calls the same method. The three call sites here are gated on `!hit`,
+     * and `_onWheel`'s own comment states that the room canvas *is* a mouse-enabled window, so
+     * `findWindowAtPoint()` returns it over the room and its `!hit`-gated branch "never ran".
+     *
+     * If that holds for the wheel it holds for down/move/click, and this method plus its three
+     * call sites are dead. That is a deduction from a comment, not a measurement — so this logs
+     * once instead of being deleted. Enter a room and move the mouse: silence means dead.
      */
-    private forwardToRoomEngine(x: number, y: number, type: string, e: MouseEvent): void 
+    private forwardToRoomEngine(x: number, y: number, type: string, e: MouseEvent): void
     {
+        if(!this._roomForwardProbeFired)
+        {
+            this._roomForwardProbeFired = true;
+            log.warn(`forwardToRoomEngine reached (type=${type}) — the !hit gate is live, this path is NOT dead code.`);
+        }
+
         const vortex = Vortex.instance;
 
         try 
@@ -1904,14 +1898,51 @@ export class VortexApp
         this._canvas.addEventListener('mousedown', this._onMouseDown);
         this._canvas.addEventListener('mousemove', this._onMouseMove);
         this._canvas.addEventListener('mouseup', this._onMouseUp);
+        this._canvas.addEventListener('click', this._onClick);
+        this._canvas.addEventListener('dblclick', this._onDblClick);
         this._canvas.addEventListener('wheel', this._onWheel, {passive: true});
         this._canvas.addEventListener('contextmenu', this._onContextMenu);
     }
 
     /**
+     * Hands one DOM pointer event to the window system's own input queue.
+     *
+     * This is the seam AS3 gets for free: `MouseEventQueue` subscribes to the Flash stage
+     * (`MouseEventQueue.as:16-22`) and `WindowContext.update()` drains it through
+     * `MouseEventProcessor.process()` every frame. There is no stage here, so the DOM
+     * listeners below push instead — and from that point on the hit testing
+     * (`groupParameterFilteredChildrenUnderPoint`), the OVER/OUT bookkeeping, the
+     * CLICK_AWAY, the `mouseUp` re-targeting and the parent bubbling are all AS3's, in
+     * `MouseEventProcessor`, rather than reimplemented here.
+     *
+     * Coordinates are canvas-local, which is the space `getGlobalPosition()` reports —
+     * the same one AS3 calls `stageX`/`stageY`.
+     */
+    // TS-only: AS3 subscribes this queue to the Flash stage; the port has DOM listeners.
+    private enqueueMouse(type: string, e: MouseEvent, delta: number = 0): void
+    {
+        const queue = WindowContext.inputEventQueue;
+
+        if(!queue) return;
+
+        const {x, y} = this.getCanvasCoords(e);
+
+        queue.enqueue({
+            type,
+            stageX: x,
+            stageY: y,
+            altKey: e.altKey,
+            ctrlKey: e.ctrlKey,
+            shiftKey: e.shiftKey,
+            buttonDown: (e.buttons & 1) !== 0,
+            delta
+        });
+    }
+
+    /**
      * Converts a DOM mouse event to canvas-local coordinates.
      */
-    private getCanvasCoords(e: MouseEvent): { x: number; y: number } 
+    private getCanvasCoords(e: MouseEvent): { x: number; y: number }
     {
         if(!this._canvas) return {x: 0, y: 0};
 
@@ -1943,14 +1974,16 @@ export class VortexApp
         // reverts to <body>, so keystrokes never reach the hidden input at all.
         e.preventDefault();
 
+        this.enqueueMouse('mouseDown', e);
+
         const {x, y} = this.getCanvasCoords(e);
         const vortex = Vortex.instance;
         const hit = vortex.windowManager.findWindowAtPoint(x, y);
 
-        if(!hit) 
+        if(!hit)
         {
             // No UI window hit — forward to room engine if in a room
-            if(this._isInRoom) 
+            if(this._isInRoom)
             {
                 this.forwardToRoomEngine(x, y, 'mouse_down', e);
             }
@@ -1971,24 +2004,17 @@ export class VortexApp
             (serviceManager.getMouseScalingService() as WindowMouseOperator).setMousePosition(x, y);
         }
 
-        // Compute local coordinates
-        const globalPos = this._globalPosScratch;
+        // The DOWN itself was enqueued above — `MouseEventProcessor.passMouseEvent()` finds the
+        // target, records it as `_lastMouseDownTarget` (which is what makes the later `mouseUp`
+        // reach the same window even when the pointer has left it) and bubbles when unhandled.
 
-        hit.getGlobalPosition(globalPos);
-
-        const localX = x - globalPos.x;
-        const localY = y - globalPos.y;
-
-        const event = WindowMouseEvent.allocateMouse(
-            WindowMouseEvent.DOWN, hit, null,
-            localX, localY, e.clientX, e.clientY,
-            e.altKey, e.ctrlKey, e.shiftKey, true
-        );
-        (hit as WindowController).update(hit as WindowController, event);
-        event.recycle();
-
-        // Register document-level handlers for drag/scale
-        if(serviceManager) 
+        // Register document-level handlers for drag/scale.
+        //
+        // These stay client-side: `WindowMouseOperator.handler()` is a Flash event subscription in
+        // AS3, and nothing in the engine drives `handleMouseMove()`/`handleMouseUp()` — this is
+        // their only caller. They are also why the listeners go on `document` rather than the
+        // canvas: a drag must keep tracking once the pointer leaves the canvas.
+        if(serviceManager)
         {
             const dragger = serviceManager.getMouseDraggingService() as WindowMouseOperator;
             const scaler = serviceManager.getMouseScalingService() as WindowMouseOperator;
@@ -2001,40 +2027,20 @@ export class VortexApp
                 scaler.handleMouseMove(coords.x, coords.y);
             };
 
-            this._docUpHandler = (ev: MouseEvent): void => 
+            this._docUpHandler = (ev: MouseEvent): void =>
             {
                 dragger.handleMouseUp();
                 scaler.handleMouseUp();
 
-                // Dispatch UP event to window
-                if(this._mouseDownWindow) 
-                {
-                    const {x: ux, y: uy} = this.getCanvasCoords(ev);
-                    const gp = this._globalPosScratch;
-
-                    this._mouseDownWindow.getGlobalPosition(gp);
-
-                    const upEvent = WindowMouseEvent.allocateMouse(
-                        WindowMouseEvent.UP, this._mouseDownWindow, null,
-                        ux - gp.x, uy - gp.y, ev.clientX, ev.clientY
-                    );
-                    (this._mouseDownWindow as WindowController).update(
-                        this._mouseDownWindow as WindowController, upEvent
-                    );
-                    upEvent.recycle();
-
-                    // Synthesize CLICK if mouseup is on same window as mousedown
-                    const clickHit = vortex.windowManager.findWindowAtPoint(ux, uy);
-
-                    if(clickHit) 
-                    {
-                        const cp = this._globalPosScratch;
-
-                        clickHit.getGlobalPosition(cp);
-
-                        this.synthesizeClick(clickHit, ux - cp.x, uy - cp.y, ev.clientX, ev.clientY, ev.altKey, ev.ctrlKey, ev.shiftKey);
-                    }
-                }
+                // The UP goes through the queue like everything else. It is enqueued here rather
+                // than in `_onMouseUp` because a drag can end with the pointer off the canvas,
+                // where the canvas listener never fires — and `_onMouseUp` stands down while these
+                // handlers are installed, so exactly one of the two enqueues it.
+                //
+                // `passMouseEvent()` re-targets it to `_lastMouseDownTarget` on its own, and
+                // `convertMouseEventType()` picks WME_UP or WME_UP_OUTSIDE by testing the point
+                // against that window's bounds. Neither needs to be worked out here.
+                this.enqueueMouse('mouseUp', ev);
 
                 this._mouseDown = false;
                 this._mouseDownWindow = null;
@@ -2061,68 +2067,22 @@ export class VortexApp
 
         const {x, y} = this.getCanvasCoords(e);
 
-        // Before anything is dispatched: `WindowToolTipAgent.begin()` reads the pointer off this
-        // queue the instant the OVER below lands, and AS3 keeps it current because every stage
-        // event passes through the queue on its way into the window system. This port dispatches
-        // straight to the window under the cursor, so the queue never saw one, `mouseX`/`mouseY`
-        // stayed at 0 all session, and every tooltip opened at the bare (20, 20) offset in the
-        // top-left corner instead of beside the cursor.
-        WindowContext.inputEventQueue?.recordPointer(x, y);
+        // `enqueue()` records the pointer on its way past, which is how AS3 keeps
+        // `MouseEventQueue.mouseX`/`mouseY` current — `WindowToolTipAgent.begin()` reads them the
+        // instant the OVER lands. `recordPointer()` used to do that by hand here, because the
+        // queue was never fed at all; it no longer has to.
+        this.enqueueMouse('mouseMove', e);
 
         const vortex = Vortex.instance;
         const hit = vortex.windowManager.findWindowAtPoint(x, y);
 
-        // Hover tracking: OVER/OUT
-        if(hit !== this._lastHoveredWindow) 
-        {
-            // Send OUT to the old window
-            if(this._lastHoveredWindow && !this._lastHoveredWindow.disposed) 
-            {
-                const outEvent = WindowMouseEvent.allocateMouse(
-                    WindowMouseEvent.OUT, this._lastHoveredWindow, hit,
-                    0, 0, e.clientX, e.clientY
-                );
-                (this._lastHoveredWindow as WindowController).update(
-                    this._lastHoveredWindow as WindowController, outEvent
-                );
-                outEvent.recycle();
-            }
-
-            // Send OVER to the new window
-            if(hit) 
-            {
-                const globalPos = this._globalPosScratch;
-
-                hit.getGlobalPosition(globalPos);
-
-                const overEvent = WindowMouseEvent.allocateMouse(
-                    WindowMouseEvent.OVER, hit, this._lastHoveredWindow,
-                    x - globalPos.x, y - globalPos.y, e.clientX, e.clientY
-                );
-                (hit as WindowController).update(hit as WindowController, overEvent);
-                overEvent.recycle();
-            }
-
-            this._lastHoveredWindow = hit;
-        }
-
-        // Send MOVE event to the hovered window
-        if(hit) 
-        {
-            const globalPos = this._globalPosScratch;
-
-            hit.getGlobalPosition(globalPos);
-
-            const moveEvent = WindowMouseEvent.allocateMouse(
-                WindowMouseEvent.MOVE, hit, null,
-                x - globalPos.x, y - globalPos.y, e.clientX, e.clientY
-            );
-            (hit as WindowController).update(hit as WindowController, moveEvent);
-            moveEvent.recycle();
-        }
+        // OVER/OUT and MOVE are `MouseEventProcessor.process()`'s job now. It tracks the hovered
+        // window in `EventProcessorState.hovered` across frames — which the hand-rolled version
+        // here could not do, because it compared against a field this class owned and the
+        // processor owns the same state for its own OUT dispatch. Two trackers, one truth.
 
         // Forward to room engine if no UI window hit and in a room
-        if(!hit && this._isInRoom) 
+        if(!hit && this._isInRoom)
         {
             this.forwardToRoomEngine(x, y, 'mouse_move', e);
         }
@@ -2139,60 +2099,6 @@ export class VortexApp
         }
     };
 
-    /**
-     * Dispatches a CLICK to the hit window, and — when this is the second click on the same window
-     * within DOUBLE_CLICK_MS/DIST — a DOUBLE_CLICK too. The browser gives us no dblclick here because
-     * clicks are synthesized from mousedown/mouseup, so this reconstructs it. RoomDesktop maps the
-     * WME_DOUBLE_CLICK to the room 'doubleClick' event (e.g. FurnitureLogic.useObject → open wired),
-     * mirroring Flash's doubleClick firing after two clicks.
-     */
-    private synthesizeClick(
-        clickHit: IWindow, localX: number, localY: number, clientX: number, clientY: number,
-        altKey: boolean = false, ctrlKey: boolean = false, shiftKey: boolean = false
-    ): void
-    {
-        // The modifier state MUST be threaded through: a click on a mouse-enabled window (which
-        // includes the room canvas wrapper) is synthesized here, and the room's CTRL/SHIFT+click
-        // furniture shortcuts read event.ctrlKey/shiftKey off this event. Dropping them (the old
-        // default-false behaviour) is exactly why CTRL/SHIFT+click did nothing while ALT+drag —
-        // which flows through the modifier-carrying mouse-DOWN path — worked.
-        const clickEvent = WindowMouseEvent.allocateMouse(
-            WindowMouseEvent.CLICK, clickHit, null,
-            localX, localY, clientX, clientY,
-            altKey, ctrlKey, shiftKey, false
-        );
-        (clickHit as WindowController).update(clickHit as WindowController, clickEvent);
-        clickEvent.recycle();
-
-        const now = performance.now();
-        const isDoubleClick = clickHit === this._lastClickWindow
-            && (now - this._lastClickTime) <= VortexApp.DOUBLE_CLICK_MS
-            && Math.abs(clientX - this._lastClickX) <= VortexApp.DOUBLE_CLICK_DIST
-            && Math.abs(clientY - this._lastClickY) <= VortexApp.DOUBLE_CLICK_DIST;
-
-        if(isDoubleClick)
-        {
-            const dblEvent = WindowMouseEvent.allocateMouse(
-                WindowMouseEvent.DOUBLE_CLICK, clickHit, null,
-                localX, localY, clientX, clientY,
-                altKey, ctrlKey, shiftKey, false
-            );
-            (clickHit as WindowController).update(clickHit as WindowController, dblEvent);
-            dblEvent.recycle();
-
-            // Reset so a third rapid click doesn't chain into another double-click.
-            this._lastClickTime = 0;
-            this._lastClickWindow = null;
-        }
-        else
-        {
-            this._lastClickTime = now;
-            this._lastClickWindow = clickHit;
-            this._lastClickX = clientX;
-            this._lastClickY = clientY;
-        }
-    }
-
     /** Canvas mouseup handler (fallback for non-drag scenarios). */
     private _onMouseUp = (e: MouseEvent): void =>
     {
@@ -2202,37 +2108,53 @@ export class VortexApp
         // null. Bail rather than dereference it.
         if(Vortex.instance.disposed) return;
 
-        // If doc-level handlers are active, they handle the UP
+        // If doc-level handlers are active, they enqueue the UP — see `_docUpHandler`.
         if(this._docUpHandler) return;
+
+        this.enqueueMouse('mouseUp', e);
 
         const {x, y} = this.getCanvasCoords(e);
         const vortex = Vortex.instance;
-        const hit = vortex.windowManager.findWindowAtPoint(x, y);
 
-        if(!hit) 
+        if(!vortex.windowManager.findWindowAtPoint(x, y) && this._isInRoom)
         {
-            // Forward click to room engine if in a room
-            if(this._isInRoom) 
-            {
-                this.forwardToRoomEngine(x, y, 'click', e);
-            }
-
-            return;
+            this.forwardToRoomEngine(x, y, 'click', e);
         }
+    };
 
-        const globalPos = this._globalPosScratch;
+    /**
+     * Canvas click handler.
+     *
+     * AS3 does not synthesize a click: `MouseEventQueue` subscribes to the stage's own `click` and
+     * `doubleClick` (`MouseEventQueue.as:16-17`). The DOM has both too, so they are forwarded
+     * rather than reconstructed from mousedown/mouseup — which is what the 55-line
+     * `synthesizeClick()` this replaces was doing, with its own 350 ms / 8 px heuristic.
+     *
+     * `detail === 2` is skipped so the sequence matches Flash's. Flash fires click on the first
+     * press and doubleClick on the second; the DOM fires click twice *and* dblclick, so passing
+     * all three would land a third CLICK on the window — `passMouseEvent()` already dispatches a
+     * CLICK ahead of every DOUBLE_CLICK, exactly as AS3 does.
+     *
+     * Modifier state rides along in the entry: the room's CTRL/SHIFT+click furniture shortcuts
+     * read `ctrlKey`/`shiftKey` off the resulting event.
+     */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as::mouseEventListener()
+    private _onClick = (e: MouseEvent): void =>
+    {
+        if(Vortex.instance.disposed) return;
 
-        hit.getGlobalPosition(globalPos);
+        if(e.detail === 2) return;
 
-        const upEvent = WindowMouseEvent.allocateMouse(
-            WindowMouseEvent.UP, hit, null,
-            x - globalPos.x, y - globalPos.y, e.clientX, e.clientY
-        );
-        (hit as WindowController).update(hit as WindowController, upEvent);
-        upEvent.recycle();
+        this.enqueueMouse('click', e);
+    };
 
-        // Synthesize CLICK (+ DOUBLE_CLICK on a rapid second click)
-        this.synthesizeClick(hit, x - globalPos.x, y - globalPos.y, e.clientX, e.clientY, e.altKey, e.ctrlKey, e.shiftKey);
+    /** Canvas double-click handler. */
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as::mouseEventListener()
+    private _onDblClick = (e: MouseEvent): void =>
+    {
+        if(Vortex.instance.disposed) return;
+
+        this.enqueueMouse('doubleClick', e);
     };
 
     /** Canvas wheel handler. */

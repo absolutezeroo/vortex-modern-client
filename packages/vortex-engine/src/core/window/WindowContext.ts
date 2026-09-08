@@ -479,6 +479,25 @@ export class WindowContext implements IWindowContext
             }
 
             WindowContext._inputEventProcessor.process(this._eventProcessorState, WindowContext.inputEventQueue);
+
+            // The port's stand-in for AS3's `enterFrame` subscription.
+            //
+            // `WindowMouseOperator.begin()` registers the operator on the stage's `enterFrame`, and
+            // `handler()`'s enterFrame branch polls the pointer every frame and calls `operate()`
+            // when it has moved — which is what makes an open tooltip follow the cursor. There is
+            // no Flash frame event here, and the client only drives the dragging and scaling
+            // operators (from `document`, because a drag has to keep tracking off-canvas). Nothing
+            // drove the tooltip agent, so `showToolTip()` placed a tooltip once at the pointer
+            // position captured by `begin()` and it never moved again.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/WindowMouseOperator.as::handler()
+            // `_services` directly rather than `getWindowServices()`: that getter asserts non-null,
+            // and the field is set by a `setServices()` call after construction and cleared again
+            // by `dispose()`, so it is genuinely null at both ends of the context's life. A throw
+            // here would take the whole frame loop with it.
+            this._services?.getToolTipAgentService().handleMouseMove(
+                WindowContext.inputEventQueue.mouseX,
+                WindowContext.inputEventQueue.mouseY
+            );
         }
 
         this._updating = false;

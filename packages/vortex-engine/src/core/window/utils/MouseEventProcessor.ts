@@ -70,16 +70,6 @@ export class MouseEventProcessor
         return this._disposed;
     }
 
-    public get absMouseX(): number
-    {
-        return this._absMouseX;
-    }
-
-    public get absMouseY(): number
-    {
-        return this._absMouseY;
-    }
-
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventProcessor.as::setMouseCursorByState()
     public static setMouseCursorByState(stateFlag: number, cursorType: number): void
     {
@@ -105,45 +95,6 @@ export class MouseEventProcessor
         }
 
         return 0;
-    }
-
-    public updateMousePosition(x: number, y: number): void
-    {
-        this._absMouseX = x;
-        this._absMouseY = y;
-    }
-
-    public processMouseEvent(type: string, x: number, y: number, window: IWindow): void
-    {
-        this._absMouseX = x;
-        this._absMouseY = y;
-
-        switch(this.normalizeMouseEventType(type))
-        {
-            case 'mouseDown':
-                this._lastClickTarget = window as WindowController;
-                this._lastMouseDownTarget = window as WindowController;
-                break;
-            case 'click':
-            case 'doubleClick':
-                if(this._lastClickTarget !== window)
-                {
-                    this._lastClickTarget = null;
-                    return;
-                }
-
-                this._lastClickTarget = null;
-                break;
-            case 'mouseMove':
-                if(this._focused !== window)
-                {
-                    this._focused = window as WindowController;
-                }
-                break;
-            case 'mouseUp':
-                this._lastMouseDownTarget = null;
-                break;
-        }
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventProcessor.as::process()

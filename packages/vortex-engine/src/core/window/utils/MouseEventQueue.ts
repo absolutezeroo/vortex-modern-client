@@ -59,36 +59,30 @@ export class MouseEventQueue extends GenericEventQueue<IMouseEventEntry>
 	 *
 	 * @param event - The mouse event entry to enqueue
 	 */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/GenericEventQueue.as::eventListener()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/MouseEventQueue.as::mouseEventListener()
     public enqueue(event: IMouseEventEntry): void
     {
         this._mouseX = event.stageX;
         this._mouseY = event.stageY;
 
-        this.eventListener(event);
-    }
+        // AS3 coalesces: a `mouseMove` arriving on top of a queued `mouseMove` REPLACES it
+        // rather than queueing behind it. This is what bounds the queue — `end()` does not
+        // clear it (neither here nor in AS3) and `process()` only `remove()`s an event whose
+        // target is not the desktop, so without this every pointer sample taken between two
+        // frames would survive into the next one and be walked again.
+        if(event.type === 'mouseMove' || event.type === 'mousemove')
+        {
+            const last = this._eventArray[this._eventArray.length - 1];
 
-    /**
-     * Records where the pointer is, without queueing anything.
-     *
-     * AS3 keeps `_mouseX`/`_mouseY` current because every stage mouse event passes through this
-     * queue's listener on its way into the window system. This port dispatches events straight to
-     * the window under the cursor instead — a deliberate architectural difference — so `enqueue()`
-     * is never called and the two fields sat at 0 for the whole session.
-     *
-     * Nothing complained, because only one caller reads them: `WindowToolTipAgent.begin()`. With the
-     * pointer at (0, 0) its `getMousePositionRelativeTo()` came back as minus the window's global
-     * position, the two cancelled in `showToolTip()`, and every tooltip in the client appeared at
-     * the bare (20, 20) offset in the top-left corner instead of beside the cursor.
-     *
-     * Coordinates are the desktop's, the same space `getGlobalPosition()` reports — not the DOM's.
-     */
-    // TS-only: the port dispatches mouse events directly, so the position AS3 gets for free through
-    // this queue's listener has to be handed to it.
-    public recordPointer(x: number, y: number): void
-    {
-        this._mouseX = x;
-        this._mouseY = y;
+            if(last && (last.type === 'mouseMove' || last.type === 'mousemove'))
+            {
+                this._eventArray[this._eventArray.length - 1] = event;
+
+                return;
+            }
+        }
+
+        this.eventListener(event);
     }
 
     /**

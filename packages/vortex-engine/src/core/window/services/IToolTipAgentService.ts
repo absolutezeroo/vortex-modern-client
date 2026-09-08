@@ -27,4 +27,18 @@ export interface IToolTipAgentService
 	 */
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/services/IToolTipAgentService.as::updateCaption()
     updateCaption(window: IWindow): void;
+
+    /**
+     * Moves an open tooltip to follow the pointer.
+     *
+     * AS3's interface has four members and this is not one of them, because AS3 never needs to
+     * reach it: `WindowMouseOperator.begin()` subscribes the operator to the stage's `enterFrame`,
+     * and `handler()`'s enterFrame branch polls the pointer and calls `operate()` on its own. The
+     * port has no Flash frame event, so the per-frame poll has to come from `WindowContext.update()`
+     * — and it needs this on the interface to get there.
+     *
+     * Inherited from `WindowMouseOperator`; `WindowToolTipAgent` adds no implementation of its own.
+     */
+    // TS-only: AS3 reaches the same code through an `enterFrame` subscription, not the interface.
+    handleMouseMove(x: number, y: number): void;
 }
