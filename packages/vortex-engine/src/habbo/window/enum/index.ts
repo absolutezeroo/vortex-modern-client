@@ -3,11 +3,6 @@
 
 // Core Exports
 export {WindowContextLayer} from './WindowContextLayer';
-export {
-    WindowElementType,
-    ELEMENT_NAME_TO_TYPE,
-    ELEMENT_TYPE_TO_NAME,
-} from './WindowElementType';
 export {WindowParam, PARAM_NAME_TO_FLAG} from './WindowParam';
 export {WindowState, STATE_PRIORITY, STATE_NAME_TO_VALUE} from './WindowState';
 export {WindowStyle} from './WindowStyle';
@@ -26,7 +21,6 @@ export {ProgressIndicatorStyle} from './ProgressIndicatorStyle';
 
 // Core Types
 export type {WindowContextLayerValue} from './WindowContextLayer';
-export type {WindowElementTypeValue} from './WindowElementType';
 export type {WindowParamValue} from './WindowParam';
 export type {WindowStateValue} from './WindowState';
 export type {WindowStyleValue} from './WindowStyle';

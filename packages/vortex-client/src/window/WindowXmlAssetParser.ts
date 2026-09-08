@@ -1,132 +1,35 @@
+import {TYPE_NAME_TO_CODE} from '@core/window/enum/WindowType';
 import type {ISkinData} from '@core/window/graphics/renderer/BitmapSkinParser';
+import {SkinLayoutEntity} from '@core/window/graphics/renderer/SkinLayoutEntity';
 import type {IElementDescriptionData} from '@habbo/window/IElementDescriptor';
 
+// TS-only: AS3 kept a layout in the `IAsset` it was loaded from and handed the XML straight
+//   to `WindowParser`; the port carries the same three fields to the same place.
 export interface IWindowLayoutXmlData {
     name: string;
     source: string;
     xml: string;
 }
 
-interface IScaleType {
-    fixed: number;
-    move: number;
-    strech: number;
-    stretch: number;
-    tiled: number;
-    center: number;
-}
-
-const SCALE_TYPE: IScaleType =
+// AS3 switches on the lowercased attribute and has no default case, so a spelling it does
+// not list leaves the entity's `scaleH`/`scaleV` at the uint default, 0 = FIXED.
+// DEVIATION: `stretch` is not one of those cases — only the `strech` typo is. The two
+//   `header_center` entities in `habbo_skin_header_3_xml` and `habbo_skin_header_7_xml`
+//   are the only 2 of the 2,066 scale attributes in the shipped skins spelt that way, so
+//   Flash held the header's centre segment fixed and left a gap across any wide style-3/7
+//   window. The port maps the spelling to STRECH and those two headers fill.
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseLayoutEntity()
+const SCALE_TYPE: Record<string, number> =
     {
-        fixed: 0,
-        move: 1,
-        strech: 2,
-        stretch: 2,
-        tiled: 4,
-        center: 8
+        fixed: SkinLayoutEntity.SCALE_TYPE_FIXED,
+        move: SkinLayoutEntity.SCALE_TYPE_MOVE,
+        strech: SkinLayoutEntity.SCALE_TYPE_STRECH,
+        stretch: SkinLayoutEntity.SCALE_TYPE_STRECH,
+        tiled: SkinLayoutEntity.SCALE_TYPE_TILED,
+        center: SkinLayoutEntity.SCALE_TYPE_CENTER
     };
 
-const TYPE_MAP: Record<string, number> =
-    {
-        'null': 0,
-        'icon': 1,
-        'background': 2,
-        'container': 4,
-        'region': 5,
-        'header': 6,
-        'toolbar': 7,
-        'tooltip': 8,
-        'notify': 9,
-        'text': 10,
-        'html': 11,
-        'label': 12,
-        'link': 14,
-        'formatted_text': 15,
-        'widget': 16,
-        'boxsizer': 17,
-        'display_object_wrapper': 20,
-        'bitmap': 21,
-        'shape': 22,
-        'static_bitmap': 23,
-        'gradient': 24,
-        'stroke': 25,
-        'bitmap_fill': 26,
-        'border': 30,
-        'border_thin': 31,
-        'border_thick': 32,
-        'border_notify': 33,
-        'frame': 35,
-        'frame_thin': 36,
-        'frame_thick': 37,
-        'frame_notify': 38,
-        'activator': 40,
-        'container_button': 41,
-        'selector': 42,
-        'selector_list': 43,
-        'bubble': 45,
-        'bubble_pointer_up': 46,
-        'bubble_pointer_right': 47,
-        'bubble_pointer_down': 48,
-        'bubble_pointer_left': 49,
-        'itemlist': 50,
-        'itemlist_vertical': 50,
-        'itemlist_horizontal': 51,
-        'itemgrid': 52,
-        'itemgrid_vertical': 53,
-        'itemgrid_horizontal': 54,
-        'scrollable_itemlist': 55,
-        'scrollable_itemlist_vertical': 56,
-        'scrollable_itemlist_horizontal': 57,
-        'button': 60,
-        'button_thick': 61,
-        'button_icon': 62,
-        'button_up': 63,
-        'button_down': 64,
-        'button_left': 65,
-        'button_right': 66,
-        'button_group_left': 67,
-        'button_group_center': 68,
-        'button_group_right': 69,
-        'checkbox': 70,
-        'radiobutton': 71,
-        'closebutton': 72,
-        'minimizebox': 73,
-        'maximizebox': 74,
-        'restorebox': 75,
-        'dragbar': 76,
-        'input': 77,
-        'password': 78,
-        'tab_content': 90,
-        'tab_context': 91,
-        'tab_selector': 92,
-        'tab_button': 93,
-        'tab_container_button': 94,
-        'menu': 100,
-        'menu_item': 101,
-        'dropmenu': 102,
-        'dropmenu_item': 103,
-        'submenu': 104,
-        'droplist': 105,
-        'droplist_item': 106,
-        'slider': 110,
-        'slider_horizontal': 111,
-        'slider_vertical': 112,
-        'scaler': 120,
-        'scaler_vertical': 121,
-        'scaler_horizontal': 122,
-        'scrollbar_horizontal': 130,
-        'scrollbar_vertical': 131,
-        'scrollbar_slider_bar_horizontal': 132,
-        'scrollbar_slider_bar_vertical': 133,
-        'scrollbar_slider_track_horizontal': 134,
-        'scrollbar_slider_track_vertical': 135,
-        'scrollbar_slider_button_right': 136,
-        'scrollbar_slider_button_down': 137,
-        'scrollbar_slider_button_left': 138,
-        'scrollbar_slider_button_up': 139,
-        'scrollable_itemgrid_vertical': 140
-    };
-
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/window/utils/_SafeCls_1859.as::parse()
 export function parseElementDescriptionXml(
     xml: string,
     assetId: string,
@@ -140,16 +43,21 @@ export function parseElementDescriptionXml(
     {
         const attrs = readAttributes(windowNode);
         const typeName = attrs.type ?? '';
-        // AS3 hands the table lookup straight to `addSkinRenderer(param1:uint, …)`
-        // (habbo/window/utils/_SafeCls_1859.as), so an unlisted type name arrives as
-        // `uint(undefined)` = 0, not as an error. The layout parser resolves the same
-        // unlisted tag to `WindowType.NULL` (0) too, so the two agree and the element
-        // still finds its skin: `frame_pointer_down` is in no type table but is both a
-        // tag in `habbo_window_layout_frame_7_xml` and a style-7 descriptor here, and
-        // that is the only reason the style-7 frame's pointer renders at all. Dropping
-        // it at -1 sent that lookup to the style-0 fallback — `habbo_skin_frame_xml`,
-        // a whole frame where a 16×12 arrow belongs.
-        const typeId = TYPE_MAP[typeName] ?? 0;
+        // AS3 fills one table — `TypeCodeTable.fillTables()` — and hands the lookup straight
+        // to `addSkinRenderer(param1:uint, …)`, so a tag the table does not list arrives as
+        // `uint(undefined)` = 0, not as an error. `WindowParser` fills that same table, so
+        // the layout and the descriptor agree on the id and the element still finds its
+        // skin: `frame_pointer_down` is in no type table but is both a tag in
+        // `habbo_window_layout_frame_7_xml` and a style-7 descriptor here, and that is the
+        // only reason the style-7 frame's pointer renders at all. Dropping it at -1 sent
+        // that lookup to the style-0 fallback — `habbo_skin_frame_xml`, a whole frame where
+        // a 16×12 arrow belongs.
+        //
+        // Reading `TYPE_NAME_TO_CODE` is what makes "the same table" true. The private copy
+        // this replaces had no `iconbutton`, so the two `iconbutton` descriptors here (plus
+        // at style 3, minus at style 4) registered under type 0 while the 8 `<iconbutton>`
+        // in the shipped layouts asked `ElementRegistry` for type 79 and got nothing.
+        const typeId = TYPE_NAME_TO_CODE[typeName] ?? 0;
         const statesNode = getChildElements(windowNode, 'states')[0] ?? null;
         const states = getChildElements(statesNode, 'state').map((stateNode) => 
         {
@@ -193,6 +101,7 @@ export function parseElementDescriptionXml(
     };
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseSkinDescription()
 export function parseSkinXml(
     xml: string,
     assetId: string,
@@ -221,6 +130,7 @@ export function parseSkinXml(
     };
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/utils/WindowParser.as::parseAndConstruct()
 export function parseWindowLayoutXml(
     xml: string,
     layoutName: string,
@@ -250,6 +160,7 @@ export function parseWindowLayoutXml(
     }];
 }
 
+// TS-only: E4X parsed XML as a language primitive, so AS3 has no counterpart to this.
 function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument 
 {
     const normalized = normalizeXmlContent(xml);
@@ -277,17 +188,20 @@ function parseXmlDocument(xml: string, source: string = 'unknown'): XMLDocument
     return doc;
 }
 
-function normalizeXmlContent(xml: string): string 
+// Matching control characters is the point: the extracted assets contain them and XML 1.0
+// forbids them, so DOMParser would reject a document over one stray byte.
+/* eslint-disable no-control-regex */
+// TS-only: Flash parsed these assets with E4X, which never saw the raw bytes DOMParser rejects.
+function normalizeXmlContent(xml: string): string
 {
     return xml
         .replace(/^\uFEFF/, '')
-        // Matching control characters is the point: the extracted assets contain them and
-        // XML 1.0 forbids them, so DOMParser would reject a document over one stray byte.
-        // eslint-disable-next-line no-control-regex
         .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '')
         .trim();
 }
+/* eslint-enable no-control-regex */
 
+// TS-only: DOMParser reports a failure as a `parsererror` node instead of throwing; E4X threw.
 function getParserError(doc: XMLDocument): Element | null 
 {
     const root = doc.documentElement;
@@ -307,12 +221,13 @@ function getParserError(doc: XMLDocument): Element | null
     return null;
 }
 
+// TS-only: E4X tolerated `name="value"id="0"` in the extracted assets; DOMParser does not.
 function repairMalformedAttributeSpacing(xml: string): string 
 {
-    // Fix tokens like: name="value"id="0" -> name="value" id="0"
     return xml.replace(/<[^>]+>/g, (tag) => tag.replace(/"(?=[A-Za-z_][\w:.-]*=)/g, '" '));
 }
 
+// TS-only: E4X read an attribute as `node.@name`; the port collects them once per node.
 function readAttributes(element: Element | null): Record<string, string> 
 {
     if(!element)
@@ -323,6 +238,7 @@ function readAttributes(element: Element | null): Record<string, string>
     return Object.fromEntries(Array.from(element.attributes, (attr) => [attr.name, attr.value]));
 }
 
+// TS-only: stands in for E4X's `node.child("name")`, which has no DOM equivalent.
 function getChildElements(node: Element | null, name?: string): Element[] 
 {
     if(!node)
@@ -335,6 +251,8 @@ function getChildElements(node: Element | null, name?: string): Element[]
     return name ? children.filter((child) => child.nodeName === name) : children;
 }
 
+// TS-only: AS3 defaulted per attribute with `@attr[0] ? uint(@attr[0]) : fallback`, which
+//   turns on the attribute being ABSENT — not on its value being falsy. This keeps that.
 function parseNumber(value: string | number | null, fallback: number): number
 {
     if(value === undefined || value === null || value === '') 
@@ -356,6 +274,8 @@ function parseNumber(value: string | number | null, fallback: number): number
     return Number.isNaN(parsed) ? fallback : parsed;
 }
 
+// TS-only: AS3 asked the asset library for the linkage name verbatim. The port's bundle keys
+//   images by bare filename, so the extension suffix the skins carry has to come off here.
 function normalizeAssetName(assetKey: string): string 
 {
     if(!assetKey) 
@@ -366,6 +286,7 @@ function normalizeAssetName(assetKey: string): string
     return assetKey.replace(/_(png|jpg|jpeg|gif|swf|xml)$/i, '');
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseLayoutEntity()
 function resolveVar(value: string | null, vars: Record<string, string>): string
 {
     if(!value) 
@@ -383,18 +304,20 @@ function resolveVar(value: string | null, vars: Record<string, string>): string
     return value;
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseLayoutEntity()
 function parseScaleValue(value: string): number 
 {
-    if(!value) 
+    if(!value)
     {
-        return SCALE_TYPE.fixed;
+        return SkinLayoutEntity.SCALE_TYPE_FIXED;
     }
 
     const lowered = value.toLowerCase();
 
-    return SCALE_TYPE[lowered as keyof IScaleType] ?? SCALE_TYPE.fixed;
+    return SCALE_TYPE[lowered] ?? SkinLayoutEntity.SCALE_TYPE_FIXED;
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseLayoutEntity()
 function parseRectangle(regionNode: Element | null, vars: Record<string, string>): {
     x: number;
     y: number;
@@ -419,6 +342,7 @@ function parseRectangle(regionNode: Element | null, vars: Record<string, string>
     };
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/utils/_SafeCls_3252.as::parseVariableList()
 function parseSkinVariables(skinNode: Element): Record<string, string> 
 {
     const vars: Record<string, string> = {};
@@ -449,6 +373,7 @@ function parseSkinVariables(skinNode: Element): Record<string, string>
     return vars;
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseTemplateList()
 function parseSkinTemplates(skinNode: Element, vars: Record<string, string>): ISkinData['templates'] 
 {
     const templatesNode = getChildElements(skinNode, 'templates')[0] ?? null;
@@ -483,6 +408,7 @@ function parseSkinTemplates(skinNode: Element, vars: Record<string, string>): IS
     });
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseLayoutList()
 function parseSkinLayouts(skinNode: Element, vars: Record<string, string>): ISkinData['layouts'] 
 {
     const layoutsNode = getChildElements(skinNode, 'layouts')[0] ?? null;
@@ -529,6 +455,7 @@ function parseSkinLayouts(skinNode: Element, vars: Record<string, string>): ISki
     });
 }
 
+// AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/graphics/_SafeCls_4380.as::parseRenderStateList()
 function parseSkinStates(skinNode: Element, vars: Record<string, string>): ISkinData['states'] 
 {
     const statesNode = getChildElements(skinNode, 'states')[0] ?? null;
