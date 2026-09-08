@@ -51,6 +51,12 @@ packages/vortex-client/.vortex-dev/
 # Scratch self-check scripts: never committed.
 *.check.ts
 
+# Local-only tooling. The measurement probes, the one-off checks and the Director
+# extraction scripts are personal working tools, not part of what is shared. The
+# pre-commit hook and the Claude PostToolUse hook both guard on their presence, so
+# a clone without them still commits normally.
+/scripts/
+
 # Python bytecode from scripts/origins/
 __pycache__/
 *.pyc

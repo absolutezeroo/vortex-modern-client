@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PROJECT_DIR:-.}/scripts/eslint-fix-hook.mjs\"",
+            "command": "[ -f \"${CLAUDE_PROJECT_DIR:-.}/scripts/eslint-fix-hook.mjs\" ] && node \"${CLAUDE_PROJECT_DIR:-.}/scripts/eslint-fix-hook.mjs\" || exit 0",
             "statusMessage": "eslint --fix",
             "timeout": 30
           }

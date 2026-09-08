@@ -150,6 +150,13 @@ bodyparts `order-before` applies to.
 
 ## Documentation
 
+**`scripts/` is local-only and is not in this repository.** The measurement probes and one-off
+checks the docs below refer to by name — `wire-coverage.mjs`, `todo-inventory.mjs`,
+`as3-member-coverage.mjs`, `check-as3-trace.mjs`, the `origins/` Director extractors and the rest —
+are personal working tools. Their *results* are what the docs record; the tools themselves are not
+shipped. The pre-commit hook and the Claude `PostToolUse` hook both guard on each script's presence,
+so a clone without them commits and edits normally.
+
 | File                                 | Content                                                                                                              |
 |--------------------------------------|----------------------------------------------------------------------------------------------------------------------|
 | `.claude/rules/`                     | Auto-loaded enforcement rules for Claude Code                                                                        |

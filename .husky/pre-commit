@@ -1,4 +1,11 @@
 npx lint-staged
-node scripts/sync-agent-docs.mjs
-node scripts/check-as3-trace.mjs
-node scripts/check-status-doc.mjs
+
+# scripts/ is local-only tooling and is not part of the shared repository, so every
+# check below is optional: it runs for whoever has the script and is skipped silently
+# for everyone else. Without these guards a fresh clone fails its first commit with
+# "Cannot find module".
+[ -f scripts/sync-agent-docs.mjs ] && node scripts/sync-agent-docs.mjs
+[ -f scripts/check-as3-trace.mjs ] && node scripts/check-as3-trace.mjs
+[ -f scripts/check-status-doc.mjs ] && node scripts/check-status-doc.mjs
+
+exit 0
