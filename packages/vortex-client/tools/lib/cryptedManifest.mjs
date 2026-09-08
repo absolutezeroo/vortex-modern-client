@@ -26,6 +26,19 @@ const FIELD_RE = /public\s+static\s+(?:var|const)\s+(\w+)\s*:\s*Class\s*=\s*([\w
 const IDENTIFIER_RE = /@identifier\s+(\S+)\s*=\s*"([^"]+)"/g;
 const TYPE_SUFFIX_RE = /_(png|gif|jpg|swf|mp3|ttf|xml)\$/;
 
+// Recognises a *direct*, non-obfuscated linkage value - the test that decides whether a
+// refClass or a dump filename already carries its real name, or has to go through the
+// @identifier map. It lists `txt` where TYPE_SUFFIX_RE deliberately does not: text embeds
+// need to be resolvable, but their short form is not safe to key on. Stripping `_txt$`
+// would collapse the chat styles' 77 distinct `_regPoints_txt$<hash>` embeds onto one
+// short name, which is exactly what import-chatstyles.mjs keeps the whole value to avoid.
+//
+// Without `txt` here, an unobfuscated text embed resolved to null in both directions and
+// was invisible: `default_localizations` (the english-only global file, the only one of the
+// thirteen whose embed class survived obfuscation) was the one language import-localizations
+// could not find.
+const LINKAGE_TYPE_RE = /_(png|gif|jpg|swf|mp3|ttf|xml|txt)\$/;
+
 export function findAsFiles(dir)
 {
     const result = [];
@@ -110,7 +123,7 @@ export function buildEmbedToFieldNames(comFiles, obfuscatedNameMap)
 
             let rawValue = null;
 
-            if(/_(png|gif|jpg|swf|mp3|ttf|xml)\$/.test(refClass)) rawValue = refClass;
+            if(LINKAGE_TYPE_RE.test(refClass)) rawValue = refClass;
             else if(obfuscatedNameMap.has(refClass)) rawValue = obfuscatedNameMap.get(refClass);
 
             if(!rawValue) continue;
@@ -153,7 +166,7 @@ export function buildFieldNameToLinkages(comFiles, obfuscatedNameMap)
 
             let rawValue = null;
 
-            if(/_(png|gif|jpg|swf|mp3|ttf|xml)\$/.test(refClass)) rawValue = refClass;
+            if(LINKAGE_TYPE_RE.test(refClass)) rawValue = refClass;
             else if(obfuscatedNameMap.has(refClass)) rawValue = obfuscatedNameMap.get(refClass);
 
             if(!rawValue) continue;
@@ -217,5 +230,5 @@ export function resolveRawLinkageName(fileName, obfuscatedNameMap)
 
     const stem = match[1];
 
-    return /_(png|gif|jpg|swf|mp3|ttf|xml)\$/.test(stem) ? stem : (obfuscatedNameMap.get(stem) ?? null);
+    return LINKAGE_TYPE_RE.test(stem) ? stem : (obfuscatedNameMap.get(stem) ?? null);
 }

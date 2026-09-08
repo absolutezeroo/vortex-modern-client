@@ -876,7 +876,7 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
             // string is all that separates them, and this switch is where it is read.
             //
             // Messages are literals for the same reason `RegisterView`'s are: no `pocket.auth`
-            // second-factor key exists in any of the twelve `default_localizations*` embeds, and
+            // second-factor key exists in any of the thirteen `default_localizations*` embeds, and
             // those embeds are built from the dump, so adding one there would not survive.
             case 'pocket.auth.mfa_required':
                 this._loginView?.requireCode();

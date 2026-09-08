@@ -76,6 +76,7 @@ const EMBEDDED_LOCALIZATION_ASSET_NAMES = [
     'default_localizations_nl',
     'default_localizations_no',
     'default_localizations_pt',
+    'default_localizations_se',
     'default_localizations_tr',
 ];
 

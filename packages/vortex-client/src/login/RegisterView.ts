@@ -14,7 +14,7 @@
  * it — so that is all this file is, built from the same `onBoardingHcUi` widgets as `LoginView`,
  * whose structure it mirrors exactly.
  *
- * Captions are literals because no registration key exists in the twelve `default_localizations*`
+ * Captions are literals because no registration key exists in the thirteen `default_localizations*`
  * embeds; the two field prompts reuse the keys that do (`connection.login.email` / `.password`).
  */
 import {Logger} from '@core/utils/Logger';
