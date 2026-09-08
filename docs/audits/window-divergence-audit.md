@@ -1,5 +1,14 @@
 # Audit de divergences — `core/window` & `habbo/window` (AS3 win63 ↔ TypeScript)
 
+> ⚠️ **Instantané du 2026-06-22, non revérifié depuis — et à lire à deux vitesses.**
+> Sa référence est `sources/win63_version/`, que `CLAUDE.md` a depuis désavouée : mauvaise
+> décompilation dont il ne faut jamais lire un corps, utilisable seulement pour les *noms*.
+> Donc ses comparaisons de **listes de fichiers** restent valables (c'est exactement ce à quoi
+> cette source sert), mais toute conclusion tirée d'une **logique lue** dans win63_version est
+> suspecte et doit être revérifiée contre `WIN63-202607011411-782849652`. Deux audits bâtis sur
+> la même référence — `WIN63_DIVERGENCES_AUDIT.md` et `AUDIT_AS3_CONFORMITY.md` — ont été
+> supprimés pour cette raison.
+
 > Comparaison entre `sources/win63_version/{core,habbo}/window/` et
 > `packages/vortex-engine/src/{core,habbo}/window/`.
 > Méthodologie : identification des classes obfusquées (`class_XXXX`), comparaison

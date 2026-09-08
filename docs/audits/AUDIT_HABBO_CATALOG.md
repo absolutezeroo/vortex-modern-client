@@ -1,5 +1,10 @@
 # Audit indépendant — `habbo/catalog`
 
+> ⚠️ **Instantané daté, non revérifié depuis juillet 2026.** Ce qu'il décrit a pu être
+> corrigé, déplacé ou invalidé. Un constat d'audit est une affirmation datée, pas un fait :
+> vérifiez-le contre le code avant d'agir dessus. Lors d'un précédent audit, 3 des 26
+> « criticals » n'ont pas survécu au contact du code et l'un d'eux aurait cassé le client.
+
 > **Contexte :** ce dossier est aussi couvert par `docs/IMPLEMENTATION_STATUS.md` (ligne `habbo/catalog` : *"Early partial. Purse/catalog shell exists, but catalog logic, UI, and most messages are missing"* — 239 fichiers AS3 contre 18 TS). Ce rapport ne redit pas ce constat de portée — il vérifie spécifiquement que la partie qui existe (le chemin d'achat, §2) est correcte, ce que le comptage de fichiers ne peut pas dire. Voir `AUDIT_WINDOW_SYSTEM.md` §13-14 pour le contexte complet.
 
 **Périmètre :** `packages/vortex-engine/src/habbo/catalog/**` (~11 070 lignes). Catalogue d'achat, page produit, confirmation d'achat, club/VIP.

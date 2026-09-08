@@ -1,5 +1,10 @@
 # Audit indépendant — `habbo/ui` (widgets superposés dans une room)
 
+> ⚠️ **Instantané daté, non revérifié depuis juillet 2026.** Ce qu'il décrit a pu être
+> corrigé, déplacé ou invalidé. Un constat d'audit est une affirmation datée, pas un fait :
+> vérifiez-le contre le code avant d'agir dessus. Lors d'un précédent audit, 3 des 26
+> « criticals » n'ont pas survécu au contact du code et l'un d'eux aurait cassé le client.
+
 > **Contexte :** ce dossier est aussi couvert par `docs/IMPLEMENTATION_STATUS.md` (ligne `habbo/ui` : *"Mostly missing... infostand (furni-only), room-tools, and chat-input widgets ported"*). Ce rapport ne redit pas ce constat général — il apporte le comptage exact (§1), une correction d'un commentaire obsolète dans le code (§2), et un gap comportemental précis non mentionné dans le doc de statut (§3, l'infostand utilisateur — résolu depuis, voir §3). Voir `AUDIT_WINDOW_SYSTEM.md` §13-14 pour le contexte complet.
 >
 > **Suite de l'audit (2026-07-09, §5-9) :** couverture des zones listées "non vérifié" dans la version précédente — `ChatWidgetHandler.ts`, `ChatInputWidgetHandler.ts`, `widget/roomtools/*`, `widget/roomchat/*` (hors `RoomChatItem.ts`). Trouvaille principale : `RoomToolsHistory.ts` désactive une fonctionnalité déjà terminée (liste des rooms visitées) à cause d'une prémisse obsolète — voir §7.

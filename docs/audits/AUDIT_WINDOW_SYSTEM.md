@@ -1,8 +1,13 @@
 # Audit indépendant — Vortex (Partie 1 : système de fenêtres · Partie 2 : codebase entière)
 
+> ⚠️ **Instantané daté du 2026-07-08, non revérifié depuis.** Ce qu'il décrit a pu être
+> corrigé, déplacé ou invalidé. Un constat d'audit est une affirmation datée, pas un fait :
+> vérifiez-le contre le code avant d'agir dessus. Lors d'un précédent audit, 3 des 26
+> « criticals » n'ont pas survécu au contact du code et l'un d'eux aurait cassé le client.
+
 **Auteur :** Claude, à la demande de Clayton
 **Date :** 2026-07-08
-**Méthode :** Lecture directe du code TypeScript et comparaison manuelle avec `WIN63-202607011411-782849652` (source AS3 primaire). Ce rapport ne reprend **pas** le contenu de `docs/WIN63_DIVERGENCES_AUDIT.md` ni `docs/AUDIT_AS3_CONFORMITY.md` — ces documents auto-générés ont été utilisés une seule fois comme point de départ pour repérer des pistes, puis chaque piste a été vérifiée manuellement ligne par ligne. Une bonne partie de ce que ces docs signalent comme "divergence high" s'est révélé être du bruit (renommages, changements d'architecture volontaires) ; ce rapport ne liste que ce qui a été confirmé par lecture directe.
+**Méthode :** Lecture directe du code TypeScript et comparaison manuelle avec `WIN63-202607011411-782849652` (source AS3 primaire). Ce rapport ne reprenait **pas** le contenu de `docs/WIN63_DIVERGENCES_AUDIT.md` ni `docs/AUDIT_AS3_CONFORMITY.md` — ces documents auto-générés ont été utilisés une seule fois comme point de départ pour repérer des pistes, puis chaque piste a été vérifiée manuellement ligne par ligne. Ils ont depuis été supprimés : ils prenaient `sources/win63_version/` pour référence unique, que `CLAUDE.md` a désavouée comme mauvaise décompilation dont il ne faut jamais lire un corps. Une bonne partie de ce que ces docs signalent comme "divergence high" s'est révélé être du bruit (renommages, changements d'architecture volontaires) ; ce rapport ne liste que ce qui a été confirmé par lecture directe.
 
 **Partie 1 — Périmètre :** `packages/vortex-engine/src/core/window/**` et `packages/vortex-engine/src/habbo/window/**`, hors parsers et sérialiseurs (`WindowParser.ts`, `WindowXmlAssetParser.ts`, `WindowLayoutXmlSerializer.ts`).
 
