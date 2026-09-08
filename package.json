@@ -4,6 +4,8 @@
   "private": true,
   "description": "Modern Habbo client renderer - Lighter than Nitro",
   "scripts": {
+    "setup": "node install.mjs",
+    "pack:assets": "node install.mjs --pack",
     "dev": "pnpm --filter vortex-client dev",
     "build": "pnpm --filter vortex-client build",
     "preview": "pnpm --filter vortex-client preview",

@@ -64,3 +64,8 @@ packages/vortex-client/.vortex-dev/
 # Python bytecode from scripts/origins/
 __pycache__/
 *.pyc
+
+# The generated client assets, packaged by `node install.mjs --pack` for people who have no
+# Flash dump. Derived dump content like everything above, just in one file — it is meant to be
+# attached to a release or handed over directly, never committed.
+/vortex-client-assets.zip
