@@ -888,9 +888,6 @@ export class VortexApp
     private _xmlBundle: AssetBundle | null = null;
     private _uninstallWindowDebugger: (() => void) | null = null;
 
-    /** PROBE (remove with the log in `forwardToRoomEngine`): one-shot, so mousemove cannot spam. */
-    private _roomForwardProbeFired: boolean = false;
-
     /** Whether the mouse button is currently down. */
     private _mouseDown: boolean = false;
 
@@ -1036,6 +1033,20 @@ export class VortexApp
         await vortex.connect();
 
         await this.initClientUi(vortex);
+
+        // AS3: `HabboCommunicationManager.onConfigurationComplete()` -> `connection.isConfigured()`.
+        // Until that call the connection holds every server message it received after authentication
+        // in `_pendingServerMessages` and replays the lot here, in order — which is how Habbo never
+        // loses a message that arrives before its handler has subscribed.
+        //
+        // AS3 hangs it off the configuration manager's "complete" because there that lands after the
+        // component graph is up. Here configuration is awaited inside prepareCore(), long before the
+        // components attach, so the same binding would open the gate too early — measured, the
+        // moderation and help handlers subscribe 1.9s AFTER authentication, which is exactly why
+        // ModeratorInit (757) and CfhTopicsInit (1762) were logged as "No registered handler".
+        // The equivalent point in this port's boot is here: the engine is up and the client UI is
+        // wired, so everything that can subscribe has.
+        vortex.habboCommunication.connection?.isConfigured();
     }
 
     /**
@@ -1631,25 +1642,19 @@ export class VortexApp
      * Forwards a mouse event to the room engine via RoomDesktop.
      * Called when no UI window intercepted the event and we are in a room.
      *
-     * PROBE (remove once answered): this is a *second* path into `canvasMouseHandler()`. The first
-     * is AS3's own — `RoomDesktop` subscribes its `_canvasWrapper` to CLICK/DOUBLE_CLICK/MOVE/DOWN/
-     * UP/UP_OUTSIDE (`RoomDesktop.ts:1165-1170`) and its `canvasWindowEventHandler` translates the
-     * `WindowMouseEvent` and calls the same method. The three call sites here are gated on `!hit`,
-     * and `_onWheel`'s own comment states that the room canvas *is* a mouse-enabled window, so
-     * `findWindowAtPoint()` returns it over the room and its `!hit`-gated branch "never ran".
+     * This is a *second* path into `canvasMouseHandler()` — the first is AS3's own: `RoomDesktop`
+     * subscribes its `_canvasWrapper` to CLICK/DOUBLE_CLICK/MOVE/DOWN/UP/UP_OUTSIDE
+     * (`RoomDesktop.ts:1165-1170`) and its `canvasWindowEventHandler` translates the
+     * `WindowMouseEvent` and calls the same method. It looked redundant: `_onWheel`'s own comment
+     * states the room canvas *is* a mouse-enabled window, so `findWindowAtPoint()` returns it over
+     * the room and its `!hit`-gated branch never ran, which should hold for down/move/click too.
      *
-     * If that holds for the wheel it holds for down/move/click, and this method plus its three
-     * call sites are dead. That is a deduction from a comment, not a measurement — so this logs
-     * once instead of being deleted. Enter a room and move the mouse: silence means dead.
+     * Measured on 2026-09-08 rather than assumed, and the assumption was wrong — a one-shot probe
+     * here fired with `type=mouse_move` on the first room entered. The `!hit` gate is live and this
+     * path carries real events. Do not delete it on that reasoning again.
      */
     private forwardToRoomEngine(x: number, y: number, type: string, e: MouseEvent): void
     {
-        if(!this._roomForwardProbeFired)
-        {
-            this._roomForwardProbeFired = true;
-            log.warn(`forwardToRoomEngine reached (type=${type}) — the !hit gate is live, this path is NOT dead code.`);
-        }
-
         const vortex = Vortex.instance;
 
         try 
