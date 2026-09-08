@@ -4,6 +4,7 @@ import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocaliza
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {IRoomEngineRectangle} from '@habbo/room/RoomEngine';
 import type {IRoomDesktop} from '@habbo/ui/IRoomDesktop';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
@@ -61,8 +62,8 @@ export class CameraWidget extends RoomWidgetBase
 
         if(this.roomEngine)
         {
-            this.roomEngine.events?.on('REE_DISPOSED', this.onRoomDisposed);
-            this.roomEngine.events?.on('REE_ROOM_ZOOMED', this.onRoomZoomed);
+            this.roomEngine.events?.on(RoomEngineEvent.REE_DISPOSED, this.onRoomDisposed);
+            this.roomEngine.events?.on(RoomEngineEvent.REE_ROOM_ZOOMED, this.onRoomZoomed);
         }
 
         cameraHandler?.sendInitCameraMessage();

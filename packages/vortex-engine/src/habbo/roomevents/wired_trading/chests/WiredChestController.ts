@@ -17,8 +17,9 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
-import type {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {
     OpenWiredChestMessageEvent
 } from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredtrading/chests/OpenWiredChestMessageEvent';
@@ -183,9 +184,9 @@ export class WiredChestController extends Component implements IWiredChest, IWir
 
         this._subControllers = [new FurniChestSubController(this), new CoinChestSubController(this)];
 
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineDisposed);
-        this._roomEngine?.events.on('REOE_REMOVED', this._onRoomObjectRemoved);
-        this._roomEngine?.events.on('REOE_UPDATED', this._onRoomObjectUpdated);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineDisposed);
+        this._roomEngine?.events.on(RoomEngineObjectEvent.REOE_REMOVED, this._onRoomObjectRemoved);
+        this._roomEngine?.events.on(RoomEngineObjectEvent.REOE_UPDATED, this._onRoomObjectUpdated);
     }
 
     /**
@@ -461,9 +462,9 @@ export class WiredChestController extends Component implements IWiredChest, IWir
 
         this._controllerDisposed = true;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineDisposed);
-        this._roomEngine?.events.off('REOE_REMOVED', this._onRoomObjectRemoved);
-        this._roomEngine?.events.off('REOE_UPDATED', this._onRoomObjectUpdated);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineDisposed);
+        this._roomEngine?.events.off(RoomEngineObjectEvent.REOE_REMOVED, this._onRoomObjectRemoved);
+        this._roomEngine?.events.off(RoomEngineObjectEvent.REOE_UPDATED, this._onRoomObjectUpdated);
 
         for(const subController of this._subControllers)
         {

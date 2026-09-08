@@ -1,6 +1,7 @@
 import type EventEmitter from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {RoomEngineSoundMachineEvent} from '@habbo/room/events/RoomEngineSoundMachineEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IPlayListController} from '../IPlayListController';
 import type {ISongInfo} from '../ISongInfo';
@@ -89,8 +90,8 @@ export class SoundMachinePlayListController implements IPlayListController
 
         this._events.on('SCE_TRAX_SONG_COMPLETE', this.onSongFinishedPlayingEvent);
         this._events.on(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceivedEvent);
-        this._roomEvents.on('ROSM_SOUND_MACHINE_SWITCHED_ON', this.onSoundMachinePlayEvent);
-        this._roomEvents.on('ROSM_SOUND_MACHINE_SWITCHED_OFF', this.onSoundMachineStopEvent);
+        this._roomEvents.on(RoomEngineSoundMachineEvent.SOUND_MACHINE_SWITCHED_ON, this.onSoundMachinePlayEvent);
+        this._roomEvents.on(RoomEngineSoundMachineEvent.SOUND_MACHINE_SWITCHED_OFF, this.onSoundMachineStopEvent);
     }
 
     // AS3: .../SoundMachinePlayListController.as::get disposed()
@@ -441,8 +442,8 @@ export class SoundMachinePlayListController implements IPlayListController
 
         if(this._roomEvents !== null)
         {
-            this._roomEvents.off('ROSM_SOUND_MACHINE_SWITCHED_ON', this.onSoundMachinePlayEvent);
-            this._roomEvents.off('ROSM_SOUND_MACHINE_SWITCHED_OFF', this.onSoundMachineStopEvent);
+            this._roomEvents.off(RoomEngineSoundMachineEvent.SOUND_MACHINE_SWITCHED_ON, this.onSoundMachinePlayEvent);
+            this._roomEvents.off(RoomEngineSoundMachineEvent.SOUND_MACHINE_SWITCHED_OFF, this.onSoundMachineStopEvent);
             this._roomEvents = null;
         }
 

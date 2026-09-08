@@ -14,6 +14,7 @@ import type {HabboInventory} from '../HabboInventory';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboSoundManager} from '@habbo/sound/IHabboSoundManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {IHabboCommunicationManager} from '../../communication/IHabboCommunicationManager';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -139,7 +140,7 @@ export class FurniModel implements IFurniModel
         this._categorySelections.set('furni', null);
         this._categorySelections.set('rentables', null);
         this._view = new FurniView(this);
-        this._roomEngine.events.on('REOE_PLACED', this.onObjectPlaced);
+        this._roomEngine.events.on(RoomEngineObjectEvent.REOE_PLACED, this.onObjectPlaced);
     }
 
     /** AS3's `new Timer(50)`. */
@@ -534,7 +535,7 @@ export class FurniModel implements IFurniModel
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/inventory/furni/FurniModel.as::onObjectPlaced()
     onObjectPlaced = (event: RoomEngineObjectPlacedEvent): void =>
     {
-        if(!this._isPlacing || event.type !== 'REOE_PLACED') return;
+        if(!this._isPlacing || event.type !== RoomEngineObjectEvent.REOE_PLACED) return;
 
         this._isPlacing = false;
 
@@ -698,7 +699,7 @@ export class FurniModel implements IFurniModel
     {
         if(this._disposed) return;
 
-        this._roomEngine.events.off('REOE_PLACED', this.onObjectPlaced);
+        this._roomEngine.events.off(RoomEngineObjectEvent.REOE_PLACED, this.onObjectPlaced);
 
         if(this._imageUpdateTimer !== null)
         {

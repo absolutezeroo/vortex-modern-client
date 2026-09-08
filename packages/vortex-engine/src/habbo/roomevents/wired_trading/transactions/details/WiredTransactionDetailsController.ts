@@ -14,6 +14,7 @@ import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommun
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import {
     WiredTransactionDetailsMessageEvent
@@ -143,7 +144,7 @@ export class WiredTransactionDetailsController extends Component implements IWir
 
         // AS3 wires REE_DISPOSED through the RoomEngine dependency's listener list; RoomEngine emits
         // it on `events`, so subscribe there directly (same as the sibling controllers).
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineDisposed);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineDisposed);
     }
 
     // AS3: WiredTransactionDetailsController.as::addMessageEvent()
@@ -217,7 +218,7 @@ export class WiredTransactionDetailsController extends Component implements IWir
 
         this._controllerDisposed = true;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineDisposed);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineDisposed);
 
         this._view?.dispose();
         this._view = null;

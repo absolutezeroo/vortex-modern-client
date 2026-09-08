@@ -7,6 +7,7 @@ import type {ILinkEventTracker} from '@core/runtime/events/ILinkEventTracker';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {IRoomEngineRectangle} from '@habbo/room/RoomEngine';
 import type {IRoomWidgetHandler} from '@habbo/ui/IRoomWidgetHandler';
 import type {IRoomWidgetHandlerContainer} from '@habbo/ui/IRoomWidgetHandlerContainer';
@@ -57,8 +58,8 @@ export class RoomThumbnailCameraWidget extends RoomWidgetBase implements ILinkEv
 
         if(this.roomEngine)
         {
-            this.roomEngine.events?.on('REE_DISPOSED', this.onRoomDisposed);
-            this.roomEngine.events?.on('REE_ROOM_ZOOMED', this.onRoomZoomed);
+            this.roomEngine.events?.on(RoomEngineEvent.REE_DISPOSED, this.onRoomDisposed);
+            this.roomEngine.events?.on(RoomEngineEvent.REE_ROOM_ZOOMED, this.onRoomZoomed);
         }
 
         (windowManager as unknown as Component).context?.addLinkEventTracker(this);

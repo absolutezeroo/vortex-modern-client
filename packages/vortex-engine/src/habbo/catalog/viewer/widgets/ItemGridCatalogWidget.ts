@@ -11,7 +11,7 @@ import type {IProductContainer} from '../IProductContainer';
 import type {IDragAndDropDoneReceiver} from '../IDragAndDropDoneReceiver';
 import {BundleProductContainer} from '../BundleProductContainer';
 import {ProductContainer} from '../ProductContainer';
-import type {CatalogWidgetColourIndexEvent} from './events/CatalogWidgetColourIndexEvent';
+import {CatalogWidgetColourIndexEvent} from './events/CatalogWidgetColourIndexEvent';
 import {CatalogWidgetColoursEvent} from './events/CatalogWidgetColoursEvent';
 import {SelectProductEvent} from './events/SelectProductEvent';
 import {SetExtraPurchaseParameterEvent} from './events/SetExtraPurchaseParameterEvent';
@@ -117,7 +117,7 @@ export class ItemGridCatalogWidget extends CatalogWidget implements IItemGrid, I
             this.loadItemGridGraphics(loadGraphics);
         }
 
-        this.events.on('COLOUR_INDEX', this.onColourIndex.bind(this));
+        this.events.on(CatalogWidgetColourIndexEvent.COLOUR_INDEX, this.onColourIndex.bind(this));
 
         return true;
     }

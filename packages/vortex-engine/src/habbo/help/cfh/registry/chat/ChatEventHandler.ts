@@ -1,4 +1,4 @@
-import type {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
+import {RoomSessionChatEvent} from '@habbo/session/events/RoomSessionChatEvent';
 import type {IChatStyleInternal} from '@habbo/freeflowchat/viewer/visualization/style/IChatStyleInternal';
 import {Logger} from '@core/utils/Logger';
 
@@ -33,7 +33,7 @@ export class ChatEventHandler
         // dependency as required, so initComponent() — which builds this handler — cannot run
         // before it resolves. `sessionEvents`, not `events`: IRoomSessionManager keeps the
         // session emitter under its own name (see the note on IRoomSessionManager).
-        this._help.roomSessionManager!.sessionEvents.on('RSCE_CHAT_EVENT', this._onRoomChatBound);
+        this._help.roomSessionManager!.sessionEvents.on(RoomSessionChatEvent.RSCE_CHAT_EVENT, this._onRoomChatBound);
 
         log.debug('ChatEventHandler initialized');
     }
@@ -94,7 +94,7 @@ export class ChatEventHandler
     {
         if(this.disposed) return;
 
-        this._help?.roomSessionManager?.sessionEvents.off('RSCE_CHAT_EVENT', this._onRoomChatBound);
+        this._help?.roomSessionManager?.sessionEvents.off(RoomSessionChatEvent.RSCE_CHAT_EVENT, this._onRoomChatBound);
 
         this._help = null;
     }

@@ -14,6 +14,7 @@ import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommun
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {
     WiredTransactionSuccessMessageEvent
 } from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredtrading/WiredTransactionSuccessMessageEvent';
@@ -136,7 +137,7 @@ export class RewardNotificationController extends Component implements ILinkEven
 
         // AS3 wires REE_DISPOSED through the RoomEngine dependency's listener list; RoomEngine emits
         // it on `events`, so subscribe there directly (same as the sibling controllers).
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
     }
 
     // AS3: RewardNotificationController.as::get linkPattern()
@@ -257,7 +258,7 @@ export class RewardNotificationController extends Component implements ILinkEven
     {
         if(this._roomEngine === null) return;
 
-        if((event as { type: string }).type === 'REE_DISPOSED')
+        if((event as { type: string }).type === RoomEngineEvent.REE_DISPOSED)
         {
             const views = this._openViews;
 
@@ -338,7 +339,7 @@ export class RewardNotificationController extends Component implements ILinkEven
 
         this._controllerDisposed = true;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
 
         for(const messageEvent of this._messageEvents)
         {

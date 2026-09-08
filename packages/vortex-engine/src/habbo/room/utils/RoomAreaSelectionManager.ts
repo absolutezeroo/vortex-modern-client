@@ -1,7 +1,7 @@
 import type {IRoomAreaSelectionManager} from '../IRoomAreaSelectionManager';
 import type {IRoomEngine} from '../IRoomEngine';
 import type {RoomObjectTileMouseEvent} from '../events/RoomObjectTileMouseEvent';
-import type {RoomEngineObjectEvent} from '../events/RoomEngineObjectEvent';
+import {RoomEngineObjectEvent} from '../events/RoomEngineObjectEvent';
 import {ColorMatrixFilter} from 'pixi.js';
 import type {FurnitureVisualization} from '../object/visualization/furniture/FurnitureVisualization';
 import type {RoomVisualization} from '../object/visualization/room/RoomVisualization';
@@ -149,7 +149,7 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
     constructor(roomEngine: IRoomEngine)
     {
         this._roomEngine = roomEngine;
-        this._roomEngine.events.on('REOE_ADDED', this.onRoomObjectAdded);
+        this._roomEngine.events.on(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAdded);
     }
 
     // AS3: RoomAreaSelectionManager.as::getAllFurnis()
@@ -373,7 +373,7 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
     {
         if(this._state === RoomAreaSelectionManager.NOT_ACTIVE) return;
 
-        if(event.type !== 'REOE_ADDED') return;
+        if(event.type !== RoomEngineObjectEvent.REOE_ADDED) return;
 
         if(event.roomId !== this._roomEngine.activeRoomId) return;
 
@@ -395,6 +395,6 @@ export class RoomAreaSelectionManager implements IRoomAreaSelectionManager
     dispose(): void
     {
         this.deactivate();
-        this._roomEngine.events.off('REOE_ADDED', this.onRoomObjectAdded);
+        this._roomEngine.events.off(RoomEngineObjectEvent.REOE_ADDED, this.onRoomObjectAdded);
     }
 }

@@ -18,6 +18,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
@@ -205,7 +206,7 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
 
         // AS3 wires REE_DISPOSED through the RoomEngine dependency's event-listener list; RoomEngine
         // emits it on `events`, so subscribe there directly (same as HabboUserDefinedRoomEvents).
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
     }
 
     // AS3: WiredMenuController.as::get linkPattern()
@@ -450,7 +451,7 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
 
         const e = event as { type: string };
 
-        if(e.type === 'REE_DISPOSED')
+        if(e.type === RoomEngineEvent.REE_DISPOSED)
         {
             if(this._view != null)
             {
@@ -706,7 +707,7 @@ export class WiredMenuController extends Component implements ILinkEventTracker,
 
         this._wiredDisposed = true;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this._onRoomSessionEvent);
 
         if(this._variableManagementOverview != null)

@@ -29,6 +29,8 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabboNotifications} from '@habbo/notifications/IHabboNotifications';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import type {IRoomSessionManager} from '@habbo/session/IRoomSessionManager';
@@ -244,7 +246,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
                 IID_RoomEngine,
                 (engine: IRoomEngine | null) => { this._roomEngine = engine; },
                 true,
-                [{ type: 'REOE_ADDED', callback: (e: unknown) => this.roomObjectAddedHandler(e) }]
+                [{ type: RoomEngineObjectEvent.REOE_ADDED, callback: (e: unknown) => this.roomObjectAddedHandler(e) }]
             ),
             // AS3 registers the RSE_* listeners through the dependency's event-listener list, which the
             // port attaches to the resolved instance's `events` emitter. RoomSessionManager emits RSE_*
@@ -345,7 +347,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
 
         // AS3's initComponent() proper.
         this._incomingMessages = new IncomingMessages(this);
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
 
         log.debug('HabboUserDefinedRoomEvents initialized');
     }
@@ -704,7 +706,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     {
         const e = event as { type: string } | null;
         if(e == null) return;
-        if(e.type === 'REE_DISPOSED')
+        if(e.type === RoomEngineEvent.REE_DISPOSED)
         {
             // AS3's order, kept: the variable cache, the room-wide click settings, the setup dialog,
             // then the contract editors. The synchronizer goes first because the other three can
@@ -721,7 +723,7 @@ export class HabboUserDefinedRoomEvents extends Component implements IHabboUserD
     {
         if(this._disposed) return;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_CREATED, this._onRoomSessionEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_STARTED, this._onRoomSessionEvent);
         this._roomSessionManager?.sessionEvents.off(RoomSessionEvent.RSE_ENDED, this._onRoomSessionEvent);

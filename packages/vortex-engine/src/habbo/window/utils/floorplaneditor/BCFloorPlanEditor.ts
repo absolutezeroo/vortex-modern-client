@@ -1,4 +1,5 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import type {IUpdateReceiver} from '@core/runtime/IContext';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IWindow} from '@core/window/IWindow';
@@ -205,7 +206,7 @@ export class BCFloorPlanEditor implements IUpdateReceiver, IDisposable
                 + ' floor height map and can send no requests.');
         }
 
-        windowManager.roomEngine?.events?.on('REE_DISPOSED', this.onRoomDisposed);
+        windowManager.roomEngine?.events?.on(RoomEngineEvent.REE_DISPOSED, this.onRoomDisposed);
         windowManager.registerUpdateReceiver(this, 0);
     }
 
@@ -989,7 +990,7 @@ export class BCFloorPlanEditor implements IUpdateReceiver, IDisposable
 
         if(roomEngine !== null && !roomEngine.disposed)
         {
-            roomEngine.events?.off('REE_DISPOSED', this.onRoomDisposed);
+            roomEngine.events?.off(RoomEngineEvent.REE_DISPOSED, this.onRoomDisposed);
         }
 
         this._windowManager?.removeUpdateReceiver(this);

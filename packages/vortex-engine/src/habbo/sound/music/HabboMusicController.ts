@@ -2,6 +2,7 @@ import type EventEmitter from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {OrderedMap} from '@core/utils/OrderedMap';
+import {RoomEngineSoundMachineEvent} from '@habbo/room/events/RoomEngineSoundMachineEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboMusicController} from '../IHabboMusicController';
 import type {IPlayListController} from '../IPlayListController';
@@ -160,10 +161,10 @@ export class HabboMusicController implements IHabboMusicController
             this._connection.addMessageEvent(event);
         }
 
-        this._roomEvents.on('ROSM_JUKEBOX_INIT', this.onJukeboxInit);
-        this._roomEvents.on('ROSM_JUKEBOX_DISPOSE', this.onJukeboxDispose);
-        this._roomEvents.on('ROSM_SOUND_MACHINE_INIT', this.onSoundMachineInit);
-        this._roomEvents.on('ROSM_SOUND_MACHINE_DISPOSE', this.onSoundMachineDispose);
+        this._roomEvents.on(RoomEngineSoundMachineEvent.JUKEBOX_INIT, this.onJukeboxInit);
+        this._roomEvents.on(RoomEngineSoundMachineEvent.JUKEBOX_DISPOSE, this.onJukeboxDispose);
+        this._roomEvents.on(RoomEngineSoundMachineEvent.SOUND_MACHINE_INIT, this.onSoundMachineInit);
+        this._roomEvents.on(RoomEngineSoundMachineEvent.SOUND_MACHINE_DISPOSE, this.onSoundMachineDispose);
 
         this._songRequestTimer = setInterval(() => this.sendNextSongRequestMessage(), 1000);
         this._events.on('SCE_TRAX_SONG_COMPLETE', this.onSongFinishedPlayingEvent);
@@ -888,10 +889,10 @@ export class HabboMusicController implements IHabboMusicController
 
         if(this._roomEvents !== null)
         {
-            this._roomEvents.off('ROSM_JUKEBOX_INIT', this.onJukeboxInit);
-            this._roomEvents.off('ROSM_JUKEBOX_DISPOSE', this.onJukeboxDispose);
-            this._roomEvents.off('ROSM_SOUND_MACHINE_INIT', this.onSoundMachineInit);
-            this._roomEvents.off('ROSM_SOUND_MACHINE_DISPOSE', this.onSoundMachineDispose);
+            this._roomEvents.off(RoomEngineSoundMachineEvent.JUKEBOX_INIT, this.onJukeboxInit);
+            this._roomEvents.off(RoomEngineSoundMachineEvent.JUKEBOX_DISPOSE, this.onJukeboxDispose);
+            this._roomEvents.off(RoomEngineSoundMachineEvent.SOUND_MACHINE_INIT, this.onSoundMachineInit);
+            this._roomEvents.off(RoomEngineSoundMachineEvent.SOUND_MACHINE_DISPOSE, this.onSoundMachineDispose);
         }
 
         this._songDisks?.dispose();

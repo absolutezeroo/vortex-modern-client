@@ -14,6 +14,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 
 import {WiredRoomLogsMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredRoomLogsMessageEvent';
 import type {WiredRoomLogsParser} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredRoomLogsParser';
@@ -122,7 +123,7 @@ export class WiredRoomLogListController extends Component implements IWiredRoomL
 
         // AS3 wires REE_DISPOSED through the RoomEngine dependency's listener list; RoomEngine emits it
         // on `events`, so subscribe there directly (same as WiredMenuController).
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
     }
 
     // AS3: WiredRoomLogListController.as::onGetPage()
@@ -198,7 +199,7 @@ export class WiredRoomLogListController extends Component implements IWiredRoomL
             return;
         }
 
-        if((event as { type: string }).type === 'REE_DISPOSED')
+        if((event as { type: string }).type === RoomEngineEvent.REE_DISPOSED)
         {
             if(this._view != null)
             {
@@ -241,7 +242,7 @@ export class WiredRoomLogListController extends Component implements IWiredRoomL
 
         this._wiredDisposed = true;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
 
         if(this._view != null)
         {

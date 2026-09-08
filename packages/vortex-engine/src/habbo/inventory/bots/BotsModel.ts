@@ -3,6 +3,7 @@ import {HabboInventoryTrackingEvent} from '@habbo/inventory/events/HabboInventor
 import type {IHabboCommunicationManager} from '@habbo/communication/IHabboCommunicationManager';
 import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IRoomSession} from '@habbo/session/IRoomSession';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
@@ -62,7 +63,7 @@ export class BotsModel implements IBotsModel
         this._communication = communication;
         this._roomEngine = roomEngine;
         this._view = new BotsView(this, windowManager, avatarRenderer);
-        this._roomEngine.events.on('REOE_PLACED', this.onObjectPlaced);
+        this._roomEngine.events.on(RoomEngineObjectEvent.REOE_PLACED, this.onObjectPlaced);
     }
 
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::get disposed()
@@ -248,7 +249,7 @@ export class BotsModel implements IBotsModel
     // AS3: .../src/com/sulake/habbo/inventory/bots/BotsModel.as::onObjectPlaced()
     private onObjectPlaced = (event: {type?: string}): void =>
     {
-        if(this._placementPending && event.type === 'REOE_PLACED')
+        if(this._placementPending && event.type === RoomEngineObjectEvent.REOE_PLACED)
         {
             this._controller.showView();
             this._placementPending = false;
@@ -283,7 +284,7 @@ export class BotsModel implements IBotsModel
         if(this._disposed) return;
 
         this._disposed = true;
-        this._roomEngine.events.off('REOE_PLACED', this.onObjectPlaced);
+        this._roomEngine.events.off(RoomEngineObjectEvent.REOE_PLACED, this.onObjectPlaced);
         this._view.dispose();
         this._items.clear();
     }

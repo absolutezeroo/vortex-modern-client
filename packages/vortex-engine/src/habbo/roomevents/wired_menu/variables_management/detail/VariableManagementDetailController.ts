@@ -15,6 +15,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 
 import {
     WiredUserPermanentVariablesEvent
@@ -150,7 +151,7 @@ export class VariableManagementDetailController extends Component implements IVa
 
         // AS3 wires REE_DISPOSED through the RoomEngine dependency's listener list; RoomEngine emits
         // it on `events`, so subscribe there directly (same as the sibling controllers).
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
     }
 
     /**
@@ -256,7 +257,7 @@ export class VariableManagementDetailController extends Component implements IVa
             return;
         }
 
-        if((event as { type: string }).type === 'REE_DISPOSED')
+        if((event as { type: string }).type === RoomEngineEvent.REE_DISPOSED)
         {
             // The room went away; the window hides rather than disposing, so re-entering a room and
             // opening the editor again reuses it.
@@ -308,7 +309,7 @@ export class VariableManagementDetailController extends Component implements IVa
             return;
         }
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
 
         if(this._view != null)
         {

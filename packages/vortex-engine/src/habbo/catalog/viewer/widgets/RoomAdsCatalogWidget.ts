@@ -6,7 +6,7 @@ import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {RoomAdPurchaseInfoMessageEvent} from '@habbo/communication/messages/incoming/catalog/RoomAdPurchaseInfoMessageEvent';
 import type {RoomAdPurchaseInfoMessageParser} from '@habbo/communication/messages/parser/catalog/RoomAdPurchaseInfoMessageParser';
 import {GuildOwnedRoomData} from '@habbo/communication/messages/incoming/users/GuildOwnedRoomData';
-import type {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 import {RoomId} from '@room/utils/RoomId';
 import type {HabboCatalog} from '../../HabboCatalog';
 import type {IPurchasableOffer} from '../../IPurchasableOffer';
@@ -94,7 +94,7 @@ export class RoomAdsCatalogWidget extends CatalogWidget
         const minutes = this.getExtensionMinutes(purchaseData, defaultMinutes);
 
         this._catalog.localization?.registerParameter('roomad.catalog_text', 'duration', String(minutes));
-        this._catalog.roomEngine?.events.on('REE_INITIALIZED', this.onRoomInitialized);
+        this._catalog.roomEngine?.events.on(RoomEngineEvent.REE_INITIALIZED, this.onRoomInitialized);
 
         this.populateEventCategories();
 
@@ -435,7 +435,7 @@ export class RoomAdsCatalogWidget extends CatalogWidget
             this._purchaseInfoEvent = null;
         }
 
-        this._catalog.roomEngine?.events.off('REE_INITIALIZED', this.onRoomInitialized);
+        this._catalog.roomEngine?.events.off(RoomEngineEvent.REE_INITIALIZED, this.onRoomInitialized);
         this._catalog = null;
     }
 }

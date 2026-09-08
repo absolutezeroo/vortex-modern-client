@@ -15,6 +15,7 @@ import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
+import {RoomEngineEvent} from '@habbo/room/events/RoomEngineEvent';
 
 import {WiredUserVariablesPageMessageEvent} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredUserVariablesPageMessageEvent';
 import type {WiredUserVariablesPageParser} from '@habbo/communication/messages/parser/userdefinedroomevents/wiredmenu/WiredUserVariablesPageParser';
@@ -117,7 +118,7 @@ export class VariableManagementOverviewController extends Component implements I
             this.addMessageEvent(messageEvent);
         }
 
-        this._roomEngine?.events.on('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.on(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
     }
 
     // AS3: VariableManagementOverviewController.as::onGetPage()
@@ -201,7 +202,7 @@ export class VariableManagementOverviewController extends Component implements I
             return;
         }
 
-        if((event as { type: string }).type === 'REE_DISPOSED')
+        if((event as { type: string }).type === RoomEngineEvent.REE_DISPOSED)
         {
             if(this._view != null)
             {
@@ -244,7 +245,7 @@ export class VariableManagementOverviewController extends Component implements I
 
         this._wiredDisposed = true;
 
-        this._roomEngine?.events.off('REE_DISPOSED', this._onRoomEngineEvent);
+        this._roomEngine?.events.off(RoomEngineEvent.REE_DISPOSED, this._onRoomEngineEvent);
 
         if(this._view != null)
         {
