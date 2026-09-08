@@ -194,8 +194,6 @@ export const TYPE_NAME_TO_CODE: Record<string, number> =
         'dragbar': WindowType.DRAGBAR,
         'input': WindowType.TEXTFIELD,
         'password': WindowType.PASSWORD,
-        // Kept after `button_icon` so the reverse map resolves 79 back to `iconbutton` —
-        // the tag the shipped layouts and the element description actually use.
         'iconbutton': WindowType.ICONBUTTON,
         'tab_content': WindowType.TAB_CONTENT,
         'tab_context': WindowType.TAB_CONTEXT,

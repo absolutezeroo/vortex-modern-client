@@ -3,10 +3,7 @@ import {VortexLoadingScreen} from './VortexLoadingScreen';
 import {VortexApp} from './App';
 
 const log = Logger.getLogger('client.index');
-
-// Show loading screen immediately
 const loadingScreen = new VortexLoadingScreen();
-
 const app = new VortexApp(loadingScreen);
 
 /**
@@ -26,10 +23,6 @@ function formatLoadingErrorMessage(error: unknown): string
         return 'Failed to download required game data.\nPlease check your connection and restart the client.';
     }
 
-    // `assetbundle` is this port's equivalent of AS3's library-download stage: `AssetBundle.load()`
-    // throws `[AssetBundle] Failed to load: …`, and its two bundles are what AS3 downloaded as
-    // libraries. Matched alongside AS3's own "download" so a dead bundle names itself rather than
-    // falling through to the generic message.
     if(text.includes('download') || text.includes('assetbundle'))
     {
         return 'Failed to download required client libraries.\nPlease check your connection and restart the client.';
