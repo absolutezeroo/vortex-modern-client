@@ -16,9 +16,10 @@
 //
 //   a Flash dump under sources/     every asset is generated from it, which is the only way to
 //                                   get a NEW one and the only way to refresh a stale one
-//   vortex-client-assets.zip        the same tree, already generated. 16 MB against a dump's
-//                                   several gigabytes, and it is how someone without a dump runs
-//                                   the client at all. Produce one with --pack.
+//   vortex-client-assets.zip        the same tree, already generated, and COMMITTED - the one
+//                                   piece of dump-derived content this repository carries, so
+//                                   that a clone can draw at all. Re-pack it with --pack after
+//                                   regenerating against a new dump, and commit the result.
 //
 // Note that this covers the client's OWN assets only - the ones derived from the Flash dump. The
 // furni, avatar figures and gamedata served at vortex-assets.local are a separate, much larger

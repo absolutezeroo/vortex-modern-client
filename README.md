@@ -36,37 +36,38 @@ Flags, none of them usually needed: `--dump <path>`, `--assets <zip>`, `--force-
 
 ## What has to exist outside this repository
 
-**A fresh clone cannot run on its own.** Almost everything the client draws is derived from a Habbo
-Flash dump that is not in this repository, and never will be: the window layouts, the skins, the
-sound effects, the avatar configurations and every PNG are generated per checkout into
-`packages/vortex-client/src/assets/`, which is gitignored.
+The client's own assets ship with it, so a clone draws correctly out of the box. Two things it
+talks to at runtime do not, and cannot: they are a hotel's own infrastructure.
 
 | What | Why | Where |
 |---|---|---|
-| Client assets | everything the client itself draws | a Flash dump in `sources/`, **or** a `vortex-client-assets.zip` |
-| An asset host | serves `/gordon`, `/c_images`, `/gamedata`, `/dcr` | `http://vortex-assets.local` |
-| The server | game socket + web API | `vortex-emulator`, a sibling checkout |
+| Client assets | everything the client itself draws | **included** — `vortex-client-assets.zip`, or a Flash dump in `sources/` |
+| An asset host | serves `/gordon`, `/c_images`, `/gamedata`, `/dcr` | `http://vortex-assets.local` — **you provide this** |
+| The server | game socket + web API | `vortex-emulator`, a sibling checkout — **you provide this** |
+
+Without the last two the client still starts and reaches its login screen; it cannot sign in or
+open a room. The installer's final step says which of the two is silent.
 
 Plus **Node ≥ 22** and **pnpm ≥ 11** — this is a pnpm workspace, npm and yarn cannot resolve it at
 all. The installer checks both first and stops if either is short.
 
-### The client's own assets: a dump, or the zip
+### The client's own assets: the zip ships with the repo
 
-A dump is any directory under `sources/` holding `src/binaryData/*Com.as` and `src/_assets/`. The
-installer does not go looking for a hardcoded name: it measures every candidate and takes the
-richest, so a newer dump dropped in beside the old one is picked up with no edit anywhere.
+**`vortex-client-assets.zip` is committed** — 4,384 files, 8.9 MB, the generated tree in one file.
+It is the only piece of dump-derived content in this repository, and it is here so that
+`git clone && node install.mjs` is enough on its own. You need no dump to run the client.
 
-Without a dump you can still run the client, from a zip of the generated tree — 4,386 files, 8.9 MB,
-which anyone who *does* have a dump produces in two seconds:
+A dump is still what *produces* that tree, and it always wins when both are present: it is the only
+source that can generate a **new** one, where an archive is a copy and stale by definition. A dump
+is any directory under `sources/` holding `src/binaryData/*Com.as` and `src/_assets/` — the
+installer does not look for a hardcoded name, it measures every candidate and takes the richest, so
+a newer dump dropped in beside the old one is picked up with no edit anywhere.
+
+After regenerating against a new dump, re-pack and commit the archive so clones get the new assets:
 
 ```bash
-node install.mjs --pack          # writes vortex-client-assets.zip
+node install.mjs --pack          # rewrites vortex-client-assets.zip
 ```
-
-Put that file at the root of a clone and `node install.mjs` uses it instead of a dump. It is
-gitignored: hand it over directly or attach it to a release, never commit it. A dump always wins
-when both are present, because it is the only source that can produce a *new* tree — an archive is
-a copy of one, and stale by definition.
 
 Note this covers the client's own assets only. The furni, avatar figures and gamedata served at
 `vortex-assets.local` are a separate, far larger tree in Nitro's formats; nothing here generates or

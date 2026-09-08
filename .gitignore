@@ -65,7 +65,8 @@ packages/vortex-client/.vortex-dev/
 __pycache__/
 *.pyc
 
-# The generated client assets, packaged by `node install.mjs --pack` for people who have no
-# Flash dump. Derived dump content like everything above, just in one file — it is meant to be
-# attached to a release or handed over directly, never committed.
-/vortex-client-assets.zip
+# vortex-client-assets.zip is the ONE piece of derived dump content that IS committed, and it is
+# deliberately absent from the list above. Everything else here is gitignored because it is
+# regenerated per checkout from a dump — but a clone has no dump, so that rule left it unable to
+# draw anything at all. The archive is what makes `git clone && node install.mjs` sufficient on
+# its own. Re-pack and commit it whenever the dump changes: `node install.mjs --pack`.
