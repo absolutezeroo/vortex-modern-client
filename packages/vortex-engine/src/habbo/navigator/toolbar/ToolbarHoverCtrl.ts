@@ -7,6 +7,7 @@ import {
     CanCreateRoomMessageComposer
 } from '../../communication/messages/outgoing/navigator/CanCreateRoomMessageComposer';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Toolbar hover menu controller for navigator quick-access.
@@ -65,9 +66,9 @@ export class ToolbarHoverCtrl
             (this._itemList as any).removeListItem?.(this._simpleItemBase);
         }
 
-        this._window.addEventListener('WME_OVER', this.onHoverOverWindow);
-        this._window.addEventListener('WME_HOVERING', this.onHoverOverWindow);
-        this._window.addEventListener('WME_OUT', this.onHoverOutWindow);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onHoverOverWindow);
+        this._window.addEventListener(WindowMouseEvent.HOVERING, this.onHoverOverWindow);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onHoverOutWindow);
 
         this.addSimpleItem('navigator', navigator.getText('${navigator.title}'), this.onNavigatorClick);
         this.addSimpleItem('home', navigator.getText('${toolbar.icon.label.exitroom.home}'), this.onHomeClick);
@@ -173,9 +174,9 @@ export class ToolbarHoverCtrl
             textWindow.text = label;
         }
 
-        item.addEventListener('WME_CLICK', callback);
-        item.addEventListener('WME_OVER', this.setItemBgHoverState);
-        item.addEventListener('WME_OUT', this.setItemBgHoverState);
+        item.addEventListener(WindowMouseEvent.CLICK, callback);
+        item.addEventListener(WindowMouseEvent.OVER, this.setItemBgHoverState);
+        item.addEventListener(WindowMouseEvent.OUT, this.setItemBgHoverState);
         (this._itemList as any).addListItem?.(item);
     }
 

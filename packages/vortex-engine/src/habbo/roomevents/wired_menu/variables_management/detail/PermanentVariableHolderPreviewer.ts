@@ -8,6 +8,7 @@ import type {WiredMenuController} from '../../WiredMenuController';
 import {
     GetExtendedProfileMessageComposer
 } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The little portrait in the detail window's info box: the user, pet or bot whose permanent
@@ -41,7 +42,7 @@ export class PermanentVariableHolderPreviewer implements IGetImageListener
 
         this.clearPreviewer();
 
-        this.previewAvatarRegion?.addEventListener('WME_CLICK', this.onPreviewAvatarClicked);
+        this.previewAvatarRegion?.addEventListener(WindowMouseEvent.CLICK, this.onPreviewAvatarClicked);
     }
 
     /**

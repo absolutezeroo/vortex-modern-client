@@ -2,7 +2,7 @@ import type {IUpdateReceiver} from '@core/runtime/IContext';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import type {HabboToolbarEvent} from '@habbo/toolbar/events/HabboToolbarEvent';
 
@@ -142,8 +142,8 @@ export class WelcomeScreenController implements IUpdateReceiver
 
         if(text) text.height = text.textHeight + 5;
 
-        window.findChildByName('close')?.addEventListener('WME_CLICK', this.onCloseButton);
-        window.findChildByName('click')?.addEventListener('WME_CLICK', this.onRegionClick);
+        window.findChildByName('close')?.addEventListener(WindowMouseEvent.CLICK, this.onCloseButton);
+        window.findChildByName('click')?.addEventListener(WindowMouseEvent.CLICK, this.onRegionClick);
     }
 
     /**
@@ -310,8 +310,8 @@ export class WelcomeScreenController implements IUpdateReceiver
 
         if(this._window)
         {
-            this._window.findChildByName('close')?.removeEventListener('WME_CLICK', this.onCloseButton);
-            this._window.findChildByName('click')?.removeEventListener('WME_CLICK', this.onRegionClick);
+            this._window.findChildByName('close')?.removeEventListener(WindowMouseEvent.CLICK, this.onCloseButton);
+            this._window.findChildByName('click')?.removeEventListener(WindowMouseEvent.CLICK, this.onRegionClick);
 
             this._window.dispose();
             this._window = null;

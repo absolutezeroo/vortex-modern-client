@@ -5,6 +5,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The toolbar bubble telling a member their club gifts are waiting
@@ -70,8 +71,8 @@ export class ClubGiftNotification
 
         if(region !== null)
         {
-            region.addEventListener('WME_OVER', this.onMouseOver);
-            region.addEventListener('WME_OUT', this.onMouseOut);
+            region.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+            region.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
         }
 
         this.setClubIcon(ClubGiftNotification.ICON_STYLE_CLUB);

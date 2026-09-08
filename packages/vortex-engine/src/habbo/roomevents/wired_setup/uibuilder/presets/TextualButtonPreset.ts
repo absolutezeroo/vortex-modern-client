@@ -1,6 +1,6 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -35,7 +35,7 @@ export class TextualButtonPreset extends WiredUIPreset
         this._container = presetManager.createLayout('growing_container_view') as unknown as IWindowContainer;
         this._text = presetManager.createText(caption, new TextParam(0, false, 0, true));
         this._container.addChild(this._text.window);
-        this._container.addEventListener('WME_CLICK', this._clicked);
+        this._container.addEventListener(WindowMouseEvent.CLICK, this._clicked);
         this._container.mouseThreshold = 0;
     }
 

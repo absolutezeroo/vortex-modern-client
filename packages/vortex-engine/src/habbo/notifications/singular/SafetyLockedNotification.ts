@@ -7,6 +7,7 @@ import type {IHabboToolbar} from '@habbo/toolbar/IHabboToolbar';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {Component} from '@core/runtime/Component';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The toolbar bubble shown while an account sits behind its safety lock
@@ -65,8 +66,8 @@ export class SafetyLockedNotification
 
         if(region !== null)
         {
-            region.addEventListener('WME_OVER', this.onMouseOver);
-            region.addEventListener('WME_OUT', this.onMouseOut);
+            region.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+            region.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
         }
     }
 

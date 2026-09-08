@@ -13,6 +13,7 @@ import {UseFurnitureMessageComposer} from '@habbo/communication/messages/outgoin
 import type {IRoomWidgetHandler} from '../../../IRoomWidgetHandler';
 import type {FurnitureAreaHideWidgetHandler} from '../../../handler/FurnitureAreaHideWidgetHandler';
 import {RoomWidgetBase} from '../../RoomWidgetBase';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.areahide.AreaHideFurniWidget');
 
@@ -248,8 +249,8 @@ export class AreaHideFurniWidget extends RoomWidgetBase
         {
             if(checkbox === null) continue;
 
-            checkbox.addEventListener('WE_SELECTED', this.onSettingsChanged);
-            checkbox.addEventListener('WE_UNSELECTED', this.onSettingsChanged);
+            checkbox.addEventListener(WindowEvent.WE_SELECTED, this.onSettingsChanged);
+            checkbox.addEventListener(WindowEvent.WE_UNSELECTED, this.onSettingsChanged);
         }
 
         const apply = this.applyButton;

@@ -13,6 +13,7 @@ import { Util } from '../Util';
 import { MainViewCtrl } from './MainViewCtrl';
 import { AddFavouriteRoomMessageComposer } from '../../communication/messages/outgoing/navigator/AddFavouriteRoomMessageComposer';
 import { DeleteFavouriteRoomMessageComposer } from '../../communication/messages/outgoing/navigator/DeleteFavouriteRoomMessageComposer';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Displays a scrollable list of guest rooms with hover popups, favourite icons, and door-mode icons.
@@ -168,10 +169,10 @@ export class GuestRoomListCtrl implements IViewCtrl
         const entry = this._navigator.getXmlWindow('grs_guest_room_details_phase_one') as IWindowContainer;
 
         entry.background = true;
-        entry.addEventListener('WME_MOVE', (e: WindowEvent) => this.onMouseMove(e));
-        entry.addEventListener('WME_OVER', (e: WindowEvent) => this.onMouseOver(e));
-        entry.addEventListener('WME_OUT', (e: WindowEvent) => this.onMouseOut(e));
-        entry.addEventListener('WME_CLICK', (e: WindowEvent) => this.onMouseClick(e));
+        entry.addEventListener(WindowMouseEvent.MOVE, (e: WindowEvent) => this.onMouseMove(e));
+        entry.addEventListener(WindowMouseEvent.OVER, (e: WindowEvent) => this.onMouseOver(e));
+        entry.addEventListener(WindowMouseEvent.OUT, (e: WindowEvent) => this.onMouseOut(e));
+        entry.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this.onMouseClick(e));
         entry.setParamFlag(1, true);
         entry.setParamFlag(128, true);
         entry.color = this.getBgColor(index);
@@ -438,11 +439,11 @@ export class GuestRoomListCtrl implements IViewCtrl
         if(!visible)
         {
             region.visible = false;
-            region.removeEventListener('WME_CLICK', handler);
+            region.removeEventListener(WindowMouseEvent.CLICK, handler);
         }
         else
         {
-            region.addEventListener('WME_CLICK', handler);
+            region.addEventListener(WindowMouseEvent.CLICK, handler);
             region.visible = true;
             this._navigator.refreshButton(region as IWindowContainer, name, true, null!, 0);
         }

@@ -6,7 +6,7 @@ import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindo
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IFriendRequest} from '../../data/IFriendRequest';
 import {Tab} from './Tab';
@@ -313,17 +313,17 @@ export class FriendRequestsTab extends Tab
         window.width = Tab.width;
         window.height = Tab.height;
 
-        window.addEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.addEventListener('WME_OVER', this.onMouseOverEvent);
-        window.addEventListener('WME_OUT', this.onMouseOutEvent);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
 
         const header = window.findChildByName(FriendRequestsTab.HEADER);
 
         if(header !== null)
         {
-            header.addEventListener('WME_CLICK', this.onMouseClickEvent);
-            header.addEventListener('WME_OVER', this.onMouseOverEvent);
-            header.addEventListener('WME_OUT', this.onMouseOutEvent);
+            header.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            header.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            header.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
         const tooltip = Tab.localization?.getLocalization('infostand.profile.link.tooltip', '') ?? '';
@@ -388,17 +388,17 @@ export class FriendRequestsTab extends Tab
         }
 
         window.procedure = null;
-        window.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.removeEventListener('WME_OVER', this.onMouseOverEvent);
-        window.removeEventListener('WME_OUT', this.onMouseOutEvent);
+        window.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
 
         const header = window.findChildByName(FriendRequestsTab.HEADER);
 
         if(header !== null)
         {
-            header.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-            header.removeEventListener('WME_OVER', this.onMouseOverEvent);
-            header.removeEventListener('WME_OUT', this.onMouseOutEvent);
+            header.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            header.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            header.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
         window.width = Tab.width;

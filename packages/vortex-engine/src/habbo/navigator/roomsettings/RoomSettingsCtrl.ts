@@ -1,6 +1,6 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {FlatCategory} from '@habbo/communication/messages/incoming/navigator/FlatCategory';
 import type {RoomSettingsData} from '@habbo/communication/messages/parser/roomsettings/RoomSettingsData';
 import type {RoomSettingsController} from '@habbo/communication/messages/parser/roomsettings/RoomSettingsController';
@@ -19,6 +19,7 @@ import {RemoveAllRightsMessageComposer} from '@habbo/communication/messages/outg
 import {UnbanUserFromRoomMessageComposer} from '@habbo/communication/messages/outgoing/room/settings/UnbanUserFromRoomMessageComposer';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
 import type {IRoomSettingsUserData} from './UserListCtrl';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 type IPopulatable = { populate(items: string[]): void; selection: number; enumerateSelection?(): unknown[] };
 type ICheckable = { select(): void; unselect(): void; readonly isSelected: boolean };
@@ -448,30 +449,30 @@ export class RoomSettingsCtrl
         const tab4 = win.findChildByName('tab_4');
         const tab5 = win.findChildByName('tab_5');
 
-        if(tab1) tab1.addEventListener('WME_CLICK', this._onTabClick);
-        if(tab2) tab2.addEventListener('WME_CLICK', this._onTabClick);
-        if(tab3) tab3.addEventListener('WME_CLICK', this._onTabClick);
-        if(tab4) tab4.addEventListener('WME_CLICK', this._onTabClick);
-        if(tab5) tab5.addEventListener('WME_CLICK', this._onTabClick);
+        if(tab1) tab1.addEventListener(WindowMouseEvent.CLICK, this._onTabClick);
+        if(tab2) tab2.addEventListener(WindowMouseEvent.CLICK, this._onTabClick);
+        if(tab3) tab3.addEventListener(WindowMouseEvent.CLICK, this._onTabClick);
+        if(tab4) tab4.addEventListener(WindowMouseEvent.CLICK, this._onTabClick);
+        if(tab5) tab5.addEventListener(WindowMouseEvent.CLICK, this._onTabClick);
 
         const buildersBtn = win.findChildByName('builders_faq_button');
-        if(buildersBtn) buildersBtn.addEventListener('WME_CLICK', this._onBuildersClubFaqClick);
+        if(buildersBtn) buildersBtn.addEventListener(WindowMouseEvent.CLICK, this._onBuildersClubFaqClick);
 
         const doormodePwEl = win.findChildByName('doormode_password');
         if(doormodePwEl)
         {
-            doormodePwEl.addEventListener('WE_SELECT', this._onDoorModePasswordSelect);
-            doormodePwEl.addEventListener('WE_UNSELECT', this._onDoorModePasswordUnselect);
+            doormodePwEl.addEventListener(WindowEvent.WE_SELECT, this._onDoorModePasswordSelect);
+            doormodePwEl.addEventListener(WindowEvent.WE_UNSELECT, this._onDoorModePasswordUnselect);
         }
 
         const closeBtn = win.findChildByTag('close');
-        if(closeBtn) closeBtn.addEventListener('WME_CLICK', this._onClose);
+        if(closeBtn) closeBtn.addEventListener(WindowMouseEvent.CLICK, this._onClose);
 
         const removeAllBtn = win.findChildByName('remove_all_flat_ctrls');
-        if(removeAllBtn) removeAllBtn.addEventListener('WME_CLICK', this._onRemoveAllFlatCtrlsClick);
+        if(removeAllBtn) removeAllBtn.addEventListener(WindowMouseEvent.CLICK, this._onRemoveAllFlatCtrlsClick);
 
         const filterInput = win.findChildByName('filter_users_input');
-        if(filterInput) filterInput.addEventListener('WE_CHANGE', this._onUserFilterChange);
+        if(filterInput) filterInput.addEventListener(WindowEvent.WE_CHANGE, this._onUserFilterChange);
 
         const removeLinkRegion = win.findChildByName('remove_link_region');
         if(removeLinkRegion)
@@ -482,7 +483,7 @@ export class RoomSettingsCtrl
             }
             else
             {
-                removeLinkRegion.addEventListener('WME_CLICK', this._onDeleteButtonClick);
+                removeLinkRegion.addEventListener(WindowMouseEvent.CLICK, this._onDeleteButtonClick);
             }
         }
 
@@ -509,7 +510,7 @@ export class RoomSettingsCtrl
 
         for(const mgr of textInputManagers)
         {
-            if(mgr) (mgr as unknown as { input: { addEventListener(e: string, cb: unknown): void } }).input?.addEventListener('WE_UNFOCUSED', this._onUnfocus);
+            if(mgr) (mgr as unknown as { input: { addEventListener(e: string, cb: unknown): void } }).input?.addEventListener(WindowEvent.WE_UNFOCUSED, this._onUnfocus);
         }
 
         const selectableNames = [
@@ -525,15 +526,15 @@ export class RoomSettingsCtrl
             const el = win.findChildByName(name);
             if(el)
             {
-                el.addEventListener('WE_SELECTED', this._onUnfocus);
-                el.addEventListener('WE_UNSELECTED', this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_SELECTED, this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_UNSELECTED, this._onUnfocus);
             }
         }
 
         for(const name of ['doormode_open', 'doormode_doorbell', 'doormode_password', 'doormode_invisible'])
         {
             const el = win.findChildByName(name);
-            if(el) el.addEventListener('WE_SELECTED', this._onUnfocus);
+            if(el) el.addEventListener(WindowEvent.WE_SELECTED, this._onUnfocus);
         }
 
         for(const name of [
@@ -543,11 +544,11 @@ export class RoomSettingsCtrl
         ])
         {
             const el = win.findChildByName(name);
-            if(el) el.addEventListener('WE_SELECT', this._onUnfocus);
+            if(el) el.addEventListener(WindowEvent.WE_SELECT, this._onUnfocus);
         }
 
         const unbanBtn = win.findChildByName('moderation_unban_btn');
-        if(unbanBtn) unbanBtn.addEventListener('WME_CLICK', this._onUnbanClick);
+        if(unbanBtn) unbanBtn.addEventListener(WindowMouseEvent.CLICK, this._onUnbanClick);
 
         const pwContainer = win.findChildByName('password_container');
         if(pwContainer) pwContainer.visible = false;
@@ -866,8 +867,8 @@ export class RoomSettingsCtrl
             const el = this._window.findChildByName('moderation_mute_dropdown');
             if(el)
             {
-                el.addEventListener('WE_SELECTED', this._onUnfocus);
-                el.addEventListener('WE_UNSELECTED', this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_SELECTED, this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_UNSELECTED, this._onUnfocus);
             }
         }
 
@@ -880,8 +881,8 @@ export class RoomSettingsCtrl
             const el = this._window.findChildByName('moderation_ban_dropdown');
             if(el)
             {
-                el.addEventListener('WE_SELECTED', this._onUnfocus);
-                el.addEventListener('WE_UNSELECTED', this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_SELECTED, this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_UNSELECTED, this._onUnfocus);
             }
         }
 
@@ -894,8 +895,8 @@ export class RoomSettingsCtrl
             const el = this._window.findChildByName('moderation_kick_dropdown');
             if(el)
             {
-                el.addEventListener('WE_SELECTED', this._onUnfocus);
-                el.addEventListener('WE_UNSELECTED', this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_SELECTED, this._onUnfocus);
+                el.addEventListener(WindowEvent.WE_UNSELECTED, this._onUnfocus);
             }
         }
     }

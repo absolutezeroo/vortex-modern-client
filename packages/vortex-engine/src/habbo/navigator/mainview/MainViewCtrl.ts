@@ -8,7 +8,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITabButtonWindow} from '@core/window/components/ITabButtonWindow';
 import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {ErrorReportStorage} from '@core/utils/ErrorReportStorage';
 import {Logger} from '@core/utils/Logger';
 import {WindowToggle} from '@habbo/utils/WindowToggle';
@@ -78,6 +78,7 @@ import type {ITransitionalMainViewCtrl} from './ITransitionalMainViewCtrl';
 import {OfficialRoomListCtrl} from './OfficialRoomListCtrl';
 import {PopularTagsListCtrl} from './PopularTagsListCtrl';
 import {RoomAdListCtrl} from './RoomAdListCtrl';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.navigator.mainview.MainViewCtrl');
 
@@ -427,9 +428,9 @@ export class MainViewCtrl implements ITransitionalMainViewCtrl, IUpdateReceiver,
 
         const closeButton = window.findChildByTag('close');
 
-        if(closeButton !== null) closeButton.addEventListener('WME_CLICK', this.onWindowClose);
+        if(closeButton !== null) closeButton.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
 
-        (this._mainWindow as unknown as IWindow).addEventListener('WE_RESIZED', this.onWindowResized);
+        (this._mainWindow as unknown as IWindow).addEventListener(WindowEvent.WE_RESIZED, this.onWindowResized);
 
         if(this._tabContext !== null && (!eventInfoEnabled || !this._isPhaseOneNavigator))
         {
@@ -461,7 +462,7 @@ export class MainViewCtrl implements ITransitionalMainViewCtrl, IUpdateReceiver,
 
             if(button !== null)
             {
-                (button as unknown as IWindow).addEventListener('WE_SELECTED', this.onTabSelected);
+                (button as unknown as IWindow).addEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
                 tab.button = button;
             }
         }

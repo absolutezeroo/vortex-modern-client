@@ -28,7 +28,7 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IModalDialog} from '@habbo/window/utils/IModalDialog';
@@ -283,7 +283,7 @@ export class TalentTrackController
             this._modal.background.procedure = this.onModalWindowBackgroundEvent;
         }
 
-        this.desktopWindow?.addEventListener('WE_RESIZED', this.onDesktopResized);
+        this.desktopWindow?.addEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
 
         this._panorama = this._window.findChildByName('panorama') as unknown as IItemListWindow | null;
 
@@ -973,7 +973,7 @@ export class TalentTrackController
             this._modal = null;
             this._window = null;
 
-            this.desktopWindow?.removeEventListener('WE_RESIZED', this.onDesktopResized);
+            this.desktopWindow?.removeEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
         }
     }
 

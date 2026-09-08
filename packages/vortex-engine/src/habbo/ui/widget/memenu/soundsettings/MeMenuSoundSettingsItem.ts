@@ -5,6 +5,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {MeMenuSoundSettingsView} from './MeMenuSoundSettingsView';
 import {Logger} from '@core/utils/Logger';
 import {MeMenuSoundSettingsSlider} from './MeMenuSoundSettingsSlider';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.memenu.soundsettings.MeMenuSoundSettingsItem');
 
@@ -74,9 +75,9 @@ export class MeMenuSoundSettingsItem implements IDisposable
 
             if(button === null) continue;
 
-            button.addEventListener('WME_CLICK', this.onButtonClicked);
-            button.addEventListener('WME_OVER', this.onButtonOver);
-            button.addEventListener('WME_OUT', this.onButtonOut);
+            button.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
+            button.addEventListener(WindowMouseEvent.OVER, this.onButtonOver);
+            button.addEventListener(WindowMouseEvent.OUT, this.onButtonOut);
         }
 
         this.updateSoundIcons();

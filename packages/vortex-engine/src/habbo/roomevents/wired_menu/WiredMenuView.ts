@@ -5,8 +5,8 @@ import type {ITabContextWindow} from '@core/window/components/ITabContextWindow'
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 
@@ -65,8 +65,8 @@ export class WiredMenuView
         this._windowManager = windowManager;
         this._tabConfigs = new WiredMenuTabConfigs(controller);
         this._window = windowManager.buildWidgetLayout('wired_menu_view_xml', 1) as unknown as IWindowContainer;
-        this.closeButton.addEventListener('WME_CLICK', this._onWindowClose);
-        this.discordRegion.addEventListener('WME_CLICK', this._onClickDiscord);
+        this.closeButton.addEventListener(WindowMouseEvent.CLICK, this._onWindowClose);
+        this.discordRegion.addEventListener(WindowMouseEvent.CLICK, this._onClickDiscord);
     }
 
     // AS3: WiredMenuView.as::initialize()
@@ -153,7 +153,7 @@ export class WiredMenuView
             }
 
             const tabButton = this._window.findChildByName(config.tabButtonName) as unknown as ITabButtonWindow;
-            tabButton.addEventListener('WE_SELECTED', this._onTabSelected);
+            tabButton.addEventListener(WindowEvent.WE_SELECTED, this._onTabSelected);
             this._window.findChildByName(config.containerName)!.visible = false;
         }
 
@@ -362,7 +362,7 @@ export class WiredMenuView
         }
 
         this.hide();
-        this.closeButton.removeEventListener('WME_CLICK', this._onWindowClose);
+        this.closeButton.removeEventListener(WindowMouseEvent.CLICK, this._onWindowClose);
 
         for(const config of this.tabConfigs)
         {
@@ -384,7 +384,7 @@ export class WiredMenuView
             }
 
             const tabButton = this._window.findChildByName(config.tabButtonName) as unknown as ITabButtonWindow;
-            tabButton.removeEventListener('WE_SELECTED', this._onTabSelected);
+            tabButton.removeEventListener(WindowEvent.WE_SELECTED, this._onTabSelected);
         }
 
         this._tabs = null as unknown as Map<string, IWiredMenuTab>;

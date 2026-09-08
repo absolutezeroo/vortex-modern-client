@@ -7,6 +7,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {WiredErrorData} from '@habbo/communication/messages/incoming/userdefinedroomevents/wiredmenu/WiredErrorData';
 import type {WiredMenuController} from '../../WiredMenuController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * WiredErrorInfoView — a small popup describing a single wired error (name, category icon, localized
@@ -35,7 +36,7 @@ export class WiredErrorInfoView implements IDisposable
         this._controller = controller;
         this._windowManager = controller.windowManager!;
         this._window = this._windowManager.buildWidgetLayout('error_info_view_xml', 1) as unknown as IWindowContainer;
-        this.closeButton.addEventListener('WME_CLICK', this._onWindowClose);
+        this.closeButton.addEventListener(WindowMouseEvent.CLICK, this._onWindowClose);
     }
 
     // AS3: WiredErrorInfoView.as::initialize()

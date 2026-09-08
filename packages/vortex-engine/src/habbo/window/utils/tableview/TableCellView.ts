@@ -6,14 +6,15 @@ import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import type {CellTemplate} from './CellTemplate';
 import {TableCell} from './TableCell';
 import type {TableColumn} from './TableColumn';
 import type {TableRowView} from './TableRowView';
 import type {TableView} from './TableView';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.window.utils.tableview.TableCellView');
 
@@ -65,10 +66,10 @@ export class TableCellView implements IDisposable
         this.updateWidth();
         this.initializeView();
         this._container.addEventListener('WME_DOUBLE_CLICK', this._onDoubleClick);
-        this._container.addEventListener('WME_DOWN', rowView.onDown);
-        this._container.addEventListener('WME_OVER', rowView.onHoverOver);
-        this._container.addEventListener('WME_OUT', rowView.onHoverOut);
-        this._container.addEventListener('WME_CLICK_AWAY', rowView.onClickAway);
+        this._container.addEventListener(WindowMouseEvent.DOWN, rowView.onDown);
+        this._container.addEventListener(WindowMouseEvent.OVER, rowView.onHoverOver);
+        this._container.addEventListener(WindowMouseEvent.OUT, rowView.onHoverOut);
+        this._container.addEventListener(WindowMouseEvent.CLICK_AWAY, rowView.onClickAway);
         this._container.mouseThreshold = 0;
     }
 
@@ -341,10 +342,10 @@ export class TableCellView implements IDisposable
         if(existing == null && create)
         {
             const input = this.template.createElementInput(this._container as unknown as IWindowContainer);
-            input.addEventListener('WKE_KEY_DOWN', this._onInputEdit);
-            input.addEventListener('WKE_KEY_UP', this._onInputEdit);
-            input.addEventListener('WE_UNFOCUS', this._onInputFocusOut);
-            input.addEventListener('WME_CLICK_AWAY', this._rowView.onClickAway);
+            input.addEventListener(WindowKeyboardEvent.KEY_DOWN, this._onInputEdit);
+            input.addEventListener(WindowKeyboardEvent.KEY_UP, this._onInputEdit);
+            input.addEventListener(WindowEvent.WE_UNFOCUS, this._onInputFocusOut);
+            input.addEventListener(WindowMouseEvent.CLICK_AWAY, this._rowView.onClickAway);
             return input;
         }
 
@@ -359,11 +360,11 @@ export class TableCellView implements IDisposable
         if(existing == null && create)
         {
             const region = this.template.createLinkContainer(this._container as unknown as IWindowContainer);
-            region.addEventListener('WME_DOWN', this._rowView.onDown);
-            region.addEventListener('WME_OVER', this._rowView.onHoverOver);
-            region.addEventListener('WME_OUT', this._rowView.onHoverOut);
-            region.addEventListener('WME_CLICK_AWAY', this._rowView.onClickAway);
-            region.addEventListener('WME_CLICK', this._onLinkClick);
+            region.addEventListener(WindowMouseEvent.DOWN, this._rowView.onDown);
+            region.addEventListener(WindowMouseEvent.OVER, this._rowView.onHoverOver);
+            region.addEventListener(WindowMouseEvent.OUT, this._rowView.onHoverOut);
+            region.addEventListener(WindowMouseEvent.CLICK_AWAY, this._rowView.onClickAway);
+            region.addEventListener(WindowMouseEvent.CLICK, this._onLinkClick);
             region.mouseThreshold = 0;
             return region;
         }
@@ -405,9 +406,9 @@ export class TableCellView implements IDisposable
         if(existing == null && create)
         {
             const region = this.template.createExtraButton(this._container as unknown as IWindowContainer);
-            region.addEventListener('WME_CLICK', this._onExtraButtonClick);
-            region.addEventListener('WME_OVER', this._rowView.onHoverOver);
-            region.addEventListener('WME_OUT', this._rowView.onHoverOut);
+            region.addEventListener(WindowMouseEvent.CLICK, this._onExtraButtonClick);
+            region.addEventListener(WindowMouseEvent.OVER, this._rowView.onHoverOver);
+            region.addEventListener(WindowMouseEvent.OUT, this._rowView.onHoverOut);
             return region;
         }
 

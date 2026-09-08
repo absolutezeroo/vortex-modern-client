@@ -1,6 +1,6 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {Tab} from './Tab';
 
@@ -81,9 +81,9 @@ export class OpenMessengerTab extends Tab
             return null;
         }
 
-        window.addEventListener('WME_CLICK', this.onButtonClick);
-        window.addEventListener('WME_OVER', this.onMouseOverEvent);
-        window.addEventListener('WME_OUT', this.onMouseOutEvent);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
+        window.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         window.height = Tab.height;
 
         return window;
@@ -98,9 +98,9 @@ export class OpenMessengerTab extends Tab
         }
 
         window.procedure = null;
-        window.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.removeEventListener('WME_OVER', this.onMouseOverEvent);
-        window.removeEventListener('WME_OUT', this.onMouseOutEvent);
+        window.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         window.width = Tab.width;
         window.height = Tab.height;
 

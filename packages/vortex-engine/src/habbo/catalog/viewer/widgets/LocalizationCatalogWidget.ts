@@ -6,7 +6,7 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import {TextWindowUtils} from '@habbo/utils/TextWindowUtils';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {type AssetLoaderEvent, AssetLoaderEventType} from '@core/assets/loaders/AssetLoaderEvent';
 import type {HabboCatalog} from '../../HabboCatalog';
 import {SelectProductEvent} from './events/SelectProductEvent';
@@ -78,7 +78,7 @@ export class LocalizationCatalogWidget extends CatalogWidget
             {
                 linkWindow.setParamFlag(1);
                 linkWindow.mouseThreshold = 0;
-                linkWindow.addEventListener('WME_CLICK', this.onClickLink);
+                linkWindow.addEventListener(WindowMouseEvent.CLICK, this.onClickLink);
             }
         }
     }

@@ -35,6 +35,7 @@ import {RewardTrackPrizeTrackView} from './prizes/RewardTrackPrizeTrackView';
 import {RewardTrackTaskDetailsView} from './tasks/RewardTrackTaskDetailsView';
 import {RewardTrackTaskListView} from './tasks/RewardTrackTaskListView';
 import {RewardTrackTheme} from './theme/RewardTrackTheme';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.quest.rewardtrack.view.RewardTrackView');
 
@@ -126,7 +127,7 @@ export class RewardTrackView implements IDisposable, IUpdateReceiver
 
         this._window.enableLookupCache();
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onCloseClicked);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onCloseClicked);
     }
 
     // AS3: RewardTrackView.as::initialize()
@@ -554,7 +555,7 @@ export class RewardTrackView implements IDisposable, IUpdateReceiver
         this._taskDetailsView?.dispose();
         this._headerView?.dispose();
 
-        this.closeButton?.removeEventListener('WME_CLICK', this.onCloseClicked);
+        this.closeButton?.removeEventListener(WindowMouseEvent.CLICK, this.onCloseClicked);
 
         this.hide();
 

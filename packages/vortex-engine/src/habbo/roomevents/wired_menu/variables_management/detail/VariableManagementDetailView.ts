@@ -26,6 +26,7 @@ import {NewVariablePicker} from '../../../wired_setup/uibuilder/presets/newvaria
 import {WiredInputSourcePicker} from '../../../wired_setup/inputsources/WiredInputSourcePicker';
 import {PermanentVariableHolderPreviewer} from './PermanentVariableHolderPreviewer';
 import type {VariableManagementDetailController} from './VariableManagementDetailController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.roomevents.wired_menu.VariableManagementDetailView');
 
@@ -118,11 +119,11 @@ export class VariableManagementDetailView
         this.createVariableValuesTable();
         this.createCreateVariableBubble();
 
-        this.refreshButton?.addEventListener('WME_CLICK', this.onRefreshClick);
-        this.closeButton?.addEventListener('WME_CLICK', this.onClose);
-        this.deleteVariableButton?.addEventListener('WME_CLICK', this.onDeleteVariableClicked);
-        this.addVariableButton?.addEventListener('WME_CLICK', this.onAddVariableClicked);
-        this.createVariableButton?.addEventListener('WME_CLICK', this.onCreateVariableClicked);
+        this.refreshButton?.addEventListener(WindowMouseEvent.CLICK, this.onRefreshClick);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
+        this.deleteVariableButton?.addEventListener(WindowMouseEvent.CLICK, this.onDeleteVariableClicked);
+        this.addVariableButton?.addEventListener(WindowMouseEvent.CLICK, this.onAddVariableClicked);
+        this.createVariableButton?.addEventListener(WindowMouseEvent.CLICK, this.onCreateVariableClicked);
 
         if(this._window) this._window.procedure = this.windowProcedure;
 

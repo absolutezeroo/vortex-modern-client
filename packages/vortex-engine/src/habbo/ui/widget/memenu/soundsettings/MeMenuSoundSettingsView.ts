@@ -7,6 +7,7 @@ import {Logger} from '@core/utils/Logger';
 import {RoomWidgetGetSettingsMessage} from '../../messages/RoomWidgetGetSettingsMessage';
 import {RoomWidgetStoreSettingsMessage} from '../../messages/RoomWidgetStoreSettingsMessage';
 import {MeMenuSoundSettingsItem} from './MeMenuSoundSettingsItem';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.memenu.soundsettings.MeMenuSoundSettingsView');
 
@@ -231,7 +232,7 @@ export class MeMenuSoundSettingsView implements IMeMenuView
 
         for(let index = 0; index < this._window.numChildren; index++)
         {
-            this._window.getChildAt(index)?.addEventListener('WME_CLICK', this.onButtonClicked);
+            this._window.getChildAt(index)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
         }
 
         const assets = widget.assets;

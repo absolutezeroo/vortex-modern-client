@@ -8,6 +8,7 @@ import {Logger} from '@core/utils/Logger';
 
 import {MeMenuSoundSettingsSlider} from '@habbo/toolbar/memenu/soundsettings/MeMenuSoundSettingsSlider';
 import type {SoundSettingsView} from './SoundSettingsView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.SoundSettingsItem');
 
@@ -67,8 +68,8 @@ export class SoundSettingsItem
             1
         );
 
-        window?.findChildByName('sounds_off')?.addEventListener('WME_CLICK', this.onButtonClicked);
-        window?.findChildByName('sounds_on')?.addEventListener('WME_CLICK', this.onButtonClicked);
+        window?.findChildByName('sounds_off')?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
+        window?.findChildByName('sounds_on')?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
 
         this.updateSoundIcons();
     }

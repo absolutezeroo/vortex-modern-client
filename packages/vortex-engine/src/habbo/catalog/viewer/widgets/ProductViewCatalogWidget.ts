@@ -7,7 +7,7 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IDisplayObjectWrapper} from '@core/window/components/IDisplayObjectWrapper';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {AssetBitmap} from '@core/assets/AssetBitmap';
 import {CatalogProductImages} from '../CatalogProductImages';
@@ -240,13 +240,13 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         this.events.off(CatalogWidgetSpinnerEvent.VALUE_CHANGED, this.onSpinnerEvent);
         this.events.off('TOTAL_PRICE_WIDGET_INITIALIZED', this.onTotalPriceWidgetInitialized);
         HabbiconAssetManager.removeEventListener(HabbiconAssetManager.ASSETS_LOADED, this.onHabbiconAssetsLoaded);
-        this._rotateAvatarLeftButton?.removeEventListener('WME_CLICK', this.onRotateAvatarLeft);
+        this._rotateAvatarLeftButton?.removeEventListener(WindowMouseEvent.CLICK, this.onRotateAvatarLeft);
         this._rotateAvatarLeftButton = null;
-        this._rotateAvatarRightButton?.removeEventListener('WME_CLICK', this.onRotateAvatarRight);
+        this._rotateAvatarRightButton?.removeEventListener(WindowMouseEvent.CLICK, this.onRotateAvatarRight);
         this._rotateAvatarRightButton = null;
-        this._togglePreviewMagicButton?.removeEventListener('WME_CLICK', this.onTogglePreviewMagic);
+        this._togglePreviewMagicButton?.removeEventListener(WindowMouseEvent.CLICK, this.onTogglePreviewMagic);
         this._togglePreviewMagicButton = null;
-        this._toggleZoomButton?.removeEventListener('WME_CLICK', this.onTogglePreviewZoom);
+        this._toggleZoomButton?.removeEventListener(WindowMouseEvent.CLICK, this.onTogglePreviewZoom);
         this._toggleZoomButton = null;
         this.setFloorFurnitureRotationAvailabilityMonitorEnabled(false);
         this.stopPreviewZoomAnimation();
@@ -311,7 +311,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
 
             if(this._roomCanvas != null && roomPreviewer != null)
             {
-                this._roomCanvasContainer.addEventListener('WME_CLICK', this.roomCanvasContainerProcedure);
+                this._roomCanvasContainer.addEventListener(WindowMouseEvent.CLICK, this.roomCanvasContainerProcedure);
                 roomPreviewer.disableUpdate = false;
                 roomPreviewer.reset(false);
 
@@ -348,7 +348,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         if(this._rotateAvatarLeftButton != null)
         {
             this._rotateAvatarLeftButton.visible = false;
-            this._rotateAvatarLeftButton.addEventListener('WME_CLICK', this.onRotateAvatarLeft);
+            this._rotateAvatarLeftButton.addEventListener(WindowMouseEvent.CLICK, this.onRotateAvatarLeft);
         }
 
         this._rotateAvatarRightButton = this.window.findChildByName('rotate_avatar_right');
@@ -356,7 +356,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         if(this._rotateAvatarRightButton != null)
         {
             this._rotateAvatarRightButton.visible = false;
-            this._rotateAvatarRightButton.addEventListener('WME_CLICK', this.onRotateAvatarRight);
+            this._rotateAvatarRightButton.addEventListener(WindowMouseEvent.CLICK, this.onRotateAvatarRight);
         }
 
         this._togglePreviewMagicButton = this.window.findChildByName('toggle_preview_magic');
@@ -364,7 +364,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         if(this._togglePreviewMagicButton != null)
         {
             this._togglePreviewMagicButton.visible = false;
-            this._togglePreviewMagicButton.addEventListener('WME_CLICK', this.onTogglePreviewMagic);
+            this._togglePreviewMagicButton.addEventListener(WindowMouseEvent.CLICK, this.onTogglePreviewMagic);
         }
 
         this._toggleZoomButton = this.window.findChildByName('toggle_preview_zoom');
@@ -372,7 +372,7 @@ export class ProductViewCatalogWidget extends CatalogWidget implements IGetImage
         if(this._toggleZoomButton != null)
         {
             this._toggleZoomButton.visible = false;
-            this._toggleZoomButton.addEventListener('WME_CLICK', this.onTogglePreviewZoom);
+            this._toggleZoomButton.addEventListener(WindowMouseEvent.CLICK, this.onTogglePreviewZoom);
         }
 
         this._previewOffset = {x: this._teaserImage!.x, y: this._teaserImage!.y};

@@ -1,6 +1,6 @@
 import type { IWindowContainer } from '@core/window/IWindowContainer';
 import type { IDropMenuWindow } from '@core/window/components/IDropMenuWindow';
-import type { WindowEvent } from '@core/window/events/WindowEvent';
+import { WindowEvent } from '@core/window/events/WindowEvent';
 import type { ITabPageDecorator } from './ITabPageDecorator';
 import type { ITabNavigator } from '../../domain/Tab';
 import { Logger } from '@core/utils/Logger';
@@ -41,7 +41,7 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
 
             if(this._filter)
             {
-                this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
+                this._filter.addEventListener(WindowEvent.WE_SELECTED, this.onFilterSelected);
             }
         }
 
@@ -79,9 +79,9 @@ export class RoomsTabPageDecorator implements ITabPageDecorator
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
 
-        this._filter.removeEventListener('WE_SELECTED', this.onFilterSelected);
+        this._filter.removeEventListener(WindowEvent.WE_SELECTED, this.onFilterSelected);
         this._filter.selection = this.defaultSelection;
-        this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
+        this._filter.addEventListener(WindowEvent.WE_SELECTED, this.onFilterSelected);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/RoomsTabPageDecorator.as::refreshFooter()

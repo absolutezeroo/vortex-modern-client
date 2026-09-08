@@ -2,8 +2,8 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Util} from '@habbo/roomevents/Util';
 
 import type {MenuPreset} from '../MenuPreset';
@@ -56,13 +56,13 @@ export class MenuItemView implements IDisposable
             this._window.toolTipCaption = item.tooltip;
         }
 
-        this._window.addEventListener('WME_OVER', this._onHover);
-        this._window.addEventListener('WME_OUT', this._onHoverEnd);
-        this._window.addEventListener('WME_CLICK', this._onClick);
-        this.checkboxWindow.addEventListener('WME_OVER', this._onCheckboxHover);
-        this.checkboxWindow.addEventListener('WME_OUT', this._onCheckboxHoverEnd);
-        this.checkboxWindow.addEventListener('WE_SELECTED', this._onSelectedChange);
-        this.checkboxWindow.addEventListener('WE_UNSELECTED', this._onSelectedChange);
+        this._window.addEventListener(WindowMouseEvent.OVER, this._onHover);
+        this._window.addEventListener(WindowMouseEvent.OUT, this._onHoverEnd);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this._onClick);
+        this.checkboxWindow.addEventListener(WindowMouseEvent.OVER, this._onCheckboxHover);
+        this.checkboxWindow.addEventListener(WindowMouseEvent.OUT, this._onCheckboxHoverEnd);
+        this.checkboxWindow.addEventListener(WindowEvent.WE_SELECTED, this._onSelectedChange);
+        this.checkboxWindow.addEventListener(WindowEvent.WE_UNSELECTED, this._onSelectedChange);
         this.updateUI();
     }
 

@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -54,9 +54,9 @@ export class MiniAssetIconButtonPreset extends WiredUIPreset
         this._container = wiredStyle.createMiniButton();
         this._onClick = onClick;
         this.iconWrapper.assetUri = this.resolveAssetFullName(assetName);
-        this.clickArea.addEventListener('WME_OVER', this._onHoverStart);
-        this.clickArea.addEventListener('WME_OUT', this._onHoverEnd);
-        this.clickArea.addEventListener('WME_CLICK', this.iconClicked);
+        this.clickArea.addEventListener(WindowMouseEvent.OVER, this._onHoverStart);
+        this.clickArea.addEventListener(WindowMouseEvent.OUT, this._onHoverEnd);
+        this.clickArea.addEventListener(WindowMouseEvent.CLICK, this.iconClicked);
         this.clickArea.toolTipCaption = tooltip;
         this.updateUI();
     }

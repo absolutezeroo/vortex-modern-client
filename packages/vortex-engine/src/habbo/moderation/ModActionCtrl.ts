@@ -26,7 +26,7 @@ import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 import {StringUtil} from '@habbo/utils/StringUtil';
 import type {IssueInfoData} from '@habbo/communication/messages/parser/moderation/IssueInfoData';
@@ -272,7 +272,7 @@ export class ModActionCtrl implements IDisposable, ITrackedWindow
         if(this._topicDropdown === null) return;
 
         (this._topicDropdown as unknown as IWindow)
-            .addEventListener('WE_SELECTED', this.refreshSanctionDataForSelectedTopic);
+            .addEventListener(WindowEvent.WE_SELECTED, this.refreshSanctionDataForSelectedTopic);
 
         this._topicIdsByRow = [];
 

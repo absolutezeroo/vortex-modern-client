@@ -4,7 +4,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
@@ -233,12 +233,12 @@ export class CustomStackHeightWidget extends RoomWidgetBase
         this._window.procedure = this.windowProcedure;
         this._window.center();
 
-        this.multiWalkCheckbox?.addEventListener('WE_SELECTED', this.onMultiWalkChange);
-        this.multiWalkCheckbox?.addEventListener('WE_UNSELECTED', this.onMultiWalkChange);
+        this.multiWalkCheckbox?.addEventListener(WindowEvent.WE_SELECTED, this.onMultiWalkChange);
+        this.multiWalkCheckbox?.addEventListener(WindowEvent.WE_UNSELECTED, this.onMultiWalkChange);
 
-        this.inputHeightField?.addEventListener('WE_CHANGE', this.onInputHeightChange);
-        this.inputHeightField?.addEventListener('WE_UNFOCUS', this.onInputHeightUnfocus);
-        this.inputHeightField?.addEventListener('WE_UNFOCUSED', this.onInputHeightUnfocus);
+        this.inputHeightField?.addEventListener(WindowEvent.WE_CHANGE, this.onInputHeightChange);
+        this.inputHeightField?.addEventListener(WindowEvent.WE_UNFOCUS, this.onInputHeightUnfocus);
+        this.inputHeightField?.addEventListener(WindowEvent.WE_UNFOCUSED, this.onInputHeightUnfocus);
     }
 
     // AS3: .../furniture/CustomStackHeightWidget.as::destroyWindow()
@@ -248,12 +248,12 @@ export class CustomStackHeightWidget extends RoomWidgetBase
         {
             this.cancelPendingSliderSend();
 
-            this.multiWalkCheckbox?.removeEventListener('WE_SELECTED', this.onMultiWalkChange);
-            this.multiWalkCheckbox?.removeEventListener('WE_UNSELECTED', this.onMultiWalkChange);
+            this.multiWalkCheckbox?.removeEventListener(WindowEvent.WE_SELECTED, this.onMultiWalkChange);
+            this.multiWalkCheckbox?.removeEventListener(WindowEvent.WE_UNSELECTED, this.onMultiWalkChange);
 
-            this.inputHeightField?.removeEventListener('WE_CHANGE', this.onInputHeightChange);
-            this.inputHeightField?.removeEventListener('WE_UNFOCUS', this.onInputHeightUnfocus);
-            this.inputHeightField?.removeEventListener('WE_UNFOCUSED', this.onInputHeightUnfocus);
+            this.inputHeightField?.removeEventListener(WindowEvent.WE_CHANGE, this.onInputHeightChange);
+            this.inputHeightField?.removeEventListener(WindowEvent.WE_UNFOCUS, this.onInputHeightUnfocus);
+            this.inputHeightField?.removeEventListener(WindowEvent.WE_UNFOCUSED, this.onInputHeightUnfocus);
 
             this._window.procedure = null;
             this._window.dispose();

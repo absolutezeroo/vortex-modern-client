@@ -29,7 +29,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IScrollableListWindow} from '@core/window/components/IScrollableListWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {StringUtil} from '@habbo/utils/StringUtil';
 import type {ChatEntryData} from '@habbo/communication/messages/parser/moderation/ChatEntryData';
 import type {ChatRecordData} from '@habbo/communication/messages/parser/moderation/ChatRecordData';
@@ -529,7 +529,7 @@ export class ChatlogCtrl implements IDisposable, ITrackedWindow, IChatlogReceive
 
         const chatter = line.findChildByName('chatter_txt');
 
-        chatter?.removeEventListener('WME_CLICK', this.onUserClick);
+        chatter?.removeEventListener(WindowMouseEvent.CLICK, this.onUserClick);
 
         const template = this._lineTemplate as unknown as IWindow | null;
         const lineWindow = line as unknown as IWindow;
@@ -598,7 +598,7 @@ export class ChatlogCtrl implements IDisposable, ITrackedWindow, IChatlogReceive
                 chatter.text = entry.chatterName;
                 chatter.underline = true;
 
-                chatterWindow.addEventListener('WME_CLICK', this.onUserClick);
+                chatterWindow.addEventListener(WindowMouseEvent.CLICK, this.onUserClick);
 
                 if(!this._chatterIdsByName.get(entry.chatterName))
                 {

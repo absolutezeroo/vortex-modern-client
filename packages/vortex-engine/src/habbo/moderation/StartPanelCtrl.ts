@@ -33,6 +33,7 @@ import type {ModerationManager} from './ModerationManager';
 import {RoomToolCtrl} from './RoomToolCtrl';
 import {UserInfoFrameCtrl} from './UserInfoFrameCtrl';
 import {WindowTracker} from './WindowTracker';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class StartPanelCtrl implements IDisposable
 {
@@ -148,9 +149,9 @@ export class StartPanelCtrl implements IDisposable
 
                 if(button === null) continue;
 
-                button.addEventListener('WME_CLICK', this.handlerFor(name));
-                button.addEventListener('WME_OVER', this.onMouseOver);
-                button.addEventListener('WME_OUT', this.onMouseOut);
+                button.addEventListener(WindowMouseEvent.CLICK, this.handlerFor(name));
+                button.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+                button.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
             }
 
             this._frame.findChildByName('userinfo_but')?.disable();

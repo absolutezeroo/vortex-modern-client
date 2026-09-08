@@ -4,8 +4,8 @@ import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -74,21 +74,21 @@ export class PagedTableView
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/roomevents/common/PagedTableView.as::PagedTableView()
         this.pageNumberInput.restrict = '0-9';
         this.createTable();
-        this.firstPageButton.addEventListener('WME_CLICK', this._onFirstPageClick);
-        this.previousPageButton.addEventListener('WME_CLICK', this._onPreviousPageClick);
-        this.nextPageButton.addEventListener('WME_CLICK', this._onNextPageClick);
-        this.lastPageButton.addEventListener('WME_CLICK', this._onLastPageClick);
+        this.firstPageButton.addEventListener(WindowMouseEvent.CLICK, this._onFirstPageClick);
+        this.previousPageButton.addEventListener(WindowMouseEvent.CLICK, this._onPreviousPageClick);
+        this.nextPageButton.addEventListener(WindowMouseEvent.CLICK, this._onNextPageClick);
+        this.lastPageButton.addEventListener(WindowMouseEvent.CLICK, this._onLastPageClick);
 
         const refreshButton = this.refreshButton;
 
         if(refreshButton != null)
         {
-            refreshButton.addEventListener('WME_CLICK', this._onRefreshClick);
+            refreshButton.addEventListener(WindowMouseEvent.CLICK, this._onRefreshClick);
         }
 
-        this.pageNumberInput.addEventListener('WKE_KEY_DOWN', this._onPageInputDown);
-        this.pageNumberInput.addEventListener('WME_CLICK_AWAY', this._onPageInputClickAway);
-        this.closeButton.addEventListener('WME_CLICK', this._onClose);
+        this.pageNumberInput.addEventListener(WindowKeyboardEvent.KEY_DOWN, this._onPageInputDown);
+        this.pageNumberInput.addEventListener(WindowMouseEvent.CLICK_AWAY, this._onPageInputClickAway);
+        this.closeButton.addEventListener(WindowMouseEvent.CLICK, this._onClose);
         this.hide();
     }
 

@@ -25,6 +25,7 @@ import type {HabboQuestEngine} from './HabboQuestEngine';
 import type {AchievementData} from './AchievementCategory';
 import {AchievementResolutionCompletedView} from './AchievementResolutionCompletedView';
 import {AchievementResolutionProgressView} from './AchievementResolutionProgressView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.quest.AchievementsResolutionController');
 
@@ -296,7 +297,7 @@ export class AchievementsResolutionController implements IDisposable
     // AS3: AchievementsResolutionController.as::addClickListener()
     private addClickListener(name: string): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WME_CLICK', this.onMouseClick);
+        this._window?.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClick);
     }
 
     /**

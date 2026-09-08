@@ -4,6 +4,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import {AlertView} from './AlertView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Simple alert with title, body text, and OK button.
@@ -38,7 +39,7 @@ export class SimpleAlertView extends AlertView
 
         if(okButton)
         {
-            okButton.addEventListener('WME_CLICK', this.onOk);
+            okButton.addEventListener(WindowMouseEvent.CLICK, this.onOk);
         }
 
         window.tags.push('SimpleAlertView');

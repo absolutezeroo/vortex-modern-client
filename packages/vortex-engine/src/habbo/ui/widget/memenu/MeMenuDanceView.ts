@@ -5,6 +5,7 @@ import type {IMeMenuView} from './IMeMenuView';
 import type {MeMenuWidget} from './MeMenuWidget';
 import {Logger} from '@core/utils/Logger';
 import {RoomWidgetDanceMessage} from '../messages/RoomWidgetDanceMessage';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.memenu.MeMenuDanceView');
 
@@ -92,7 +93,7 @@ export class MeMenuDanceView implements IMeMenuView
 
         for(const buttonName of ['stop_dancing_button', 'back_btn'])
         {
-            this._window.findChildByName(buttonName)?.addEventListener('WME_CLICK', this.onButtonClicked);
+            this._window.findChildByName(buttonName)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
         }
 
         const list = this._window.findChildByName('buttonContainer') as IItemListWindow | null;
@@ -114,7 +115,7 @@ export class MeMenuDanceView implements IMeMenuView
 
                 button.name = `dance_${style}_button`;
                 button.caption = `\${widget.memenu.dance${style}}`;
-                button.addEventListener('WME_CLICK', this.onButtonClicked);
+                button.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
                 list.addListItemAt(button, list.numListItems - 1);
 
                 if(widget.hasEffectOn) button.disable();

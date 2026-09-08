@@ -17,6 +17,7 @@ import type {TextPreset} from '../TextPreset';
 import {WiredUIPreset} from '../WiredUIPreset';
 import type {NamedTextInputPreset} from '../combinations/NamedTextInputPreset';
 import {ItemTypeTableObject} from './itemtable/ItemTypeTableObject';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 /**
  * Pick a furniture type out of the whole catalogue: a code field, a search box, a scrolling table
@@ -122,7 +123,7 @@ export class ItemTypeSelectionPreset extends WiredUIPreset
         this._listWindow.addListItem(this._tableContainer as unknown as IWindow);
         this._listWindow.addListItem(this._countText.window);
 
-        this._searchInput.addEventListener('WE_CHANGE', this.onSearchChanged);
+        this._searchInput.addEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
 
         this.createTableView();
         this.refreshShowCount();

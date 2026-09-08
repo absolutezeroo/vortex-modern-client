@@ -18,6 +18,7 @@ import {MusicInventoryGridView} from './MusicInventoryGridView';
 import {PlayListEditorItemListView} from './PlayListEditorItemListView';
 import {MusicInventoryStatusView} from './MusicInventoryStatusView';
 import {PlayListStatusView} from './PlayListStatusView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class MainWindowHandler
 {
@@ -257,7 +258,7 @@ export class MainWindowHandler
             throw new Error("Window content area is missing 'playlist_scrollbar' window element");
         }
 
-        this._window.findChildByTag('close')?.addEventListener('WME_CLICK', this.onClose);
+        this._window.findChildByTag('close')?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
     }
 
     // AS3: .../MainWindowHandler.as::getMusicInventoryGrid()

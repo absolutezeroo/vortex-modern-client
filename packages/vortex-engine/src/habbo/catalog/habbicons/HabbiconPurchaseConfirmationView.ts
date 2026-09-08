@@ -6,7 +6,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowUtils} from '@core/window/utils/WindowUtils';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -105,9 +105,9 @@ export class HabbiconPurchaseConfirmationView implements IDisposable
 
         if(image !== null) image.disposesBitmap = true;
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.cancelButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.confirmButton?.addEventListener('WME_CLICK', this.onConfirmClicked);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.confirmButton?.addEventListener(WindowMouseEvent.CLICK, this.onConfirmClicked);
     }
 
     // AS3: HabbiconPurchaseConfirmationView.as::initializeForHabbicon()
@@ -640,9 +640,9 @@ export class HabbiconPurchaseConfirmationView implements IDisposable
             this._retryTimer = null;
         }
 
-        this.closeButton?.removeEventListener('WME_CLICK', this.onWindowClose);
-        this.cancelButton?.removeEventListener('WME_CLICK', this.onWindowClose);
-        this.confirmButton?.removeEventListener('WME_CLICK', this.onConfirmClicked);
+        this.closeButton?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.cancelButton?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.confirmButton?.removeEventListener(WindowMouseEvent.CLICK, this.onConfirmClicked);
 
         const window = this._window as unknown as IWindow | null;
 

@@ -1,7 +1,7 @@
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import {VariableExtraSourceTypes} from '../common/VariableExtraSourceTypes';
 import {WiredInputSourcePicker} from './WiredInputSourcePicker';
@@ -40,9 +40,9 @@ export class SourceTypeOption
         this._picker = picker;
         this._container = container;
         this._option = option;
-        this._container.addEventListener('WME_CLICK', this._onClick);
-        this._container.addEventListener('WME_OVER', this._onOver);
-        this._container.addEventListener('WME_OUT', this._onOut);
+        this._container.addEventListener(WindowMouseEvent.CLICK, this._onClick);
+        this._container.addEventListener(WindowMouseEvent.OVER, this._onOver);
+        this._container.addEventListener(WindowMouseEvent.OUT, this._onOut);
 
         const roomEvents = picker.roomEvents;
         const typeName = WiredInputSourcePicker.getTypeNameForSource(option);

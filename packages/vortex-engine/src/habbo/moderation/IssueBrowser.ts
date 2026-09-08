@@ -20,13 +20,14 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IIssueBrowserView} from './IIssueBrowserView';
 import type {IssueManager} from './IssueManager';
 import {MyIssuesView} from './MyIssuesView';
 import {OpenIssuesView} from './OpenIssuesView';
 import {PickedIssuesView} from './PickedIssuesView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class IssueBrowser
 {
@@ -145,8 +146,8 @@ export class IssueBrowser
             window.x = (desktop?.width ?? 0) / 2 - window.width / 2;
             window.y = (desktop?.height ?? 0) / 2 - window.height / 2;
 
-            this._window.findChildByTag('close')?.addEventListener('WME_CLICK', this.onClose);
-            this._window.findChildByName('auto_pick')?.addEventListener('WME_CLICK', this.onAutoPick);
+            this._window.findChildByTag('close')?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
+            this._window.findChildByName('auto_pick')?.addEventListener(WindowMouseEvent.CLICK, this.onAutoPick);
 
             this._tabContext = this._window.findChildByName('tab_context') as unknown as ITabContextWindow | null;
 
@@ -156,7 +157,7 @@ export class IssueBrowser
             {
                 const tab = this._tabContext?.getTabItemAt(index) ?? null;
 
-                (tab as unknown as IWindow | null)?.addEventListener('WE_SELECTED', this.onTabSelected);
+                (tab as unknown as IWindow | null)?.addEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
             }
 
             this._myIssuesView = new MyIssuesView(

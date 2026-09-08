@@ -3,7 +3,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
 import {copyBitmap} from '@habbo/notifications/utils/copyBitmap';
 
@@ -61,9 +61,9 @@ export class HabbiconSetRailRowView implements IDisposable
         this._onSelected = onSelected;
         this._progressView = new HabbiconProgressBarView(this.setRowProgressBar);
 
-        this._window.addEventListener('WME_CLICK', this.onClicked);
-        this._window.addEventListener('WME_OVER', this.onOver);
-        this._window.addEventListener('WME_OUT', this.onOut);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClicked);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onOver);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onOut);
     }
 
     // AS3: HabbiconSetRailRowView.as::initialize()
@@ -258,9 +258,9 @@ export class HabbiconSetRailRowView implements IDisposable
             (parent as unknown as IWindowContainer).removeChild(this._window as unknown as IWindow);
         }
 
-        this._window?.removeEventListener('WME_CLICK', this.onClicked);
-        this._window?.removeEventListener('WME_OVER', this.onOver);
-        this._window?.removeEventListener('WME_OUT', this.onOut);
+        this._window?.removeEventListener(WindowMouseEvent.CLICK, this.onClicked);
+        this._window?.removeEventListener(WindowMouseEvent.OVER, this.onOver);
+        this._window?.removeEventListener(WindowMouseEvent.OUT, this.onOut);
 
         this.clearIcon();
 

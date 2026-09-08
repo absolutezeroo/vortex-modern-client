@@ -1,7 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -31,7 +31,7 @@ export class CollapseExpandSectionButtonPreset extends WiredUIPreset
         this._region = wiredStyle.createExpandCollapseSectionRegion();
         this.upArrow.visible = startExpanded;
         this.downArrow.visible = !startExpanded;
-        this._region.addEventListener('WME_CLICK', this._onButtonClicked);
+        this._region.addEventListener(WindowMouseEvent.CLICK, this._onButtonClicked);
     }
 
     // AS3: CollapseExpandSectionButtonPreset.as::get window()

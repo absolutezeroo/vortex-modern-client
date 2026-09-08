@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {Logger} from '@core/utils/Logger';
 import {SendRoomInviteMessageComposer} from '@habbo/communication/messages/outgoing/friendlist/SendRoomInviteMessageComposer';
 import {AlertView} from './AlertView';
@@ -49,7 +49,7 @@ export class RoomInviteView extends AlertView
 
         if(this._inputMessage !== null)
         {
-            (this._inputMessage as unknown as IWindow).addEventListener('WKE_KEY_DOWN', this.onMessageInput);
+            (this._inputMessage as unknown as IWindow).addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onMessageInput);
         }
 
         const cancel = content.findChildByName('cancel');

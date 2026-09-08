@@ -20,6 +20,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ShapeController} from '@core/window/components/ShapeController';
 import type {RewardTrackTheme} from '../theme/RewardTrackTheme';
 import type {RewardTrackTaskListView} from './RewardTrackTaskListView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackTaskFilterButtonView
 {
@@ -102,9 +103,9 @@ export class RewardTrackTaskFilterButtonView
 
         const asWindow = window as unknown as IWindow;
 
-        asWindow.addEventListener('WME_CLICK', this.onClick);
-        asWindow.addEventListener('WME_OVER', this.onMouseOver);
-        asWindow.addEventListener('WME_OUT', this.onMouseOut);
+        asWindow.addEventListener(WindowMouseEvent.CLICK, this.onClick);
+        asWindow.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        asWindow.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
     }
 
     // AS3: RewardTrackTaskFilterButtonView.as::setActive()
@@ -216,9 +217,9 @@ export class RewardTrackTaskFilterButtonView
 
         const asWindow = this._window as unknown as IWindow | null;
 
-        asWindow?.removeEventListener('WME_CLICK', this.onClick);
-        asWindow?.removeEventListener('WME_OVER', this.onMouseOver);
-        asWindow?.removeEventListener('WME_OUT', this.onMouseOut);
+        asWindow?.removeEventListener(WindowMouseEvent.CLICK, this.onClick);
+        asWindow?.removeEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        asWindow?.removeEventListener(WindowMouseEvent.OUT, this.onMouseOut);
         asWindow?.dispose();
 
         this._window = null;

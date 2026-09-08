@@ -18,6 +18,7 @@ import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {RewardTrack} from '../../data/RewardTrack';
 import type {RewardTrackController} from '../../RewardTrackController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackHeaderView
 {
@@ -73,7 +74,7 @@ export class RewardTrackHeaderView
 
         if(canCopy)
         {
-            (region as unknown as IWindow).addEventListener('WME_CLICK', this.onTrackTitleClicked);
+            (region as unknown as IWindow).addEventListener(WindowMouseEvent.CLICK, this.onTrackTitleClicked);
         }
     }
 
@@ -191,7 +192,7 @@ export class RewardTrackHeaderView
 
         this._disposed = true;
 
-        (this.trackTitleRegion as unknown as IWindow | null)?.removeEventListener('WME_CLICK', this.onTrackTitleClicked);
+        (this.trackTitleRegion as unknown as IWindow | null)?.removeEventListener(WindowMouseEvent.CLICK, this.onTrackTitleClicked);
 
         this._controller = null;
         this._window = null;

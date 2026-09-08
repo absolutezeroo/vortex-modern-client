@@ -21,6 +21,7 @@ import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {NewModerationTool} from '../NewModerationTool';
 import {NewModToolSubView} from './NewModToolSubView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class BanSubView extends NewModToolSubView
 {
@@ -30,7 +31,7 @@ export class BanSubView extends NewModToolSubView
         super(tool, window);
 
         this.banRadio?.select();
-        this.performBanAction?.addEventListener('WME_CLICK', this.onBanClick);
+        this.performBanAction?.addEventListener(WindowMouseEvent.CLICK, this.onBanClick);
     }
 
     // AS3: .../new_mod_tool_tabs/_SafeCls_3888.as::onBanClick()

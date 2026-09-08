@@ -13,6 +13,8 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {WiredChestWrapperView} from '../../chests/WiredChestWrapperView';
 import {TransactionOverviewView} from './furni_overview/TransactionOverviewView';
 import type {WiredTransactionDetailsController} from './WiredTransactionDetailsController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.roomevents.transactions.WiredTransactionDetailsView');
 
@@ -100,8 +102,8 @@ export class WiredTransactionDetailsView implements IDisposable
 
         this._window = windowManager.buildFromXML(xml as string, 1) as IFrameWindow;
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onClose);
-        (this.extraInfoButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onExtraButtonClick);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
+        (this.extraInfoButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onExtraButtonClick);
 
         const withdrawals = this.withdrawalsContainer;
         const deposits = this.depositsContainer;
@@ -117,7 +119,7 @@ export class WiredTransactionDetailsView implements IDisposable
                 ?.addChild(this._extraInfoBubble as unknown as IWindow);
             this._extraInfoBubble.visible = false;
             (this._extraInfoBubble as unknown as IWindow)
-                .addEventListener('WE_DEACTIVATED', this.onExtraInfoBubbleDeactivates);
+                .addEventListener(WindowEvent.WE_DEACTIVATED, this.onExtraInfoBubbleDeactivates);
         }
     }
 

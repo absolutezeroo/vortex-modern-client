@@ -3,7 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {IIconButtonWindow} from '@core/window/components/IIconButtonWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -43,12 +43,12 @@ export class AssetButtonPreset extends WiredUIPreset
         this._container = wiredStyle.createAssetButton();
         this.staticBitmap.assetUri = this.resolveAssetFullName(assetName);
         (this._container as unknown as IInteractiveWindow).toolTipCaption = tooltip;
-        this._container.addEventListener('WME_CLICK', this._onButtonClicked);
-        this._container.addEventListener('WME_OVER', this._onOver);
-        this._container.addEventListener('WME_OUT', this._onOut);
-        this._container.addEventListener('WME_OUT', this._maybeCancelEvent);
-        this._container.addEventListener('WME_UP', this._maybeCancelEvent);
-        this._container.addEventListener('WME_DOWN', this._onDown);
+        this._container.addEventListener(WindowMouseEvent.CLICK, this._onButtonClicked);
+        this._container.addEventListener(WindowMouseEvent.OVER, this._onOver);
+        this._container.addEventListener(WindowMouseEvent.OUT, this._onOut);
+        this._container.addEventListener(WindowMouseEvent.OUT, this._maybeCancelEvent);
+        this._container.addEventListener(WindowMouseEvent.UP, this._maybeCancelEvent);
+        this._container.addEventListener(WindowMouseEvent.DOWN, this._onDown);
     }
 
     // AS3: AssetButtonPreset.as::buttonClicked()

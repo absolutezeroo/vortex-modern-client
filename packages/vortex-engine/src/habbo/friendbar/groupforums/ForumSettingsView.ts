@@ -1,8 +1,8 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {ISelectorWindow} from '@core/window/components/ISelectorWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {ForumPermissions} from '@habbo/communication/messages/parser/groupforums/ForumPermissions';
 import type {GroupForumController} from './GroupForumController';
 import {GroupForumView} from './GroupForumView';
@@ -198,39 +198,39 @@ export class ForumSettingsView
 
         if(clickArea !== null)
         {
-            clickArea.removeEventListener('WME_CLICK', this.onTopAreaClick);
-            clickArea.addEventListener('WME_CLICK', this.onTopAreaClick);
+            clickArea.removeEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
+            clickArea.addEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
         }
 
         const cancelButton = this._window.findChildByName('cancel_btn');
 
-        cancelButton?.removeEventListener('WME_CLICK', this.onCancelButtonClick);
-        cancelButton?.addEventListener('WME_CLICK', this.onCancelButtonClick);
+        cancelButton?.removeEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
+        cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
 
         const closeButton = this._window.findChildByName('header_button_close');
 
-        closeButton?.removeEventListener('WME_CLICK', this.onCancelButtonClick);
-        closeButton?.addEventListener('WME_CLICK', this.onCancelButtonClick);
+        closeButton?.removeEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
+        closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
 
         const okButton = this._window.findChildByName('ok_btn');
 
-        okButton?.removeEventListener('WME_CLICK', this.onPostButtonClick);
-        okButton?.addEventListener('WME_CLICK', this.onPostButtonClick);
+        okButton?.removeEventListener(WindowMouseEvent.CLICK, this.onPostButtonClick);
+        okButton?.addEventListener(WindowMouseEvent.CLICK, this.onPostButtonClick);
 
         this._readSelector = this._window.findChildByName('read_selector') as ISelectorWindow | null;
-        this._readSelector?.addEventListener('WME_OVER', this.onReadSelectorHover);
+        this._readSelector?.addEventListener(WindowMouseEvent.OVER, this.onReadSelectorHover);
         this.addSelectorListeners(this._readSelector);
 
         this._postMessageSelector = this._window.findChildByName('post_message_selector') as ISelectorWindow | null;
-        this._postMessageSelector?.addEventListener('WME_OVER', this.onPostMessageSelectorHover);
+        this._postMessageSelector?.addEventListener(WindowMouseEvent.OVER, this.onPostMessageSelectorHover);
         this.addSelectorListeners(this._postMessageSelector);
 
         this._postThreadSelector = this._window.findChildByName('post_thread_selector') as ISelectorWindow | null;
-        this._postThreadSelector?.addEventListener('WME_OVER', this.onPostThreadSelectorHover);
+        this._postThreadSelector?.addEventListener(WindowMouseEvent.OVER, this.onPostThreadSelectorHover);
         this.addSelectorListeners(this._postThreadSelector);
 
         this._moderateSelector = this._window.findChildByName('moderate_selector') as ISelectorWindow | null;
-        this._moderateSelector?.addEventListener('WME_OVER', this.onModerateSelectorHover);
+        this._moderateSelector?.addEventListener(WindowMouseEvent.OVER, this.onModerateSelectorHover);
         this.addSelectorListeners(this._moderateSelector);
 
         this._readPermissions = ForumSettingsView.setSelectorState(this._readSelector, 0, this._forum.readPermissions);
@@ -291,8 +291,8 @@ export class ForumSettingsView
         {
             const selectable = selector.getSelectableAt(i);
 
-            selectable?.removeEventListener('WE_SELECTED', this.onSelectionChanged);
-            selectable?.addEventListener('WE_SELECTED', this.onSelectionChanged);
+            selectable?.removeEventListener(WindowEvent.WE_SELECTED, this.onSelectionChanged);
+            selectable?.addEventListener(WindowEvent.WE_SELECTED, this.onSelectionChanged);
         }
     }
 

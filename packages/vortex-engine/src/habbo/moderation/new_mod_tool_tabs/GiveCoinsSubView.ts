@@ -20,6 +20,7 @@ import type {IIconButtonWindow} from '@core/window/components/IIconButtonWindow'
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {NewModerationTool} from '../NewModerationTool';
 import {NewModToolSubView} from './NewModToolSubView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class GiveCoinsSubView extends NewModToolSubView
 {
@@ -67,9 +68,9 @@ export class GiveCoinsSubView extends NewModToolSubView
     {
         super(tool, window);
 
-        (this.plusButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onPlusButtonClick);
-        (this.minusButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onMinusButtonClick);
-        this.donateCoinsButton?.addEventListener('WME_CLICK', this.onDonateCoinsClick);
+        (this.plusButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onPlusButtonClick);
+        (this.minusButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onMinusButtonClick);
+        this.donateCoinsButton?.addEventListener(WindowMouseEvent.CLICK, this.onDonateCoinsClick);
     }
 
     // AS3: .../new_mod_tool_tabs/_SafeCls_3550.as::onDonateCoinsClick()

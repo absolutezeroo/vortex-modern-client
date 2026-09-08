@@ -20,6 +20,7 @@ import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget'
 import type {IIlluminaInputWidget} from '@habbo/window/widgets/IIlluminaInputWidget';
 
 import type {HabboHelp} from './HabboHelp';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.help.TopicsFlowHelpController');
 
@@ -922,7 +923,7 @@ export class TopicsFlowHelpController
         }
 
         row.name = 'inappropiate_room_group_event';
-        row.addEventListener('WME_CLICK', this.onReportTopic);
+        row.addEventListener(WindowMouseEvent.CLICK, this.onReportTopic);
 
         this._reasonList.addListItem(row);
 
@@ -947,7 +948,7 @@ export class TopicsFlowHelpController
             if(label) label.caption = `\${help.cfh.reason.${category.name}}`;
 
             row.name = category.name;
-            row.addEventListener('WME_CLICK', this.populateTopicsEvent);
+            row.addEventListener(WindowMouseEvent.CLICK, this.populateTopicsEvent);
 
             this._reasonList.addListItem(row);
         }
@@ -1005,7 +1006,7 @@ export class TopicsFlowHelpController
             }
 
             row.name = topic.name;
-            row.addEventListener('WME_CLICK', this.onReportTopic);
+            row.addEventListener(WindowMouseEvent.CLICK, this.onReportTopic);
 
             this._reasonList.addListItem(row);
         }

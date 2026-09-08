@@ -1,8 +1,9 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {FlatCategory} from '@habbo/communication/messages/incoming/navigator/FlatCategory';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
 import {UpdateRoomCategoryAndTradeSettingsComposer} from '@habbo/communication/messages/outgoing/room/settings/UpdateRoomCategoryAndTradeSettingsComposer';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 type IPopulatable = { populate(items: string[]): void; selection: number };
 
@@ -78,10 +79,10 @@ export class EnforceCategoryCtrl
 
         if(okBtn !== null)
         {
-            okBtn.addEventListener('WME_CLICK', this._onOkClick);
+            okBtn.addEventListener(WindowMouseEvent.CLICK, this._onOkClick);
         }
 
-        win.addEventListener('WE_SELECTED', this._onSelected);
+        win.addEventListener(WindowEvent.WE_SELECTED, this._onSelected);
 
         (win as unknown as { center(): void }).center?.();
         win.visible = true;

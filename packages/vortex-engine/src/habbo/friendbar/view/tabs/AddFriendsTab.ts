@@ -2,7 +2,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {Tab} from './Tab';
 
@@ -95,17 +95,17 @@ export class AddFriendsTab extends Tab
             return null;
         }
 
-        window.addEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.addEventListener('WME_OVER', this.onMouseOverEvent);
-        window.addEventListener('WME_OUT', this.onMouseOutEvent);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
 
         const header = window.findChildByName(AddFriendsTab.HEADER);
 
         if(header !== null)
         {
-            header.addEventListener('WME_CLICK', this.onMouseClickEvent);
-            header.addEventListener('WME_OVER', this.onMouseOverEvent);
-            header.addEventListener('WME_OUT', this.onMouseOutEvent);
+            header.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            header.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            header.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
         if(AddFriendsTab._expandedHeight < 0)
@@ -133,7 +133,7 @@ export class AddFriendsTab extends Tab
             }
         }
 
-        window.findChildByName(AddFriendsTab.BUTTON)?.addEventListener('WME_CLICK', this.onButtonClick);
+        window.findChildByName(AddFriendsTab.BUTTON)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
 
         const text = window.findChildByName(AddFriendsTab.TEXT);
 
@@ -154,20 +154,20 @@ export class AddFriendsTab extends Tab
         }
 
         window.procedure = null;
-        window.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.removeEventListener('WME_OVER', this.onMouseOverEvent);
-        window.removeEventListener('WME_OUT', this.onMouseOutEvent);
+        window.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
 
         const header = window.findChildByName(AddFriendsTab.HEADER);
 
         if(header !== null)
         {
-            header.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-            header.removeEventListener('WME_OVER', this.onMouseOverEvent);
-            header.removeEventListener('WME_OUT', this.onMouseOutEvent);
+            header.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            header.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            header.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
-        window.findChildByName(AddFriendsTab.BUTTON)?.removeEventListener('WME_CLICK', this.onButtonClick);
+        window.findChildByName(AddFriendsTab.BUTTON)?.removeEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
 
         const text = window.findChildByName(AddFriendsTab.TEXT);
 

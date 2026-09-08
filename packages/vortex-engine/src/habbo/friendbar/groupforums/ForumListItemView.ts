@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IDisposable} from '@core/runtime';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import type {ForumData} from '@habbo/communication/messages/parser/groupforums/ForumData';
@@ -85,8 +85,8 @@ export class ForumListItemView implements IDisposable
         this._messages2 = this._window.findChildByName('messages2') as ITextWindow | null;
         this._badgeWidget = (this._window.findChildByName('group_icon') as IWidgetWindow | null)?.widget as IBadgeImageWidget | null ?? null;
 
-        this._headerRegion?.addEventListener('WME_CLICK', this.onOpenForum);
-        this._unreadRegion?.addEventListener('WME_CLICK', this.onOpenForum);
+        this._headerRegion?.addEventListener(WindowMouseEvent.CLICK, this.onOpenForum);
+        this._unreadRegion?.addEventListener(WindowMouseEvent.CLICK, this.onOpenForum);
     }
 
     // AS3: .../groupforums/ForumListItemView.as::bind()
@@ -240,8 +240,8 @@ export class ForumListItemView implements IDisposable
             return;
         }
 
-        this._headerRegion?.removeEventListener('WME_CLICK', this.onOpenForum);
-        this._unreadRegion?.removeEventListener('WME_CLICK', this.onOpenForum);
+        this._headerRegion?.removeEventListener(WindowMouseEvent.CLICK, this.onOpenForum);
+        this._unreadRegion?.removeEventListener(WindowMouseEvent.CLICK, this.onOpenForum);
         this._window?.dispose();
         this._window = null;
         this._badgeWidget = null;

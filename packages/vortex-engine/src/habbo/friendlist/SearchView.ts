@@ -4,7 +4,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {Logger} from '@core/utils/Logger';
 import {HabboSearchMessageComposer} from '@habbo/communication/messages/outgoing/friendlist/HabboSearchMessageComposer';
 import {GetExtendedProfileMessageComposer} from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
@@ -75,7 +75,7 @@ export class SearchView implements ITabView, ISearchView
             const field = this._searchStr as unknown as IWindow;
 
             field.procedure = this.onSearchInput;
-            field.addEventListener('WKE_KEY_DOWN', this.onSearchStrInput);
+            field.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchStrInput);
         }
 
         const searchButton = footer.findChildByName('search_but');

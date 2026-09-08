@@ -15,6 +15,7 @@ import {IID_HabboWindowManager} from '@iid/IIDHabboWindowManager';
 import {IID_HabboLocalizationManager} from '@iid/IIDHabboLocalizationManager';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
 import {Logger} from '@core/utils/Logger';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.communication.demo.ErrorPopupCtrl');
 
@@ -202,9 +203,9 @@ export class ErrorPopupCtrl extends Component
 
             if(this._window === null) return;
 
-            this.closeButton?.addEventListener('WME_CLICK', this.onWindowCloseClicked);
-            this.okButton?.addEventListener('WME_CLICK', this.onWindowCloseClicked);
-            this.copyButton?.addEventListener('WME_CLICK', this.onCopyClicked);
+            this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowCloseClicked);
+            this.okButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowCloseClicked);
+            this.copyButton?.addEventListener(WindowMouseEvent.CLICK, this.onCopyClicked);
         }
 
         this._window?.activate();

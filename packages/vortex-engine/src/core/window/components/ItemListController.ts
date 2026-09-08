@@ -97,11 +97,11 @@ export class ItemListController extends WindowController implements IItemListWin
 
         const containerWin = this._container as unknown as IWindow;
 
-        containerWin.addEventListener('WE_RESIZED', this._containerEventHandlerBound);
-        containerWin.addEventListener('WE_CHILD_REMOVED', this._containerEventHandlerBound);
-        containerWin.addEventListener('WE_CHILD_RESIZED', this._containerEventHandlerBound);
-        containerWin.addEventListener('WE_CHILD_RELOCATED', this._containerEventHandlerBound);
-        containerWin.addEventListener('WE_CHILD_VISIBILITY', this._containerEventHandlerBound);
+        containerWin.addEventListener(WindowEvent.WE_RESIZED, this._containerEventHandlerBound);
+        containerWin.addEventListener(WindowEvent.WE_CHILD_REMOVED, this._containerEventHandlerBound);
+        containerWin.addEventListener(WindowEvent.WE_CHILD_RESIZED, this._containerEventHandlerBound);
+        containerWin.addEventListener(WindowEvent.WE_CHILD_RELOCATED, this._containerEventHandlerBound);
+        containerWin.addEventListener(WindowEvent.WE_CHILD_VISIBILITY, this._containerEventHandlerBound);
         this._container.clipping = this.clipping;
 
         // Arm the resize_on_item_update reflect-to-parent flag on _container
@@ -852,11 +852,11 @@ export class ItemListController extends WindowController implements IItemListWin
 
         if(this._container) 
         {
-            (this._container as unknown as IWindow).removeEventListener('WE_RESIZED', this._containerEventHandlerBound);
-            (this._container as unknown as IWindow).removeEventListener('WE_CHILD_REMOVED', this._containerEventHandlerBound);
-            (this._container as unknown as IWindow).removeEventListener('WE_CHILD_RESIZED', this._containerEventHandlerBound);
-            (this._container as unknown as IWindow).removeEventListener('WE_CHILD_RELOCATED', this._containerEventHandlerBound);
-            (this._container as unknown as IWindow).removeEventListener('WE_CHILD_VISIBILITY', this._containerEventHandlerBound);
+            (this._container as unknown as IWindow).removeEventListener(WindowEvent.WE_RESIZED, this._containerEventHandlerBound);
+            (this._container as unknown as IWindow).removeEventListener(WindowEvent.WE_CHILD_REMOVED, this._containerEventHandlerBound);
+            (this._container as unknown as IWindow).removeEventListener(WindowEvent.WE_CHILD_RESIZED, this._containerEventHandlerBound);
+            (this._container as unknown as IWindow).removeEventListener(WindowEvent.WE_CHILD_RELOCATED, this._containerEventHandlerBound);
+            (this._container as unknown as IWindow).removeEventListener(WindowEvent.WE_CHILD_VISIBILITY, this._containerEventHandlerBound);
         }
 
         // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ItemListController.as::dispose()

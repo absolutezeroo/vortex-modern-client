@@ -17,6 +17,7 @@ import type {SpecialItemsController} from './SpecialItemsController';
 import {SpecialItemClaimState} from './SpecialItemsController';
 import {SpecialItemElementView} from './view/SpecialItemElementView';
 import {SpecialItemPageButtonView} from './view/SpecialItemPageButtonView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.catalog.special_items_display.SpecialItemsView');
 
@@ -150,10 +151,10 @@ export class SpecialItemsView implements IUpdateReceiver, IDisposable
         this._productDisplayTemplate =
             this.itemRotation?.removeChildAt(0) as unknown as IWidgetWindow | null ?? null;
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onClose);
-        this.previousButton?.addEventListener('WME_CLICK', this.onPreviousClick);
-        this.nextButton?.addEventListener('WME_CLICK', this.onNextClick);
-        this.claimButton?.addEventListener('WME_CLICK', this.onClaimClick);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
+        this.previousButton?.addEventListener(WindowMouseEvent.CLICK, this.onPreviousClick);
+        this.nextButton?.addEventListener(WindowMouseEvent.CLICK, this.onNextClick);
+        this.claimButton?.addEventListener(WindowMouseEvent.CLICK, this.onClaimClick);
 
         controller.registerUpdateReceiver(this, 1);
 

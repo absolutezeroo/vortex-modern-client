@@ -24,6 +24,7 @@ import {RewardTrackMainProgressBarView} from '../progress/RewardTrackMainProgres
 import {RewardTrackPointIndicatorView} from './RewardTrackPointIndicatorView';
 import {RewardTrackPrizeLayout} from './RewardTrackPrizeLayout';
 import {RewardTrackPrizeView} from './RewardTrackPrizeView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackPrizeTrackView implements IDisposable
 {
@@ -149,8 +150,8 @@ export class RewardTrackPrizeTrackView implements IDisposable
         this._layout = new RewardTrackPrizeLayout();
         this._progressBar = new RewardTrackMainProgressBarView(progressBarContainer);
 
-        (previousRegion as unknown as IWindow).addEventListener('WME_CLICK', this.onPreviousClicked);
-        (nextRegion as unknown as IWindow).addEventListener('WME_CLICK', this.onNextClicked);
+        (previousRegion as unknown as IWindow).addEventListener(WindowMouseEvent.CLICK, this.onPreviousClicked);
+        (nextRegion as unknown as IWindow).addEventListener(WindowMouseEvent.CLICK, this.onNextClicked);
 
         this.refresh(false, true);
     }
@@ -595,8 +596,8 @@ export class RewardTrackPrizeTrackView implements IDisposable
 
         this._disposed = true;
 
-        (this._previousRegion as unknown as IWindow | null)?.removeEventListener('WME_CLICK', this.onPreviousClicked);
-        (this._nextRegion as unknown as IWindow | null)?.removeEventListener('WME_CLICK', this.onNextClicked);
+        (this._previousRegion as unknown as IWindow | null)?.removeEventListener(WindowMouseEvent.CLICK, this.onPreviousClicked);
+        (this._nextRegion as unknown as IWindow | null)?.removeEventListener(WindowMouseEvent.CLICK, this.onNextClicked);
 
         for(const view of this._allPrizeViews)
         {

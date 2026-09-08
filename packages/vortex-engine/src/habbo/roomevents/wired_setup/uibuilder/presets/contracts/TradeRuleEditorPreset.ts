@@ -15,6 +15,7 @@ import type {WiredStyle} from '../../styles/WiredStyle';
 import {Util} from '../../../../Util';
 import {WiredUIPreset} from '../WiredUIPreset';
 import {TradeRuleNodeView} from './TradeRuleNodeView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /** TS-only: the four optional callbacks AS3 passes as bare `Function`s. */
 export type TradeRuleEditNodeCallback = (editor: TradeRuleEditorPreset, uniqueId: number, node: TradeRequirementNode | null) => void;
@@ -104,12 +105,12 @@ export class TradeRuleEditorPreset extends WiredUIPreset
         // The template is *removed* from the grid, not copied — see the class note.
         this._nodeTemplate = this.itemGrid?.removeGridItemAt(0) ?? null;
 
-        this.addMoreButton?.addEventListener('WME_CLICK', this.onAddMoreClicked);
-        this._container.addEventListener('WME_OVER', this.onHover);
-        this._container.addEventListener('WME_OUT', this.onHoverEnd);
-        this.closeRegion?.addEventListener('WME_OVER', this.onCloseHover);
-        this.closeRegion?.addEventListener('WME_OUT', this.onCloseHoverEnd);
-        this.closeRegion?.addEventListener('WME_CLICK', this.onCloseClick);
+        this.addMoreButton?.addEventListener(WindowMouseEvent.CLICK, this.onAddMoreClicked);
+        this._container.addEventListener(WindowMouseEvent.OVER, this.onHover);
+        this._container.addEventListener(WindowMouseEvent.OUT, this.onHoverEnd);
+        this.closeRegion?.addEventListener(WindowMouseEvent.OVER, this.onCloseHover);
+        this.closeRegion?.addEventListener(WindowMouseEvent.OUT, this.onCloseHoverEnd);
+        this.closeRegion?.addEventListener(WindowMouseEvent.CLICK, this.onCloseClick);
 
         // 0x800000 off = the grid does not wrap; a one-line rule scrolls instead.
         if(this.isOneLineMode) this.itemGrid?.setParamFlag(8388608, false);

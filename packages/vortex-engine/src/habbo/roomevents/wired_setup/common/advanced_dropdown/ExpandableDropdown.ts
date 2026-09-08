@@ -1,6 +1,6 @@
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {IDisposable} from '@core/runtime/IDisposable';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 import type {ExpandableDropdownOption} from './ExpandableDropdownOption';
 
@@ -51,7 +51,7 @@ export class ExpandableDropdown implements IDisposable
         this._dropdown = dropdown;
         this._showMoreLocalization = showMoreLocalization;
         this._onChangeCallback = onChangeCallback;
-        this._dropdown.addEventListener('WE_SELECTED', this._onSelectAction);
+        this._dropdown.addEventListener(WindowEvent.WE_SELECTED, this._onSelectAction);
         this._dropdown.addEventListener('WE_COLLAPSE', this._onDropdownCollapse);
     }
 

@@ -11,6 +11,7 @@ import {ActivityPointTypeEnum} from '../purse/ActivityPointTypeEnum';
 import type {TargetedOffer} from './data/TargetedOffer';
 import type {OfferController} from './OfferController';
 import {OfferView} from './OfferView';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 
 /**
  * The full targeted-offer dialog: art, price, countdown, quantity and a buy button.
@@ -101,7 +102,7 @@ export class TargetedOfferDialogView extends OfferView
 
         const quantityInput = this._window.findChildByName('quantity_input') as unknown as ITextFieldWindow | null;
 
-        if(quantityInput) quantityInput.addEventListener('WKE_KEY_UP', this.onQuantityInputEvent);
+        if(quantityInput) quantityInput.addEventListener(WindowKeyboardEvent.KEY_UP, this.onQuantityInputEvent);
 
         this._window.procedure = this.onInput;
         this._window.center();

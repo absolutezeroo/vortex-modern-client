@@ -22,6 +22,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 import type {RewardTrack} from '../../data/RewardTrack';
 import type {RewardTrackController} from '../../RewardTrackController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.quest.rewardtrack.view.premium.RewardTrackPremiumPurchaseConfirmationView');
 
@@ -85,9 +86,9 @@ export class RewardTrackPremiumPurchaseConfirmationView implements IDisposable
 
         this._window.enableLookupCache();
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.cancelButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.confirmButton?.addEventListener('WME_CLICK', this.onConfirmClicked);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.confirmButton?.addEventListener(WindowMouseEvent.CLICK, this.onConfirmClicked);
 
         this.initializeUI();
     }
@@ -356,9 +357,9 @@ export class RewardTrackPremiumPurchaseConfirmationView implements IDisposable
             this._retryTimer = null;
         }
 
-        this.closeButton?.removeEventListener('WME_CLICK', this.onWindowClose);
-        this.cancelButton?.removeEventListener('WME_CLICK', this.onWindowClose);
-        this.confirmButton?.removeEventListener('WME_CLICK', this.onConfirmClicked);
+        this.closeButton?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.cancelButton?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.confirmButton?.removeEventListener(WindowMouseEvent.CLICK, this.onConfirmClicked);
 
         const window = this._window as unknown as IWindow | null;
 

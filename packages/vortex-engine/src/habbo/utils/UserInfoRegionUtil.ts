@@ -1,6 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * UserInfoRegionUtil
@@ -32,9 +33,9 @@ export class UserInfoRegionUtil
             return;
         }
 
-        region.addEventListener('WME_OVER', UserInfoRegionUtil.onUserInfoMouseOver);
-        region.addEventListener('WME_OUT', UserInfoRegionUtil.onUserInfoMouseOut);
-        region.addEventListener('WME_CLICK', onClick);
+        region.addEventListener(WindowMouseEvent.OVER, UserInfoRegionUtil.onUserInfoMouseOver);
+        region.addEventListener(WindowMouseEvent.OUT, UserInfoRegionUtil.onUserInfoMouseOut);
+        region.addEventListener(WindowMouseEvent.CLICK, onClick);
     }
 
     // AS3: .../utils/_SafeCls_3877.as::setUserInfoState()

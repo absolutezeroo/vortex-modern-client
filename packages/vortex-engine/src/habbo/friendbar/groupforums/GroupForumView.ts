@@ -8,8 +8,8 @@ import type {IScrollableListWindow} from '@core/window/components/IScrollableLis
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import type {ForumData} from '@habbo/communication/messages/parser/groupforums/ForumData';
@@ -253,8 +253,8 @@ export class GroupForumView
         {
             if(this._forum !== null && this._forum.canChangeSettings)
             {
-                settingsButton.removeEventListener('WME_CLICK', this.onSettingsButtonClick);
-                settingsButton.addEventListener('WME_CLICK', this.onSettingsButtonClick);
+                settingsButton.removeEventListener(WindowMouseEvent.CLICK, this.onSettingsButtonClick);
+                settingsButton.addEventListener(WindowMouseEvent.CLICK, this.onSettingsButtonClick);
                 settingsButton.visible = true;
             }
             else
@@ -354,24 +354,24 @@ export class GroupForumView
         if(this._window === null) return;
 
         this._scrollableList = this._window.findChildByName('scrollable_message_list') as IScrollableListWindow | null;
-        this._scrollableList?.scrollableWindow.addEventListener('WE_RESIZED', this.onResized, GroupForumView.WINDOW_TOP);
+        this._scrollableList?.scrollableWindow.addEventListener(WindowEvent.WE_RESIZED, this.onResized, GroupForumView.WINDOW_TOP);
         this._window.center();
         this._window.y = GroupForumView.WINDOW_TOP;
         this._txtElement = this._window.findChildByName('page_info');
         this._showPreviousButton = this._window.findChildByName('show_previous');
-        this._showPreviousButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._showPreviousButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._showNextButton = this._window.findChildByName('show_next');
-        this._showNextButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._showNextButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._showLastButton = this._window.findChildByName('show_last');
-        this._showLastButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._showLastButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._showFirstButton = this._window.findChildByName('show_first');
-        this._showFirstButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._showFirstButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._backButton = this._window.findChildByName('back_button') as IWindowContainer | null;
-        this._backButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._backButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._postButton = this._window.findChildByName('post_button') as IWindowContainer | null;
-        this._postButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._postButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._closeButton = this._window.findChildByTag('close');
-        this._closeButton?.addEventListener('WME_CLICK', this.onClickButton);
+        this._closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickButton);
         this._listHeader = this._window.findChildByName('list_header');
         this._myForumsShortcut = (this._window.findChildByName('shortcuts') as IItemListWindow | null)?.getListItemByName('my') as ITextWindow | null ?? null;
     }
@@ -506,7 +506,7 @@ export class GroupForumView
 
             if(clickArea !== null)
             {
-                clickArea.removeEventListener('WME_CLICK', this.onTopAreaClick);
+                clickArea.removeEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
                 clickArea.disable();
             }
         }
@@ -568,8 +568,8 @@ export class GroupForumView
 
         if(clickArea !== null)
         {
-            clickArea.removeEventListener('WME_CLICK', this.onTopAreaClick);
-            clickArea.addEventListener('WME_CLICK', this.onTopAreaClick);
+            clickArea.removeEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
+            clickArea.addEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
             clickArea.enable();
         }
 
@@ -661,8 +661,8 @@ export class GroupForumView
 
         if(clickArea !== null)
         {
-            clickArea.removeEventListener('WME_CLICK', this.onTopAreaClick);
-            clickArea.addEventListener('WME_CLICK', this.onTopAreaClick);
+            clickArea.removeEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
+            clickArea.addEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
             clickArea.enable();
         }
 

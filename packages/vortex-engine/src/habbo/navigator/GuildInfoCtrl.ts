@@ -6,6 +6,7 @@ import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import {GetHabboGroupDetailsMessageComposer} from '../communication/messages/outgoing/users/GetHabboGroupDetailsMessageComposer';
 import type {GuestRoomData} from '../communication/messages/incoming/navigator';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * GuildInfoCtrl
@@ -60,7 +61,7 @@ export class GuildInfoCtrl implements IDisposable
             guildInfo = xmlWindow as unknown as IWindowContainer;
             guildInfo.name = GuildInfoCtrl.GUILD_INFO_NAME;
             container.addChild(guildInfo);
-            guildInfo.addEventListener('WME_CLICK', this.onGuildInfo);
+            guildInfo.addEventListener(WindowMouseEvent.CLICK, this.onGuildInfo);
         }
 
         if(!roomData || roomData.habboGroupId < 1)

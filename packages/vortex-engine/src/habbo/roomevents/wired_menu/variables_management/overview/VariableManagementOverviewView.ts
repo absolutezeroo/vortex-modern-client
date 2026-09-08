@@ -1,6 +1,6 @@
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {TableView} from '@habbo/window/utils/tableview/TableView';
@@ -57,10 +57,10 @@ export class VariableManagementOverviewView extends PagedTableView
     {
         super('variables_management_overview_xml', windowManager, controller.localizationManager);
         this._controller = controller;
-        this.userTypeMenu.addEventListener('WE_SELECT', this._onSelectFilter);
-        this.sortTypeMenu.addEventListener('WE_SELECT', this._onSelectFilter);
-        this.userTypeMenu.addEventListener('WE_SELECTED', this._onSelectedFilter);
-        this.sortTypeMenu.addEventListener('WE_SELECTED', this._onSelectedFilter);
+        this.userTypeMenu.addEventListener(WindowEvent.WE_SELECT, this._onSelectFilter);
+        this.sortTypeMenu.addEventListener(WindowEvent.WE_SELECT, this._onSelectFilter);
+        this.userTypeMenu.addEventListener(WindowEvent.WE_SELECTED, this._onSelectedFilter);
+        this.sortTypeMenu.addEventListener(WindowEvent.WE_SELECTED, this._onSelectedFilter);
     }
 
     // AS3: VariableManagementOverviewView.as::displayNewPage()

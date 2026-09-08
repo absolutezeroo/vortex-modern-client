@@ -8,7 +8,7 @@ import {InteractiveController} from './InteractiveController';
 import {SubstituteParentController} from './SubstituteParentController';
 import type {ScrollBarLiftController} from './ScrollBarLiftController';
 import type {WindowController} from '../WindowController';
-import type {WindowEvent} from '../events/WindowEvent';
+import {WindowEvent} from '../events/WindowEvent';
 import type {WindowMouseEvent} from '../events/WindowMouseEvent';
 import type {PropertyStruct} from '../utils/PropertyStruct';
 import {SmoothScroller} from '../utils/SmoothScroller';
@@ -158,16 +158,16 @@ export class ScrollBarController extends InteractiveController implements IScrol
     {
         if(this._scrollable !== null && !this._scrollable.disposed)
         {
-            (this._scrollable as unknown as IWindow).removeEventListener('WE_RESIZED', this._boundOnScrollableResized);
-            (this._scrollable as unknown as IWindow).removeEventListener('WE_SCROLL', this._boundOnScrollableScrolled);
+            (this._scrollable as unknown as IWindow).removeEventListener(WindowEvent.WE_RESIZED, this._boundOnScrollableResized);
+            (this._scrollable as unknown as IWindow).removeEventListener(WindowEvent.WE_SCROLL, this._boundOnScrollableScrolled);
         }
 
         this._scrollable = value;
 
         if(this._scrollable !== null && !this._scrollable.disposed)
         {
-            (this._scrollable as unknown as IWindow).addEventListener('WE_RESIZED', this._boundOnScrollableResized);
-            (this._scrollable as unknown as IWindow).addEventListener('WE_SCROLL', this._boundOnScrollableScrolled);
+            (this._scrollable as unknown as IWindow).addEventListener(WindowEvent.WE_RESIZED, this._boundOnScrollableResized);
+            (this._scrollable as unknown as IWindow).addEventListener(WindowEvent.WE_SCROLL, this._boundOnScrollableScrolled);
 
             // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/ScrollBarController.as::set scrollable()
             // Adopt the target's current position, otherwise _offset stays at 0 while the

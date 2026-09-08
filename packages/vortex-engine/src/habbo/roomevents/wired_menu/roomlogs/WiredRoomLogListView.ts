@@ -1,8 +1,8 @@
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {TableView} from '@habbo/window/utils/tableview/TableView';
@@ -65,11 +65,11 @@ export class WiredRoomLogListView extends PagedTableView
     {
         super('logs_overview_xml', windowManager, controller.localizationManager, false);
         this._controller = controller;
-        this.logSourceMenu.addEventListener('WE_SELECT', this._onSelectFilter);
-        this.logLevelMenu.addEventListener('WE_SELECT', this._onSelectFilter);
-        this.logSourceMenu.addEventListener('WE_SELECTED', this._onSelectedFilter);
-        this.logLevelMenu.addEventListener('WE_SELECTED', this._onSelectedFilter);
-        this.filterInput.addEventListener('WKE_KEY_DOWN', this._onFilterInputDown);
+        this.logSourceMenu.addEventListener(WindowEvent.WE_SELECT, this._onSelectFilter);
+        this.logLevelMenu.addEventListener(WindowEvent.WE_SELECT, this._onSelectFilter);
+        this.logSourceMenu.addEventListener(WindowEvent.WE_SELECTED, this._onSelectedFilter);
+        this.logLevelMenu.addEventListener(WindowEvent.WE_SELECTED, this._onSelectedFilter);
+        this.filterInput.addEventListener(WindowKeyboardEvent.KEY_DOWN, this._onFilterInputDown);
         this.autoRefreshCheckbox.select();
         this.startAutoRefresh();
     }

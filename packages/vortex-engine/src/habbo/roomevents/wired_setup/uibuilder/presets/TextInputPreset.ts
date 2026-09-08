@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {WindowEventListener} from '@core/window/events/WindowEventDispatcher';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
@@ -93,7 +93,7 @@ export class TextInputPreset extends WiredUIPreset
             this._placeholder.window.y = this._field.y;
         }
 
-        this._field.addEventListener('WE_CHANGE', this._textHasChanged);
+        this._field.addEventListener(WindowEvent.WE_CHANGE, this._textHasChanged);
         this._textHasChanged(null);
     }
 

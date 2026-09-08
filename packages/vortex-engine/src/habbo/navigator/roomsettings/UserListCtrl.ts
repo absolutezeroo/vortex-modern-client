@@ -7,6 +7,7 @@ import { AssignRightsMessageComposer } from '@habbo/communication/messages/outgo
 import { RemoveRightsMessageComposer } from '@habbo/communication/messages/outgoing/room/action/RemoveRightsMessageComposer';
 import { GetExtendedProfileMessageComposer } from '@habbo/communication/messages/outgoing/users/GetExtendedProfileMessageComposer';
 import { UserInfoRegionUtil } from '@habbo/utils/UserInfoRegionUtil';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /** Minimal user data from room settings (class_2565). */
 export interface IRoomSettingsUserData
@@ -158,9 +159,9 @@ export class UserListCtrl
 
         if(bg)
         {
-            bg.addEventListener('WME_CLICK', (e: WindowEvent) => this.onBgMouseClick(e));
-            bg.addEventListener('WME_OVER', (e: WindowEvent) => this._onBgMouseOver(e));
-            bg.addEventListener('WME_OUT', (e: WindowEvent) => this._onBgMouseOut(e));
+            bg.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this.onBgMouseClick(e));
+            bg.addEventListener(WindowMouseEvent.OVER, (e: WindowEvent) => this._onBgMouseOver(e));
+            bg.addEventListener(WindowMouseEvent.OUT, (e: WindowEvent) => this._onBgMouseOut(e));
         }
 
         // The helper adds the eye-icon hover swap alongside the click, which the hand-rolled

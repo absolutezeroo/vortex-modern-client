@@ -11,6 +11,7 @@ import type {IRoomWidgetHandler} from '../../IRoomWidgetHandler';
 import {RoomWidgetBase} from '../RoomWidgetBase';
 import {RoomWidgetRoomQueueUpdateEvent} from '../events/RoomWidgetRoomQueueUpdateEvent';
 import {RoomWidgetRoomQueueMessage} from '../messages/RoomWidgetRoomQueueMessage';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.roomqueue.RoomQueueWidget');
 
@@ -152,19 +153,19 @@ export class RoomQueueWidget extends RoomWidgetBase
 
         const close = this._window.findChildByTag('close');
 
-        if(close !== null) close.addEventListener('WME_CLICK', this.exitQueue);
+        if(close !== null) close.addEventListener(WindowMouseEvent.CLICK, this.exitQueue);
 
         const cancel = this._window.findChildByName('cancel_button');
 
-        if(cancel !== null) cancel.addEventListener('WME_CLICK', this.exitQueue);
+        if(cancel !== null) cancel.addEventListener(WindowMouseEvent.CLICK, this.exitQueue);
 
         const link = this._window.findChildByName('link_text');
 
-        if(link !== null) link.addEventListener('WME_CLICK', this.openLink);
+        if(link !== null) link.addEventListener(WindowMouseEvent.CLICK, this.openLink);
 
         const change = this._window.findChildByName('change_button');
 
-        if(change !== null) change.addEventListener('WME_CLICK', this.changeQueue);
+        if(change !== null) change.addEventListener(WindowMouseEvent.CLICK, this.changeQueue);
 
         return true;
     }

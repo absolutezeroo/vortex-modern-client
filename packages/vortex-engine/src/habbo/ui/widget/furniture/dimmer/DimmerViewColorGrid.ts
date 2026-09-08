@@ -5,7 +5,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {DimmerView} from './DimmerView';
 
@@ -124,7 +124,7 @@ export class DimmerViewColorGrid
 
             if(cell === null) continue;
 
-            cell.addEventListener('WME_CLICK', this.onClick);
+            cell.addEventListener(WindowMouseEvent.CLICK, this.onClick);
             cell.background = true;
             cell.color = 0xFFFFFFFF;
 

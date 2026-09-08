@@ -6,6 +6,7 @@ import {Logger} from '@core/utils/Logger';
 
 import type {HabboToolbar} from '../../HabboToolbar';
 import {SoundSettingsItem} from './SoundSettingsItem';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.SoundSettingsView');
 
@@ -104,7 +105,7 @@ export class SoundSettingsView
 
         for(let index = 0; index < this._window.numChildren; index++)
         {
-            this._window.getChildAt(index)?.addEventListener('WME_CLICK', this.onButtonClicked);
+            this._window.getChildAt(index)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
         }
 
         this._uiVolumeItem = new SoundSettingsItem(this, SoundSettingsItem.TYPE_UI_VOLUME, this.uiVolumeContainer);

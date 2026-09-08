@@ -3,6 +3,7 @@ import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import {RoomEngineSoundMachineEvent} from '@habbo/room/events/RoomEngineSoundMachineEvent';
+import {SoundCompleteEvent} from '@habbo/sound/events/SoundCompleteEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboMusicController} from '../IHabboMusicController';
 import type {IPlayListController} from '../IPlayListController';
@@ -167,7 +168,7 @@ export class HabboMusicController implements IHabboMusicController
         this._roomEvents.on(RoomEngineSoundMachineEvent.SOUND_MACHINE_DISPOSE, this.onSoundMachineDispose);
 
         this._songRequestTimer = setInterval(() => this.sendNextSongRequestMessage(), 1000);
-        this._events.on('SCE_TRAX_SONG_COMPLETE', this.onSongFinishedPlayingEvent);
+        this._events.on(SoundCompleteEvent.TRAX_SONG_COMPLETE, this.onSongFinishedPlayingEvent);
 
         for(let i = 0; i < HabboMusicController.PRIORITY_SLOT_COUNT; i++)
         {

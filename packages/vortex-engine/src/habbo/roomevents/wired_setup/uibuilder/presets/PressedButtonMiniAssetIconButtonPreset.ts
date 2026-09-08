@@ -1,4 +1,4 @@
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Util} from '@habbo/roomevents/Util';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
@@ -20,8 +20,8 @@ export class PressedButtonMiniAssetIconButtonPreset extends MiniAssetIconButtonP
     {
         super(roomEvents, presetManager, wiredStyle, assetName, tooltip, onClick);
 
-        this.clickArea.addEventListener('WME_OUT', this._maybeCancelEvent);
-        this.clickArea.addEventListener('WME_UP', this._maybeCancelEvent);
+        this.clickArea.addEventListener(WindowMouseEvent.OUT, this._maybeCancelEvent);
+        this.clickArea.addEventListener(WindowMouseEvent.UP, this._maybeCancelEvent);
         this.updateUI();
     }
 

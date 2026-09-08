@@ -1,7 +1,7 @@
 import type {IUpdateReceiver} from '@core/runtime';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 
 import {TableView} from '@habbo/window/utils/tableview/TableView';
@@ -110,8 +110,8 @@ export class WiredMenuOverviewTab extends WiredMenuDefaultTab implements IUpdate
         this.createPropertiesTable();
         this.createTextTable();
         this.addMessageEvent(new VariableInfoAndHoldersEvent((event) => this.onAllVariableHolders(event)));
-        this.highlightHoldersButton.addEventListener('WME_CLICK', this._onHighlightClick);
-        this.manageButton.addEventListener('WME_CLICK', this._onManageClick);
+        this.highlightHoldersButton.addEventListener(WindowMouseEvent.CLICK, this._onHighlightClick);
+        this.manageButton.addEventListener(WindowMouseEvent.CLICK, this._onManageClick);
     }
 
     // AS3: WiredMenuOverviewTab.as::createVariableList()
@@ -614,14 +614,14 @@ export class WiredMenuOverviewTab extends WiredMenuDefaultTab implements IUpdate
 
         if(highlightButton != null)
         {
-            highlightButton.removeEventListener('WME_CLICK', this._onHighlightClick);
+            highlightButton.removeEventListener(WindowMouseEvent.CLICK, this._onHighlightClick);
         }
 
         const manageButton = this.manageButton;
 
         if(manageButton != null)
         {
-            manageButton.removeEventListener('WME_CLICK', this._onManageClick);
+            manageButton.removeEventListener(WindowMouseEvent.CLICK, this._onManageClick);
         }
 
         if(this.controller != null && this.controller.variablesSynchronizer != null)

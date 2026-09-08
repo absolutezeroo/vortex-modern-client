@@ -9,6 +9,7 @@ import type {WindowController} from '../WindowController';
 import {WindowEvent} from '../events/WindowEvent';
 import type {PropertyStruct} from '../utils/PropertyStruct';
 import {InteractiveController} from './InteractiveController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Base controller for dropdown windows.
@@ -79,7 +80,7 @@ export class DropBaseController extends InteractiveController implements ITouchA
 
         if(region)
         {
-            (region as unknown as IWindow).addEventListener('WME_DOWN', this._menuItemEventHandlerBound);
+            (region as unknown as IWindow).addEventListener(WindowMouseEvent.DOWN, this._menuItemEventHandlerBound);
         }
     }
 
@@ -384,7 +385,7 @@ export class DropBaseController extends InteractiveController implements ITouchA
 
         if(region)
         {
-            (region as unknown as IWindow).removeEventListener('WME_DOWN', this._menuItemEventHandlerBound);
+            (region as unknown as IWindow).removeEventListener(WindowMouseEvent.DOWN, this._menuItemEventHandlerBound);
         }
 
         if(this._subMenu !== null && !this._subMenu.disposed)

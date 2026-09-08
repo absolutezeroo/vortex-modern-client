@@ -23,6 +23,7 @@ import type {HabboInventory} from '../HabboInventory';
 import {CreditTradingItem} from '../items/CreditTradingItem';
 import {FurnitureCategory} from '../enum';
 import {Logger} from '@core/utils/Logger';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.inventory.trading.TradingView');
 
@@ -873,8 +874,8 @@ export class TradingView implements IInventoryView
 
             gridItem.id = i;
             gridItem.procedure = procedure;
-            gridItem.addEventListener('WME_OVER', procedure);
-            gridItem.addEventListener('WME_OUT', procedure);
+            gridItem.addEventListener(WindowMouseEvent.OVER, procedure);
+            gridItem.addEventListener(WindowMouseEvent.OUT, procedure);
         }
     }
 

@@ -4,7 +4,7 @@ import type {XmlAsset} from '@core/assets/XmlAsset';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
@@ -253,7 +253,7 @@ export class MonsterPlantSeedConfirmationView implements IGetImageListener
     // AS3: .../contextmenu/MonsterPlantSeedConfirmationView.as::addClickListener()
     private addClickListener(name: string): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WME_CLICK', this.onMouseClick);
+        this._window?.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClick);
     }
 
     // AS3: .../contextmenu/MonsterPlantSeedConfirmationView.as::onMouseClick()

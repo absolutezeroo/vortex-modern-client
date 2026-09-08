@@ -1,7 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
@@ -73,9 +73,9 @@ export class RecyclerCatalogWidget extends CatalogWidget implements IRecyclerVis
         this.renderSlotGraphics();
         this.renderDucketCost();
 
-        this.window.findChildByName('recycler_recycle')?.addEventListener('WME_CLICK', this.onRecycleButtonClick);
-        this.window.findChildByName('abort_region')?.addEventListener('WME_CLICK', this.onAbortClick);
-        this.patFrankButton?.addEventListener('WME_CLICK', this.onPatFrank);
+        this.window.findChildByName('recycler_recycle')?.addEventListener(WindowMouseEvent.CLICK, this.onRecycleButtonClick);
+        this.window.findChildByName('abort_region')?.addEventListener(WindowMouseEvent.CLICK, this.onAbortClick);
+        this.patFrankButton?.addEventListener(WindowMouseEvent.CLICK, this.onPatFrank);
         this.abortButtonVisible = false;
 
         const arrow = this.window.findChildByName('pointer_arrow') as unknown as IStaticBitmapWrapperWindow | null;

@@ -25,8 +25,8 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {IHabbiconController} from '@habbo/catalog/habbicons/IHabbiconController';
@@ -37,6 +37,7 @@ import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager
 import {MessengerHabbiconPickerEntry} from './MessengerHabbiconPickerEntry';
 import {MessengerHabbiconPickerSection} from './MessengerHabbiconPickerSection';
 import {MessengerHabbiconPickerSectionView} from './MessengerHabbiconPickerSectionView';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 export class MessengerHabbiconPicker
 {
@@ -153,11 +154,11 @@ export class MessengerHabbiconPicker
             ? (sectionList!.removeListItem(template) as IWindowContainer | null)
             : null;
 
-        this.searchInput?.addEventListener('WE_CHANGE', this.onSearchChanged);
-        this.searchInput?.addEventListener('WKE_KEY_DOWN', this.onSearchKeyDown as never);
-        this.searchPlaceholder?.addEventListener('WME_DOWN', this.onSearchPlaceholderDown as never);
-        this.searchClearButton?.addEventListener('WME_CLICK', this.onSearchClearClicked as never);
-        this.openHubButton?.addEventListener('WME_CLICK', this.onOpenHubClicked as never);
+        this.searchInput?.addEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+        this.searchInput?.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchKeyDown as never);
+        this.searchPlaceholder?.addEventListener(WindowMouseEvent.DOWN, this.onSearchPlaceholderDown as never);
+        this.searchClearButton?.addEventListener(WindowMouseEvent.CLICK, this.onSearchClearClicked as never);
+        this.openHubButton?.addEventListener(WindowMouseEvent.CLICK, this.onOpenHubClicked as never);
 
         if(this._controller !== null)
         {
@@ -1168,11 +1169,11 @@ export class MessengerHabbiconPicker
             this._controller = null;
         }
 
-        this.searchInput?.removeEventListener('WE_CHANGE', this.onSearchChanged);
-        this.searchInput?.removeEventListener('WKE_KEY_DOWN', this.onSearchKeyDown as never);
-        this.searchPlaceholder?.removeEventListener('WME_DOWN', this.onSearchPlaceholderDown as never);
-        this.searchClearButton?.removeEventListener('WME_CLICK', this.onSearchClearClicked as never);
-        this.openHubButton?.removeEventListener('WME_CLICK', this.onOpenHubClicked as never);
+        this.searchInput?.removeEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+        this.searchInput?.removeEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchKeyDown as never);
+        this.searchPlaceholder?.removeEventListener(WindowMouseEvent.DOWN, this.onSearchPlaceholderDown as never);
+        this.searchClearButton?.removeEventListener(WindowMouseEvent.CLICK, this.onSearchClearClicked as never);
+        this.openHubButton?.removeEventListener(WindowMouseEvent.CLICK, this.onOpenHubClicked as never);
 
         this.clearSections();
 

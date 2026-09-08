@@ -4,7 +4,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {WindowUtils} from '@core/window/utils/WindowUtils';
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
@@ -61,13 +61,13 @@ export class HabbiconRewardPanelView implements IDisposable
 
         if(habbicon !== null) habbicon.disposesBitmap = true;
 
-        this.rewardActionButton?.addEventListener('WME_CLICK', this.onClaimClicked);
-        this.rewardBuyButton?.addEventListener('WME_CLICK', this.onBuyClicked);
+        this.rewardActionButton?.addEventListener(WindowMouseEvent.CLICK, this.onClaimClicked);
+        this.rewardBuyButton?.addEventListener(WindowMouseEvent.CLICK, this.onBuyClicked);
 
         if(this._onTileClicked !== null && this.rewardTile !== null)
         {
             this._clickTarget = this.rewardHabbiconFrame ?? (habbicon as unknown as IWindow | null);
-            this._clickTarget?.addEventListener('WME_CLICK', this.onRewardTileClick);
+            this._clickTarget?.addEventListener(WindowMouseEvent.CLICK, this.onRewardTileClick);
         }
     }
 
@@ -375,12 +375,12 @@ export class HabbiconRewardPanelView implements IDisposable
     {
         if(this._disposed) return;
 
-        this.rewardActionButton?.removeEventListener('WME_CLICK', this.onClaimClicked);
-        this.rewardBuyButton?.removeEventListener('WME_CLICK', this.onBuyClicked);
+        this.rewardActionButton?.removeEventListener(WindowMouseEvent.CLICK, this.onClaimClicked);
+        this.rewardBuyButton?.removeEventListener(WindowMouseEvent.CLICK, this.onBuyClicked);
 
         if(this._clickTarget !== null)
         {
-            this._clickTarget.removeEventListener('WME_CLICK', this.onRewardTileClick);
+            this._clickTarget.removeEventListener(WindowMouseEvent.CLICK, this.onRewardTileClick);
             this._clickTarget = null;
         }
 

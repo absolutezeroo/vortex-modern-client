@@ -9,6 +9,8 @@ import {Logger} from '@core/utils/Logger';
 import type {ChooserItem} from '../ChooserItem';
 import {FurniChooserTableObject} from './FurniChooserTableObject';
 import type {FurniChooserWidget} from './FurniChooserWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.chooser.furni.FurniView');
 
@@ -182,10 +184,10 @@ export class FurniView
 
         this.createTable();
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onClose);
-        this.searchTextInput?.addEventListener('WE_CHANGE', this.onSearchChanged);
-        this.usernameDropDown?.addEventListener('WE_SELECTED', this.onUsernameChanged);
-        this.clearButton?.addEventListener('WME_CLICK', this.onClearClicked);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
+        this.searchTextInput?.addEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+        this.usernameDropDown?.addEventListener(WindowEvent.WE_SELECTED, this.onUsernameChanged);
+        this.clearButton?.addEventListener(WindowMouseEvent.CLICK, this.onClearClicked);
 
         const parent = this._window.parent;
 

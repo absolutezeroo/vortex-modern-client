@@ -23,6 +23,7 @@ import {RoomWidgetToolbarClickedUpdateEvent} from '../events/RoomWidgetToolbarCl
 import {RoomWidgetTutorialEvent} from '../events/RoomWidgetTutorialEvent';
 import {RoomWidgetUpdateEffectsUpdateEvent} from '../events/RoomWidgetUpdateEffectsUpdateEvent';
 import {RoomWidgetUserInfoUpdateEvent} from '../events/RoomWidgetUserInfoUpdateEvent';
+import {RoomWidgetRoomObjectUpdateEvent} from '../events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetWaveUpdateEvent} from '../events/RoomWidgetWaveUpdateEvent';
 import {MeMenuDanceView} from './MeMenuDanceView';
 import {MeMenuMainView} from './MeMenuMainView';
@@ -357,7 +358,7 @@ export class MeMenuWidget extends RoomWidgetBase
         events.on(RoomWidgetToolbarClickedUpdateEvent.REQUEST_ME_MENU_TOOLBAR_CLICKED_EVENT, this.onToolbarClicked);
         events.on(RoomWidgetAvatarEditorUpdateEvent.AVATAR_EDITOR_CLOSED, this.onAvatarEditorClosed);
         events.on(RoomWidgetAvatarEditorUpdateEvent.HIDE_AVATAR_EDITOR, this.onHideAvatarEditor);
-        events.on('RWROUE_OBJECT_DESELECTED', this.onAvatarDeselected);
+        events.on(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onAvatarDeselected);
         events.on(RoomWidgetHabboClubUpdateEvent.HABBO_CLUB, this.onHabboClubEvent);
         events.on(RoomWidgetUserInfoUpdateEvent.OWN_USER, this.onUserInfo);
         events.on(RoomWidgetSettingsUpdateEvent.SETTINGS, this.onSettingsUpdate);
@@ -392,7 +393,7 @@ export class MeMenuWidget extends RoomWidgetBase
         events.off(RoomWidgetDanceUpdateEvent.DANCE, this.onDanceEvent);
         events.off(RoomWidgetUpdateEffectsUpdateEvent.UPDATE_EFFECTS, this.onUpdateEffects);
         events.off(RoomWidgetToolbarClickedUpdateEvent.REQUEST_ME_MENU_TOOLBAR_CLICKED_EVENT, this.onToolbarClicked);
-        events.off('RWROUE_OBJECT_DESELECTED', this.onAvatarDeselected);
+        events.off(RoomWidgetRoomObjectUpdateEvent.OBJECT_DESELECTED, this.onAvatarDeselected);
         events.off(RoomWidgetHabboClubUpdateEvent.HABBO_CLUB, this.onHabboClubEvent);
         events.off(RoomWidgetAvatarEditorUpdateEvent.AVATAR_EDITOR_CLOSED, this.onHideAvatarEditor);
         events.off(RoomWidgetAvatarEditorUpdateEvent.HIDE_AVATAR_EDITOR, this.onAvatarEditorClosed);

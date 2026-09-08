@@ -16,6 +16,7 @@ import {GuildInfoCtrl} from '../GuildInfoCtrl';
 import {SimpleAlertView} from '../SimpleAlertView';
 import {Util} from '../Util';
 import {UserInfoRegionUtil} from '@habbo/utils/UserInfoRegionUtil';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Room info view controller for displaying room details in-room.
@@ -384,7 +385,7 @@ export class RoomInfoViewCtrl
 
         if(closeBtn !== null)
         {
-            closeBtn.addEventListener('WME_CLICK', this._onCloseButtonClick);
+            closeBtn.addEventListener(WindowMouseEvent.CLICK, this._onCloseButtonClick);
         }
 
         const removeRightsRegion = this._find('remove_rights_region');
@@ -426,9 +427,9 @@ export class RoomInfoViewCtrl
         if(ownerNameCont !== null)
         {
             Util.layoutChildrenInArea(ownerNameCont, 1000, 10, 2, 5);
-            ownerNameCont.addEventListener('WME_CLICK', this._onOwnerNameClick);
-            ownerNameCont.addEventListener('WME_OVER', this._onOwnerNameOver);
-            ownerNameCont.addEventListener('WME_OUT', this._onOwnerNameOut);
+            ownerNameCont.addEventListener(WindowMouseEvent.CLICK, this._onOwnerNameClick);
+            ownerNameCont.addEventListener(WindowMouseEvent.OVER, this._onOwnerNameOver);
+            ownerNameCont.addEventListener(WindowMouseEvent.OUT, this._onOwnerNameOut);
         }
 
         this._setupLabelAndValue('rating_cont', 'rating_caption', 'rating_txt');
@@ -462,7 +463,7 @@ export class RoomInfoViewCtrl
 
             if(embedInfoRegion !== null)
             {
-                embedInfoRegion.addEventListener('WME_CLICK', this._onEmbedInfoClick);
+                embedInfoRegion.addEventListener(WindowMouseEvent.CLICK, this._onEmbedInfoClick);
             }
         }
 
@@ -476,7 +477,7 @@ export class RoomInfoViewCtrl
 
                 if(this._navigator.data.canEditRoomSettings)
                 {
-                    addThumbRegion.addEventListener('WME_CLICK', this._onAddRoomThumbnail);
+                    addThumbRegion.addEventListener(WindowMouseEvent.CLICK, this._onAddRoomThumbnail);
                 }
             }
         }
@@ -519,7 +520,7 @@ export class RoomInfoViewCtrl
 
         if(child !== null)
         {
-            child.addEventListener('WME_CLICK', handler);
+            child.addEventListener(WindowMouseEvent.CLICK, handler);
         }
     }
 

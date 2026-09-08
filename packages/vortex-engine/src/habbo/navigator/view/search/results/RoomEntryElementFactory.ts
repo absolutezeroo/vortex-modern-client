@@ -7,6 +7,7 @@ import type {HabboNewNavigator} from '../../../HabboNewNavigator';
 import type { ViewModeType} from '../../ViewMode';
 import {isEventViewMode, ViewMode} from '../../ViewMode';
 import {RoomEntryUtils} from '../../RoomEntryUtils';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Factory for creating room entry elements (rows and tiles) in navigator results.
@@ -235,8 +236,8 @@ export class RoomEntryElementFactory
         if(goToRoomRegion)
         {
             goToRoomRegion.id = roomData.flatId;
-            goToRoomRegion.addEventListener('WME_CLICK', this.onGoButtonClicked);
-            goToRoomRegion.addEventListener('WME_OVER', isTile ? this.onTileGoToRoomMouseOver : this.onGoToRoomMouseOver);
+            goToRoomRegion.addEventListener(WindowMouseEvent.CLICK, this.onGoButtonClicked);
+            goToRoomRegion.addEventListener(WindowMouseEvent.OVER, isTile ? this.onTileGoToRoomMouseOver : this.onGoToRoomMouseOver);
         }
 
         const infoPopupRegion = container.findChildByName('info_popup_click_region');
@@ -244,8 +245,8 @@ export class RoomEntryElementFactory
         if(infoPopupRegion)
         {
             infoPopupRegion.id = roomData.flatId;
-            infoPopupRegion.addEventListener('WME_CLICK', this.onMouseClicked);
-            infoPopupRegion.addEventListener('WME_OVER', this.onRoomInfoMouseOver);
+            infoPopupRegion.addEventListener(WindowMouseEvent.CLICK, this.onMouseClicked);
+            infoPopupRegion.addEventListener(WindowMouseEvent.OVER, this.onRoomInfoMouseOver);
         }
 
         // Set user count color indicator

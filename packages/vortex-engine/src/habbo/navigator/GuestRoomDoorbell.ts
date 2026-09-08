@@ -4,6 +4,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {GuestRoomData} from '../communication/messages/incoming/navigator';
 import {QuitMessageComposer} from '../communication/messages/outgoing/room/session/QuitMessageComposer';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Doorbell dialog for doorbell-protected rooms.
@@ -151,21 +152,21 @@ export class GuestRoomDoorbell
 
         if(ringButton)
         {
-            ringButton.addEventListener('WME_CLICK', this.onRingDoorbell);
+            ringButton.addEventListener(WindowMouseEvent.CLICK, this.onRingDoorbell);
         }
 
         const cancelRegion = (this._window as any).findChildByName?.('cancel_region');
 
         if(cancelRegion)
         {
-            cancelRegion.addEventListener('WME_CLICK', this.onClose);
+            cancelRegion.addEventListener(WindowMouseEvent.CLICK, this.onClose);
         }
 
         const closeButton = (this._window as any).findChildByTag?.('close');
 
         if(closeButton)
         {
-            closeButton.addEventListener('WME_CLICK', this.onClose);
+            closeButton.addEventListener(WindowMouseEvent.CLICK, this.onClose);
         }
     }
 

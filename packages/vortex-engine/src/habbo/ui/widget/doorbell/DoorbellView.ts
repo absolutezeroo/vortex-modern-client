@@ -5,6 +5,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 import type {DoorbellWidget} from './DoorbellWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.doorbell.DoorbellView');
 
@@ -119,7 +120,7 @@ export class DoorbellView
         {
             const button = row.findChildByName(buttonName);
 
-            if(button !== null) button.addEventListener('WME_CLICK', this.onButtonClicked);
+            if(button !== null) button.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
         }
 
         return row;
@@ -157,7 +158,7 @@ export class DoorbellView
 
         const close = this._frame.findChildByTag('close');
 
-        if(close !== null) close.addEventListener('WME_CLICK', this.onClose);
+        if(close !== null) close.addEventListener(WindowMouseEvent.CLICK, this.onClose);
     }
 
     // AS3: .../DoorbellView.as::onClose()

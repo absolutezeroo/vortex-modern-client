@@ -5,7 +5,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
@@ -220,7 +220,7 @@ export class HabbiconView implements IDisposable, IUpdateReceiver
     // AS3: HabbiconView.as::addEventListeners()
     private addEventListeners(): void
     {
-        this.headerButtonClose?.addEventListener('WME_CLICK', this.onWindowClose);
+        this.headerButtonClose?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
 
         this._controller?.addEventListener(HabbiconControllerEvent.HABBICON_STATUS_CHANGED, this.onControllerDataUpdated);
         this._controller?.addEventListener(HabbiconControllerEvent.OWNED_HABBICONS_UPDATED, this.onControllerDataUpdated);
@@ -230,7 +230,7 @@ export class HabbiconView implements IDisposable, IUpdateReceiver
     // AS3: HabbiconView.as::removeEventListeners()
     private removeEventListeners(): void
     {
-        if(this._window !== null) this.headerButtonClose?.removeEventListener('WME_CLICK', this.onWindowClose);
+        if(this._window !== null) this.headerButtonClose?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
 
         this._controller?.removeEventListener(HabbiconControllerEvent.HABBICON_STATUS_CHANGED, this.onControllerDataUpdated);
         this._controller?.removeEventListener(HabbiconControllerEvent.OWNED_HABBICONS_UPDATED, this.onControllerDataUpdated);

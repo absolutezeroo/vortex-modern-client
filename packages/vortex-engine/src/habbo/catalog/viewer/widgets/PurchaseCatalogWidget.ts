@@ -1,5 +1,5 @@
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IStuffData} from '@habbo/room/object/data/IStuffData';
 import type {HabboCatalog} from '../../HabboCatalog';
 import type {IPurchasableOffer} from '../../IPurchasableOffer';
@@ -110,7 +110,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
             this._catalog!.sendRoomAdPurchaseInitiatedEvent();
         }
 
-        this.window.findChildByName('buy_button')!.addEventListener('WME_CLICK', this.onPurchase);
+        this.window.findChildByName('buy_button')!.addEventListener(WindowMouseEvent.CLICK, this.onPurchase);
 
         const giftButton = this.window.findChildByName('gift_button');
 
@@ -120,7 +120,7 @@ export class PurchaseCatalogWidget extends CatalogWidget
             giftButton!.visible = false;
         }
 
-        giftButton!.addEventListener('WME_CLICK', this.onGift);
+        giftButton!.addEventListener(WindowMouseEvent.CLICK, this.onGift);
         giftButton!.disable();
 
         this.events.on(SelectProductEvent.SELECT_PRODUCT, this.onSelectProduct);

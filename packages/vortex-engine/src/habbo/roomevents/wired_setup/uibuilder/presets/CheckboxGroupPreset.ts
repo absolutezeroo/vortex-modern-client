@@ -1,6 +1,6 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {OrderedMap} from '@core/utils/OrderedMap';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 import {Util} from '@habbo/roomevents/Util';
@@ -84,8 +84,8 @@ export class CheckboxGroupPreset extends WiredUIPreset
 
             if(onChange != null)
             {
-                option.checkbox.addEventListener('WE_SELECTED', this._onSelectionChange);
-                option.checkbox.addEventListener('WE_UNSELECTED', this._onSelectionChange);
+                option.checkbox.addEventListener(WindowEvent.WE_SELECTED, this._onSelectionChange);
+                option.checkbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onSelectionChange);
             }
 
             index++;

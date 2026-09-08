@@ -16,6 +16,7 @@ import {drawIntoBitmapSlot} from '@core/utils/BitmapSlot';
 import type {Pet} from './Pet';
 import type {PetsModel} from './PetsModel';
 import {PetsGridItem} from './PetsGridItem';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.inventory.pets.PetsView');
 
@@ -332,8 +333,8 @@ export class PetsView implements IGetImageListener
 
         this.updateFilterOptions();
 
-        this._window.findChildByName('place_button')?.addEventListener('WME_CLICK', this.startPlacingHandler);
-        this._window.findChildByName('preview_image')?.addEventListener('WME_DOWN', this.startPlacingHandler);
+        this._window.findChildByName('place_button')?.addEventListener(WindowMouseEvent.CLICK, this.startPlacingHandler);
+        this._window.findChildByName('preview_image')?.addEventListener(WindowMouseEvent.DOWN, this.startPlacingHandler);
 
         this.updatePreview();
         this._initialized = true;

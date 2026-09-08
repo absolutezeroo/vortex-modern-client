@@ -6,6 +6,7 @@ import type { IHabboTransitionalNavigator } from '../IHabboTransitionalNavigator
 import { GuestRoomListCtrl } from './GuestRoomListCtrl';
 import { Util } from '../Util';
 import { RoomAdEventTabAdClickedComposer } from '../../communication/messages/outgoing/navigator/RoomAdEventTabAdClickedComposer';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Displays event room ads in a scrollable list.
@@ -24,10 +25,10 @@ export class RoomAdListCtrl extends GuestRoomListCtrl
         const entry = this._navigator.getXmlWindow('grs_room_ads_details_phase_one') as IWindowContainer;
 
         entry.background = true;
-        entry.addEventListener('WME_MOVE', (e: WindowEvent) => this.onMouseMove(e));
-        entry.addEventListener('WME_OVER', (e: WindowEvent) => this.onMouseOver(e));
-        entry.addEventListener('WME_OUT', (e: WindowEvent) => this.onMouseOut(e));
-        entry.addEventListener('WME_CLICK', (e: WindowEvent) => this.onMouseClick(e));
+        entry.addEventListener(WindowMouseEvent.MOVE, (e: WindowEvent) => this.onMouseMove(e));
+        entry.addEventListener(WindowMouseEvent.OVER, (e: WindowEvent) => this.onMouseOver(e));
+        entry.addEventListener(WindowMouseEvent.OUT, (e: WindowEvent) => this.onMouseOut(e));
+        entry.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this.onMouseClick(e));
         entry.setParamFlag(1, true);
         entry.setParamFlag(128, true);
         entry.color = this.getBgColor(index);

@@ -18,6 +18,7 @@ import type {IIconButtonWindow} from '@core/window/components/IIconButtonWindow'
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {NewModerationTool} from '../NewModerationTool';
 import {NewModToolSubView} from './NewModToolSubView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class GiveFurniSubView extends NewModToolSubView
 {
@@ -26,9 +27,9 @@ export class GiveFurniSubView extends NewModToolSubView
     {
         super(tool, window);
 
-        (this.plusButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onPlusButtonClick);
-        (this.minusButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onMinusButtonClick);
-        this.donateFurniButton?.addEventListener('WME_CLICK', this.onDonateClick);
+        (this.plusButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onPlusButtonClick);
+        (this.minusButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onMinusButtonClick);
+        this.donateFurniButton?.addEventListener(WindowMouseEvent.CLICK, this.onDonateClick);
     }
 
     // AS3: .../new_mod_tool_tabs/_SafeCls_2522.as::onDonateClick()

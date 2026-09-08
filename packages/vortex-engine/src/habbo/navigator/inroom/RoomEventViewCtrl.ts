@@ -1,7 +1,7 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
 import {TextFieldManager} from '../TextFieldManager';
@@ -9,6 +9,7 @@ import {EditEventMessageComposer} from '@habbo/communication/messages/outgoing/n
 import {CancelEventMessageComposer} from '@habbo/communication/messages/outgoing/navigator/CancelEventMessageComposer';
 import {RoomAdErrorMessageEvent} from '@habbo/communication/messages/incoming/advertisement/RoomAdErrorMessageEvent';
 import type {RoomAdErrorMessageParser} from '@habbo/communication/messages/parser/advertisement/RoomAdErrorMessageParser';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Room event (ad) creation/editing view controller.
@@ -176,28 +177,28 @@ export class RoomEventViewCtrl implements IDisposable
 
         if(closeBtn !== null)
         {
-            closeBtn.addEventListener('WME_CLICK', this._onClose);
+            closeBtn.addEventListener(WindowMouseEvent.CLICK, this._onClose);
         }
 
         const endBtn = win.findChildByName('end_button');
 
         if(endBtn !== null)
         {
-            endBtn.addEventListener('WME_CLICK', this._onEndButtonClick);
+            endBtn.addEventListener(WindowMouseEvent.CLICK, this._onEndButtonClick);
         }
 
         const cancelBtn = win.findChildByName('cancel_button');
 
         if(cancelBtn !== null)
         {
-            cancelBtn.addEventListener('WME_CLICK', this._onCancelButtonClick);
+            cancelBtn.addEventListener(WindowMouseEvent.CLICK, this._onCancelButtonClick);
         }
 
         const saveBtn = win.findChildByName('save_button');
 
         if(saveBtn !== null)
         {
-            saveBtn.addEventListener('WME_CLICK', this._onSaveButtonClick);
+            saveBtn.addEventListener(WindowMouseEvent.CLICK, this._onSaveButtonClick);
         }
 
         const nameInput = this._getInput('event_name');
@@ -206,13 +207,13 @@ export class RoomEventViewCtrl implements IDisposable
         if(nameInput !== null)
         {
             this._eventNameManager = new TextFieldManager(this._navigator, nameInput, 25);
-            nameInput.addEventListener('WE_UNFOCUSED', this._onUnfocus);
+            nameInput.addEventListener(WindowEvent.WE_UNFOCUSED, this._onUnfocus);
         }
 
         if(descInput !== null)
         {
             this._eventDescManager = new TextFieldManager(this._navigator, descInput, 100);
-            descInput.addEventListener('WE_UNFOCUSED', this._onUnfocus);
+            descInput.addEventListener(WindowEvent.WE_UNFOCUSED, this._onUnfocus);
         }
 
         this._navigator.communication.addMessageEvent(

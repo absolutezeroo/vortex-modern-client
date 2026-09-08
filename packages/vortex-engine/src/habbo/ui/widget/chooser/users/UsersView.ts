@@ -9,6 +9,8 @@ import {Logger} from '@core/utils/Logger';
 import type {ChooserItem} from '../ChooserItem';
 import {UsersChooserTableObject} from './UsersChooserTableObject';
 import type {UsersChooserWidget} from './UsersChooserWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.chooser.users.UsersView');
 
@@ -129,10 +131,10 @@ export class UsersView
 
         this.createTable();
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onClose);
-        this.searchTextInput?.addEventListener('WE_CHANGE', this.onSearchChanged);
-        this.typeDropdown?.addEventListener('WE_SELECTED', this.onTypeChanged);
-        this.clearButton?.addEventListener('WME_CLICK', this.onClearClicked);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
+        this.searchTextInput?.addEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+        this.typeDropdown?.addEventListener(WindowEvent.WE_SELECTED, this.onTypeChanged);
+        this.clearButton?.addEventListener(WindowMouseEvent.CLICK, this.onClearClicked);
 
         const parent = this._window.parent;
 

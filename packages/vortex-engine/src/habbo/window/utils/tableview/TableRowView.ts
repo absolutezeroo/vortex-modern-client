@@ -1,7 +1,7 @@
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindow} from '@core/window/IWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import type {ITableObject} from './ITableObject';
 import {TableCellView} from './TableCellView';
@@ -63,10 +63,10 @@ export class TableRowView implements IDisposable
         }
 
         this.updateColor();
-        this._container.addEventListener('WME_DOWN', this.onDown);
-        this._container.addEventListener('WME_OVER', this.onHoverOver);
-        this._container.addEventListener('WME_OUT', this.onHoverOut);
-        this._container.addEventListener('WME_CLICK_AWAY', this.onClickAway);
+        this._container.addEventListener(WindowMouseEvent.DOWN, this.onDown);
+        this._container.addEventListener(WindowMouseEvent.OVER, this.onHoverOver);
+        this._container.addEventListener(WindowMouseEvent.OUT, this.onHoverOut);
+        this._container.addEventListener(WindowMouseEvent.CLICK_AWAY, this.onClickAway);
     }
 
     // AS3: TableRowView.as::windowIsChild()

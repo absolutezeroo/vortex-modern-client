@@ -24,6 +24,9 @@ import type {FurniChestSubController} from '../FurniChestSubController';
 import {ChestItemTypeRenderableWrapper} from './ChestItemTypeRenderableWrapper';
 import {FurniChestItemView} from './FurniChestItemView';
 import type {IChestItemView} from './IChestItemView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 
 /**
  * The furniture chest's grid, preview panel and withdraw controls.
@@ -103,11 +106,11 @@ export class FurniChestView
 
         if(input) input.restrict = '0-9';
 
-        this.withdrawButton?.addEventListener('WME_CLICK', this.onWithdrawClick);
-        this.viewLogsButton?.addEventListener('WME_CLICK', this.onViewLogsClick);
-        this.searchInput?.addEventListener('WE_CHANGE', this.onSearchChanged);
-        this.searchInput?.addEventListener('WKE_KEY_DOWN', this.onSearchMaybeEnter);
-        this.searchClearButton?.addEventListener('WME_CLICK', this.onClearSearchClicked);
+        this.withdrawButton?.addEventListener(WindowMouseEvent.CLICK, this.onWithdrawClick);
+        this.viewLogsButton?.addEventListener(WindowMouseEvent.CLICK, this.onViewLogsClick);
+        this.searchInput?.addEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+        this.searchInput?.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchMaybeEnter);
+        this.searchClearButton?.addEventListener(WindowMouseEvent.CLICK, this.onClearSearchClicked);
     }
 
     /**

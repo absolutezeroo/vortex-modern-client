@@ -21,6 +21,7 @@ import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {ReportStatusTableObject} from './reportstatus/ReportStatusTableObject';
 import {MyReportStatusColumn} from './MyReportStatusColumn';
 import type {HabboHelp} from './HabboHelp';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.help.MyReportStatus');
 
@@ -104,7 +105,7 @@ export class MyReportStatus implements IDisposable
             this._infoBubble.visible = false;
         }
 
-        this.appealButton?.addEventListener('WME_CLICK', this.onClickAppeal);
+        this.appealButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickAppeal);
 
         this._window.center();
         this._window.procedure = this.windowEventHandler;

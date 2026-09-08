@@ -8,6 +8,7 @@ import {PollQuestion} from '@habbo/communication/messages/parser/poll/PollQuesti
 import {RoomWidgetPollMessage} from '../messages/RoomWidgetPollMessage';
 import type {IPollDialog} from './IPollDialog';
 import type {PollWidget} from './PollWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.poll.PollContentDialog');
 
@@ -151,7 +152,7 @@ export class PollContentDialog implements IPollDialog
     {
         const button = window.findChildByName(name) ?? null;
 
-        if(button !== null) button.addEventListener('WME_CLICK', handler);
+        if(button !== null) button.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     // AS3: .../widget/poll/PollContentDialog.as::onClose()

@@ -6,8 +6,8 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IAvatarFigureContainer} from '@habbo/avatar/IAvatarFigureContainer';
@@ -540,13 +540,13 @@ export class MannequinWidget extends RoomWidgetBase
     // AS3: .../mannequin/MannequinWidget.as::addClickListener()
     private addClickListener(name: string): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WME_CLICK', this.onMouseClick);
+        this._window?.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClick);
     }
 
     // AS3: .../mannequin/MannequinWidget.as::addTextFieldListener()
     private addTextFieldListener(name: string): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WKE_KEY_UP', this.onKeyTyped);
+        this._window?.findChildByName(name)?.addEventListener(WindowKeyboardEvent.KEY_UP, this.onKeyTyped);
     }
 
     // AS3: .../mannequin/MannequinWidget.as::onKeyTyped()

@@ -1,9 +1,10 @@
 import type { IWindowContainer } from '@core/window/IWindowContainer';
 import type { IDropMenuWindow } from '@core/window/components/IDropMenuWindow';
-import type { WindowEvent } from '@core/window/events/WindowEvent';
+import { WindowEvent } from '@core/window/events/WindowEvent';
 import type { ITabPageDecorator } from './ITabPageDecorator';
 import type { ITabNavigator } from '../../domain/Tab';
 import { CanCreateRoomMessageComposer } from '../../../communication/messages/outgoing/navigator/CanCreateRoomMessageComposer';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Tab page decorator for the "Me" (My Rooms) tab.
@@ -49,7 +50,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
 
             if(this._filter)
             {
-                this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
+                this._filter.addEventListener(WindowEvent.WE_SELECTED, this.onFilterSelected);
             }
         }
 
@@ -61,9 +62,9 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
     {
         if(!this._filter || (this._filter as unknown as { disposed?: boolean }).disposed) return;
 
-        this._filter.removeEventListener('WE_SELECTED', this.onFilterSelected);
+        this._filter.removeEventListener(WindowEvent.WE_SELECTED, this.onFilterSelected);
         this._filter.selection = 0;
-        this._filter.addEventListener('WE_SELECTED', this.onFilterSelected);
+        this._filter.addEventListener(WindowEvent.WE_SELECTED, this.onFilterSelected);
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/navigator/mainview/tabpagedecorators/MyRoomsTabPageDecorator.as::refreshFooter()
@@ -77,7 +78,7 @@ export class MyRoomsTabPageDecorator implements ITabPageDecorator
 
         if(createRoomButton)
         {
-            createRoomButton.addEventListener('WME_CLICK', this.onCreateRoomClick);
+            createRoomButton.addEventListener(WindowMouseEvent.CLICK, this.onCreateRoomClick);
         }
 
         this._navigator.refreshButton(footer, 'create_room', true, null, 0);

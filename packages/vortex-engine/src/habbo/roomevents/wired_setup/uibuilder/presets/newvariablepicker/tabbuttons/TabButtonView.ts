@@ -2,7 +2,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import type {ExpandedVariablePickerView} from '../ExpandedVariablePickerView';
 import type {TabButtonConfig} from './TabButtonConfig';
@@ -60,9 +60,9 @@ export class TabButtonView implements IDisposable
         this._window.width = width;
         this._window.toolTipCaption = parent.roomEvents.localization.getLocalization(tabConfig.tooltipCaption);
         this.image.assetUri = tabConfig.assetUri;
-        this._window.addEventListener('WME_CLICK', this.onClick);
-        this._window.addEventListener('WME_OVER', this.onOver);
-        this._window.addEventListener('WME_OUT', this.onOut);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClick);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onOver);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onOut);
         this.updateColoring();
     }
 

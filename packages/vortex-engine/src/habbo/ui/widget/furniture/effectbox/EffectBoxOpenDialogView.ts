@@ -1,7 +1,7 @@
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import type {XmlAsset} from '@core/assets/XmlAsset';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
@@ -106,7 +106,7 @@ export class EffectBoxOpenDialogView
     // AS3: .../effectbox/EffectBoxOpenDialogView.as::addClickListener()
     private addClickListener(name: string): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WME_CLICK', this.onMouseClick);
+        this._window?.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClick);
     }
 
     // AS3: .../effectbox/EffectBoxOpenDialogView.as::onMouseClick()

@@ -17,7 +17,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboCatalog} from '@habbo/catalog/IHabboCatalog';
 import type {IRarityItemPreviewOverlayWidget} from '@habbo/window/widgets/IRarityItemPreviewOverlayWidget';
@@ -359,7 +359,7 @@ export class InfoStandPetView
         {
             if(button.parent) button.parent.width = button.width;
 
-            button.addEventListener('WE_RESIZED', this.onButtonResized);
+            button.addEventListener(WindowEvent.WE_RESIZED, this.onButtonResized);
         }
     }
 

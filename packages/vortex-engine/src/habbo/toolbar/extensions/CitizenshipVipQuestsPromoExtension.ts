@@ -13,6 +13,7 @@ import {ToolbarDisplayExtensionIds} from '../ToolbarDisplayExtensionIds';
 
 import type {HabboToolbar} from '../HabboToolbar';
 import type {IExtensionView} from '../IExtensionView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.CitizenshipVipQuestsPromoExtension');
 
@@ -143,9 +144,9 @@ export class CitizenshipVipQuestsPromoExtension
 
         if(window === null) return null;
 
-        window.findChildByName('quests_button')?.addEventListener('WME_CLICK', this.onButtonClicked);
-        window.findChildByName('minimize_region')?.addEventListener('WME_CLICK', this.onMinMax);
-        window.findChildByName('maximize_region')?.addEventListener('WME_CLICK', this.onMinMax);
+        window.findChildByName('quests_button')?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
+        window.findChildByName('minimize_region')?.addEventListener(WindowMouseEvent.CLICK, this.onMinMax);
+        window.findChildByName('maximize_region')?.addEventListener(WindowMouseEvent.CLICK, this.onMinMax);
 
         this._expandedHeight = window.height;
 

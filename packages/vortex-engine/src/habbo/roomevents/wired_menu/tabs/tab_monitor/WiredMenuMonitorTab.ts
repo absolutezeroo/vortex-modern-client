@@ -3,7 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IHTMLTextWindow} from '@core/window/components/IHTMLTextWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import {TableView} from '@habbo/window/utils/tableview/TableView';
 import {TableColumn} from '@habbo/window/utils/tableview/TableColumn';
@@ -108,9 +108,9 @@ export class WiredMenuMonitorTab extends WiredMenuDefaultTab implements IUpdateR
         this.createLogTable();
         this.addMessageEvent(new WiredRoomStatsEvent((event) => this.onRoomStatsEvent(event)));
         this.addMessageEvent(new WiredErrorLogsEvent((event) => this.onErrorLogsEvent(event)));
-        this.clearButton.addEventListener('WME_CLICK', this._onClearButtonClicked);
-        this.logOverviewButton.addEventListener('WME_CLICK', this._onLogOverviewButtonClicked);
-        this.monitorImage2.addEventListener('WME_CLICK', this._onClickMonitor);
+        this.clearButton.addEventListener(WindowMouseEvent.CLICK, this._onClearButtonClicked);
+        this.logOverviewButton.addEventListener(WindowMouseEvent.CLICK, this._onLogOverviewButtonClicked);
+        this.monitorImage2.addEventListener(WindowMouseEvent.CLICK, this._onClickMonitor);
     }
 
     // AS3: WiredMenuMonitorTab.as::colorize()

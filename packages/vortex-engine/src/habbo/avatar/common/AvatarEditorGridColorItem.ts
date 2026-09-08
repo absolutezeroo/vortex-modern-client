@@ -5,6 +5,7 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import type {IPartColor} from '../structure/figure/IPartColor';
 import type {IAvatarEditorGridColorItem} from './IAvatarEditorGridItem';
 import type {ICategoryModel} from './ICategoryModel';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * One colour swatch: a tinted 13×21 chip, a border that shows selection and hover, and a club
@@ -72,8 +73,8 @@ export class AvatarEditorGridColorItem implements IAvatarEditorGridColorItem
         this.setupColor();
         this.updateThumbData();
 
-        window?.addEventListener('WME_OVER', this.onMouseOver);
-        window?.addEventListener('WME_OUT', this.onMouseOut);
+        window?.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        window?.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
     }
 
     // AS3: .../avatar/common/AvatarEditorGridColorItem.as::get view()

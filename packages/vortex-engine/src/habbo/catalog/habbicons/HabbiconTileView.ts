@@ -2,7 +2,7 @@ import type {IDisposable} from '@core/runtime';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import type {HabbiconController} from './HabbiconController';
 import type {HabbiconEntryModel} from './HabbiconEntryModel';
@@ -101,9 +101,9 @@ export class HabbiconTileView implements IDisposable
     {
         this._window = template.clone() as IWindowContainer;
 
-        this._window.addEventListener('WME_CLICK', this.onClicked);
-        this._window.addEventListener('WME_OVER', this.onOver);
-        this._window.addEventListener('WME_OUT', this.onOut);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClicked);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onOver);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onOut);
     }
 
     // AS3: HabbiconTileView.as::claim()
@@ -371,9 +371,9 @@ export class HabbiconTileView implements IDisposable
 
         this.detachFromParent();
 
-        this._window?.removeEventListener('WME_CLICK', this.onClicked);
-        this._window?.removeEventListener('WME_OVER', this.onOver);
-        this._window?.removeEventListener('WME_OUT', this.onOut);
+        this._window?.removeEventListener(WindowMouseEvent.CLICK, this.onClicked);
+        this._window?.removeEventListener(WindowMouseEvent.OVER, this.onOver);
+        this._window?.removeEventListener(WindowMouseEvent.OUT, this.onOut);
 
         this.clearBitmap();
 

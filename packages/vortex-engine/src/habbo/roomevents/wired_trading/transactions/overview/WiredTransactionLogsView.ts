@@ -7,7 +7,7 @@ import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {LoadingIcon} from '@habbo/utils/LoadingIcon';
 import type {ITableObject} from '@habbo/window/utils/tableview/ITableObject';
@@ -27,6 +27,7 @@ import {Util} from '../../../Util';
 import {TransactionConfig} from './TransactionConfig';
 import {TransactionTableObject} from './TransactionTableObject';
 import type {WiredTransactionLogsController} from './WiredTransactionLogsController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.roomevents.transactions.WiredTransactionLogsView');
 
@@ -129,14 +130,14 @@ export class WiredTransactionLogsView implements IDisposable
 
         this.createTransactionTable();
 
-        this.firstPageButton?.addEventListener('WME_CLICK', this.onFirstPageClick);
-        this.previousPageButton?.addEventListener('WME_CLICK', this.onPreviousPageClick);
-        this.nextPageButton?.addEventListener('WME_CLICK', this.onNextPageClick);
-        this.lastPageButton?.addEventListener('WME_CLICK', this.onLastPageClick);
-        this.refreshButton?.addEventListener('WME_CLICK', this.onRefreshClick);
-        pageNumberInput?.addEventListener('WKE_KEY_DOWN', this.onPageInputDown);
-        pageNumberInput?.addEventListener('WME_CLICK_AWAY', this.onPageInputClickAway);
-        this.closeButton?.addEventListener('WME_CLICK', this.onClose);
+        this.firstPageButton?.addEventListener(WindowMouseEvent.CLICK, this.onFirstPageClick);
+        this.previousPageButton?.addEventListener(WindowMouseEvent.CLICK, this.onPreviousPageClick);
+        this.nextPageButton?.addEventListener(WindowMouseEvent.CLICK, this.onNextPageClick);
+        this.lastPageButton?.addEventListener(WindowMouseEvent.CLICK, this.onLastPageClick);
+        this.refreshButton?.addEventListener(WindowMouseEvent.CLICK, this.onRefreshClick);
+        pageNumberInput?.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onPageInputDown);
+        pageNumberInput?.addEventListener(WindowMouseEvent.CLICK_AWAY, this.onPageInputClickAway);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
     }
 
     // AS3: WiredTransactionLogsView.as::onClose()

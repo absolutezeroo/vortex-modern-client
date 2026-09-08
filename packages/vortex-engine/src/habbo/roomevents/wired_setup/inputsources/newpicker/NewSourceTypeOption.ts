@@ -2,7 +2,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {IIconButtonWindow} from '@core/window/components/IIconButtonWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Util} from '@habbo/roomevents/Util';
 
 import {VariableExtraSourceTypes} from '../../common/VariableExtraSourceTypes';
@@ -39,11 +39,11 @@ export class NewSourceTypeOption
         this._picker = picker;
         this._container = container;
         this._option = option;
-        this._container.addEventListener('WME_CLICK', this._onClick);
-        this._container.addEventListener('WME_OVER', this._onOver);
-        this._container.addEventListener('WME_OUT', this._onOut);
-        this._container.addEventListener('WME_OUT', this._maybeCancelEvent);
-        this._container.addEventListener('WME_UP', this._maybeCancelEvent);
+        this._container.addEventListener(WindowMouseEvent.CLICK, this._onClick);
+        this._container.addEventListener(WindowMouseEvent.OVER, this._onOver);
+        this._container.addEventListener(WindowMouseEvent.OUT, this._onOut);
+        this._container.addEventListener(WindowMouseEvent.OUT, this._maybeCancelEvent);
+        this._container.addEventListener(WindowMouseEvent.UP, this._maybeCancelEvent);
 
         const roomEvents = picker.roomEvents;
         const typeName = WiredInputSourcePicker.getTypeNameForSource(option);

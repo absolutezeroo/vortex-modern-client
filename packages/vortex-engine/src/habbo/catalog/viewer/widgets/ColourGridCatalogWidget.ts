@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {CatalogWidgetColoursEvent} from './events/CatalogWidgetColoursEvent';
 import {CatalogWidgetMultiColoursEvent} from './events/CatalogWidgetMultiColoursEvent';
@@ -179,7 +179,7 @@ export class ColourGridCatalogWidget extends CatalogWidget
 
         const container = this.page.viewer.catalog.windowManager!.buildWidgetLayout('color_chooser_cell') as unknown as IWindowContainer;
 
-        container.addEventListener('WME_CLICK', this.onClick);
+        container.addEventListener(WindowMouseEvent.CLICK, this.onClick);
         container.background = true;
         container.color = 0xFFFFFFFF;
 

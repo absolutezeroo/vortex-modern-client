@@ -6,7 +6,7 @@ import type {IScrollbarWindow} from './IScrollbarWindow';
 import type {IScrollableWindow} from './IScrollableWindow';
 import type {IIterator} from '../utils/IIterator';
 import {ContainerController} from './ContainerController';
-import type {WindowEvent} from '../events/WindowEvent';
+import {WindowEvent} from '../events/WindowEvent';
 
 /**
  * Scrollable item grid window.
@@ -240,8 +240,8 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 
             if(this._scrollBarRef)
             {
-                (this._scrollBarRef as unknown as IWindow).addEventListener('WE_ENABLED', this._scrollBarEventProcBound);
-                (this._scrollBarRef as unknown as IWindow).addEventListener('WE_DISABLED', this._scrollBarEventProcBound);
+                (this._scrollBarRef as unknown as IWindow).addEventListener(WindowEvent.WE_ENABLED, this._scrollBarEventProcBound);
+                (this._scrollBarRef as unknown as IWindow).addEventListener(WindowEvent.WE_DISABLED, this._scrollBarEventProcBound);
             }
         }
 
@@ -363,8 +363,8 @@ export class ScrollableItemGridWindow extends ContainerController implements ISc
 
         if(this._scrollBarRef)
         {
-            (this._scrollBarRef as unknown as IWindow).removeEventListener('WE_ENABLED', this._scrollBarEventProcBound);
-            (this._scrollBarRef as unknown as IWindow).removeEventListener('WE_DISABLED', this._scrollBarEventProcBound);
+            (this._scrollBarRef as unknown as IWindow).removeEventListener(WindowEvent.WE_ENABLED, this._scrollBarEventProcBound);
+            (this._scrollBarRef as unknown as IWindow).removeEventListener(WindowEvent.WE_DISABLED, this._scrollBarEventProcBound);
             this._scrollBarRef = null;
         }
 

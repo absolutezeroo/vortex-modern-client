@@ -2,7 +2,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IUpdateReceiver} from '@core/runtime';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * VariableTypePicker — the four source-type toggle buttons (furni / user / global / context) at the
@@ -49,8 +49,8 @@ export class VariableTypePicker implements IDisposable, IUpdateReceiver
 
             if(button != null)
             {
-                button.addEventListener('WME_OUT', this._maybeCancelEvent);
-                button.addEventListener('WME_UP', this._maybeCancelEvent);
+                button.addEventListener(WindowMouseEvent.OUT, this._maybeCancelEvent);
+                button.addEventListener(WindowMouseEvent.UP, this._maybeCancelEvent);
             }
         }
     }

@@ -3,7 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import type {WiredStyle} from '../../../styles/WiredStyle';
 import type {NewVariablePicker} from '../NewVariablePicker';
@@ -77,8 +77,8 @@ export class VariableNodeView implements IDisposable
         this._window.interactiveCursorDisabled = !this._canBeSelected;
         this.nodeName.blend = this._isDisabled ? 0.55 : 1;
         this.icon.blend = this._isDisabled ? 0.55 : 1;
-        this._window.addEventListener('WME_CLICK', this.onClick);
-        this._window.addEventListener('WME_OVER', this.onOver);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClick);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onOver);
 
         const localization = this._picker.roomEvents.localization;
 
@@ -225,8 +225,8 @@ export class VariableNodeView implements IDisposable
         }
 
         this.removeSublist();
-        this._window.removeEventListener('WME_CLICK', this.onClick);
-        this._window.removeEventListener('WME_OVER', this.onOver);
+        this._window.removeEventListener(WindowMouseEvent.CLICK, this.onClick);
+        this._window.removeEventListener(WindowMouseEvent.OVER, this.onOver);
         this._picker.roomEvents.variablePickerHelper.releaseNodeView(this._style, this._window);
         this._picker = null as unknown as NewVariablePicker;
         this._window = null as unknown as IRegionWindow;

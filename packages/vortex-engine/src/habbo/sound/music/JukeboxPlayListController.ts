@@ -1,6 +1,7 @@
 import type EventEmitter from 'eventemitter3';
 import type {IConnection} from '@core/communication/connection/IConnection';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
+import {SoundCompleteEvent} from '@habbo/sound/events/SoundCompleteEvent';
 import {Logger} from '@core/utils/Logger';
 import type {IPlayListController} from '../IPlayListController';
 import type {ISongInfo} from '../ISongInfo';
@@ -91,7 +92,7 @@ export class JukeboxPlayListController implements IPlayListController
             this._connection.addMessageEvent(event);
         }
 
-        this._events.on('SCE_TRAX_SONG_COMPLETE', this.onSongFinishedPlayingEvent);
+        this._events.on(SoundCompleteEvent.TRAX_SONG_COMPLETE, this.onSongFinishedPlayingEvent);
         this._musicController.events.on(SongInfoReceivedEvent.TRAX_SONG_INFO_RECEIVED, this.onSongInfoReceivedEvent);
     }
 
@@ -321,7 +322,7 @@ export class JukeboxPlayListController implements IPlayListController
 
         if(this._events !== null)
         {
-            this._events.off('SCE_TRAX_SONG_COMPLETE', this.onSongFinishedPlayingEvent);
+            this._events.off(SoundCompleteEvent.TRAX_SONG_COMPLETE, this.onSongFinishedPlayingEvent);
             this._events = null;
         }
 

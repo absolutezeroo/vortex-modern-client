@@ -7,6 +7,7 @@ import type {HabboNewNavigator} from '../../../HabboNewNavigator';
 import type {BlockResultsView} from './BlockResultsView';
 import type {RoomEntryElementFactory} from './RoomEntryElementFactory';
 import {NavigatorSearchAction} from '@habbo/communication/messages/incoming/newnavigator/NavigatorSearchResultBlock';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Factory for creating category elements in navigator search results.
@@ -104,7 +105,7 @@ export class CategoryElementFactory
 
         if(backEl)
         {
-            backEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryBackClicked(e));
+            backEl.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryBackClicked(e));
             backEl.visible = actionAllowed === NavigatorSearchAction.GO_BACK;
         }
 
@@ -115,7 +116,7 @@ export class CategoryElementFactory
         {
             collapseEl.visible = actionAllowed !== NavigatorSearchAction.GO_BACK;
             collapseEl.id = showMoreId;
-            collapseEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
+            collapseEl.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
         }
 
         // Wire category name region (clickable to collapse)
@@ -124,7 +125,7 @@ export class CategoryElementFactory
         if(nameRegion)
         {
             nameRegion.id = showMoreId;
-            nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
+            nameRegion.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryCollapseClicked(e));
         }
 
         // Wire show more button
@@ -133,7 +134,7 @@ export class CategoryElementFactory
         if(showMoreEl)
         {
             showMoreEl.id = showMoreId;
-            showMoreEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
+            showMoreEl.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
             showMoreEl.visible = actionAllowed === NavigatorSearchAction.SHOW_MORE;
         }
 
@@ -143,7 +144,7 @@ export class CategoryElementFactory
         if(addQuickLink)
         {
             addQuickLink.id = showMoreId;
-            addQuickLink.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
+            addQuickLink.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
 
             const searchCode = this._navigator.currentResults?.searchCodeOriginal ?? '';
 
@@ -171,14 +172,14 @@ export class CategoryElementFactory
 
                 if(toggleTiles)
                 {
-                    toggleTiles.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
+                    toggleTiles.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
                     toggleTiles.id = showMoreId;
                     toggleTiles.visible = resultMode === 0;
                 }
 
                 if(toggleRows)
                 {
-                    toggleRows.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
+                    toggleRows.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryToggleModeClicked(e));
                     toggleRows.id = showMoreId;
                     toggleRows.visible = resultMode === 1;
                 }
@@ -224,7 +225,7 @@ export class CategoryElementFactory
                     {
                         currentTileContainer = this._roomEntryElementFactory.getNewTileContainerElement();
                         roomList.addListItem(currentTileContainer as unknown as IWindow);
-                        currentTileContainer.addEventListener('WME_WHEEL', (event: WindowEvent) =>
+                        currentTileContainer.addEventListener(WindowMouseEvent.WHEEL, (event: WindowEvent) =>
                         {
                             const delta = (event as unknown as { delta?: number }).delta ?? 0;
                             const list = this._blockResultsView?.itemList as unknown as { scrollWithWheel?: (value: number, useHorizontal: boolean) => boolean } | null;
@@ -293,7 +294,7 @@ export class CategoryElementFactory
         if(showMoreEl)
         {
             showMoreEl.id = showMoreId;
-            showMoreEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
+            showMoreEl.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryShowMoreClicked(e));
             showMoreEl.visible = actionAllowed === NavigatorSearchAction.SHOW_MORE;
         }
 
@@ -301,7 +302,7 @@ export class CategoryElementFactory
 
         if(expandEl)
         {
-            expandEl.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
+            expandEl.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
             expandEl.id = showMoreId;
         }
 
@@ -309,7 +310,7 @@ export class CategoryElementFactory
 
         if(nameRegion)
         {
-            nameRegion.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
+            nameRegion.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryExpandClicked(e));
             nameRegion.id = showMoreId;
         }
 
@@ -317,7 +318,7 @@ export class CategoryElementFactory
 
         if(addQuickLink)
         {
-            addQuickLink.addEventListener('WME_CLICK', (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
+            addQuickLink.addEventListener(WindowMouseEvent.CLICK, (e: WindowEvent) => this._blockResultsView?.onCategoryAddQuickLinkClicked(e));
             addQuickLink.id = showMoreId;
 
             const searchCode = this._navigator.currentResults?.searchCodeOriginal ?? '';

@@ -8,8 +8,8 @@ import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import {Logger} from '@core/utils/Logger';
 
@@ -396,8 +396,8 @@ export class GuildMembersWindowCtrl
         if(pageInput !== null)
         {
             pageInput.restrict = '0-9';
-            pageInput.addEventListener('WKE_KEY_DOWN', this.onPageInputDown as unknown as (event: WindowEvent) => void);
-            pageInput.addEventListener('WME_CLICK_AWAY', this.onPageInputClickAway as unknown as (event: WindowEvent) => void);
+            pageInput.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onPageInputDown as unknown as (event: WindowEvent) => void);
+            pageInput.addEventListener(WindowMouseEvent.CLICK_AWAY, this.onPageInputClickAway as unknown as (event: WindowEvent) => void);
         }
 
         window.center();
@@ -561,27 +561,27 @@ export class GuildMembersWindowCtrl
 
         if(blockRegion)
         {
-            blockRegion.addEventListener('WME_OVER', this.onRemoveMouseOver);
-            blockRegion.addEventListener('WME_OUT', this.onRemoveMouseOut);
-            blockRegion.addEventListener('WME_CLICK', this.onBlockMouseClick);
+            blockRegion.addEventListener(WindowMouseEvent.OVER, this.onRemoveMouseOver);
+            blockRegion.addEventListener(WindowMouseEvent.OUT, this.onRemoveMouseOut);
+            blockRegion.addEventListener(WindowMouseEvent.CLICK, this.onBlockMouseClick);
         }
 
         const removeRegion = row.findChildByName('remove_region');
 
         if(removeRegion)
         {
-            removeRegion.addEventListener('WME_OVER', this.onRemoveMouseOver);
-            removeRegion.addEventListener('WME_OUT', this.onRemoveMouseOut);
-            removeRegion.addEventListener('WME_CLICK', this.onRemoveMouseClick);
+            removeRegion.addEventListener(WindowMouseEvent.OVER, this.onRemoveMouseOver);
+            removeRegion.addEventListener(WindowMouseEvent.OUT, this.onRemoveMouseOut);
+            removeRegion.addEventListener(WindowMouseEvent.CLICK, this.onRemoveMouseClick);
         }
 
         const actionRegion = row.findChildByName('action_link_region');
 
         if(actionRegion)
         {
-            actionRegion.addEventListener('WME_OVER', this.onActionLinkMouseOver);
-            actionRegion.addEventListener('WME_OUT', this.onActionLinkMouseOut);
-            actionRegion.addEventListener('WME_CLICK', this.onActionLinkClick);
+            actionRegion.addEventListener(WindowMouseEvent.OVER, this.onActionLinkMouseOver);
+            actionRegion.addEventListener(WindowMouseEvent.OUT, this.onActionLinkMouseOut);
+            actionRegion.addEventListener(WindowMouseEvent.CLICK, this.onActionLinkClick);
         }
 
         return row;

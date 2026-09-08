@@ -4,7 +4,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 
@@ -116,10 +116,10 @@ export class WiredMenuInspectionTab extends WiredMenuDefaultTab implements IUpda
         this.updatePreviewUI();
         this.addMessageEvent(new WiredVariablesForObjectEvent((event) => this.onWiredVariablesForObject(event)));
         this.addMessageEvent(new WiredMenuErrorEvent((event) => this.onWiredMenuError(event)));
-        this.highlightWiredButton.addEventListener('WME_CLICK', this._onHighlightWiredsClicked);
-        this.deleteVariableButton.addEventListener('WME_CLICK', this._onDeleteVariableClicked);
-        this.addVariableButton.addEventListener('WME_CLICK', this._onAddVariableClicked);
-        this.createVariableButton.addEventListener('WME_CLICK', this._onCreateVariableClicked);
+        this.highlightWiredButton.addEventListener(WindowMouseEvent.CLICK, this._onHighlightWiredsClicked);
+        this.deleteVariableButton.addEventListener(WindowMouseEvent.CLICK, this._onDeleteVariableClicked);
+        this.addVariableButton.addEventListener(WindowMouseEvent.CLICK, this._onAddVariableClicked);
+        this.createVariableButton.addEventListener(WindowMouseEvent.CLICK, this._onCreateVariableClicked);
         container.procedure = (event, window) => this.windowProcedure(event, window);
     }
 

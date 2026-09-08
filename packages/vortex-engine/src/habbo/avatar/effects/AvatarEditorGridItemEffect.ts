@@ -4,6 +4,7 @@ import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperW
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAvatarEffect} from '../IAvatarEffect';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * One tile in the effects grid: the effect's icon, a stack badge, and a duration bar.
@@ -86,8 +87,8 @@ export class AvatarEditorGridItemEffect
 
         this.selected = false;
 
-        this._window?.addEventListener('WME_OVER', this.onMouseOver);
-        this._window?.addEventListener('WME_OUT', this.onMouseOut);
+        this._window?.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        this._window?.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
     }
 
     // AS3: .../avatar/effects/AvatarEditorGridItemEffect.as::get window()

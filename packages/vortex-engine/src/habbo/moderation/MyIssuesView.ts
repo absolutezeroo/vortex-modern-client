@@ -13,6 +13,7 @@ import type {IIssueBrowserView} from './IIssueBrowserView';
 import type {IssueBrowser} from './IssueBrowser';
 import {IssueListView} from './IssueListView';
 import {IssueManager} from './IssueManager';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class MyIssuesView implements IIssueBrowserView
 {
@@ -46,7 +47,7 @@ export class MyIssuesView implements IIssueBrowserView
 
         const releaseAll = window.findChildByName('release_all');
 
-        if(releaseAll !== null) releaseAll.addEventListener('WME_CLICK', this.onReturnAll);
+        if(releaseAll !== null) releaseAll.addEventListener(WindowMouseEvent.CLICK, this.onReturnAll);
     }
 
     // AS3: MyIssuesView.as::get view()

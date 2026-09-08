@@ -1,6 +1,6 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -64,7 +64,7 @@ export class PaddedContainerPreset extends WiredUIPreset
         this._wrapped = wrapped;
         this._wrapped.window.x = this._leftPadding;
         this._wrapped.window.y = this._top;
-        this._wrapped.window.addEventListener('WE_RESIZED', this._onResizeListener);
+        this._wrapped.window.addEventListener(WindowEvent.WE_RESIZED, this._onResizeListener);
     }
 
     // AS3: PaddedContainerPreset.as::onResizeListener()
@@ -133,7 +133,7 @@ export class PaddedContainerPreset extends WiredUIPreset
             return;
         }
 
-        this._wrapped.window.removeEventListener('WE_RESIZED', this._onResizeListener);
+        this._wrapped.window.removeEventListener(WindowEvent.WE_RESIZED, this._onResizeListener);
         super.dispose();
         this._window.dispose();
         this._window = null as unknown as IWindowContainer;

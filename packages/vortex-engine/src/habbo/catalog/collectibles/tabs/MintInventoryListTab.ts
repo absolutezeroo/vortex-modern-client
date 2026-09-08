@@ -10,7 +10,7 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IUpdateReceiver} from '@core/runtime';
 import type {IDisposable} from '@core/runtime/IDisposable';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
@@ -163,7 +163,7 @@ export class MintInventoryListTab implements IUpdateReceiver
 
         this.createWalletButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickCreateWallet as unknown as (...args: unknown[]) => void);
         this.moreInfoButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickMoreInfo as unknown as (...args: unknown[]) => void);
-        this.stampsPurchaseDropdown?.addEventListener('WE_SELECTED', this.onSelectTokenOffer as unknown as (...args: unknown[]) => void);
+        this.stampsPurchaseDropdown?.addEventListener(WindowEvent.WE_SELECTED, this.onSelectTokenOffer as unknown as (...args: unknown[]) => void);
         this.stampBuyButton?.addEventListener(WindowMouseEvent.CLICK, this.onBuyStampsClicked as unknown as (...args: unknown[]) => void);
         this.collectButton?.addEventListener(WindowMouseEvent.CLICK, this.onCollectClicked as unknown as (...args: unknown[]) => void);
     }
@@ -958,7 +958,7 @@ export class MintInventoryListTab implements IUpdateReceiver
         // AS3 leaves all five listeners attached; the port removes them, as its sibling tabs do.
         this.createWalletButton?.removeEventListener(WindowMouseEvent.CLICK, this.onClickCreateWallet as unknown as (...args: unknown[]) => void);
         this.moreInfoButton?.removeEventListener(WindowMouseEvent.CLICK, this.onClickMoreInfo as unknown as (...args: unknown[]) => void);
-        this.stampsPurchaseDropdown?.removeEventListener('WE_SELECTED', this.onSelectTokenOffer as unknown as (...args: unknown[]) => void);
+        this.stampsPurchaseDropdown?.removeEventListener(WindowEvent.WE_SELECTED, this.onSelectTokenOffer as unknown as (...args: unknown[]) => void);
         this.stampBuyButton?.removeEventListener(WindowMouseEvent.CLICK, this.onBuyStampsClicked as unknown as (...args: unknown[]) => void);
         this.collectButton?.removeEventListener(WindowMouseEvent.CLICK, this.onCollectClicked as unknown as (...args: unknown[]) => void);
 

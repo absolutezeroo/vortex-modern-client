@@ -3,7 +3,7 @@ import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IDisposable} from '@core/runtime';
 import type {IAvatarImageWidget} from '@habbo/window/widgets/IAvatarImageWidget';
 import type {ForumPermissions} from '@habbo/communication/messages/parser/groupforums/ForumPermissions';
@@ -145,10 +145,10 @@ export class MessageListItemView implements IDisposable
         this._textBlockPool = [];
         this._activeTextBlocks = [];
 
-        this._avatarImage?.addEventListener('WME_CLICK', this.onSelectAuthor);
-        this._deleteButton?.addEventListener('WME_CLICK', this.onDeleteOrUndelete);
-        this._reportButton?.addEventListener('WME_CLICK', this.onReport);
-        this._replyButton?.addEventListener('WME_CLICK', this.onReply);
+        this._avatarImage?.addEventListener(WindowMouseEvent.CLICK, this.onSelectAuthor);
+        this._deleteButton?.addEventListener(WindowMouseEvent.CLICK, this.onDeleteOrUndelete);
+        this._reportButton?.addEventListener(WindowMouseEvent.CLICK, this.onReport);
+        this._replyButton?.addEventListener(WindowMouseEvent.CLICK, this.onReply);
     }
 
     // AS3: .../groupforums/MessageListItemView.as::bind()
@@ -648,10 +648,10 @@ export class MessageListItemView implements IDisposable
         this._textBlockPool = [];
         this._messageTextTemplate?.dispose();
         this._messageTextTemplate = null;
-        this._avatarImage?.removeEventListener('WME_CLICK', this.onSelectAuthor);
-        this._deleteButton?.removeEventListener('WME_CLICK', this.onDeleteOrUndelete);
-        this._reportButton?.removeEventListener('WME_CLICK', this.onReport);
-        this._replyButton?.removeEventListener('WME_CLICK', this.onReply);
+        this._avatarImage?.removeEventListener(WindowMouseEvent.CLICK, this.onSelectAuthor);
+        this._deleteButton?.removeEventListener(WindowMouseEvent.CLICK, this.onDeleteOrUndelete);
+        this._reportButton?.removeEventListener(WindowMouseEvent.CLICK, this.onReport);
+        this._replyButton?.removeEventListener(WindowMouseEvent.CLICK, this.onReply);
         this._window?.dispose();
         this._window = null;
         this._activeTextBlocks = [];

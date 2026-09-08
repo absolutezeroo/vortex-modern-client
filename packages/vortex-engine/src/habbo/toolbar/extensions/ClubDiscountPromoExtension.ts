@@ -15,6 +15,7 @@ import {
 } from '@habbo/communication/messages/outgoing/catalog/GetHabboClubExtendOfferMessageComposer';
 
 import type {HabboToolbar} from '../HabboToolbar';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.ClubDiscountPromoExtension');
 
@@ -163,9 +164,9 @@ export class ClubDiscountPromoExtension
         {
             const region = textRegion as unknown as IWindow;
 
-            region.addEventListener('WME_CLICK', this.onTextRegionClicked);
-            region.addEventListener('WME_OVER', this.onTextRegionMouseOver);
-            region.addEventListener('WME_OUT', this.onTextRegionMouseOut);
+            region.addEventListener(WindowMouseEvent.CLICK, this.onTextRegionClicked);
+            region.addEventListener(WindowMouseEvent.OVER, this.onTextRegionMouseOver);
+            region.addEventListener(WindowMouseEvent.OUT, this.onTextRegionMouseOut);
         }
 
         this.assignState();

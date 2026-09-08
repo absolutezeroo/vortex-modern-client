@@ -31,6 +31,7 @@ import {TransactionConfig} from '../../../wired_trading/transactions/overview/Tr
 import type {WiredMenuController} from '../../WiredMenuController';
 import {WiredMenuDefaultTab} from '../WiredMenuDefaultTab';
 import {TransactionPreviewTableObject} from './TransactionPreviewTableObject';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * WiredMenuChestsTab — the "chests" tab: lock or unlock the room's wired chests, and a ten-row
@@ -95,10 +96,10 @@ export class WiredMenuChestsTab extends WiredMenuDefaultTab implements IUpdateRe
         this.createTransactionTable();
         this.addMessageEvent(new WiredTransactionLogsEvent((event) => this.onLogListResults(event)));
 
-        this.lockYourChestsButton?.addEventListener('WME_CLICK', this.onLockChestsClick);
-        this.unlockYourChestsButton?.addEventListener('WME_CLICK', this.onUnlockChestsClick);
-        this.lockAllChestsButton?.addEventListener('WME_CLICK', this.onLockAllChestsClick);
-        this.viewInDetailButton?.addEventListener('WME_CLICK', this.onViewInDetailClick);
+        this.lockYourChestsButton?.addEventListener(WindowMouseEvent.CLICK, this.onLockChestsClick);
+        this.unlockYourChestsButton?.addEventListener(WindowMouseEvent.CLICK, this.onUnlockChestsClick);
+        this.lockAllChestsButton?.addEventListener(WindowMouseEvent.CLICK, this.onLockAllChestsClick);
+        this.viewInDetailButton?.addEventListener(WindowMouseEvent.CLICK, this.onViewInDetailClick);
     }
 
     /**

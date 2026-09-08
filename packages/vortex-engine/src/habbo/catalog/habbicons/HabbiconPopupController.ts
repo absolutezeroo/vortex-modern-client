@@ -4,7 +4,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IIconWindow} from '@core/window/components/IIconWindow';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {ActivityPointTypeEnum} from '@habbo/catalog/purse/ActivityPointTypeEnum';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -147,8 +147,8 @@ export class HabbiconPopupController implements IDisposable
         this._currencyIcon = (window?.findChildByName('habbicon_popup_currency_icon') as IIconWindow | null) ?? null;
         this._buyButton = window?.findChildByName('habbicon_popup_buy_button') ?? null;
 
-        this._actionButton?.addEventListener('WME_CLICK', this.onPopupActionClicked);
-        this._buyButton?.addEventListener('WME_CLICK', this.onPopupBuyClicked);
+        this._actionButton?.addEventListener(WindowMouseEvent.CLICK, this.onPopupActionClicked);
+        this._buyButton?.addEventListener(WindowMouseEvent.CLICK, this.onPopupBuyClicked);
 
         this.hide(false);
     }
@@ -491,8 +491,8 @@ export class HabbiconPopupController implements IDisposable
         this.hide(false);
         this.detachFromStage();
 
-        this._actionButton?.removeEventListener('WME_CLICK', this.onPopupActionClicked);
-        this._buyButton?.removeEventListener('WME_CLICK', this.onPopupBuyClicked);
+        this._actionButton?.removeEventListener(WindowMouseEvent.CLICK, this.onPopupActionClicked);
+        this._buyButton?.removeEventListener(WindowMouseEvent.CLICK, this.onPopupBuyClicked);
 
         this._layer = null;
         this._popup = null;

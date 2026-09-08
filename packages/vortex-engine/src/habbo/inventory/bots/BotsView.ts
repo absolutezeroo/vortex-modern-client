@@ -13,6 +13,7 @@ import type {IAvatarRenderManager} from '@habbo/avatar/IAvatarRenderManager';
 import type {Bot} from './Bot';
 import type {BotsModel} from './BotsModel';
 import {BotGridItem} from './BotGridItem';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.inventory.bots.BotsView');
 
@@ -333,8 +334,8 @@ export class BotsView implements IAvatarImageListener
         this._window.visible = false;
         this._grid = this._window.findChildByName('grid') as unknown as IItemGridWindow | null;
 
-        this._window.findChildByName('place_button')?.addEventListener('WME_CLICK', this.startPlacingHandler);
-        this._window.findChildByName('preview_image')?.addEventListener('WME_DOWN', this.startPlacingHandler);
+        this._window.findChildByName('place_button')?.addEventListener(WindowMouseEvent.CLICK, this.startPlacingHandler);
+        this._window.findChildByName('preview_image')?.addEventListener(WindowMouseEvent.DOWN, this.startPlacingHandler);
 
         this.updatePreview();
 

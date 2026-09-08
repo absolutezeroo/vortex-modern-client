@@ -5,7 +5,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IWindow} from '@core/window/IWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IIterator} from '@core/window/utils/IIterator';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {EmptyIterator} from '@core/window/iterators/EmptyIterator';
 import {PropertyStruct} from '@core/window/utils/PropertyStruct';
 
@@ -374,7 +374,7 @@ export class PixelLimitWidget implements IPixelLimitWidget
 
         if(this._region)
         {
-            this._region.removeEventListener('WME_CLICK', this.onClick);
+            this._region.removeEventListener(WindowMouseEvent.CLICK, this.onClick);
             this._region.dispose();
             this._region = null;
         }

@@ -1,5 +1,5 @@
 import type {IWindow} from '@core/window/IWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -27,7 +27,7 @@ export class IconButtonPreset extends WiredUIPreset
 
         this._container = wiredStyle.createIconButton(name);
         this._onClick = onClick;
-        this._container.addEventListener('WME_CLICK', this._iconClicked);
+        this._container.addEventListener(WindowMouseEvent.CLICK, this._iconClicked);
     }
 
     // AS3: IconButtonPreset.as::iconClicked()

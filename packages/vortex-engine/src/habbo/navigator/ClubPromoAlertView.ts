@@ -3,6 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import {AlertView} from './AlertView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Club promotion alert with call-to-action to the catalog club page.
@@ -46,14 +47,14 @@ export class ClubPromoAlertView extends AlertView
 
         if(okButton)
         {
-            okButton.addEventListener('WME_CLICK', this.onOk);
+            okButton.addEventListener(WindowMouseEvent.CLICK, this.onOk);
         }
 
         const promoContainer = content.findChildByName('promo_container');
 
         if(promoContainer)
         {
-            promoContainer.addEventListener('WME_CLICK', this.onPromo);
+            promoContainer.addEventListener(WindowMouseEvent.CLICK, this.onPromo);
         }
     }
 

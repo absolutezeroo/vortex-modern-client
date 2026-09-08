@@ -19,6 +19,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {NewModerationTool} from '../NewModerationTool';
 import {NewModToolSubView} from './NewModToolSubView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class SendWarningSubView extends NewModToolSubView
 {
@@ -41,7 +42,7 @@ export class SendWarningSubView extends NewModToolSubView
     {
         super(tool, window);
 
-        this.sendWarningButton?.addEventListener('WME_CLICK', this.onSendWarningClick);
+        this.sendWarningButton?.addEventListener(WindowMouseEvent.CLICK, this.onSendWarningClick);
     }
 
     // AS3: .../new_mod_tool_tabs/_SafeCls_2922.as::onSendWarningClick()

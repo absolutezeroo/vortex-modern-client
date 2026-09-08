@@ -1,8 +1,8 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 import {WiredDebugCommandMessageComposer} from '@habbo/communication/messages/outgoing/userdefinedroomevents/WiredDebugCommandMessageComposer';
 import {UserDefinedRoomEventsCtrl} from '../../../UserDefinedRoomEventsCtrl';
@@ -101,15 +101,15 @@ export class FramePreset extends WiredUIPreset
         this._leftRightMargin = this._frame.width - this._frame.margins.right + this._frame.margins.left;
         this._topBottomMargin = this._frame.height - this._frame.margins.bottom + this._frame.margins.top;
         this.createListView(elements);
-        this._content.window.addEventListener('WE_RESIZED', this._onContentsResized);
-        (this._frame as unknown as IWindowContainer).findChildByTag('close')!.addEventListener('WME_CLICK', this._onCloseClicked);
+        this._content.window.addEventListener(WindowEvent.WE_RESIZED, this._onContentsResized);
+        (this._frame as unknown as IWindowContainer).findChildByTag('close')!.addEventListener(WindowMouseEvent.CLICK, this._onCloseClicked);
         this._frame.content.addChild(this._content.window);
         this._frame.color = this._wiredStyle.frameColor;
 
         if(resizable)
         {
             this._frame.setParamFlag(65536, true);
-            this._frame.addEventListener('WE_RESIZED', this._onFrameResized);
+            this._frame.addEventListener(WindowEvent.WE_RESIZED, this._onFrameResized);
         }
 
         const menuButton = this._frame.menuButton;
@@ -117,7 +117,7 @@ export class FramePreset extends WiredUIPreset
         if(menuButton != null && showMenu)
         {
             this._frame.menuButtonVisible = true;
-            menuButton.addEventListener('WME_CLICK', this._onMenuButtonClick);
+            menuButton.addEventListener(WindowMouseEvent.CLICK, this._onMenuButtonClick);
             this.createMenuPreset();
         }
     }
@@ -378,8 +378,8 @@ export class FramePreset extends WiredUIPreset
     // AS3: FramePreset.as::dispose()
     override dispose(): void
     {
-        this._content.window.removeEventListener('WE_RESIZED', this._onContentsResized);
-        this._frame.removeEventListener('WE_RESIZED', this._onFrameResized);
+        this._content.window.removeEventListener(WindowEvent.WE_RESIZED, this._onContentsResized);
+        this._frame.removeEventListener(WindowEvent.WE_RESIZED, this._onFrameResized);
 
         if(this.disposed)
         {

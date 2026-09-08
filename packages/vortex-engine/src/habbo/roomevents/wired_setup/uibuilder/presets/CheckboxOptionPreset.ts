@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 import {Util} from '@habbo/roomevents/Util';
 
@@ -121,8 +121,8 @@ export class CheckboxOptionPreset extends WiredUIPreset
 
         if(this._extra1 != null || this._extra2 != null)
         {
-            this._checkbox.addEventListener('WE_SELECTED', this._onSelect);
-            this._checkbox.addEventListener('WE_UNSELECTED', this._onUnSelect);
+            this._checkbox.addEventListener(WindowEvent.WE_SELECTED, this._onSelect);
+            this._checkbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onUnSelect);
             this._onUnSelect(null);
         }
 

@@ -18,6 +18,7 @@ import {CreditTradingItem} from '../items/CreditTradingItem';
 import {FurnitureCategory} from '../enum';
 import {Util} from '../Util';
 import {Logger} from '@core/utils/Logger';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.inventory.wired_trading.WiredTradingView');
 
@@ -128,8 +129,8 @@ export class WiredTradingView implements IWiredTradingView, IInventoryView
 
         this._window = window;
 
-        this.acceptButton?.addEventListener('WME_CLICK', this.onAcceptClick);
-        this.cancelButton?.addEventListener('WME_CLICK', this.onCancelClick);
+        this.acceptButton?.addEventListener(WindowMouseEvent.CLICK, this.onAcceptClick);
+        this.cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onCancelClick);
 
         const secondsLeft = this.secondsLeftText;
 
@@ -149,8 +150,8 @@ export class WiredTradingView implements IWiredTradingView, IInventoryView
 
             gridItem.id = i;
             gridItem.procedure = procedure;
-            gridItem.addEventListener('WME_OVER', procedure);
-            gridItem.addEventListener('WME_OUT', procedure);
+            gridItem.addEventListener(WindowMouseEvent.OVER, procedure);
+            gridItem.addEventListener(WindowMouseEvent.OUT, procedure);
         }
     }
 

@@ -13,6 +13,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {NewModerationTool} from '../NewModerationTool';
 import {NewModToolSubView} from './NewModToolSubView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class HotelAlertSubView extends NewModToolSubView
 {
@@ -25,7 +26,7 @@ export class HotelAlertSubView extends NewModToolSubView
     {
         super(tool, window);
 
-        this.sendHotelAlertButton?.addEventListener('WME_CLICK', this.onSendClicked);
+        this.sendHotelAlertButton?.addEventListener(WindowMouseEvent.CLICK, this.onSendClicked);
     }
 
     // AS3: .../new_mod_tool_tabs/_SafeCls_3103.as::onSendClicked()

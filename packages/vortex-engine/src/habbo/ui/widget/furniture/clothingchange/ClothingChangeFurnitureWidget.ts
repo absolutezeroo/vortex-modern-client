@@ -4,7 +4,7 @@ import type {XmlAsset} from '@core/assets/XmlAsset';
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
@@ -112,7 +112,7 @@ export class ClothingChangeFurnitureWidget extends RoomWidgetBase
 
         if(this._window === null) return;
 
-        this._window.addEventListener('WME_CLICK', this.onGenderSelectionMouseEvent);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onGenderSelectionMouseEvent);
         this._window.center();
 
         const closeButton = this._window.findChildByTag('close');
@@ -124,7 +124,7 @@ export class ClothingChangeFurnitureWidget extends RoomWidgetBase
 
         for(const name of [ClothingChangeFurnitureWidget.BUTTON_BOY, ClothingChangeFurnitureWidget.BUTTON_GIRL])
         {
-            this._window.findChildByName(name)?.addEventListener('WME_CLICK', this.onGenderSelectionMouseEvent);
+            this._window.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onGenderSelectionMouseEvent);
         }
     }
 

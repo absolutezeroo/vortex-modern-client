@@ -94,9 +94,10 @@ import {RoomEngineUseProductEvent} from '@habbo/room/events/RoomEngineUseProduct
 import {RoomEngineRoomAdEvent} from '@habbo/room/events/RoomEngineRoomAdEvent';
 import {RoomEngineAreaHideStateWidgetEvent} from '@habbo/room/events/RoomEngineAreaHideStateWidgetEvent';
 import {RoomEngineSoundMachineEvent} from '@habbo/room/events/RoomEngineSoundMachineEvent';
-import type {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
+import {RoomEngineRoomColorEvent} from '@habbo/room/events/RoomEngineRoomColorEvent';
+import {RoomEngineZoomEvent} from '@habbo/room/events/RoomEngineZoomEvent';
 import {RoomEngineDimmerStateEvent} from '@habbo/room/events/RoomEngineDimmerStateEvent';
-import type {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
+import {RoomEngineHSLColorEnableEvent} from '@habbo/room/events/RoomEngineHSLColorEnableEvent';
 
 // Internal
 import type {IRoomUI} from './IRoomUI';
@@ -538,14 +539,14 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                         engine.events.on(RoomEngineEvent.REE_OBJECTS_INITIALIZED, this.roomEngineEventHandler, this);
                         engine.events.on(RoomEngineEvent.REE_NORMAL_MODE, this.roomEngineEventHandler, this);
                         engine.events.on(RoomEngineEvent.REE_GAME_MODE, this.roomEngineEventHandler, this);
-                        engine.events.on('RERCE_ROOM_COLOR', this.roomEventHandler, this);
+                        engine.events.on(RoomEngineRoomColorEvent.RERCE_ROOM_COLOR, this.roomEventHandler, this);
                         // The moodlight's state, on its way to the dimmer widget. AS3 subscribes
                         // it here (RoomUI.as l.189) and forwards it to the desktop, which is the
                         // router to the handlers — without this hop the handler declares the event
                         // in getProcessedEvents() and is never called with it.
                         engine.events.on(RoomEngineDimmerStateEvent.CYCLED, this.roomEventHandler, this);
-                        engine.events.on('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
-                        engine.events.on('REE_ROOM_ZOOM', this.roomEventHandler, this);
+                        engine.events.on(RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR, this.roomEventHandler, this);
+                        engine.events.on(RoomEngineZoomEvent.ROOM_ZOOM, this.roomEventHandler, this);
                         // AS3: RoomUI.as:200-333 — every entry of the same table routed to
                         // roomObjectEventHandler.
                         for(const type of RoomUI.ROOM_OBJECT_ENGINE_EVENTS)
@@ -1125,10 +1126,10 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
             this._roomEngine.events.off(RoomEngineEvent.REE_OBJECTS_INITIALIZED, this.roomEngineEventHandler, this);
             this._roomEngine.events.off(RoomEngineEvent.REE_NORMAL_MODE, this.roomEngineEventHandler, this);
             this._roomEngine.events.off(RoomEngineEvent.REE_GAME_MODE, this.roomEngineEventHandler, this);
-            this._roomEngine.events.off('RERCE_ROOM_COLOR', this.roomEventHandler, this);
+            this._roomEngine.events.off(RoomEngineRoomColorEvent.RERCE_ROOM_COLOR, this.roomEventHandler, this);
             this._roomEngine.events.off(RoomEngineDimmerStateEvent.CYCLED, this.roomEventHandler, this);
-            this._roomEngine.events.off('ROHSLCEE_ROOM_BACKGROUND_COLOR', this.roomEventHandler, this);
-            this._roomEngine.events.off('REE_ROOM_ZOOM', this.roomEventHandler, this);
+            this._roomEngine.events.off(RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR, this.roomEventHandler, this);
+            this._roomEngine.events.off(RoomEngineZoomEvent.ROOM_ZOOM, this.roomEventHandler, this);
 
             for(const type of RoomUI.ROOM_OBJECT_ENGINE_EVENTS)
             {
@@ -1520,7 +1521,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case 'RERCE_ROOM_COLOR': {
+            case RoomEngineRoomColorEvent.RERCE_ROOM_COLOR: {
                 if(desktop)
                 {
                     const colorEvent = event as RoomEngineRoomColorEvent;
@@ -1546,7 +1547,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case 'ROHSLCEE_ROOM_BACKGROUND_COLOR': {
+            case RoomEngineHSLColorEnableEvent.ROOM_BACKGROUND_COLOR: {
                 if(desktop) 
                 {
                     const hslEvent = event as RoomEngineHSLColorEnableEvent;
@@ -1560,7 +1561,7 @@ export class RoomUI extends Component implements IRoomUI, IUpdateReceiver
                 break;
             }
 
-            case 'REE_ROOM_ZOOM': {
+            case RoomEngineZoomEvent.ROOM_ZOOM: {
                 // Zoom event — handled by desktop
                 break;
             }

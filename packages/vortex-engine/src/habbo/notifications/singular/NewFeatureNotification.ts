@@ -21,6 +21,7 @@ import {
 } from '@habbo/communication/messages/outgoing/competition/GetSecondsUntilMessageComposer';
 import {HabboWebTools} from '@habbo/utils/HabboWebTools';
 import {ColorConverter} from '@room/utils/ColorConverter';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The configurable "new feature" toolbar promo
@@ -244,8 +245,8 @@ export class NewFeatureNotification implements IDisposable
 
         if(region !== null)
         {
-            region.addEventListener('WME_OVER', this.onMouseOver);
-            region.addEventListener('WME_OUT', this.onMouseOut);
+            region.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+            region.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
         }
 
         if(this._featureType === NewFeatureNotification.FEATURE_TYPE_COUNTDOWN)

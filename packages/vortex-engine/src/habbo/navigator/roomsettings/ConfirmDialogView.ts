@@ -2,6 +2,7 @@ import type { IWindowContainer } from '@core/window/IWindowContainer';
 import type { WindowEvent } from '@core/window/events/WindowEvent';
 import type { IHabboTransitionalNavigator } from '../IHabboTransitionalNavigator';
 import { Util } from '../Util';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Generic yes/no confirmation dialog for destructive room settings actions (e.g. delete room).
@@ -28,14 +29,14 @@ export class ConfirmDialogView
 
         if(closeBtn)
         {
-            closeBtn.addEventListener('WME_CLICK', this._onCancel);
+            closeBtn.addEventListener(WindowMouseEvent.CLICK, this._onCancel);
         }
 
         const okBtn = win.findChildByName('ok');
 
         if(okBtn)
         {
-            okBtn.addEventListener('WME_CLICK', this._onOk);
+            okBtn.addEventListener(WindowMouseEvent.CLICK, this._onOk);
         }
 
         win.caption = title;

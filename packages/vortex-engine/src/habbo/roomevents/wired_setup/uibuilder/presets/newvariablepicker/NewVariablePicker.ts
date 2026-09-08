@@ -7,9 +7,9 @@ import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IFocusWindow} from '@core/window/components/IFocusWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {WiredStyle} from '../../styles/WiredStyle';
@@ -95,14 +95,14 @@ export class NewVariablePicker implements IDisposable
         (this._expandedWrapper.desktop as unknown as IWindowContainer).addChild(this._expandedWrapper);
         this._expandedWrapper.visible = false;
         this.setWiredStyle(wiredStyle);
-        this.inputFieldRegion.addEventListener('WME_CLICK', this.onTextRegionClick);
-        this.inputField.addEventListener('WME_CLICK', this.onTextRegionClick);
-        this.cancelSearchButton.addEventListener('WME_CLICK', this.onCancelSearch);
-        this.inputField.addEventListener('WE_CHANGE', this.onChangeQuery);
-        this.inputField.addEventListener('WKE_KEY_UP', this.onKeyUp);
+        this.inputFieldRegion.addEventListener(WindowMouseEvent.CLICK, this.onTextRegionClick);
+        this.inputField.addEventListener(WindowMouseEvent.CLICK, this.onTextRegionClick);
+        this.cancelSearchButton.addEventListener(WindowMouseEvent.CLICK, this.onCancelSearch);
+        this.inputField.addEventListener(WindowEvent.WE_CHANGE, this.onChangeQuery);
+        this.inputField.addEventListener(WindowKeyboardEvent.KEY_UP, this.onKeyUp);
         this.inputPlaceholderText.visible = true;
         this.expandedWindowWrapper.setParamFlag(16, false);
-        this.expandedWindowWrapper.addEventListener('WE_DEACTIVATED', this.onDeactivate);
+        this.expandedWindowWrapper.addEventListener(WindowEvent.WE_DEACTIVATED, this.onDeactivate);
         this.collapseView(true);
     }
 

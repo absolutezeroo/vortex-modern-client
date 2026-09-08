@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IRadioButtonWindow} from '@core/window/components/IRadioButtonWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -134,8 +134,8 @@ export class RadioButtonPreset extends WiredUIPreset
 
         if(this._extra1 != null || this._extra2 != null)
         {
-            this._radio.addEventListener('WE_SELECTED', this._onSelect);
-            this._radio.addEventListener('WE_UNSELECTED', this._onUnSelect);
+            this._radio.addEventListener(WindowEvent.WE_SELECTED, this._onSelect);
+            this._radio.addEventListener(WindowEvent.WE_UNSELECTED, this._onUnSelect);
             this._onUnSelect(null);
         }
 

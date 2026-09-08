@@ -19,6 +19,7 @@ import {RoomWidgetScriptProceedMessage} from '../messages/RoomWidgetScriptProcee
 import {HelpBubbleItem} from './HelpBubbleItem';
 import {UiHelpBubble} from './UiHelpBubble';
 import {UiHelpBubbleIconEnum} from './UiHelpBubbleIconEnum';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 /**
  * The guided-tour bubbles: a server-side script sends `helpBubble/add/<element>/<textKey>/...`
@@ -284,7 +285,7 @@ export class UiHelpBubblesWidget extends RoomWidgetBase implements ILinkEventTra
         }
 
         bubble.setPosition({x: rect.x, y: rect.y});
-        bubble.getWindow()?.desktop?.addEventListener('WE_RESIZED', this.onDesktopResized);
+        bubble.getWindow()?.desktop?.addEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
         // A second pass in "modal mode", which returns the element's untouched bounds — the hole
         // must sit over the element, not over the balloon's computed position.
         bubble.setModal(this.checkElementPosition(bubble, true));

@@ -8,6 +8,7 @@ import type {AvatarEditorView} from '../AvatarEditorView';
 import type {IHabboAvatarEditorHost} from '../IHabboAvatarEditorHost';
 import {AvatarEditorNameSuggestionListRenderer} from './AvatarEditorNameSuggestionListRenderer';
 import {CheckUserNameResultMessageEvent} from '@habbo/communication/messages/incoming/help/CheckUserNameResultMessageEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The rename dialog, opened beside the editor by its `avatar_name_change` button.
@@ -249,9 +250,9 @@ export class AvatarEditorNameChangeView
             if(chip === null) continue;
 
             chip.color = AvatarEditorNameChangeView.NAME_SUGGESTION_BG_COLOR;
-            chip.addEventListener('WME_CLICK', this.nameSelected);
-            chip.addEventListener('WME_OVER', this.nameOver);
-            chip.addEventListener('WME_OUT', this.nameOut);
+            chip.addEventListener(WindowMouseEvent.CLICK, this.nameSelected);
+            chip.addEventListener(WindowMouseEvent.OVER, this.nameOver);
+            chip.addEventListener(WindowMouseEvent.OUT, this.nameOut);
         }
     }
 

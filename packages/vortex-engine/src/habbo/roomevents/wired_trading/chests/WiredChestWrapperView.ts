@@ -11,8 +11,8 @@ import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomObject} from '@room/object/IRoomObject';
@@ -39,6 +39,7 @@ import {ChestSettingsUI} from './settings/ChestSettingsUI';
 import type {IChestSubController} from './subcontrollers/IChestSubController';
 import {WiredChestUpgradeConfirmationView} from './upgrade_confirmation/WiredChestUpgradeConfirmationView';
 import type {WiredChestController} from './WiredChestController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.roomevents.chests.WiredChestWrapperView');
 
@@ -225,26 +226,26 @@ export class WiredChestWrapperView implements IDisposable
             - (this.footer?.height ?? 0)
             - (this.header?.height ?? 0);
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.lockInfoButton?.addEventListener('WME_CLICK', this.onInfoButtonClick);
-        this.withdrawAllButton?.addEventListener('WME_CLICK', this.onWithdrawAllClick);
-        this.startDepositButton?.addEventListener('WME_CLICK', this.onDepositClick);
-        this.viewLogsButton?.addEventListener('WME_CLICK', this.onViewLogsClick);
-        this.lockChestCheckbox?.addEventListener('WE_SELECT', this.onAttemptLockChest);
-        this.lockChestCheckbox?.addEventListener('WE_UNSELECT', this.onAttemptUnlockChest);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.lockInfoButton?.addEventListener(WindowMouseEvent.CLICK, this.onInfoButtonClick);
+        this.withdrawAllButton?.addEventListener(WindowMouseEvent.CLICK, this.onWithdrawAllClick);
+        this.startDepositButton?.addEventListener(WindowMouseEvent.CLICK, this.onDepositClick);
+        this.viewLogsButton?.addEventListener(WindowMouseEvent.CLICK, this.onViewLogsClick);
+        this.lockChestCheckbox?.addEventListener(WindowEvent.WE_SELECT, this.onAttemptLockChest);
+        this.lockChestCheckbox?.addEventListener(WindowEvent.WE_UNSELECT, this.onAttemptUnlockChest);
 
         for(const checkbox of [this.lockChestCheckbox, this.autoLockChestCheckbox])
         {
-            checkbox?.addEventListener('WE_SELECTED', this.onOptionsChanged);
-            checkbox?.addEventListener('WE_UNSELECTED', this.onOptionsChanged);
+            checkbox?.addEventListener(WindowEvent.WE_SELECTED, this.onOptionsChanged);
+            checkbox?.addEventListener(WindowEvent.WE_UNSELECTED, this.onOptionsChanged);
         }
 
-        this.capacityInput?.addEventListener('WME_CLICK_AWAY', this.onOptionsChanged);
-        this.capacityInput?.addEventListener('WKE_KEY_DOWN', this.onCapacityKeyDown);
-        this.capacityInput?.addEventListener('WE_CHANGE', this.onCapacityChange);
-        this.maxCapacityUpgradeButton?.addEventListener('WME_CLICK', this.onUpgradeCapacityClick);
-        this.settingsButton?.addEventListener('WME_CLICK', this.onClickSettings);
-        this.notificationSettingsButton?.addEventListener('WME_CLICK', this.onClickNotificationSettings);
+        this.capacityInput?.addEventListener(WindowMouseEvent.CLICK_AWAY, this.onOptionsChanged);
+        this.capacityInput?.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onCapacityKeyDown);
+        this.capacityInput?.addEventListener(WindowEvent.WE_CHANGE, this.onCapacityChange);
+        this.maxCapacityUpgradeButton?.addEventListener(WindowMouseEvent.CLICK, this.onUpgradeCapacityClick);
+        this.settingsButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickSettings);
+        this.notificationSettingsButton?.addEventListener(WindowMouseEvent.CLICK, this.onClickNotificationSettings);
 
         // The bubble lives on the desktop, not inside the frame, so it can overhang the window edge.
         this._lockInfoBubble = (this._window.findChildByName('lock_info_bubble') as IBubbleWindow | null) ?? null;
@@ -253,10 +254,10 @@ export class WiredChestWrapperView implements IDisposable
         {
             (this._window.desktop as IWindowContainer | null)?.addChild(this._lockInfoBubble as unknown as IWindow);
             this._lockInfoBubble.visible = false;
-            (this._lockInfoBubble as unknown as IWindow).addEventListener('WE_DEACTIVATED', this.onLockInfoBubbleDeactivates);
+            (this._lockInfoBubble as unknown as IWindow).addEventListener(WindowEvent.WE_DEACTIVATED, this.onLockInfoBubbleDeactivates);
         }
 
-        this._window.addEventListener('WE_RESIZED', this.onResizeWindow);
+        this._window.addEventListener(WindowEvent.WE_RESIZED, this.onResizeWindow);
 
         this.show(null, null, 0, false, false);
         this.hide();

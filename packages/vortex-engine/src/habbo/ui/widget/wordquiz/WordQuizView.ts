@@ -3,6 +3,8 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import {Logger} from '@core/utils/Logger';
 import type {WordQuizWidget} from './WordQuizWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.wordquiz.WordQuizView');
 
@@ -107,11 +109,11 @@ export class WordQuizView
 
         const like = this._window.findChildByName('button_like');
 
-        if(like !== null) like.addEventListener('WME_CLICK', this.onLike);
+        if(like !== null) like.addEventListener(WindowMouseEvent.CLICK, this.onLike);
 
         const dislike = this._window.findChildByName('button_dislike');
 
-        if(dislike !== null) dislike.addEventListener('WME_CLICK', this.onDislike);
+        if(dislike !== null) dislike.addEventListener(WindowMouseEvent.CLICK, this.onDislike);
 
         if(topic !== null) this._topic = topic;
 
@@ -129,7 +131,7 @@ export class WordQuizView
 
         this.positionWindow();
 
-        this._window.desktop?.addEventListener('WE_RESIZED', this.onDesktopResized);
+        this._window.desktop?.addEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
     }
 
     /**
@@ -144,7 +146,7 @@ export class WordQuizView
     {
         if(this._window === null || this._window.numChildren === 0) return;
 
-        this._window.desktop?.addEventListener('WE_RESIZED', this.onDesktopResized);
+        this._window.desktop?.addEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
         this._window.dispose();
         this._window = null;
 
@@ -208,7 +210,7 @@ export class WordQuizView
 
         if(this._window !== null)
         {
-            this._window.desktop?.removeEventListener('WE_RESIZED', this.onDesktopResized);
+            this._window.desktop?.removeEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
             this._window.dispose();
             this._window = null;
         }

@@ -1,8 +1,8 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {FriendlyTime} from '@habbo/utils/FriendlyTime';
 import type {ForumData} from '@habbo/communication/messages/parser/groupforums/ForumData';
 import type {ForumThread} from '@habbo/communication/messages/parser/groupforums/ForumThread';
@@ -165,8 +165,8 @@ export class ComposeMessageView
 
         if(clickArea !== null)
         {
-            clickArea.removeEventListener('WME_CLICK', this.onTopAreaClick);
-            clickArea.addEventListener('WME_CLICK', this.onTopAreaClick);
+            clickArea.removeEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
+            clickArea.addEventListener(WindowMouseEvent.CLICK, this.onTopAreaClick);
         }
 
         const subjectHeader = this._window.findChildByName('thread_subject_header');
@@ -189,7 +189,7 @@ export class ComposeMessageView
 
             if(this._subjectField !== null)
             {
-                this._subjectField.addEventListener('WKE_KEY_UP', this.onHeaderKeyUpEvent);
+                this._subjectField.addEventListener(WindowKeyboardEvent.KEY_UP, this.onHeaderKeyUpEvent);
                 this._subjectField.maxChars = ComposeMessageView.SUBJECT_MAX_LENGTH;
                 this._subjectField.enable();
             }
@@ -199,8 +199,8 @@ export class ComposeMessageView
 
         if(this._messageField !== null)
         {
-            this._messageField.removeEventListener('WKE_KEY_UP', this.onMessageKeyUpEvent);
-            this._messageField.addEventListener('WKE_KEY_UP', this.onMessageKeyUpEvent);
+            this._messageField.removeEventListener(WindowKeyboardEvent.KEY_UP, this.onMessageKeyUpEvent);
+            this._messageField.addEventListener(WindowKeyboardEvent.KEY_UP, this.onMessageKeyUpEvent);
             this._messageField.maxChars = ComposeMessageView.MESSAGE_MAX_LENGTH;
         }
 
@@ -211,17 +211,17 @@ export class ComposeMessageView
 
         const cancelButton = this._window.findChildByName('cancel_btn');
 
-        cancelButton?.removeEventListener('WME_CLICK', this.onCancelButtonClick);
-        cancelButton?.addEventListener('WME_CLICK', this.onCancelButtonClick);
+        cancelButton?.removeEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
+        cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
 
         const closeButton = this._window.findChildByName('header_button_close');
 
-        closeButton?.removeEventListener('WME_CLICK', this.onCancelButtonClick);
-        closeButton?.addEventListener('WME_CLICK', this.onCancelButtonClick);
+        closeButton?.removeEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
+        closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onCancelButtonClick);
 
         this._postButton = this._window.findChildByName('post_btn');
-        this._postButton?.removeEventListener('WME_CLICK', this.onPostButtonClick);
-        this._postButton?.addEventListener('WME_CLICK', this.onPostButtonClick);
+        this._postButton?.removeEventListener(WindowMouseEvent.CLICK, this.onPostButtonClick);
+        this._postButton?.addEventListener(WindowMouseEvent.CLICK, this.onPostButtonClick);
 
         this._status = this._window.findChildByName('status_text');
 

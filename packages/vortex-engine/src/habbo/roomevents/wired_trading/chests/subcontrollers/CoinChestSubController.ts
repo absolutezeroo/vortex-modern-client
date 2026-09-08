@@ -18,6 +18,7 @@ import {Util} from '../../../Util';
 import {ChestType} from '../ChestType';
 import type {IWiredChestControllerHost} from '../IWiredChestControllerHost';
 import {AbstractChestSubController} from './AbstractChestSubController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The coin tab of a wired chest: a balance, an artwork that changes with it, and a withdraw field.
@@ -76,7 +77,7 @@ export class CoinChestSubController extends AbstractChestSubController
 
         if(input) input.restrict = '0-9';
 
-        this.withdrawButton?.addEventListener('WME_CLICK', this.onWithdrawClick);
+        this.withdrawButton?.addEventListener(WindowMouseEvent.CLICK, this.onWithdrawClick);
     }
 
     // AS3: CoinChestSubController.as::initChestStates()

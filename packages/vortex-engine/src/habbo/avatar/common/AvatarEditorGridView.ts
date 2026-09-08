@@ -3,7 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {IScrollableGridWindow} from '@core/window/components/IScrollableGridWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IAvatarEditorGridView} from './ICategoryView';
 import type {ICategoryModel} from './ICategoryModel';
 
@@ -136,7 +136,7 @@ export class AvatarEditorGridView implements IAvatarEditorGridView
             if(view === null) continue;
 
             this._thumbs?.addGridItem(view);
-            view.addEventListener('WME_CLICK', this.onGridItemClicked);
+            view.addEventListener(WindowMouseEvent.CLICK, this.onGridItemClicked);
 
             // The selected part decides how many palettes are visible — so a two-layer garment
             // reveals the second one as soon as the page is filled, without a click.

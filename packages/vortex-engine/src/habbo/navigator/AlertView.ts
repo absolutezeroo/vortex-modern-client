@@ -3,6 +3,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import {Util} from './Util';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Base class for modal alert dialogs with singleton management.
@@ -153,7 +154,7 @@ export class AlertView implements IDisposable
 
             if(close)
             {
-                close.addEventListener('WME_CLICK', this.onClose);
+                close.addEventListener(WindowMouseEvent.CLICK, this.onClose);
             }
         }
 

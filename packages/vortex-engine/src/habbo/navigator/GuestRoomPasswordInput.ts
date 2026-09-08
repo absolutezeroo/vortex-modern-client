@@ -4,6 +4,7 @@ import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {GuestRoomData} from '../communication/messages/incoming/navigator';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Password input dialog for password-protected rooms.
@@ -110,21 +111,21 @@ export class GuestRoomPasswordInput
 
         if(tryButton)
         {
-            tryButton.addEventListener('WME_CLICK', this.onTry);
+            tryButton.addEventListener(WindowMouseEvent.CLICK, this.onTry);
         }
 
         const cancelRegion = (this._window as any).findChildByName?.('cancel_region');
 
         if(cancelRegion)
         {
-            cancelRegion.addEventListener('WME_CLICK', this.onClose);
+            cancelRegion.addEventListener(WindowMouseEvent.CLICK, this.onClose);
         }
 
         const closeButton = (this._window as any).findChildByTag?.('close');
 
         if(closeButton)
         {
-            closeButton.addEventListener('WME_CLICK', this.onClose);
+            closeButton.addEventListener(WindowMouseEvent.CLICK, this.onClose);
         }
     }
 

@@ -13,6 +13,7 @@ import {CreateFlatMessageComposer} from '../../communication/messages/outgoing/n
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
 import {TextFieldManager} from '../TextFieldManager';
 import {Util} from '../Util';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Room layout definition.
@@ -578,7 +579,7 @@ export class RoomCreateViewCtrl
         if(!window) return;
 
         window.setParamFlag(WindowParam.INPUT_EVENT_PROCESSOR, true);
-        window.addEventListener('WME_CLICK', handler);
+        window.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     // Derived name: `initLayouts` is declared in no AS3 tree — the trace points

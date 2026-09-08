@@ -1,6 +1,6 @@
 import type {IIconButtonWindow} from '@core/window/components/IIconButtonWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -37,7 +37,7 @@ export class ContainerButtonPreset extends PaddedContainerPreset
         );
 
         this._onClick = onClick;
-        this.button.addEventListener('WME_CLICK', this._buttonClicked);
+        this.button.addEventListener(WindowMouseEvent.CLICK, this._buttonClicked);
     }
 
     // AS3: ContainerButtonPreset.as::buttonClicked()

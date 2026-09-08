@@ -22,6 +22,7 @@ import type {RewardTrackTask} from '../../data/RewardTrackTask';
 import type {RewardTrackController} from '../../RewardTrackController';
 import type {RewardTrackTheme} from '../theme/RewardTrackTheme';
 import {RewardTrackTaskLevelView} from './RewardTrackTaskLevelView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackTaskDetailsView
 {
@@ -66,7 +67,7 @@ export class RewardTrackTaskDetailsView
         this._levelTemplate = levelTemplate;
         this._theme = theme;
 
-        (this.hintButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onHintClicked);
+        (this.hintButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onHintClicked);
 
         this.initializeStaffActions();
     }
@@ -84,7 +85,7 @@ export class RewardTrackTaskDetailsView
 
         if(canCopy)
         {
-            (region as unknown as IWindow).addEventListener('WME_CLICK', this.onTaskNameClicked);
+            (region as unknown as IWindow).addEventListener(WindowMouseEvent.CLICK, this.onTaskNameClicked);
         }
     }
 
@@ -321,8 +322,8 @@ export class RewardTrackTaskDetailsView
 
         this._disposed = true;
 
-        (this.hintButton as unknown as IWindow | null)?.removeEventListener('WME_CLICK', this.onHintClicked);
-        (this.taskNameRegion as unknown as IWindow | null)?.removeEventListener('WME_CLICK', this.onTaskNameClicked);
+        (this.hintButton as unknown as IWindow | null)?.removeEventListener(WindowMouseEvent.CLICK, this.onHintClicked);
+        (this.taskNameRegion as unknown as IWindow | null)?.removeEventListener(WindowMouseEvent.CLICK, this.onTaskNameClicked);
 
         this.levelsList?.removeListItems();
 

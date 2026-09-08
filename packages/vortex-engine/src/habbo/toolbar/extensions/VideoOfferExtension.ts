@@ -14,6 +14,7 @@ import {VideoOfferTypeEnum} from '@habbo/catalog/enum/VideoOfferTypeEnum';
 import type {IVideoOfferLauncher} from '@habbo/catalog/IVideoOfferLauncher';
 
 import type {HabboToolbar} from '../HabboToolbar';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.VideoOfferExtension');
 
@@ -183,9 +184,9 @@ export class VideoOfferExtension implements IVideoOfferLauncher
         {
             const region = this._textRegion as unknown as IWindow;
 
-            region.addEventListener('WME_CLICK', this.onTextRegionClicked);
-            region.addEventListener('WME_OVER', this.onTextRegionMouseOver);
-            region.addEventListener('WME_OUT', this.onTextRegionMouseOut);
+            region.addEventListener(WindowMouseEvent.CLICK, this.onTextRegionClicked);
+            region.addEventListener(WindowMouseEvent.OVER, this.onTextRegionMouseOver);
+            region.addEventListener(WindowMouseEvent.OUT, this.onTextRegionMouseOut);
         }
 
         this._closeIcon = (window.findChildByName('promo_close_icon') as IIconWindow | null) ?? null;
@@ -194,9 +195,9 @@ export class VideoOfferExtension implements IVideoOfferLauncher
         {
             const close = this._closeIcon as unknown as IWindow;
 
-            close.addEventListener('WME_CLICK', this.onCloseClicked);
-            close.addEventListener('WME_OVER', this.onCloseMouseOver);
-            close.addEventListener('WME_OUT', this.onCloseMouseOut);
+            close.addEventListener(WindowMouseEvent.CLICK, this.onCloseClicked);
+            close.addEventListener(WindowMouseEvent.OVER, this.onCloseMouseOver);
+            close.addEventListener(WindowMouseEvent.OUT, this.onCloseMouseOut);
         }
 
         toolbar.extensionView?.attachExtension(VideoOfferExtension.EXTENSION_ID, window, 10);
@@ -213,9 +214,9 @@ export class VideoOfferExtension implements IVideoOfferLauncher
         {
             const region = this._textRegion as unknown as IWindow;
 
-            region.removeEventListener('WME_CLICK', this.onTextRegionClicked);
-            region.removeEventListener('WME_OVER', this.onTextRegionMouseOver);
-            region.removeEventListener('WME_OUT', this.onTextRegionMouseOut);
+            region.removeEventListener(WindowMouseEvent.CLICK, this.onTextRegionClicked);
+            region.removeEventListener(WindowMouseEvent.OVER, this.onTextRegionMouseOver);
+            region.removeEventListener(WindowMouseEvent.OUT, this.onTextRegionMouseOut);
 
             this._textRegion = null;
         }
@@ -224,9 +225,9 @@ export class VideoOfferExtension implements IVideoOfferLauncher
         {
             const close = this._closeIcon as unknown as IWindow;
 
-            close.removeEventListener('WME_CLICK', this.onCloseClicked);
-            close.removeEventListener('WME_OVER', this.onCloseMouseOver);
-            close.removeEventListener('WME_OUT', this.onCloseMouseOut);
+            close.removeEventListener(WindowMouseEvent.CLICK, this.onCloseClicked);
+            close.removeEventListener(WindowMouseEvent.OVER, this.onCloseMouseOver);
+            close.removeEventListener(WindowMouseEvent.OUT, this.onCloseMouseOut);
 
             this._closeIcon = null;
         }

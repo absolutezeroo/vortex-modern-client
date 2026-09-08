@@ -4,7 +4,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IDisposable} from '@core/runtime';
 import type {ForumPermissions} from '@habbo/communication/messages/parser/groupforums/ForumPermissions';
 import type {ForumThread} from '@habbo/communication/messages/parser/groupforums/ForumThread';
@@ -141,12 +141,12 @@ export class ThreadListItemView implements IDisposable
         this._pinButton = infoButtons?.getListItemByName('thread_pin') as IRegionWindow | null ?? null;
         this._pinButtonIcon = this._pinButton?.getChildByName('icon') as IStaticBitmapWrapperWindow | null ?? null;
 
-        this._headerRegion?.addEventListener('WME_CLICK', this.onGoToFirstUnread);
-        this._unreadRegion?.addEventListener('WME_CLICK', this.onGoToFirstUnread);
-        this._hideButton?.addEventListener('WME_CLICK', this.onDeleteOrUndelete);
-        this._reportButton?.addEventListener('WME_CLICK', this.onReport);
-        this._lockButton?.addEventListener('WME_CLICK', this.onToggleLock);
-        this._pinButton?.addEventListener('WME_CLICK', this.onToggleSticky);
+        this._headerRegion?.addEventListener(WindowMouseEvent.CLICK, this.onGoToFirstUnread);
+        this._unreadRegion?.addEventListener(WindowMouseEvent.CLICK, this.onGoToFirstUnread);
+        this._hideButton?.addEventListener(WindowMouseEvent.CLICK, this.onDeleteOrUndelete);
+        this._reportButton?.addEventListener(WindowMouseEvent.CLICK, this.onReport);
+        this._lockButton?.addEventListener(WindowMouseEvent.CLICK, this.onToggleLock);
+        this._pinButton?.addEventListener(WindowMouseEvent.CLICK, this.onToggleSticky);
     }
 
     /**
@@ -593,12 +593,12 @@ export class ThreadListItemView implements IDisposable
             return;
         }
 
-        this._headerRegion?.removeEventListener('WME_CLICK', this.onGoToFirstUnread);
-        this._unreadRegion?.removeEventListener('WME_CLICK', this.onGoToFirstUnread);
-        this._hideButton?.removeEventListener('WME_CLICK', this.onDeleteOrUndelete);
-        this._reportButton?.removeEventListener('WME_CLICK', this.onReport);
-        this._lockButton?.removeEventListener('WME_CLICK', this.onToggleLock);
-        this._pinButton?.removeEventListener('WME_CLICK', this.onToggleSticky);
+        this._headerRegion?.removeEventListener(WindowMouseEvent.CLICK, this.onGoToFirstUnread);
+        this._unreadRegion?.removeEventListener(WindowMouseEvent.CLICK, this.onGoToFirstUnread);
+        this._hideButton?.removeEventListener(WindowMouseEvent.CLICK, this.onDeleteOrUndelete);
+        this._reportButton?.removeEventListener(WindowMouseEvent.CLICK, this.onReport);
+        this._lockButton?.removeEventListener(WindowMouseEvent.CLICK, this.onToggleLock);
+        this._pinButton?.removeEventListener(WindowMouseEvent.CLICK, this.onToggleSticky);
         this._window?.dispose();
         this._window = null;
         this._pinButtonIcon = null;

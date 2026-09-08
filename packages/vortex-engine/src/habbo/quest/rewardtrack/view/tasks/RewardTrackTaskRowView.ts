@@ -20,6 +20,7 @@ import type {RewardTrackController} from '../../RewardTrackController';
 import {RewardTrackTaskProgressBarView} from '../progress/RewardTrackTaskProgressBarView';
 import type {RewardTrackTheme} from '../theme/RewardTrackTheme';
 import type {RewardTrackTaskListView} from './RewardTrackTaskListView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackTaskRowView
 {
@@ -82,9 +83,9 @@ export class RewardTrackTaskRowView
 
         const window = this._window as unknown as IWindow;
 
-        window.addEventListener('WME_CLICK', this.onClick);
-        window.addEventListener('WME_OVER', this.onMouseOver);
-        window.addEventListener('WME_OUT', this.onMouseOut);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onClick);
+        window.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        window.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
 
         this._lastLevelIndex = task.activeLevelIndex;
 
@@ -267,9 +268,9 @@ export class RewardTrackTaskRowView
 
         const window = this._window as unknown as IWindow | null;
 
-        window?.removeEventListener('WME_CLICK', this.onClick);
-        window?.removeEventListener('WME_OVER', this.onMouseOver);
-        window?.removeEventListener('WME_OUT', this.onMouseOut);
+        window?.removeEventListener(WindowMouseEvent.CLICK, this.onClick);
+        window?.removeEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        window?.removeEventListener(WindowMouseEvent.OUT, this.onMouseOut);
 
         this._progressBar?.dispose();
         this._progressBar = null;

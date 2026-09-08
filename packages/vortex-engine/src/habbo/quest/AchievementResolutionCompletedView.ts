@@ -8,6 +8,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 
 import type {AchievementsResolutionController} from './AchievementsResolutionController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.quest.AchievementResolutionCompletedView');
 
@@ -119,7 +120,7 @@ export class AchievementResolutionCompletedView implements IDisposable
     // AS3: AchievementResolutionCompletedView.as::addClickListener()
     private addClickListener(name: string): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WME_CLICK', this.onMouseClick);
+        this._window?.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClick);
     }
 
     // AS3: AchievementResolutionCompletedView.as::onMouseClick()

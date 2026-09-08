@@ -6,7 +6,7 @@ import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindo
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {FriendNotification} from '../../data/FriendNotification';
 import type {IFriendEntity} from '../../data/IFriendEntity';
@@ -347,7 +347,7 @@ export class NewFriendEntityTab extends Tab
             {
                 controls.name = NewFriendEntityTab.CONTROLS;
 
-                controls.getChildByName(NewFriendEntityTab.MESSAGE)?.addEventListener('WME_CLICK', this.onButtonClick);
+                controls.getChildByName(NewFriendEntityTab.MESSAGE)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
 
                 if(!this._isInGame)
                 {
@@ -365,7 +365,7 @@ export class NewFriendEntityTab extends Tab
                         if(this._friend.allowFollow)
                         {
                             visitButton.visible = true;
-                            visitButton.addEventListener('WME_CLICK', this.onButtonClick);
+                            visitButton.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
                         }
                         else
                         {
@@ -392,12 +392,12 @@ export class NewFriendEntityTab extends Tab
                         Tab.localization?.registerParameter('friend.bar.game.tip', 'game', gameLabel);
 
                         gameButton.visible = true;
-                        gameButton.addEventListener('WME_CLICK', this.onButtonClick);
+                        gameButton.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
                     }
                 }
 
-                controls.getChildByName(NewFriendEntityTab.BTN_MESSENGER)?.addEventListener('WME_CLICK', this.onButtonClick);
-                controls.getChildByName(NewFriendEntityTab.BTN_PROFILE)?.addEventListener('WME_CLICK', this.onButtonClick);
+                controls.getChildByName(NewFriendEntityTab.BTN_MESSENGER)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
+                controls.getChildByName(NewFriendEntityTab.BTN_PROFILE)?.addEventListener(WindowMouseEvent.CLICK, this.onButtonClick);
 
                 pieces.addListItem(controls);
 
@@ -596,17 +596,17 @@ export class NewFriendEntityTab extends Tab
         window.width = Tab.width;
         window.height = Tab.height;
 
-        window.addEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.addEventListener('WME_OVER', this.onMouseOverEvent);
-        window.addEventListener('WME_OUT', this.onMouseOutEvent);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
 
         const header = window.findChildByName(NewFriendEntityTab.HEADER);
 
         if(header !== null)
         {
-            header.addEventListener('WME_CLICK', this.onMouseClickEvent);
-            header.addEventListener('WME_OVER', this.onMouseOverEvent);
-            header.addEventListener('WME_OUT', this.onMouseOutEvent);
+            header.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            header.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            header.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
         const profile = window.findChildByName(NewFriendEntityTab.PROFILE) as IRegionWindow | null;
@@ -615,7 +615,7 @@ export class NewFriendEntityTab extends Tab
         {
             const interactive = profile as unknown as IInteractiveWindow;
 
-            (profile as unknown as IWindow).addEventListener('WME_CLICK', this.onProfileMouseEvent);
+            (profile as unknown as IWindow).addEventListener(WindowMouseEvent.CLICK, this.onProfileMouseEvent);
             interactive.toolTipCaption = Tab.localization?.getLocalization('infostand.profile.link.tooltip', '') ?? '';
             interactive.toolTipDelay = 100;
         }
@@ -624,9 +624,9 @@ export class NewFriendEntityTab extends Tab
 
         if(icons !== null)
         {
-            icons.addEventListener('WME_CLICK', this.onMouseClickEvent);
-            icons.addEventListener('WME_OVER', this.onMouseOverEvent);
-            icons.addEventListener('WME_OUT', this.onMouseOutEvent);
+            icons.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            icons.addEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            icons.addEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
         const canvas = window.findChildByName(NewFriendEntityTab.CANVAS) as IBitmapWrapperWindow | null;
@@ -663,33 +663,33 @@ export class NewFriendEntityTab extends Tab
         }
 
         window.procedure = null;
-        window.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-        window.removeEventListener('WME_OVER', this.onMouseOverEvent);
-        window.removeEventListener('WME_OUT', this.onMouseOutEvent);
+        window.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+        window.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+        window.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
 
         const header = window.findChildByName(NewFriendEntityTab.HEADER);
 
         if(header !== null)
         {
-            header.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-            header.removeEventListener('WME_OVER', this.onMouseOverEvent);
-            header.removeEventListener('WME_OUT', this.onMouseOutEvent);
+            header.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            header.removeEventListener(WindowMouseEvent.OVER, this.onMouseOverEvent);
+            header.removeEventListener(WindowMouseEvent.OUT, this.onMouseOutEvent);
         }
 
         const icons = window.findChildByName(NewFriendEntityTab.ICONS);
 
         if(icons !== null)
         {
-            icons.removeEventListener('WME_CLICK', this.onMouseClickEvent);
-            icons.removeEventListener('WME_OVER', this.onMouseClickEvent);
-            icons.removeEventListener('WME_OUT', this.onMouseClickEvent);
+            icons.removeEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
+            icons.removeEventListener(WindowMouseEvent.OVER, this.onMouseClickEvent);
+            icons.removeEventListener(WindowMouseEvent.OUT, this.onMouseClickEvent);
         }
 
         const profile = window.findChildByName(NewFriendEntityTab.PROFILE);
 
         if(profile !== null)
         {
-            profile.removeEventListener('WME_CLICK', this.onProfileMouseEvent);
+            profile.removeEventListener(WindowMouseEvent.CLICK, this.onProfileMouseEvent);
         }
 
         window.width = Tab.width;
@@ -843,19 +843,19 @@ export class NewFriendEntityTab extends Tab
 
             case FriendNotification.TYPE_ROOM_EVENT:
                 token = new RoomEventToken(this._friend!, notification);
-                token.iconElement?.addEventListener('WME_CLICK', this.onMouseClickEvent);
+                token.iconElement?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
                 iconTag = NewFriendEntityTab.TOKEN_ICON_TAG_NOTIFY;
                 break;
 
             case FriendNotification.TYPE_ACHIEVEMENT:
                 token = new AchievementToken(this._friend!, notification, Tab.localization!);
-                token.iconElement?.addEventListener('WME_CLICK', this.onMouseClickEvent);
+                token.iconElement?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
                 iconTag = NewFriendEntityTab.TOKEN_ICON_TAG_NOTIFY;
                 break;
 
             case FriendNotification.TYPE_QUEST:
                 token = new QuestToken(this._friend!, notification);
-                token.iconElement?.addEventListener('WME_CLICK', this.onMouseClickEvent);
+                token.iconElement?.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
                 iconTag = NewFriendEntityTab.TOKEN_ICON_TAG_NOTIFY;
                 break;
 
@@ -865,7 +865,7 @@ export class NewFriendEntityTab extends Tab
                 if(token.iconElement !== null)
                 {
                     token.iconElement.name = NewFriendEntityTab.GAME_ICON;
-                    token.iconElement.addEventListener('WME_CLICK', this.onMouseClickEvent);
+                    token.iconElement.addEventListener(WindowMouseEvent.CLICK, this.onMouseClickEvent);
                 }
 
                 iconTag = NewFriendEntityTab.TOKEN_ICON_TAG_GAME;

@@ -2,7 +2,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {NodeData} from '../../communication/messages/incoming/catalog/NodeData';
 import type {ICatalogNavigator} from './ICatalogNavigator';
 import type {ICatalogNode} from './ICatalogNode';
@@ -283,13 +283,13 @@ export class CatalogNodeRenderable extends CatalogNode
             }
         }
 
-        this._window.addEventListener('WME_CLICK', this.onButtonClicked.bind(this));
-        this._window.addEventListener('WME_OVER', this.onOver.bind(this));
-        this._window.addEventListener('WME_OUT', this.onOut.bind(this));
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked.bind(this));
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onOver.bind(this));
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onOut.bind(this));
 
         if(downButton != null)
         {
-            downButton.addEventListener('WME_CLICK', this.onButtonClicked.bind(this));
+            downButton.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked.bind(this));
         }
     }
 

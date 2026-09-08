@@ -2,6 +2,7 @@ import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {SpecialItemsView} from '../SpecialItemsView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * One dot in the carousel's page strip. Clicking it rotates to that item.
@@ -37,7 +38,7 @@ export class SpecialItemPageButtonView implements IDisposable
         this._view = view;
         this._window = view.pageTemplate?.clone() as unknown as IRegionWindow | null ?? null;
 
-        this._window?.addEventListener('WME_CLICK', this.onClick);
+        this._window?.addEventListener(WindowMouseEvent.CLICK, this.onClick);
 
         this.selected = false;
     }

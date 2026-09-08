@@ -19,6 +19,7 @@ import {RoomWidgetOpenInventoryMessage} from '../messages/RoomWidgetOpenInventor
 import {RoomWidgetOpenProfileMessage} from '../messages/RoomWidgetOpenProfileMessage';
 import {RoomWidgetRequestWidgetMessage} from '../messages/RoomWidgetRequestWidgetMessage';
 import {RoomWidgetShowOwnRoomsMessage} from '../messages/RoomWidgetShowOwnRoomsMessage';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.memenu.MeMenuMainView');
 
@@ -238,9 +239,9 @@ export class MeMenuMainView implements IMeMenuView
 
             if(child === null) continue;
 
-            child.addEventListener('WME_CLICK', this.onButtonClicked);
-            child.addEventListener('WME_OVER', this.onMouseOverOrOut);
-            child.addEventListener('WME_OUT', this.onMouseOverOrOut);
+            child.addEventListener(WindowMouseEvent.CLICK, this.onButtonClicked);
+            child.addEventListener(WindowMouseEvent.OVER, this.onMouseOverOrOut);
+            child.addEventListener(WindowMouseEvent.OUT, this.onMouseOverOrOut);
         }
     }
 

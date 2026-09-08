@@ -48,6 +48,7 @@ import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum'
 import {RoomEngineObjectEvent} from '@habbo/room/events/RoomEngineObjectEvent';
 import {RoomWidgetRoomObjectMessage} from '@habbo/ui/widget/messages/RoomWidgetRoomObjectMessage';
 import {RoomWidgetUserInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetUserInfoUpdateEvent';
+import {RoomWidgetPetCommandsUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetCommandsUpdateEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetRoomObjectNameEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectNameEvent';
 import {RoomWidgetPetInfoUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPetInfoUpdateEvent';
@@ -1948,13 +1949,13 @@ export class AvatarInfoWidget extends RoomWidgetBase implements IContextMenuPare
     // shared desktop bus.
     public openTrainingView(): void
     {
-        this.container?.desktopEvents.emit('RWPCUE_OPEN_PET_TRAINING', new RoomWidgetUpdateEvent('RWPCUE_OPEN_PET_TRAINING'));
+        this.container?.desktopEvents.emit(RoomWidgetPetCommandsUpdateEvent.OPEN_PET_TRAINING, new RoomWidgetUpdateEvent(RoomWidgetPetCommandsUpdateEvent.OPEN_PET_TRAINING));
     }
 
     // AS3: AvatarInfoWidget.as::closeTrainingView()
     public closeTrainingView(): void
     {
-        this.container?.desktopEvents.emit('RWPCUE_CLOSE_PET_TRAINING', new RoomWidgetUpdateEvent('RWPCUE_CLOSE_PET_TRAINING'));
+        this.container?.desktopEvents.emit(RoomWidgetPetCommandsUpdateEvent.CLOSE_PET_TRAINING, new RoomWidgetUpdateEvent(RoomWidgetPetCommandsUpdateEvent.CLOSE_PET_TRAINING));
     }
 
     // AS3: AvatarInfoWidget.as::get/set useMinimizedOwnAvatarMenu()

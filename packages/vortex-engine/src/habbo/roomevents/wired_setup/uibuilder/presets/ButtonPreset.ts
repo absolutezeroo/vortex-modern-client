@@ -1,6 +1,6 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -40,7 +40,7 @@ export class ButtonPreset extends WiredUIPreset
         this._container = wiredStyle.createButton();
         this._container.caption = caption;
         this._mode = mode;
-        this._container.addEventListener('WME_CLICK', this._buttonClicked);
+        this._container.addEventListener(WindowMouseEvent.CLICK, this._buttonClicked);
     }
 
     // AS3: ButtonPreset.as::buttonClicked()

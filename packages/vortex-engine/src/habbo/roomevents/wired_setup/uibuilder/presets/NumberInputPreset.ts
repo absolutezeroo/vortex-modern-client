@@ -1,7 +1,7 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -93,7 +93,7 @@ export class NumberInputPreset extends WiredUIPreset
         }
 
         this.setValue(param.initialValue);
-        this._field.addEventListener('WE_CHANGE', this._onTextChange);
+        this._field.addEventListener(WindowEvent.WE_CHANGE, this._onTextChange);
     }
 
     // AS3: NumberInputPreset.as::swapChars()

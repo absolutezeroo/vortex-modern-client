@@ -5,6 +5,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IAvatarEffect} from '../IAvatarEffect';
 import type {EffectsModel} from './EffectsModel';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * The strip under the effects grid: the selected effect's name, how long it has left, and the
@@ -70,7 +71,7 @@ export class EffectsParamView implements IDisposable
         this._container = model?.controller?.view?.effectsParamViewContainer ?? null;
         this._catalogPageName = model?.controller?.manager?.getProperty(EffectsParamView.CATALOG_PAGE_KEY) ?? '';
 
-        this._container?.findChildByName('get_more_button')?.addEventListener('WME_CLICK', this.onBuyButtonClick);
+        this._container?.findChildByName('get_more_button')?.addEventListener(WindowMouseEvent.CLICK, this.onBuyButtonClick);
 
         this.updateView(null);
     }

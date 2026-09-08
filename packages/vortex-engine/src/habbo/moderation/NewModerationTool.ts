@@ -74,6 +74,7 @@ import {IID_HabboNotifications} from '@iid/IIDHabboNotifications';
 import {IID_HabboSoundManager} from '@iid/IIDHabboSoundManager';
 import {IID_HabboInventory} from '@iid/IIDHabboInventory';
 import {IID_SessionDataManager} from '@iid/IIDSessionDataManager';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.moderation.NewModerationTool');
 
@@ -416,7 +417,7 @@ export class NewModerationTool extends Component
 
         if(this._window === null) return;
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onWindowClose);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
 
         const mainView = this.mainView;
         const subViewWrapper = this.subViewWrapper;
@@ -464,9 +465,9 @@ export class NewModerationTool extends Component
             this.giveFurnitureButton,
         ];
 
-        for(const button of buttons) button?.addEventListener('WME_CLICK', this.onSubViewClick);
+        for(const button of buttons) button?.addEventListener(WindowMouseEvent.CLICK, this.onSubViewClick);
 
-        this.returnButton?.addEventListener('WME_CLICK', this.onReturnClick);
+        this.returnButton?.addEventListener(WindowMouseEvent.CLICK, this.onReturnClick);
 
         this.show();
         this.hide();

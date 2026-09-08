@@ -7,6 +7,8 @@ import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import type {IRoomEngineRectangle} from '@habbo/room/RoomEngine';
 import {Logger} from '@core/utils/Logger';
 import type {FriendRequestWidget} from './FriendRequestWidget';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.friendrequest.FriendRequestDialog');
 
@@ -222,7 +224,7 @@ export class FriendRequestDialog
             return;
         }
 
-        this._window.addEventListener('WE_DEACTIVATED', this.onDeactivated);
+        this._window.addEventListener(WindowEvent.WE_DEACTIVATED, this.onDeactivated);
 
         // Typed as the interactive window rather than IWindow: the tooltip pair lives there,
         // as it does on AS3's IRegionWindow.
@@ -262,7 +264,7 @@ export class FriendRequestDialog
         if(window === null) return;
 
         window.setParamFlag(FriendRequestDialog.PARAM_FLAG_MOUSE_CLICK, true);
-        window.addEventListener('WME_CLICK', handler);
+        window.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     // AS3: .../widget/friendrequest/FriendRequestDialog.as::windowEventHandler()

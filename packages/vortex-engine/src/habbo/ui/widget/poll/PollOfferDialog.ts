@@ -5,6 +5,7 @@ import {Logger} from '@core/utils/Logger';
 import {RoomWidgetPollMessage} from '../messages/RoomWidgetPollMessage';
 import type {IPollDialog} from './IPollDialog';
 import type {PollWidget} from './PollWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.poll.PollOfferDialog');
 
@@ -118,7 +119,7 @@ export class PollOfferDialog implements IPollDialog
     {
         const button = this._window?.findChildByName(name) ?? null;
 
-        if(button !== null) button.addEventListener('WME_CLICK', handler);
+        if(button !== null) button.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     // AS3: .../widget/poll/PollOfferDialog.as::PollOfferDialog()

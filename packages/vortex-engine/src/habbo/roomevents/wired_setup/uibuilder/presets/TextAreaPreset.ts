@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -95,7 +95,7 @@ export class TextAreaPreset extends WiredUIPreset
             this._container.addChild(this._placeholder.window);
         }
 
-        this._field.addEventListener('WE_CHANGE', this._textHasChanged);
+        this._field.addEventListener(WindowEvent.WE_CHANGE, this._textHasChanged);
         this._textHasChanged(null);
     }
 

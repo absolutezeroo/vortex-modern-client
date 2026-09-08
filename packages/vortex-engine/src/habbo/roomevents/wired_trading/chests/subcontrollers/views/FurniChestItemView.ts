@@ -14,6 +14,7 @@ import type {
 import {ChestItemTypeRenderableWrapper} from './ChestItemTypeRenderableWrapper';
 import type {IChestItemView} from './IChestItemView';
 import type {FurniChestView} from './FurniChestView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * One cell of the furniture grid — and it stands for a **stack**, not an item.
@@ -58,9 +59,9 @@ export class FurniChestItemView implements IChestItemView
     {
         this._window = template.clone() as unknown as IWindowContainer;
 
-        this._window.addEventListener('WME_CLICK', this.onClick);
-        this._window.addEventListener('WME_OVER', this.onOver);
-        this._window.addEventListener('WME_OUT', this.onOut);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClick);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onOver);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onOut);
     }
 
     /**

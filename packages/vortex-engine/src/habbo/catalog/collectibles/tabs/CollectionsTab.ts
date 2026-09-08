@@ -23,6 +23,7 @@ import type {CollectiblesController} from '../CollectiblesController';
 import {CollectiblesView} from '../CollectiblesView';
 import {CollectionsNavigationNodeRenderer} from '../renderer/collections/CollectionsNavigationNodeRenderer';
 import {CollectionView} from './subviews/CollectionView';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.catalog.collectibles.tabs.CollectionsTab');
 
@@ -135,12 +136,12 @@ export class CollectionsTab implements IUpdateReceiver
 
         if(wallets !== null) this.initializeWallets(wallets);
 
-        this.walletSelection?.addEventListener('WE_SELECTED', this.onWalletSelectAction as unknown as (...args: unknown[]) => void);
+        this.walletSelection?.addEventListener(WindowEvent.WE_SELECTED, this.onWalletSelectAction as unknown as (...args: unknown[]) => void);
 
         this.populateSortOptions();
 
-        this.sortSelection?.addEventListener('WE_SELECTED', this.onSortSelectAction as unknown as (...args: unknown[]) => void);
-        this.searchInput?.addEventListener('WE_CHANGE', this.onFilterChangeAction as unknown as (...args: unknown[]) => void);
+        this.sortSelection?.addEventListener(WindowEvent.WE_SELECTED, this.onSortSelectAction as unknown as (...args: unknown[]) => void);
+        this.searchInput?.addEventListener(WindowEvent.WE_CHANGE, this.onFilterChangeAction as unknown as (...args: unknown[]) => void);
         this.clearSearchButton?.addEventListener(WindowMouseEvent.CLICK, this.onClearSearchAction as unknown as (...args: unknown[]) => void);
 
         this._backgroundStar = this._container.findChildByName('bg_star') as IStaticBitmapWrapperWindow | null;
@@ -743,9 +744,9 @@ export class CollectionsTab implements IUpdateReceiver
         this.clearNavigationList();
         this.removeMessageEvents();
 
-        this.walletSelection?.removeEventListener('WE_SELECTED', this.onWalletSelectAction as unknown as (...args: unknown[]) => void);
-        this.sortSelection?.removeEventListener('WE_SELECTED', this.onSortSelectAction as unknown as (...args: unknown[]) => void);
-        this.searchInput?.removeEventListener('WE_CHANGE', this.onFilterChangeAction as unknown as (...args: unknown[]) => void);
+        this.walletSelection?.removeEventListener(WindowEvent.WE_SELECTED, this.onWalletSelectAction as unknown as (...args: unknown[]) => void);
+        this.sortSelection?.removeEventListener(WindowEvent.WE_SELECTED, this.onSortSelectAction as unknown as (...args: unknown[]) => void);
+        this.searchInput?.removeEventListener(WindowEvent.WE_CHANGE, this.onFilterChangeAction as unknown as (...args: unknown[]) => void);
         this.clearSearchButton?.removeEventListener(WindowMouseEvent.CLICK, this.onClearSearchAction as unknown as (...args: unknown[]) => void);
 
         this._container = null;

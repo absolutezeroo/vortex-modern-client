@@ -4,8 +4,8 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 import {Util} from '../../../Util';
 import {UserDefinedRoomEventsCtrl} from '../../../wired_setup/UserDefinedRoomEventsCtrl';
@@ -66,29 +66,29 @@ export class WiredMenuSettingsTab extends WiredMenuDefaultTab
         for(const option of WiredMenuSettingsTab.MODIFY_PERMISSION_OPTIONS)
         {
             const checkbox = this.getModifyCheckbox(option);
-            checkbox.addEventListener('WE_SELECTED', this._onPermissionsChanged);
-            checkbox.addEventListener('WE_UNSELECTED', this._onPermissionsChanged);
+            checkbox.addEventListener(WindowEvent.WE_SELECTED, this._onPermissionsChanged);
+            checkbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onPermissionsChanged);
         }
 
         for(const option of WiredMenuSettingsTab.READ_PERMISSION_OPTIONS)
         {
             const checkbox = this.getReadCheckbox(option);
-            checkbox.addEventListener('WE_SELECTED', this._onPermissionsChanged);
-            checkbox.addEventListener('WE_UNSELECTED', this._onPermissionsChanged);
+            checkbox.addEventListener(WindowEvent.WE_SELECTED, this._onPermissionsChanged);
+            checkbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onPermissionsChanged);
         }
 
-        this.toolbarCheckbox.addEventListener('WE_SELECTED', this._onPreferencesChanged);
-        this.toolbarCheckbox.addEventListener('WE_UNSELECTED', this._onPreferencesChanged);
-        this.wiredInspectButton.addEventListener('WE_SELECTED', this._onPreferencesChanged);
-        this.wiredInspectButton.addEventListener('WE_UNSELECTED', this._onPreferencesChanged);
-        this.playtestCheckbox.addEventListener('WE_SELECTED', this._onPreferencesChanged);
-        this.playtestCheckbox.addEventListener('WE_UNSELECTED', this._onPreferencesChanged);
-        this.allNotificationsCheckbox.addEventListener('WE_SELECTED', this._onPreferencesChanged);
-        this.allNotificationsCheckbox.addEventListener('WE_UNSELECTED', this._onPreferencesChanged);
-        this.uiStyleDropdown.addEventListener('WE_SELECTED', this._onPreferencesChanged);
-        this.saveReloadButton.addEventListener('WME_CLICK', this._onClickReload);
-        this.rollbackButton.addEventListener('WME_CLICK', this._onClickRollback);
-        this.timezoneDropdown.addEventListener('WE_SELECTED', this._onSelectTimezone);
+        this.toolbarCheckbox.addEventListener(WindowEvent.WE_SELECTED, this._onPreferencesChanged);
+        this.toolbarCheckbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onPreferencesChanged);
+        this.wiredInspectButton.addEventListener(WindowEvent.WE_SELECTED, this._onPreferencesChanged);
+        this.wiredInspectButton.addEventListener(WindowEvent.WE_UNSELECTED, this._onPreferencesChanged);
+        this.playtestCheckbox.addEventListener(WindowEvent.WE_SELECTED, this._onPreferencesChanged);
+        this.playtestCheckbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onPreferencesChanged);
+        this.allNotificationsCheckbox.addEventListener(WindowEvent.WE_SELECTED, this._onPreferencesChanged);
+        this.allNotificationsCheckbox.addEventListener(WindowEvent.WE_UNSELECTED, this._onPreferencesChanged);
+        this.uiStyleDropdown.addEventListener(WindowEvent.WE_SELECTED, this._onPreferencesChanged);
+        this.saveReloadButton.addEventListener(WindowMouseEvent.CLICK, this._onClickReload);
+        this.rollbackButton.addEventListener(WindowMouseEvent.CLICK, this._onClickRollback);
+        this.timezoneDropdown.addEventListener(WindowEvent.WE_SELECTED, this._onSelectTimezone);
         this.wiredStyleBorder.visible = this.controller.getBoolean('wired.ui_picker_enabled');
     }
 

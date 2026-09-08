@@ -11,6 +11,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 import type {TradingNameScamWarningController} from './TradingNameScamWarningController';
 import type {TradingNameScamWarningData} from './TradingNameScamWarningData';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.inventory.trading.namescam.TradingNameScamWarningView');
 
@@ -84,9 +85,9 @@ export class TradingNameScamWarningView implements IDisposable
 
         this._window.enableLookupCache();
 
-        this.headerCloseButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.dismissButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.openProfileButton?.addEventListener('WME_CLICK', this.onOpenProfileClicked);
+        this.headerCloseButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.dismissButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.openProfileButton?.addEventListener(WindowMouseEvent.CLICK, this.onOpenProfileClicked);
     }
 
     // AS3: .../TradingNameScamWarningView.as::show()
@@ -394,9 +395,9 @@ export class TradingNameScamWarningView implements IDisposable
     {
         if(this._disposed) return;
 
-        this.headerCloseButton?.removeEventListener('WME_CLICK', this.onWindowClose);
-        this.dismissButton?.removeEventListener('WME_CLICK', this.onWindowClose);
-        this.openProfileButton?.removeEventListener('WME_CLICK', this.onOpenProfileClicked);
+        this.headerCloseButton?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.dismissButton?.removeEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.openProfileButton?.removeEventListener(WindowMouseEvent.CLICK, this.onOpenProfileClicked);
 
         this.hide();
 

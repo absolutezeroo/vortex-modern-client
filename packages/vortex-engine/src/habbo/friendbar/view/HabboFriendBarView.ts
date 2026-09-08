@@ -8,7 +8,7 @@ import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {IAvatarImageListener} from '@habbo/avatar/IAvatarImageListener';
@@ -47,6 +47,7 @@ import {Token} from './tabs/tokens/Token';
 import type {FriendListIcon} from './utils/FriendListIcon';
 import type {MessengerIcon} from './utils/MessengerIcon';
 import {TextCropper} from './utils/TextCropper';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.friendbar.HabboFriendBarView');
 
@@ -658,21 +659,21 @@ export class HabboFriendBarView extends AbstractView implements IHabboFriendBarV
 
             if(this._messengerIconWindow !== null)
             {
-                this._messengerIconWindow.addEventListener('WME_CLICK', this.onOpenMessenger);
+                this._messengerIconWindow.addEventListener(WindowMouseEvent.CLICK, this.onOpenMessenger);
                 this._messengerIconWindow.visible = false;
             }
 
-            tools.findChildByName(HabboFriendBarView.ICON_ALL_FRIENDS)?.addEventListener('WME_CLICK', this.onOpenFriendsList);
-            tools.findChildByName(HabboFriendBarView.ICON_FIND_FRIENDS)?.addEventListener('WME_CLICK', this.onOpenSearchFriends);
+            tools.findChildByName(HabboFriendBarView.ICON_ALL_FRIENDS)?.addEventListener(WindowMouseEvent.CLICK, this.onOpenFriendsList);
+            tools.findChildByName(HabboFriendBarView.ICON_FIND_FRIENDS)?.addEventListener(WindowMouseEvent.CLICK, this.onOpenSearchFriends);
         }
 
         this._collapseLeftButton = window.findChildByName(HabboFriendBarView.BUTTON_COLLAPSE_LEFT) as IRegionWindow | null;
-        (this._collapseLeftButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onCollapseFriendList);
+        (this._collapseLeftButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onCollapseFriendList);
 
         this._collapseRightButton = window.findChildByName(HabboFriendBarView.BUTTON_COLLAPSE_RIGHT) as IRegionWindow | null;
-        (this._collapseRightButton as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onCollapseFriendList);
+        (this._collapseRightButton as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onCollapseFriendList);
 
-        this._windowManager.getWindowContext(1).getDesktopWindow()?.addEventListener('WE_RESIZED', this.onDesktopResized);
+        this._windowManager.getWindowContext(1).getDesktopWindow()?.addEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
 
         this.populate();
 
@@ -1607,7 +1608,7 @@ export class HabboFriendBarView extends AbstractView implements IHabboFriendBarV
         }
 
         this._sessionDataManager?.events.off(SessionDataPreferencesEvent.PREFERENCES_UPDATED, this.onSessionDataPreferences);
-        this._windowManager?.getWindowContext(1).getDesktopWindow()?.removeEventListener('WE_RESIZED', this.onDesktopResized);
+        this._windowManager?.getWindowContext(1).getDesktopWindow()?.removeEventListener(WindowEvent.WE_RESIZED, this.onDesktopResized);
 
         this.context.removeLinkEventTracker(this);
 

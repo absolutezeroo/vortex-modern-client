@@ -32,6 +32,7 @@ import {RewardTrackTaskFilter} from './RewardTrackTaskFilter';
 import {RewardTrackTaskFilterButtonView} from './RewardTrackTaskFilterButtonView';
 import {RewardTrackTaskRowView} from './RewardTrackTaskRowView';
 import type {RewardTrackTaskDetailsView} from './RewardTrackTaskDetailsView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackTaskListView
 {
@@ -98,7 +99,7 @@ export class RewardTrackTaskListView
         this._theme = theme;
 
         (this.getPremiumButton as unknown as IWindow | null)
-            ?.addEventListener('WME_CLICK', this.onGetPremiumClicked);
+            ?.addEventListener(WindowMouseEvent.CLICK, this.onGetPremiumClicked);
 
         this.initializeFilters();
         this.initializeTasks();
@@ -445,7 +446,7 @@ export class RewardTrackTaskListView
         this._disposed = true;
 
         (this.getPremiumButton as unknown as IWindow | null)
-            ?.removeEventListener('WME_CLICK', this.onGetPremiumClicked);
+            ?.removeEventListener(WindowMouseEvent.CLICK, this.onGetPremiumClicked);
 
         this.tasksList?.removeListItems();
 

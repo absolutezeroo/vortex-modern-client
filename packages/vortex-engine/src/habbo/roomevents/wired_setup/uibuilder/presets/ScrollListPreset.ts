@@ -1,6 +1,6 @@
 import type {IWindow} from '@core/window/IWindow';
 import type {IScrollableListWindow} from '@core/window/components/IScrollableListWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../PresetManager';
@@ -67,7 +67,7 @@ export class ScrollListPreset extends WiredUIPreset implements IListPreset
             this._container.autoHideScrollBar = true;
         }
 
-        this._container.scrollableWindow.addEventListener('WE_RESIZED', this._onScrollableWindowResized);
+        this._container.scrollableWindow.addEventListener(WindowEvent.WE_RESIZED, this._onScrollableWindowResized);
     }
 
     // AS3: ScrollListPreset.as::get window()

@@ -6,7 +6,7 @@ import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBi
 import type {IMessageEvent} from '@core/communication/messages/IMessageEvent';
 import type {IUpdateReceiver} from '@core/runtime';
 import type {IDisposable} from '@core/runtime/IDisposable';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboLocalizationManager} from '@habbo/localization/IHabboLocalizationManager';
 import type {NftTransferFeeMessageParser} from '@habbo/communication/messages/parser/collectibles/NftTransferFeeMessageParser';
@@ -91,7 +91,7 @@ export class TransferNftsTab implements IUpdateReceiver
         controller.registerUpdateReceiver(this, 1);
 
         this.transferButton?.addEventListener(WindowMouseEvent.CLICK, this.onTransferClicked as unknown as (...args: unknown[]) => void);
-        this.transferWalletSelection?.addEventListener('WE_SELECTED', this.onSelectWallet as unknown as (...args: unknown[]) => void);
+        this.transferWalletSelection?.addEventListener(WindowEvent.WE_SELECTED, this.onSelectWallet as unknown as (...args: unknown[]) => void);
     }
 
     /**
@@ -412,7 +412,7 @@ export class TransferNftsTab implements IUpdateReceiver
 
         // AS3 leaves both listeners attached; the port removes them, as its sibling tab does.
         this.transferButton?.removeEventListener(WindowMouseEvent.CLICK, this.onTransferClicked as unknown as (...args: unknown[]) => void);
-        this.transferWalletSelection?.removeEventListener('WE_SELECTED', this.onSelectWallet as unknown as (...args: unknown[]) => void);
+        this.transferWalletSelection?.removeEventListener(WindowEvent.WE_SELECTED, this.onSelectWallet as unknown as (...args: unknown[]) => void);
 
         this._controller.removeUpdateReceiver(this);
 

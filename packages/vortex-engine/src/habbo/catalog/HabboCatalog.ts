@@ -283,6 +283,7 @@ import type {IEarningsController} from './earnings/IEarningsController';
 import {Purse} from './purse/Purse';
 import {PurseEvent} from './purse/PurseEvent';
 import {PurseUpdateEvent} from './purse/PurseUpdateEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.catalog.HabboCatalog');
 
@@ -3820,7 +3821,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
         if(closeButton)
         {
-            closeButton.addEventListener('WME_CLICK', this.onWindowClose);
+            closeButton.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
         }
 
         const searchInput = window.findChildByName('search.input') as unknown as ITextFieldWindow | null;
@@ -3841,7 +3842,7 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
 
             if(clearButton)
             {
-                clearButton.addEventListener('WME_CLICK', this.onClearSearch);
+                clearButton.addEventListener(WindowMouseEvent.CLICK, this.onClearSearch);
             }
         }
 

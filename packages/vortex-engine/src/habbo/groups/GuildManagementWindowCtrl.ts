@@ -6,7 +6,7 @@ import type {ITabContextWindow} from '@core/window/components/ITabContextWindow'
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IWidgetWindow} from '@core/window/components/IWidgetWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IDisposable} from '@core/runtime/IDisposable';
 import type {IBadgeImageWidget} from '@habbo/window/widgets/IBadgeImageWidget';
 import type {IGuildManagementData} from '@habbo/communication/messages/incoming/users/IGuildManagementData';
@@ -165,7 +165,7 @@ export class GuildManagementWindowCtrl
         this.bindProcedure('buy_button', this.onBuy);
         this.bindProcedure('vip_required_region', this.onGetVip);
 
-        window.addEventListener('WE_DEACTIVATED', this.onWindowUnActivated);
+        window.addEventListener(WindowEvent.WE_DEACTIVATED, this.onWindowUnActivated);
 
         this.bindProcedure('edit_tab_1', this.onTab);
         this.bindProcedure('edit_tab_2', this.onTab);
@@ -1075,7 +1075,7 @@ export class GuildManagementWindowCtrl
 
         if(this._window)
         {
-            this._window.removeEventListener('WE_DEACTIVATED', this.onWindowUnActivated);
+            this._window.removeEventListener(WindowEvent.WE_DEACTIVATED, this.onWindowUnActivated);
             this._window.dispose();
             this._window = null;
         }

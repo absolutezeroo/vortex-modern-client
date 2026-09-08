@@ -29,7 +29,7 @@ import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {IHabbiconController} from '@habbo/catalog/habbicons/IHabbiconController';
 import {HabbiconControllerEvent} from '@habbo/catalog/habbicons/HabbiconControllerEvent';
 import type {OwnedHabbiconData} from '@habbo/communication/messages/incoming/habbicons/OwnedHabbiconData';
@@ -40,6 +40,7 @@ import {
 import type {RoomChatInputView} from '../RoomChatInputView';
 import {HabbiconSelectorEntry} from './HabbiconSelectorEntry';
 import {HabbiconSelectorSection} from './HabbiconSelectorSection';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 export class HabbiconSelector
 {
@@ -255,11 +256,11 @@ export class HabbiconSelector
         this._openHubButton = this._window.findChildByName('habbicon_open_hub_button');
         this._emptyView = this._window.findChildByName('empty_view') as IWindowContainer | null;
 
-        this._searchInput?.addEventListener('WE_CHANGE', this.onSearchChanged);
-        this._searchInput?.addEventListener('WKE_KEY_DOWN', this.onSearchKeyDown as never);
-        this._searchPlaceholder?.addEventListener('WME_DOWN', this.onSearchPlaceholderDown as never);
-        this._searchClearButton?.addEventListener('WME_CLICK', this.onSearchClearClicked as never);
-        this._openHubButton?.addEventListener('WME_CLICK', this.onOpenHubClicked as never);
+        this._searchInput?.addEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+        this._searchInput?.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchKeyDown as never);
+        this._searchPlaceholder?.addEventListener(WindowMouseEvent.DOWN, this.onSearchPlaceholderDown as never);
+        this._searchClearButton?.addEventListener(WindowMouseEvent.CLICK, this.onSearchClearClicked as never);
+        this._openHubButton?.addEventListener(WindowMouseEvent.CLICK, this.onOpenHubClicked as never);
 
         if(this._controller !== null)
         {
@@ -313,26 +314,26 @@ export class HabbiconSelector
 
         if(this._searchInput !== null)
         {
-            this._searchInput.removeEventListener('WE_CHANGE', this.onSearchChanged);
-            this._searchInput.removeEventListener('WKE_KEY_DOWN', this.onSearchKeyDown as never);
+            this._searchInput.removeEventListener(WindowEvent.WE_CHANGE, this.onSearchChanged);
+            this._searchInput.removeEventListener(WindowKeyboardEvent.KEY_DOWN, this.onSearchKeyDown as never);
             this._searchInput = null;
         }
 
         if(this._searchPlaceholder !== null)
         {
-            this._searchPlaceholder.removeEventListener('WME_DOWN', this.onSearchPlaceholderDown as never);
+            this._searchPlaceholder.removeEventListener(WindowMouseEvent.DOWN, this.onSearchPlaceholderDown as never);
             this._searchPlaceholder = null;
         }
 
         if(this._searchClearButton !== null)
         {
-            this._searchClearButton.removeEventListener('WME_CLICK', this.onSearchClearClicked as never);
+            this._searchClearButton.removeEventListener(WindowMouseEvent.CLICK, this.onSearchClearClicked as never);
             this._searchClearButton = null;
         }
 
         if(this._openHubButton !== null)
         {
-            this._openHubButton.removeEventListener('WME_CLICK', this.onOpenHubClicked as never);
+            this._openHubButton.removeEventListener(WindowMouseEvent.CLICK, this.onOpenHubClicked as never);
             this._openHubButton = null;
         }
 

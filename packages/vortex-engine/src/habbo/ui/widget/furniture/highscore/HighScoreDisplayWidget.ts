@@ -10,6 +10,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IRoomWidgetHandler} from '../../../IRoomWidgetHandler';
 import type {HighScoreDisplayWidgetHandler} from '../../../handler/HighScoreDisplayWidgetHandler';
 import {RoomWidgetBase} from '../../RoomWidgetBase';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.highscore.HighScoreDisplayWidget');
 
@@ -104,7 +105,7 @@ export class HighScoreDisplayWidget extends RoomWidgetBase
         }
 
         this.resizeRootContainerToDesktop();
-        this._rootContainer.addEventListener('WE_PARENT_RESIZED', this.resizeRootContainerToDesktop);
+        this._rootContainer.addEventListener(WindowEvent.WE_PARENT_RESIZED, this.resizeRootContainerToDesktop);
     }
 
     // AS3: .../furniture/highscore/HighScoreDisplayWidget.as::get mainWindow()
@@ -240,7 +241,7 @@ export class HighScoreDisplayWidget extends RoomWidgetBase
 
         if(this._rootContainer !== null)
         {
-            this._rootContainer.removeEventListener('WE_PARENT_RESIZED', this.resizeRootContainerToDesktop);
+            this._rootContainer.removeEventListener(WindowEvent.WE_PARENT_RESIZED, this.resizeRootContainerToDesktop);
             this._rootContainer.dispose();
             this._rootContainer = null;
         }

@@ -15,6 +15,7 @@ import type {BitmapDataAsset} from '@core/assets/BitmapDataAsset';
 import {FixedSizeStack} from '@habbo/utils/FixedSizeStack';
 import {RoomWidgetUserActionMessage} from '../messages/RoomWidgetUserActionMessage';
 import type {IContextMenuParentWidget} from './IContextMenuParentWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export interface IScreenRectangle
 {
@@ -164,7 +165,7 @@ export class ContextInfoView
     // AS3: .../src/com/sulake/habbo/ui/widget/contextmenu/ContextInfoView.as::addMouseClickListener()
     protected addMouseClickListener(window: IWindow | null, handler: (event: WindowEvent) => void): void
     {
-        window?.addEventListener('WME_CLICK', handler);
+        window?.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     /**

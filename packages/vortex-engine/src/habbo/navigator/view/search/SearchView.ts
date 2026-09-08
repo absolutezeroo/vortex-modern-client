@@ -3,11 +3,12 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {IStaticBitmapWrapperWindow} from '@core/window/components/IStaticBitmapWrapperWindow';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import {WindowParam} from '@core/window/enum/WindowParam';
 import type {HabboNewNavigator} from '../../HabboNewNavigator';
 import {FilterMode} from './FilterMode';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Search input view for the navigator.
@@ -69,19 +70,19 @@ export class SearchView
 
         if(this._inputField)
         {
-            this._inputField.addEventListener('WKE_KEY_UP', this.keyUpHandler);
-            this._inputField.addEventListener('WE_CHANGE', this.onInputChanged);
-            this._inputField.addEventListener('WE_FOCUSED', this.onInputFocused);
-            this._inputField.addEventListener('WME_DOWN', this.onSearchInputMouse);
-            this._inputField.addEventListener('WME_CLICK', this.onSearchInputMouse);
+            this._inputField.addEventListener(WindowKeyboardEvent.KEY_UP, this.keyUpHandler);
+            this._inputField.addEventListener(WindowEvent.WE_CHANGE, this.onInputChanged);
+            this._inputField.addEventListener(WindowEvent.WE_FOCUSED, this.onInputFocused);
+            this._inputField.addEventListener(WindowMouseEvent.DOWN, this.onSearchInputMouse);
+            this._inputField.addEventListener(WindowMouseEvent.CLICK, this.onSearchInputMouse);
 
             this._searchInputClickArea = this._inputField.parent;
 
             if(this._searchInputClickArea)
             {
                 this._searchInputClickArea.setParamFlag(WindowParam.INPUT_EVENT_PROCESSOR, true);
-                this._searchInputClickArea.addEventListener('WME_DOWN', this.onSearchInputMouse);
-                this._searchInputClickArea.addEventListener('WME_CLICK', this.onSearchInputMouse);
+                this._searchInputClickArea.addEventListener(WindowMouseEvent.DOWN, this.onSearchInputMouse);
+                this._searchInputClickArea.addEventListener(WindowMouseEvent.CLICK, this.onSearchInputMouse);
             }
         }
 
@@ -89,7 +90,7 @@ export class SearchView
 
         if(this._clearButton)
         {
-            this._clearButton.addEventListener('WME_CLICK', this.onClearSearch);
+            this._clearButton.addEventListener(WindowMouseEvent.CLICK, this.onClearSearch);
         }
 
         this.clear();
@@ -331,22 +332,22 @@ export class SearchView
     {
         if(this._inputField)
         {
-            this._inputField.removeEventListener('WKE_KEY_UP', this.keyUpHandler);
-            this._inputField.removeEventListener('WE_CHANGE', this.onInputChanged);
-            this._inputField.removeEventListener('WE_FOCUSED', this.onInputFocused);
-            this._inputField.removeEventListener('WME_DOWN', this.onSearchInputMouse);
-            this._inputField.removeEventListener('WME_CLICK', this.onSearchInputMouse);
+            this._inputField.removeEventListener(WindowKeyboardEvent.KEY_UP, this.keyUpHandler);
+            this._inputField.removeEventListener(WindowEvent.WE_CHANGE, this.onInputChanged);
+            this._inputField.removeEventListener(WindowEvent.WE_FOCUSED, this.onInputFocused);
+            this._inputField.removeEventListener(WindowMouseEvent.DOWN, this.onSearchInputMouse);
+            this._inputField.removeEventListener(WindowMouseEvent.CLICK, this.onSearchInputMouse);
         }
 
         if(this._searchInputClickArea)
         {
-            this._searchInputClickArea.removeEventListener('WME_DOWN', this.onSearchInputMouse);
-            this._searchInputClickArea.removeEventListener('WME_CLICK', this.onSearchInputMouse);
+            this._searchInputClickArea.removeEventListener(WindowMouseEvent.DOWN, this.onSearchInputMouse);
+            this._searchInputClickArea.removeEventListener(WindowMouseEvent.CLICK, this.onSearchInputMouse);
         }
 
         if(this._clearButton)
         {
-            this._clearButton.removeEventListener('WME_CLICK', this.onClearSearch);
+            this._clearButton.removeEventListener(WindowMouseEvent.CLICK, this.onClearSearch);
         }
 
         this._inputField = null;

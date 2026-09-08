@@ -3,6 +3,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
 import type {RoomEventData} from '@habbo/communication/messages/incoming/navigator/RoomEventData';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Room event info display in the toolbar extension area.
@@ -202,21 +203,21 @@ export class RoomEventInfoCtrl implements IDisposable
 
         if(bgRegion !== null)
         {
-            bgRegion.addEventListener('WME_CLICK', this._onGetEventClick);
+            bgRegion.addEventListener(WindowMouseEvent.CLICK, this._onGetEventClick);
         }
 
         const modifyRegion = win.findChildByName('modify_link_region');
 
         if(modifyRegion !== null)
         {
-            modifyRegion.addEventListener('WME_CLICK', this._onModify);
+            modifyRegion.addEventListener(WindowMouseEvent.CLICK, this._onModify);
         }
 
         const extendRegion = win.findChildByName('extend_event_region');
 
         if(extendRegion !== null)
         {
-            extendRegion.addEventListener('WME_CLICK', this._onExtend);
+            extendRegion.addEventListener(WindowMouseEvent.CLICK, this._onExtend);
         }
     }
 

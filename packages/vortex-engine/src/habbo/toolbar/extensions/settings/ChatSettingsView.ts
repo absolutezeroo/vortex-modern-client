@@ -3,7 +3,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import {Logger} from '@core/utils/Logger';
 
 import type {HabboToolbar} from '../../HabboToolbar';
@@ -80,7 +80,7 @@ export class ChatSettingsView
 
         for(const menu of [this._chatMode, this._chatBubbleWidth, this._chatScrollSpeed])
         {
-            menu?.addEventListener('WE_SELECTED', this.onDropMenuSelectionChanged);
+            menu?.addEventListener(WindowEvent.WE_SELECTED, this.onDropMenuSelectionChanged);
         }
 
         this._populating = true;

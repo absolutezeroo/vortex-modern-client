@@ -14,6 +14,7 @@ import type {ITableObject} from './ITableObject';
 import type {TableColumn} from './TableColumn';
 import {TableRowModel} from './TableRowModel';
 import {TableRowView} from './TableRowView';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 type Rectangle = {x: number; y: number; width: number; height: number};
 type RowCallback = (object: ITableObject | null) => void;
@@ -163,8 +164,8 @@ export class TableView implements IDisposable
             this._container.setParamFlag(2048, true);
         }
 
-        this.tableContents.addEventListener('WE_RESIZED', this._onTableContentsResized);
-        (this.tableItems.findChildByTag('_ITEMLIST') as unknown as IWindow).addEventListener('WE_SCROLL', this._onScrolled);
+        this.tableContents.addEventListener(WindowEvent.WE_RESIZED, this._onTableContentsResized);
+        (this.tableItems.findChildByTag('_ITEMLIST') as unknown as IWindow).addEventListener(WindowEvent.WE_SCROLL, this._onScrolled);
     }
 
     // AS3: TableView.as::initialize()

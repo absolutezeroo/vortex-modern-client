@@ -19,7 +19,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import {HabbiconAssetManager} from '@habbo/habbicons/assets/HabbiconAssetManager';
 import type {MessengerHabbiconPickerEntry} from './MessengerHabbiconPickerEntry';
@@ -129,9 +129,9 @@ export class MessengerHabbiconPickerTileView
             return;
         }
 
-        this._window.addEventListener('WME_CLICK', this.onClicked);
-        this._window.addEventListener('WME_OVER', this.onHovered);
-        this._window.addEventListener('WME_OUT', this.onOut);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClicked);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onHovered);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onOut);
 
         this.refreshBitmap();
         this.addUnseenCounter(windowManager, isUnseen);
@@ -290,8 +290,8 @@ export class MessengerHabbiconPickerTileView
     {
         if(window === null || this._onWheel === null) return;
 
-        window.addEventListener('WME_WHEEL', this._onWheel);
-        window.addEventListener('WME_WHEEL_HORIZONTAL', this._onWheel);
+        window.addEventListener(WindowMouseEvent.WHEEL, this._onWheel);
+        window.addEventListener(WindowMouseEvent.WHEEL_HORIZONTAL, this._onWheel);
     }
 
     // AS3: .../src/com/sulake/habbo/messenger/habbicons/MessengerHabbiconPickerTileView.as::removeWheelListener()
@@ -299,8 +299,8 @@ export class MessengerHabbiconPickerTileView
     {
         if(window === null || this._onWheel === null) return;
 
-        window.removeEventListener('WME_WHEEL', this._onWheel);
-        window.removeEventListener('WME_WHEEL_HORIZONTAL', this._onWheel);
+        window.removeEventListener(WindowMouseEvent.WHEEL, this._onWheel);
+        window.removeEventListener(WindowMouseEvent.WHEEL_HORIZONTAL, this._onWheel);
     }
 
     /**
@@ -354,9 +354,9 @@ export class MessengerHabbiconPickerTileView
             this.removeWheelListener(this.background);
             this.removeWheelListener(this.bitmap);
 
-            this._window.removeEventListener('WME_CLICK', this.onClicked);
-            this._window.removeEventListener('WME_OVER', this.onHovered);
-            this._window.removeEventListener('WME_OUT', this.onOut);
+            this._window.removeEventListener(WindowMouseEvent.CLICK, this.onClicked);
+            this._window.removeEventListener(WindowMouseEvent.OVER, this.onHovered);
+            this._window.removeEventListener(WindowMouseEvent.OUT, this.onOut);
 
             this.removeUnseenCounter();
             this.clearBitmap();

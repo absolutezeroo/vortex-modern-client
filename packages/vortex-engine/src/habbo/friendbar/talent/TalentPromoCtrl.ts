@@ -20,6 +20,7 @@ import {
 } from '@habbo/communication/messages/outgoing/talent/GetTalentTrackLevelMessageComposer';
 import {GetTalentTrackMessageComposer} from '@habbo/communication/messages/outgoing/talent/GetTalentTrackMessageComposer';
 import type {HabboTalent} from './HabboTalent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class TalentPromoCtrl
 {
@@ -171,9 +172,9 @@ export class TalentPromoCtrl
 
         const window = this._window as unknown as IWindow;
 
-        window.addEventListener('WME_CLICK', this.onCheckProgress);
-        window.addEventListener('WME_OVER', this.onContainerMouseOver);
-        window.addEventListener('WME_OUT', this.onContainerMouseOut);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onCheckProgress);
+        window.addEventListener(WindowMouseEvent.OVER, this.onContainerMouseOver);
+        window.addEventListener(WindowMouseEvent.OUT, this.onContainerMouseOut);
 
         this._designedHeight = window.height;
     }

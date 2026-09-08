@@ -17,6 +17,7 @@ import {FurniChestView} from '../../../chests/subcontrollers/views/FurniChestVie
 import type {IChestItemView} from '../../../chests/subcontrollers/views/IChestItemView';
 import type {WiredTransactionDetailsController} from '../WiredTransactionDetailsController';
 import {TransactionChestItemWrapper} from './TransactionChestItemWrapper';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * One cell in a transaction's item breakdown — a stack of furniture, a pile of coins, or the
@@ -80,8 +81,8 @@ export class TransactionItemView implements IDisposable, IChestItemView
         this._window = (template as unknown as IWindow).clone() as unknown as IRegionWindow;
         this._controller = controller;
 
-        (this._window as unknown as IWindow).addEventListener('WME_OVER', this.onOver);
-        (this._window as unknown as IWindow).addEventListener('WME_OUT', this.onOut);
+        (this._window as unknown as IWindow).addEventListener(WindowMouseEvent.OVER, this.onOver);
+        (this._window as unknown as IWindow).addEventListener(WindowMouseEvent.OUT, this.onOut);
     }
 
     // AS3: TransactionItemView.as::get window()

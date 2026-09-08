@@ -6,7 +6,7 @@ import type {IItemGridWindow} from '@core/window/components/IItemGridWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {DimmerFurniWidget} from './DimmerFurniWidget';
 import {DimmerViewAlphaSlider} from './DimmerViewAlphaSlider';
 import {DimmerViewColorGrid} from './DimmerViewColorGrid';
@@ -221,7 +221,7 @@ export class DimmerView
 
         for(const name of ['type_checkbox', 'apply_button', 'on_off_button'])
         {
-            this._window.findChildByName(name)?.addEventListener('WME_CLICK', this.onMouseEvent);
+            this._window.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, this.onMouseEvent);
         }
 
         const offImage = this._window.findChildByName('off_image') as IBitmapWrapperWindow | null;

@@ -1,5 +1,5 @@
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 /**
  * InfoText
@@ -34,7 +34,7 @@ export class InfoText
             this._input.text = infoText;
         }
 
-        this._input.addEventListener('WE_FOCUSED', this.onFocus);
+        this._input.addEventListener(WindowEvent.WE_FOCUSED, this.onFocus);
     }
 
     // AS3: .../InfoText.as::goBackToInitialState()

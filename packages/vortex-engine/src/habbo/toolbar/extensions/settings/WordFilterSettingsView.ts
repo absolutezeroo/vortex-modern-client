@@ -30,6 +30,7 @@ import {
     RemoveFromCustomFilterMessageComposer
 } from '@habbo/communication/messages/outgoing/preferences/RemoveFromCustomFilterMessageComposer';
 import type {HabboToolbar} from '../../HabboToolbar';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.toolbar.extensions.settings.WordFilterSettingsView');
 
@@ -119,9 +120,9 @@ export class WordFilterSettingsView
 
         if(this._window === null) return;
 
-        this._window.findChildByName('remove_btn')?.addEventListener('WME_CLICK', this.onRemoveWordClick);
-        this._window.findChildByName('add_btn')?.addEventListener('WME_CLICK', this.onAddWordClick);
-        this._window.findChildByName('back_btn')?.addEventListener('WME_CLICK', this.onCloseButtonClick);
+        this._window.findChildByName('remove_btn')?.addEventListener(WindowMouseEvent.CLICK, this.onRemoveWordClick);
+        this._window.findChildByName('add_btn')?.addEventListener(WindowMouseEvent.CLICK, this.onAddWordClick);
+        this._window.findChildByName('back_btn')?.addEventListener(WindowMouseEvent.CLICK, this.onCloseButtonClick);
 
         this._addWordInput = this._window.findChildByName('add_word_input') as unknown as ITextFieldWindow | null;
         this._wordList = this._window.findChildByName('wordlist') as unknown as IItemListWindow | null;
@@ -302,9 +303,9 @@ export class WordFilterSettingsView
 
         if(bgRegion !== null)
         {
-            bgRegion.addEventListener('WME_CLICK', this.onBgMouseClick);
-            bgRegion.addEventListener('WME_OVER', this.onBgMouseOver);
-            bgRegion.addEventListener('WME_OUT', this.onBgMouseOut);
+            bgRegion.addEventListener(WindowMouseEvent.CLICK, this.onBgMouseClick);
+            bgRegion.addEventListener(WindowMouseEvent.OVER, this.onBgMouseOver);
+            bgRegion.addEventListener(WindowMouseEvent.OUT, this.onBgMouseOut);
         }
 
         row.id = index;
@@ -385,9 +386,9 @@ export class WordFilterSettingsView
 
         if(this._window)
         {
-            this._window.findChildByName('remove_btn')?.removeEventListener('WME_CLICK', this.onRemoveWordClick);
-            this._window.findChildByName('add_btn')?.removeEventListener('WME_CLICK', this.onAddWordClick);
-            this._window.findChildByName('back_btn')?.removeEventListener('WME_CLICK', this.onCloseButtonClick);
+            this._window.findChildByName('remove_btn')?.removeEventListener(WindowMouseEvent.CLICK, this.onRemoveWordClick);
+            this._window.findChildByName('add_btn')?.removeEventListener(WindowMouseEvent.CLICK, this.onAddWordClick);
+            this._window.findChildByName('back_btn')?.removeEventListener(WindowMouseEvent.CLICK, this.onCloseButtonClick);
 
             this._window.visible = false;
             this._window.dispose();

@@ -10,6 +10,7 @@ import type {IFigurePartSet} from '../structure/figure/IFigurePartSet';
 import type {IPartColor} from '../structure/figure/IPartColor';
 import type {IAvatarEditorGridPartItem} from './IAvatarEditorGridItem';
 import type {ICategoryModel} from './ICategoryModel';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /** TS-only: the rectangle union `analyzePartLayers()` accumulates. */
 /**
@@ -185,8 +186,8 @@ export class AvatarEditorGridPartItem implements IAvatarEditorGridPartItem, IAva
 
         this._renderManager = this.resolveRenderManager();
 
-        window?.addEventListener('WME_OVER', this.onMouseOver);
-        window?.addEventListener('WME_OUT', this.onMouseOut);
+        window?.addEventListener(WindowMouseEvent.OVER, this.onMouseOver);
+        window?.addEventListener(WindowMouseEvent.OUT, this.onMouseOut);
 
         this.updateThumbVisualization();
     }

@@ -17,7 +17,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import type {IssueBundle} from './IssueBundle';
 import type {IssueBrowser} from './IssueBrowser';
 import {IssueCategoryNames} from './IssueCategoryNames';
@@ -196,8 +196,8 @@ export class IssueListView
 
         button.id = bundleId;
 
-        button.removeEventListener('WME_CLICK', handler);
-        button.addEventListener('WME_CLICK', handler);
+        button.removeEventListener(WindowMouseEvent.CLICK, handler);
+        button.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     // TS-only: the null-guarded form of AS3's `row.findChildByName(name).caption = value`.

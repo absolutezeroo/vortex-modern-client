@@ -2,10 +2,11 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowKeyboardEvent} from '@core/window/events/WindowKeyboardEvent';
 import type {IHabboTransitionalNavigator} from './IHabboTransitionalNavigator';
 import {Util} from './Util';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Manages a text input field with placeholder, validation, and error display.
@@ -49,10 +50,10 @@ export class TextFieldManager
         }
 
         Util.setProcDirectly(this._input, this.onInputClick);
-        this._input.addEventListener('WME_DOWN', this.focusInput);
-        this._input.addEventListener('WME_CLICK', this.focusInput);
-        this._input.addEventListener('WKE_KEY_DOWN', this.checkEnterPress);
-        this._input.addEventListener('WE_CHANGE', this.checkMaxLen);
+        this._input.addEventListener(WindowMouseEvent.DOWN, this.focusInput);
+        this._input.addEventListener(WindowMouseEvent.CLICK, this.focusInput);
+        this._input.addEventListener(WindowKeyboardEvent.KEY_DOWN, this.checkEnterPress);
+        this._input.addEventListener(WindowEvent.WE_CHANGE, this.checkMaxLen);
         this._orgTextBackground = this._input.textBackground;
         this._orgTextBackgroundColor = this._input.textBackgroundColor;
     }
@@ -221,10 +222,10 @@ export class TextFieldManager
     {
         if(this._input)
         {
-            this._input.removeEventListener('WME_DOWN', this.focusInput);
-            this._input.removeEventListener('WME_CLICK', this.focusInput);
-            this._input.removeEventListener('WKE_KEY_DOWN', this.checkEnterPress);
-            this._input.removeEventListener('WE_CHANGE', this.checkMaxLen);
+            this._input.removeEventListener(WindowMouseEvent.DOWN, this.focusInput);
+            this._input.removeEventListener(WindowMouseEvent.CLICK, this.focusInput);
+            this._input.removeEventListener(WindowKeyboardEvent.KEY_DOWN, this.checkEnterPress);
+            this._input.removeEventListener(WindowEvent.WE_CHANGE, this.checkMaxLen);
             this._input.dispose();
             this._input = null;
         }

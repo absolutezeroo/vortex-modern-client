@@ -7,6 +7,7 @@ import {Logger} from '@core/utils/Logger';
 import type {IContextMenuParentWidget} from '@habbo/ui/widget/contextmenu/IContextMenuParentWidget';
 import {RoomWidgetFurniActionMessage} from '@habbo/ui/widget/messages/RoomWidgetFurniActionMessage';
 import {FurnitureContextInfoView} from './FurnitureContextInfoView';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.contextmenu.RandomTeleportContextMenuView');
 
@@ -66,16 +67,16 @@ export class RandomTeleportContextMenuView extends FurnitureContextInfoView
 
             if(this._window === null) return;
 
-            this._window.addEventListener('WME_OVER', this.onMouseHoverEvent);
-            this._window.addEventListener('WME_OUT', this.onMouseHoverEvent);
+            this._window.addEventListener(WindowMouseEvent.OVER, this.onMouseHoverEvent);
+            this._window.addEventListener(WindowMouseEvent.OUT, this.onMouseHoverEvent);
 
             const minimize = this._window.findChildByName('minimize');
 
             if(minimize !== null)
             {
-                minimize.addEventListener('WME_CLICK', this.onMinimize);
-                minimize.addEventListener('WME_OVER', this.onMinimizeHover);
-                minimize.addEventListener('WME_OUT', this.onMinimizeHover);
+                minimize.addEventListener(WindowMouseEvent.CLICK, this.onMinimize);
+                minimize.addEventListener(WindowMouseEvent.OVER, this.onMinimizeHover);
+                minimize.addEventListener(WindowMouseEvent.OUT, this.onMinimizeHover);
             }
         }
 

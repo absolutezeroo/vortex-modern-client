@@ -7,7 +7,7 @@ import type {IInteractiveWindow} from '@core/window/components/IInteractiveWindo
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {FriendEntity} from '../../data/FriendEntity';
 import type {IFriendRequest} from '../../data/IFriendRequest';
@@ -208,24 +208,24 @@ export class FriendRequestTab extends FriendEntityTab
         window.width = Tab.width;
         window.height = Tab.height;
 
-        window.addEventListener('WME_CLICK', this.onRequestMouseClick);
-        window.addEventListener('WME_OVER', this.onRequestMouseOver);
-        window.addEventListener('WME_OUT', this.onRequestMouseOut);
+        window.addEventListener(WindowMouseEvent.CLICK, this.onRequestMouseClick);
+        window.addEventListener(WindowMouseEvent.OVER, this.onRequestMouseOver);
+        window.addEventListener(WindowMouseEvent.OUT, this.onRequestMouseOut);
 
         const header = window.findChildByName(FriendEntityTab.HEADER);
 
         if(header !== null)
         {
-            header.addEventListener('WME_CLICK', this.onRequestMouseClick);
-            header.addEventListener('WME_OVER', this.onRequestMouseOver);
-            header.addEventListener('WME_OUT', this.onRequestMouseOut);
+            header.addEventListener(WindowMouseEvent.CLICK, this.onRequestMouseClick);
+            header.addEventListener(WindowMouseEvent.OVER, this.onRequestMouseOver);
+            header.addEventListener(WindowMouseEvent.OUT, this.onRequestMouseOut);
         }
 
         const profile = window.findChildByName(FriendEntityTab.PROFILE);
 
         if(profile !== null)
         {
-            profile.addEventListener('WME_CLICK', this.onProfileMouseEvent);
+            profile.addEventListener(WindowMouseEvent.CLICK, this.onProfileMouseEvent);
 
             const interactive = profile as unknown as IInteractiveWindow;
 
@@ -237,9 +237,9 @@ export class FriendRequestTab extends FriendEntityTab
 
         if(icons !== null)
         {
-            icons.addEventListener('WME_CLICK', this.onRequestMouseClick);
-            icons.addEventListener('WME_OVER', this.onRequestMouseOver);
-            icons.addEventListener('WME_OUT', this.onRequestMouseOut);
+            icons.addEventListener(WindowMouseEvent.CLICK, this.onRequestMouseClick);
+            icons.addEventListener(WindowMouseEvent.OVER, this.onRequestMouseOver);
+            icons.addEventListener(WindowMouseEvent.OUT, this.onRequestMouseOut);
         }
 
         const canvas = window.findChildByName(FriendEntityTab.CANVAS) as IBitmapWrapperWindow | null;
@@ -295,17 +295,17 @@ export class FriendRequestTab extends FriendEntityTab
         }
 
         window.procedure = null;
-        window.removeEventListener('WME_CLICK', this.onRequestMouseClick);
-        window.removeEventListener('WME_OVER', this.onRequestMouseOver);
-        window.removeEventListener('WME_OUT', this.onRequestMouseOut);
+        window.removeEventListener(WindowMouseEvent.CLICK, this.onRequestMouseClick);
+        window.removeEventListener(WindowMouseEvent.OVER, this.onRequestMouseOver);
+        window.removeEventListener(WindowMouseEvent.OUT, this.onRequestMouseOut);
 
         const header = window.findChildByName(FriendEntityTab.HEADER);
 
         if(header !== null)
         {
-            header.removeEventListener('WME_CLICK', this.onRequestMouseClick);
-            header.removeEventListener('WME_OVER', this.onRequestMouseOver);
-            header.removeEventListener('WME_OUT', this.onRequestMouseOut);
+            header.removeEventListener(WindowMouseEvent.CLICK, this.onRequestMouseClick);
+            header.removeEventListener(WindowMouseEvent.OVER, this.onRequestMouseOver);
+            header.removeEventListener(WindowMouseEvent.OUT, this.onRequestMouseOut);
         }
 
         // Verbatim: AS3 removes all three `icons` listeners with the click handler.
@@ -313,12 +313,12 @@ export class FriendRequestTab extends FriendEntityTab
 
         if(icons !== null)
         {
-            icons.removeEventListener('WME_CLICK', this.onRequestMouseClick);
-            icons.removeEventListener('WME_OVER', this.onRequestMouseClick);
-            icons.removeEventListener('WME_OUT', this.onRequestMouseClick);
+            icons.removeEventListener(WindowMouseEvent.CLICK, this.onRequestMouseClick);
+            icons.removeEventListener(WindowMouseEvent.OVER, this.onRequestMouseClick);
+            icons.removeEventListener(WindowMouseEvent.OUT, this.onRequestMouseClick);
         }
 
-        window.findChildByName(FriendEntityTab.PROFILE)?.removeEventListener('WME_CLICK', this.onProfileMouseEvent);
+        window.findChildByName(FriendEntityTab.PROFILE)?.removeEventListener(WindowMouseEvent.CLICK, this.onProfileMouseEvent);
 
         window.width = Tab.width;
         window.height = Tab.height;

@@ -34,6 +34,7 @@ import {RoomWidgetEcotronBoxDataUpdateEvent} from '@habbo/ui/widget/events/RoomW
 import {RoomWidgetPresentDataUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetPresentDataUpdateEvent';
 import {RoomWidgetRoomObjectUpdateEvent} from '@habbo/ui/widget/events/RoomWidgetRoomObjectUpdateEvent';
 import {RoomWidgetPresentOpenMessage} from '@habbo/ui/widget/messages/RoomWidgetPresentOpenMessage';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.ui.widget.furniture.present.PresentFurniWidget');
 
@@ -332,7 +333,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         this.applySenderCaption();
 
-        this._window.findChildByName('header_button_close')?.addEventListener('WME_CLICK', this.onClose);
+        this._window.findChildByName('header_button_close')?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
 
         const background = this._window.findChildByName('image_bg') as IBitmapWrapperWindow | null;
         const backgroundAsset = this.assets?.getAssetByName('gift_icon_background') as BitmapDataAsset | null;
@@ -377,7 +378,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
                 this.localizations?.registerParameter(key, 'name', this._senderName ?? '');
                 giveGift.caption = this.localizations?.getLocalization(key, this._senderName ?? '') ?? '';
-                giveGift.addEventListener('WME_CLICK', this.onGiveGiftOpened);
+                giveGift.addEventListener(WindowMouseEvent.CLICK, this.onGiveGiftOpened);
             }
             else
             {
@@ -428,7 +429,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         if(keepInRoom !== null)
         {
-            keepInRoom.addEventListener('WME_CLICK', this.onKeepInRoom);
+            keepInRoom.addEventListener(WindowMouseEvent.CLICK, this.onKeepInRoom);
             keepInRoom.visible = this._placedInRoom && !isSpaces && !isClub;
         }
 
@@ -436,7 +437,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         if(placeInRoom !== null)
         {
-            placeInRoom.addEventListener('WME_CLICK', this.onPlaceInRoom);
+            placeInRoom.addEventListener(WindowMouseEvent.CLICK, this.onPlaceInRoom);
             placeInRoom.visible = !this._placedInRoom;
 
             if(isSpaces)
@@ -454,7 +455,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         if(putInInventory !== null)
         {
-            putInInventory.addEventListener('WME_CLICK', this.onPutInInventory);
+            putInInventory.addEventListener(WindowMouseEvent.CLICK, this.onPutInInventory);
             putInInventory.enable();
 
             if(isSpaces || isClub)
@@ -615,7 +616,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         this.applySenderCaption();
 
-        this._window.findChildByName('header_button_close')?.addEventListener('WME_CLICK', this.onClose);
+        this._window.findChildByName('header_button_close')?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
 
         const giftCard = this._window.findChildByName('gift_card') as IStaticBitmapWrapperWindow | null;
 
@@ -704,7 +705,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
                 this.localizations?.registerParameter(key, 'name', this._senderName ?? '');
                 messageFrom.text = this.localizations?.getLocalization(key, this._senderName ?? '') ?? '';
-                messageFrom.addEventListener('WME_CLICK', this.onSenderNameClick);
+                messageFrom.addEventListener(WindowMouseEvent.CLICK, this.onSenderNameClick);
             }
             else
             {
@@ -730,7 +731,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
                 if(this._controller)
                 {
-                    giveGift.addEventListener('WME_CLICK', this.onGiveGift);
+                    giveGift.addEventListener(WindowMouseEvent.CLICK, this.onGiveGift);
                 }
 
                 if(!this._controller || this.isUnknownSender())
@@ -745,7 +746,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
             {
                 if(this._controller)
                 {
-                    openGift.addEventListener('WME_CLICK', this.onOpenGift);
+                    openGift.addEventListener(WindowMouseEvent.CLICK, this.onOpenGift);
                 }
                 else
                 {
@@ -927,7 +928,7 @@ export class PresentFurniWidget extends RoomWidgetBase implements IAvatarImageLi
 
         if(!this.isUnknownSender())
         {
-            region.addEventListener('WME_CLICK', this.onSenderImageClick);
+            region.addEventListener(WindowMouseEvent.CLICK, this.onSenderImageClick);
         }
         else
         {

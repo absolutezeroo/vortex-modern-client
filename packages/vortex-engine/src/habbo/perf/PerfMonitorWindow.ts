@@ -4,7 +4,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IBitmapWrapperWindow} from '@core/window/components/IBitmapWrapperWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IRoomEngine} from '@habbo/room/IRoomEngine';
 import {RoomObjectCategoryEnum} from '@habbo/room/object/RoomObjectCategoryEnum';
@@ -19,6 +19,7 @@ import {
     FrameTimings
 } from '@core/utils/FrameTimings';
 import {PERF_MONITOR_LAYOUT_NAME, PERF_MONITOR_TABS} from './PerfMonitorLayout';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.perf.PerfMonitorWindow');
 
@@ -204,7 +205,7 @@ export class PerfMonitorWindow
         // The frame skin supplies the red X in its header, tagged `close` — the layout never
         // declares it, so it has to be found by tag rather than by name. Without this the button
         // draws and depresses and does nothing, which is what it was doing.
-        this._tree.findChildByTag('close')?.addEventListener('WME_CLICK', this._onClose);
+        this._tree.findChildByTag('close')?.addEventListener(WindowMouseEvent.CLICK, this._onClose);
 
         // Parented to a desktop layer and activated, exactly as `WiredErrorInfoView.show()` does.
         // A window that is only `visible` has no parent and never reaches the compositor.
@@ -234,7 +235,7 @@ export class PerfMonitorWindow
 
             if(page !== null) page.visible = tab.id === this._activeTab;
 
-            this.find(tab.button)?.addEventListener('WE_SELECTED', this._onTabSelected);
+            this.find(tab.button)?.addEventListener(WindowEvent.WE_SELECTED, this._onTabSelected);
         }
 
         // Selecting through the context's own selector is what paints a tab button as active;
@@ -281,16 +282,16 @@ export class PerfMonitorWindow
     // TS-only: see the class note.
     private wireButtons(): void
     {
-        this.find('perfmon_run_prev')?.addEventListener('WME_CLICK', () => this.stepRun(-1));
-        this.find('perfmon_run_next')?.addEventListener('WME_CLICK', () => this.stepRun(1));
-        this.find('perfmon_run_reload')?.addEventListener('WME_CLICK', () => void this.reloadRuns());
+        this.find('perfmon_run_prev')?.addEventListener(WindowMouseEvent.CLICK, () => this.stepRun(-1));
+        this.find('perfmon_run_next')?.addEventListener(WindowMouseEvent.CLICK, () => this.stepRun(1));
+        this.find('perfmon_run_reload')?.addEventListener(WindowMouseEvent.CLICK, () => void this.reloadRuns());
 
-        this.find('perfmon_bench_20')?.addEventListener('WME_CLICK', () => this.startBench(20));
-        this.find('perfmon_bench_60')?.addEventListener('WME_CLICK', () => this.startBench(60));
-        this.find('perfmon_bench_100')?.addEventListener('WME_CLICK', () => this.startBench(100));
-        this.find('perfmon_p_refresh')?.addEventListener('WME_CLICK', () => this.showProfile());
+        this.find('perfmon_bench_20')?.addEventListener(WindowMouseEvent.CLICK, () => this.startBench(20));
+        this.find('perfmon_bench_60')?.addEventListener(WindowMouseEvent.CLICK, () => this.startBench(60));
+        this.find('perfmon_bench_100')?.addEventListener(WindowMouseEvent.CLICK, () => this.startBench(100));
+        this.find('perfmon_p_refresh')?.addEventListener(WindowMouseEvent.CLICK, () => this.showProfile());
 
-        this.find('perfmon_bench_stop')?.addEventListener('WME_CLICK', () =>
+        this.find('perfmon_bench_stop')?.addEventListener(WindowMouseEvent.CLICK, () =>
         {
             RoomStressTest.stop();
             this.setCaption('perfmon_bench_status', 'stopped');

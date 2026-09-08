@@ -2,7 +2,7 @@ import type {IWindow} from '@core/window/IWindow';
 import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {IItemListWindow} from '@core/window/components/IItemListWindow';
 import type {IRegionWindow} from '@core/window/components/IRegionWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 import type {HabboUserDefinedRoomEvents} from '@habbo/roomevents/HabboUserDefinedRoomEvents';
 
 import type {PresetManager} from '../../PresetManager';
@@ -80,7 +80,7 @@ export class MenuPreset extends WiredUIPreset
 
         this._container.width = minWidth + widthDelta + wiredStyle.menuRightOffset;
         this._container.height = list.height + heightDelta;
-        this._container.addEventListener('WE_DEACTIVATED', this._onDeactivate);
+        this._container.addEventListener(WindowEvent.WE_DEACTIVATED, this._onDeactivate);
     }
 
     // AS3: MenuPreset.as::onDeactivate()

@@ -7,6 +7,7 @@ import type {IHabboWindowManager} from '@habbo/window/IHabboWindowManager';
 import type {IGetImageListener} from '@habbo/room/IGetImageListener';
 import {Vector3d} from '@room/utils/Vector3d';
 import type {ChestSettingsUI} from './ChestSettingsUI';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 const log = Logger.getLogger('habbo.roomevents.chests.WiredChestWiredUpdateConfirmationView');
 
@@ -72,9 +73,9 @@ export class WiredChestWiredUpdateConfirmationView implements IGetImageListener
         this._window = this._windowManager.buildFromXML(xml as string, 1) as unknown as IWindowContainer;
         this._window.enableLookupCache();
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.cancelButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.buyButton?.addEventListener('WME_CLICK', this.onBuyClicked);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.buyButton?.addEventListener(WindowMouseEvent.CLICK, this.onBuyClicked);
     }
 
     // AS3: WiredChestWiredUpdateConfirmationView.as::onBuyClicked()

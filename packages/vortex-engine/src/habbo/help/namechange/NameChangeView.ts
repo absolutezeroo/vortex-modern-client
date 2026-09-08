@@ -4,7 +4,7 @@ import type {IFrameWindow} from '@core/window/components/IFrameWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {
     ChangeUserNameResultMessageEvent
 } from '@habbo/communication/messages/incoming/help/ChangeUserNameResultMessageEvent';
@@ -347,9 +347,9 @@ export class NameChangeView
             if(chip === null) continue;
 
             chip.color = NameChangeView.NAME_SUGGESTION_BG_COLOR;
-            chip.addEventListener('WME_CLICK', this.nameSelected);
-            chip.addEventListener('WME_OVER', this.nameOver);
-            chip.addEventListener('WME_OUT', this.nameOut);
+            chip.addEventListener(WindowMouseEvent.CLICK, this.nameSelected);
+            chip.addEventListener(WindowMouseEvent.OVER, this.nameOver);
+            chip.addEventListener(WindowMouseEvent.OUT, this.nameOut);
         }
     }
 

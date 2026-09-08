@@ -25,6 +25,7 @@ import type {RewardTrack} from '../../data/RewardTrack';
 import type {RewardTrackPrize} from '../../data/RewardTrackPrize';
 import {RewardTrackRewardDisplayWrapper} from '../../data/RewardTrackRewardDisplayWrapper';
 import type {RewardTrackController} from '../../RewardTrackController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 export class RewardTrackPrizeView
 {
@@ -64,7 +65,7 @@ export class RewardTrackPrizeView
         this._window = (template as unknown as IWindow).clone() as unknown as IWindowContainer;
         this._iconBaseY = (this.productIcon as unknown as IWindow | null)?.y ?? 0;
 
-        (this.clickRegion as unknown as IWindow | null)?.addEventListener('WME_CLICK', this.onClick);
+        (this.clickRegion as unknown as IWindow | null)?.addEventListener(WindowMouseEvent.CLICK, this.onClick);
     }
 
     // AS3: RewardTrackPrizeView.as::initialize()
@@ -262,7 +263,7 @@ export class RewardTrackPrizeView
             (window.parent as unknown as IWindowContainer).removeChild(window);
         }
 
-        (this.clickRegion as unknown as IWindow | null)?.removeEventListener('WME_CLICK', this.onClick);
+        (this.clickRegion as unknown as IWindow | null)?.removeEventListener(WindowMouseEvent.CLICK, this.onClick);
 
         window?.dispose();
 

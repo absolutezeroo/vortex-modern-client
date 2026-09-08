@@ -30,8 +30,8 @@ import type {IDropMenuWindow} from '@core/window/components/IDropMenuWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {ITextWindow} from '@core/window/components/ITextWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
-import type {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 import {Logger} from '@core/utils/Logger';
 import {
     GetCfhChatlogMessageComposer
@@ -293,14 +293,14 @@ export class IssueHandler implements ITrackedWindow, IIssueHandler, IUpdateRecei
             messageList.removeListItems();
         }
 
-        this._window.findChildByTag('close')?.addEventListener('WME_CLICK', this.onClose);
+        this._window.findChildByTag('close')?.addEventListener(WindowMouseEvent.CLICK, this.onClose);
 
         const issueContainer = this._window.findChildByName('issue_cont');
 
         if(issueContainer !== null)
         {
-            issueContainer.addEventListener('WE_RELOCATED', this.onWindowRelocatedOrResized);
-            issueContainer.addEventListener('WE_RESIZED', this.onWindowRelocatedOrResized);
+            issueContainer.addEventListener(WindowEvent.WE_RELOCATED, this.onWindowRelocatedOrResized);
+            issueContainer.addEventListener(WindowEvent.WE_RESIZED, this.onWindowRelocatedOrResized);
 
             manager.registerUpdateReceiver(this, IssueHandler.UPDATE_PRIORITY);
         }
@@ -541,8 +541,8 @@ export class IssueHandler implements ITrackedWindow, IIssueHandler, IUpdateRecei
             rowWindow.background = position++ % 2 === 0;
             rowWindow.id = issue.issueId;
 
-            rowWindow.removeEventListener('WME_CLICK', this.onIssueClicked);
-            rowWindow.addEventListener('WME_CLICK', this.onIssueClicked);
+            rowWindow.removeEventListener(WindowMouseEvent.CLICK, this.onIssueClicked);
+            rowWindow.addEventListener(WindowMouseEvent.CLICK, this.onIssueClicked);
 
             IssueHandler.setCaption(row.findChildByName('reporter'), issue.reporterUserName);
             IssueHandler.setCaption(
@@ -677,7 +677,7 @@ export class IssueHandler implements ITrackedWindow, IIssueHandler, IUpdateRecei
         if(selected >= 0) this._topicDropdown.selection = selected;
 
         (this._topicDropdown as unknown as IWindow)
-            .addEventListener('WE_SELECTED', this.refreshSanctionDataForSelectedTopic);
+            .addEventListener(WindowEvent.WE_SELECTED, this.refreshSanctionDataForSelectedTopic);
     }
 
     // AS3: IssueHandler.as::refreshSanctionDataForSelectedTopic()
@@ -691,7 +691,7 @@ export class IssueHandler implements ITrackedWindow, IIssueHandler, IUpdateRecei
     // AS3: IssueHandler.as::setProc()
     private setProc(name: string, handler: (event: WindowEvent) => void): void
     {
-        this._window?.findChildByName(name)?.addEventListener('WME_CLICK', handler);
+        this._window?.findChildByName(name)?.addEventListener(WindowMouseEvent.CLICK, handler);
     }
 
     /** Closing the window releases nothing — it only stops this client tracking the bundle. */

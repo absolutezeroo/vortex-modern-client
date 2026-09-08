@@ -20,6 +20,8 @@ import {
 import {Util} from '../../../Util';
 import {ChestType} from '../ChestType';
 import type {WiredChestController} from '../WiredChestController';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 const log = Logger.getLogger('habbo.roomevents.chests.WiredChestUpgradeConfirmationView');
 
@@ -90,10 +92,10 @@ export class WiredChestUpgradeConfirmationView implements IGetImageListener
         this._window = this._windowManager.buildFromXML(xml as string, 1) as unknown as IWindowContainer;
         this._window.enableLookupCache();
 
-        this.closeButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.cancelButton?.addEventListener('WME_CLICK', this.onWindowClose);
-        this.buyButton?.addEventListener('WME_CLICK', this.onBuyClicked);
-        (this.amountSelection as unknown as IWindow | null)?.addEventListener('WE_SELECTED', this.onAmountSelected);
+        this.closeButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.cancelButton?.addEventListener(WindowMouseEvent.CLICK, this.onWindowClose);
+        this.buyButton?.addEventListener(WindowMouseEvent.CLICK, this.onBuyClicked);
+        (this.amountSelection as unknown as IWindow | null)?.addEventListener(WindowEvent.WE_SELECTED, this.onAmountSelected);
 
         this._upgradeResultEvent = new WiredChestUpgradeResultMessageEvent((event) => this.onUpgradeChestResult(event));
         controller.addMessageEvent(this._upgradeResultEvent);

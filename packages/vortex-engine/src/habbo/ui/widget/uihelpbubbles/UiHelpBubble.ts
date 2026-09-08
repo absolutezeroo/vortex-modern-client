@@ -6,6 +6,7 @@ import type {ITextWindow} from '@core/window/components/ITextWindow';
 import type {ITextFieldWindow} from '@core/window/components/ITextFieldWindow';
 import type {HelpBubbleItem} from './HelpBubbleItem';
 import type {UiHelpBubblesWidget} from './UiHelpBubblesWidget';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /** TS-only: the shape AS3's `flash.geom.Rectangle` reduces to across this port's window API. */
 export interface IBubbleRect
@@ -222,7 +223,7 @@ export class UiHelpBubble
         this._callbackTarget = target;
         this._callback = this._hasNext ? this.onNext : this.onLastBubble;
 
-        this._callbackTarget.addEventListener('WME_CLICK', this._callback);
+        this._callbackTarget.addEventListener(WindowMouseEvent.CLICK, this._callback);
     }
 
     // AS3: .../widget/uihelpbubbles/UiHelpBubble.as::setChatFieldCallback()
@@ -233,7 +234,7 @@ export class UiHelpBubble
         this._chatFieldTarget = target;
         this._callback = this._hasNext ? this.onNext : this.onLastBubble;
 
-        this._chatFieldTarget.addEventListener('WME_CLICK', this._callback);
+        this._chatFieldTarget.addEventListener(WindowMouseEvent.CLICK, this._callback);
     }
 
     /**
@@ -251,7 +252,7 @@ export class UiHelpBubble
 
         if(this._callbackTarget !== null && this._callback !== null)
         {
-            this._callbackTarget.removeEventListener('WME_CLICK', this._callback);
+            this._callbackTarget.removeEventListener(WindowMouseEvent.CLICK, this._callback);
         }
 
         if(this._modalWindow !== null)
@@ -277,7 +278,7 @@ export class UiHelpBubble
         if(target === null) return;
 
         target.setParamFlag(1, true);
-        target.addEventListener('WME_CLICK', callback);
+        target.addEventListener(WindowMouseEvent.CLICK, callback);
     }
 
     /**

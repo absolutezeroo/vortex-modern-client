@@ -11,6 +11,7 @@ import {
     ChestItemTypeRenderableWrapper
 } from '../../../../wired_trading/chests/subcontrollers/views/ChestItemTypeRenderableWrapper';
 import type {TradeRuleEditorPreset} from './TradeRuleEditorPreset';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * One requirement chip inside a trade rule: an icon, a quantity, and a close button that only
@@ -65,13 +66,13 @@ export class TradeRuleNodeView
         this._uniqueID = TradeRuleNodeView._uniqueIdCounter++;
         this._window = template.clone() as unknown as IWindowContainer;
 
-        this._window.addEventListener('WME_OVER', this.onHover);
-        this._window.addEventListener('WME_OUT', this.onHoverEnd);
-        this._window.addEventListener('WME_CLICK', this.onClick);
+        this._window.addEventListener(WindowMouseEvent.OVER, this.onHover);
+        this._window.addEventListener(WindowMouseEvent.OUT, this.onHoverEnd);
+        this._window.addEventListener(WindowMouseEvent.CLICK, this.onClick);
 
-        this.closeRegion?.addEventListener('WME_OVER', this.onCloseHover);
-        this.closeRegion?.addEventListener('WME_OUT', this.onCloseHoverEnd);
-        this.closeRegion?.addEventListener('WME_CLICK', this.onCloseClick);
+        this.closeRegion?.addEventListener(WindowMouseEvent.OVER, this.onCloseHover);
+        this.closeRegion?.addEventListener(WindowMouseEvent.OUT, this.onCloseHoverEnd);
+        this.closeRegion?.addEventListener(WindowMouseEvent.CLICK, this.onCloseClick);
     }
 
     /**

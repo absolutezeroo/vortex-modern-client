@@ -4,7 +4,7 @@ import type {IWindowContainer} from '@core/window/IWindowContainer';
 import type {ITabContextWindow} from '@core/window/components/ITabContextWindow';
 import type {ITabButtonWindow} from '@core/window/components/ITabButtonWindow';
 import type {ISelectableWindow} from '@core/window/components/ISelectableWindow';
-import type {WindowEvent} from '@core/window/events/WindowEvent';
+import {WindowEvent} from '@core/window/events/WindowEvent';
 
 import {HabbiconTabMode} from './HabbiconTabMode';
 
@@ -38,9 +38,9 @@ export class HabbiconTabView implements IDisposable
         this._window = window;
         this._onTabChanged = onTabChanged;
 
-        this.tabAllSets?.addEventListener('WE_SELECTED', this.onTabSelected);
-        this.tabOwned?.addEventListener('WE_SELECTED', this.onTabSelected);
-        this.tabFavourited?.addEventListener('WE_SELECTED', this.onTabSelected);
+        this.tabAllSets?.addEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
+        this.tabOwned?.addEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
+        this.tabFavourited?.addEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
     }
 
     // AS3: HabbiconTabView.as::select()
@@ -132,9 +132,9 @@ export class HabbiconTabView implements IDisposable
     {
         if(this._disposed) return;
 
-        this.tabAllSets?.removeEventListener('WE_SELECTED', this.onTabSelected);
-        this.tabOwned?.removeEventListener('WE_SELECTED', this.onTabSelected);
-        this.tabFavourited?.removeEventListener('WE_SELECTED', this.onTabSelected);
+        this.tabAllSets?.removeEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
+        this.tabOwned?.removeEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
+        this.tabFavourited?.removeEventListener(WindowEvent.WE_SELECTED, this.onTabSelected);
 
         this._onTabChanged = null;
         this._activeMode = null;

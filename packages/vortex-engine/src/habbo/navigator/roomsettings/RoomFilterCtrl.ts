@@ -6,6 +6,7 @@ import type {WindowEvent} from '@core/window/events/WindowEvent';
 import type {IHabboTransitionalNavigator} from '../IHabboTransitionalNavigator';
 import {UpdateRoomFilterMessageComposer} from '@habbo/communication/messages/outgoing/room/settings/UpdateRoomFilterMessageComposer';
 import {GetCustomRoomFilterMessageComposer} from '@habbo/communication/messages/outgoing/room/settings/GetCustomRoomFilterMessageComposer';
+import {WindowMouseEvent} from '@core/window/events/WindowMouseEvent';
 
 /**
  * Room word filter editor controller.
@@ -142,15 +143,15 @@ export class RoomFilterCtrl implements IDisposable
 
         const removeBtn = win.findChildByName('badword_remove_btn');
 
-        if(removeBtn !== null) removeBtn.addEventListener('WME_CLICK', this._onRemoveWordClick);
+        if(removeBtn !== null) removeBtn.addEventListener(WindowMouseEvent.CLICK, this._onRemoveWordClick);
 
         const addBtn = win.findChildByName('badword_add_btn');
 
-        if(addBtn !== null) addBtn.addEventListener('WME_CLICK', this._onAddWordClick);
+        if(addBtn !== null) addBtn.addEventListener(WindowMouseEvent.CLICK, this._onAddWordClick);
 
         const closeBtn = win.findChildByTag('close');
 
-        if(closeBtn !== null) closeBtn.addEventListener('WME_CLICK', this._onCloseButtonClick);
+        if(closeBtn !== null) closeBtn.addEventListener(WindowMouseEvent.CLICK, this._onCloseButtonClick);
 
         this._addWordInput = win.findChildByName('roomfilter_addword_txt') as ITextFieldWindow | null;
 
@@ -217,9 +218,9 @@ export class RoomFilterCtrl implements IDisposable
 
         if(bgRegion !== null)
         {
-            bgRegion.addEventListener('WME_CLICK', this._onBgMouseClick);
-            bgRegion.addEventListener('WME_OVER', this._onBgMouseOver);
-            bgRegion.addEventListener('WME_OUT', this._onBgMouseOut);
+            bgRegion.addEventListener(WindowMouseEvent.CLICK, this._onBgMouseClick);
+            bgRegion.addEventListener(WindowMouseEvent.OVER, this._onBgMouseOver);
+            bgRegion.addEventListener(WindowMouseEvent.OUT, this._onBgMouseOut);
         }
 
         entry.id = index;
