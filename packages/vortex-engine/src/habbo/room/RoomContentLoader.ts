@@ -16,6 +16,8 @@ import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 import type {IRoomObjectVisualizationFactory} from '@room/object/IRoomObjectVisualizationFactory';
 import type {IGraphicAssetCollection} from '@room/object/visualization/utils/IGraphicAssetCollection';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
+import {AssetLibraryCollection} from '@core/assets/AssetLibraryCollection';
+import {Core} from '@core/Core';
 import type {IHabboConfigurationManager} from '@habbo/configuration/IHabboConfigurationManager';
 import type {ISessionDataManager} from '@habbo/session/ISessionDataManager';
 import type {IFurnitureData} from '@habbo/session/furniture/IFurnitureData';
@@ -200,7 +202,6 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     // AS3: sources/win63_version/habbo/room/class_1835.as::_lastAssetCompressionTime
     private _lastAssetCompressionTime: number = 0;
 
-    private _assetLibrary: IAssetLibrary | null = null;
     private _configurationManager: IHabboConfigurationManager | null = null;
     private _loadedTypes: Map<string, boolean> = new Map();
     private _loadingTypes: Map<string, Promise<void>> = new Map();
@@ -282,11 +283,14 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 *
 	 * @see AS3 RoomContentLoader.initialize() lines 181-192
 	 */
-    // AS3: sources/win63_version/habbo/room/class_1835.as::initialize()
-    initialize(stateEvents: EventEmitter, assetLibrary: IAssetLibrary, configurationManager: IHabboConfigurationManager): void
+    // AS3 takes `(IEventDispatcher, IHabboConfigurationManager)` and no asset library: it builds one
+    // AssetLibraryCollection per content type in addAssetLibraryCollection() and never holds a
+    // library of its own. The port's third parameter existed only to feed the shared-library design
+    // that made two content types share one asset namespace, so it goes with it.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_2288.as::initialize()
+    initialize(stateEvents: EventEmitter, configurationManager: IHabboConfigurationManager): void
     {
         this._stateEvents = stateEvents;
-        this._assetLibrary = assetLibrary;
         this._configurationManager = configurationManager;
 
         this._furnitureDownloadUrl = configurationManager.getProperty('flash.dynamic.download.url');
@@ -689,15 +693,18 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 
         if(existingLibrary !== null)
         {
-            // The named asset(s) are still registered - this port shares one AssetLibrary
-            // across every content type instead of AS3's per-type AssetLibraryCollection (see
-            // purge()'s comment), so they're never actually forgotten here. But purge() can
-            // still free the *processed* GraphicAssetCollection built from them to reclaim GPU
-            // memory, and AS3's real object-creation path (room/RoomManager.as::createRoomObject()
-            // lines 307-313) treats `getGraphicAssetCollection() == null` as the one signal that
-            // content needs (re)loading - there is no separate "already loaded" flag there at all.
-            // Rebuild the collection from the still-present data instead of silently leaving the
-            // type looking loaded with nothing to show.
+            // DEVIATION: AS3 has no such branch - its guard is the bare
+            //   `if(getAssetLibrary(type) != null || getAssetLibraryEventDispatcher(type) != null)
+            //   return false`, so a type whose GraphicAssetCollection was freed while its library
+            //   survived stays permanently blank. That happens when initializeGraphicAssetCollection()
+            //   fails and calls disposeGraphicAssetCollection() (purge() no longer produces it: it
+            //   drops the collection and the library together, as AS3 does). The rebuild below is
+            //   kept because AS3's own object-creation path (room/RoomManager.as::createRoomObject()
+            //   lines 307-313) treats `getGraphicAssetCollection() == null` as the one signal that
+            //   content needs (re)loading - there is no separate "already loaded" flag there at
+            //   all - so rebuilding from the still-present data beats leaving the type looking
+            //   loaded with nothing to show.
+            // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_2288.as::loadObjectContent()
             if(this.getGraphicAssetCollection(type) === null)
             {
                 const contentType = this.getRoomObjectOriginalName(this.getContentType(type));
@@ -737,7 +744,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 
         if(urls.length > 0)
         {
-            const loadPromise = this.loadObjectContentFromUrls(type, urls, events);
+            const loadPromise = this.loadObjectContentFromUrls(type, urls, events, assetLibrary);
             this._loadingTypes.set(type, loadPromise);
 
             return true;
@@ -773,8 +780,18 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
                 throw new Error(`Registering content library for unsupported category ${category}!`);
         }
 
-        this.addAssetLibraryCollection(contentType, null);
-        this._assetLibraries.set(this.getAssetLibraryName(contentType), assetLibrary);
+        // AS3: `_loc4_ = addAssetLibraryCollection(_loc5_, null) as AssetLibraryCollection;
+        // if(_loc4_) { _loc4_.addAssetLibrary(param3); ... }` — the externally loaded library joins
+        // the type's collection. The port overwrote the map entry with the bare library instead,
+        // which put a type back on a library shared with whoever else was handed the same instance.
+        // The cast is AS3's too: addAssetLibrary() is not on IAssetLibrary.
+        const collection = this.addAssetLibraryCollection(contentType, null);
+
+        if(collection instanceof AssetLibraryCollection)
+        {
+            collection.addAssetLibrary(assetLibrary);
+        }
+
         this.registerContentData(contentType, assetLibrary);
 
         if(this.initializeGraphicAssetCollection(contentType, assetLibrary))
@@ -1400,15 +1417,8 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
 	 * @see sources/win63_version/habbo/room/class_1835.as::loadObjectContent()
 	 */
     // AS3: sources/win63_version/habbo/room/class_1835.as::loadObjectContent()
-    private async loadObjectContentFromUrls(type: string, urls: string[], events: EventEmitter): Promise<void>
+    private async loadObjectContentFromUrls(type: string, urls: string[], events: EventEmitter, assetLibrary: IAssetLibrary): Promise<void>
     {
-        if(this._assetLibrary === null)
-        {
-            this._loadingTypes.delete(type);
-            events.emit(RoomContentLoadedEvent.CONTENT_LOAD_FAILURE, type);
-            return;
-        }
-
         await new Promise<void>((resolve) =>
         {
             let remaining = urls.length;
@@ -1427,7 +1437,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
                 // same try/catch this file already uses around loadThumbnailContent()'s loadAssetFromFile().
                 try
                 {
-                    const loader = this._assetLibrary!.loadAssetFromFile(type, url);
+                    const loader = assetLibrary.loadAssetFromFile(type, url);
 
                     loader.events.on('event', (event: AssetLoaderEvent) =>
                     {
@@ -1492,13 +1502,20 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     private processLoadedLibrary(type: string): void
     {
         const contentType = this.getRoomObjectOriginalName(type);
+
+        // The collection addAssetLibraryCollection() made for this type, fetched by the key *it*
+        // used - the content type, before getRoomObjectOriginalName() is applied. AS3 has no lookup
+        // here at all: its onContentLoaded() is handed the collection by the event and passes it
+        // straight in. Re-keying it under the original name below is what keeps getAssetLibrary(),
+        // which resolves aliases, able to find it afterwards.
+        const assetLibrary = this._assetLibraries.get(this.getAssetLibraryName(this.getContentType(type))) ?? null;
         let success = false;
 
-        if(this._assetLibrary !== null)
+        if(assetLibrary !== null)
         {
-            this._assetLibraries.set(this.getAssetLibraryName(contentType), this._assetLibrary);
-            this.registerContentData(contentType, this._assetLibrary, type);
-            success = this.initializeGraphicAssetCollection(contentType, this._assetLibrary);
+            this._assetLibraries.set(this.getAssetLibraryName(contentType), assetLibrary);
+            this.registerContentData(contentType, assetLibrary, type);
+            success = this.initializeGraphicAssetCollection(contentType, assetLibrary);
         }
 
         if(success && this._petTypeIds.has(contentType))
@@ -1685,7 +1702,7 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
     /**
 	 * @see sources/win63_version/habbo/room/class_1835.as::addAssetLibraryCollection()
 	 */
-    // AS3: sources/win63_version/habbo/room/class_1835.as::addAssetLibraryCollection()
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_2288.as::addAssetLibraryCollection()
     private addAssetLibraryCollection(type: string, events: EventEmitter | null): IAssetLibrary | null
     {
         const contentType = this.getContentType(type);
@@ -1696,19 +1713,40 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
             return existing;
         }
 
-        if(this._assetLibrary === null)
+        const context = Core.instance;
+
+        if(context === null)
         {
             return null;
         }
 
-        this._assetLibraries.set(this.getAssetLibraryName(contentType), this._assetLibrary);
+        const libraryName = this.getAssetLibraryName(contentType);
+
+        // AS3: `_loc3_ = new AssetLibraryCollection(_loc4_)` — one collection per content type.
+        // That is the whole reason a content type's asset name can never collide with another's:
+        // AssetLibraryCollection routes loadAssetFromFile() into its own private `bin` library, so
+        // `room`, `tile_cursor` and every furni class each register into a library of their own.
+        //
+        // This port used to store the one shared `_assetLibrary` under every key instead. The names
+        // then shared a single namespace, and since the write path keys `_assetLibraries` on the
+        // content type while the read path (getAssetLibrary) keys on getRoomObjectOriginalName() of
+        // it, an alias landing in `_objectOriginalNames` between two loads made the lookup miss a
+        // library that was in fact still holding the asset. The reload then hit AssetLibrary's
+        // `Asset with name X already exists` throw, which onContentLoadError() turns into
+        // "Failed to load critical room content asset" for any place-holder type.
+        //
+        // AS3's constructor takes the name alone; this one also needs the context because
+        // AssetLibraryCollection extends Component here where AS3 extends EventDispatcherWrapper.
+        const collection: IAssetLibrary = new AssetLibraryCollection(context, libraryName);
+
+        this._assetLibraries.set(libraryName, collection);
 
         if(events !== null && this.getAssetLibraryEventDispatcher(type) === null)
         {
             this._assetLibraryEventDispatchers.set(contentType, events);
         }
 
-        return this._assetLibrary;
+        return collection;
     }
 
     /**
@@ -1886,19 +1924,14 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
                 const libraryName = this.getAssetLibraryName(contentType);
                 const assetLibrary = this._assetLibraries.get(libraryName) ?? null;
 
-                // AS3's _libraries stores a dedicated AssetLibraryCollection per content type
-                // (addAssetLibraryCollection() does `new AssetLibraryCollection(...)`), so disposing
-                // it here is always safe there. This port instead registers every content type's
-                // named asset straight into the one shared `_assetLibrary` Nitro-bundle loader (see
-                // addAssetLibraryCollection()/processLoadedLibrary()), so that shared instance must
-                // never be disposed - only remove the *bookkeeping* entry when we are also actually
-                // disposing the underlying library. Deleting the entry unconditionally (regardless of
-                // whether disposal happened) desynced getAssetLibrary(type)'s cache from what's really
-                // still registered in the shared library: a later reload of the same type then hit
-                // AssetLibrary.loadAssetFromFile()'s "Asset with name X already exists" guard, which
-                // is exactly the "tile_cursor already exists" crash reported after leaving it unused
-                // long enough for purge() to run.
-                if(assetLibrary !== null && assetLibrary !== this._assetLibrary)
+                // AS3: `_libraries.remove(_loc2_); _loc3_.dispose();` - unconditional, because
+                // _libraries holds a dedicated AssetLibraryCollection per content type and disposing
+                // one can never touch another's assets. The port had to guard this while every key
+                // pointed at one shared library; now that addAssetLibraryCollection() builds a
+                // collection per type, the guard is gone and the entry and its library are dropped
+                // together, which is what keeps getAssetLibrary() in step with what is really still
+                // registered - the desync behind the "tile_cursor already exists" crash.
+                if(assetLibrary !== null)
                 {
                     this._assetLibraries.delete(libraryName);
                     assetLibrary.dispose();
