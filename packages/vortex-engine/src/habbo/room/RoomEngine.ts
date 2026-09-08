@@ -454,6 +454,13 @@ export class RoomEngine extends Component implements IRoomEngine,
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_90.as::_SafeStr_5238
     private _pendingFurniIconObjects: Map<string, IRoomObjectController[]> = new Map();
     private _contentLoader: RoomContentLoader;
+    /**
+     * Whether onConfigurationComplete() has already set the content loader up.
+     *
+     * TS-only: AS3 needs no such flag because it disposes and rebuilds the loader on every
+     * completion, which this port cannot do — see the comment at onConfigurationComplete().
+     */
+    private _contentLoaderInitialized: boolean = false;
     private _contentLoaderEvents: EventEmitter = new EventEmitter();
     private _roomInstanceData: Map<number, IRoomEngineRoomInstanceData>;
     private _boundOnContentLoaded: ((type: string) => void) = this.onContentLoaded.bind(this);
@@ -10212,6 +10219,26 @@ export class RoomEngine extends Component implements IRoomEngine,
         {
             return;
         }
+
+        // AS3 opens this method by tearing the previous loader down —
+        // `if(_roomContentLoader){ _roomContentLoader.dispose(); events.removeEventListener(
+        // "RCL_LOADER_READY", onContentLoaderReady); }` (_SafeCls_90.as l.460-464) — because
+        // configuration can complete more than once and it rebuilds from scratch each time. It can
+        // afford that: its loader owns an AssetLibraryCollection per content type, so disposing it
+        // takes the registered assets with it.
+        //
+        // This port registers every content type into the one shared `assets` library, which
+        // outlives the loader. Rebuilding here therefore does not start from scratch: the loader
+        // goes back to STATE_INITIALIZING while its six place-holder loads are still in flight, and
+        // RoomManager re-requests types whose names the shared library already holds — which is
+        // AssetLibrary's "Asset with name room already exists", escalated by onContentLoadError()
+        // into the crash that left rooms with no walls, no tile cursor and no way to walk.
+        //
+        // A second completion carries nothing new for the loader either: every property read below
+        // comes from the same configuration. So the first initialisation stands.
+        if(this._contentLoaderInitialized) return;
+
+        this._contentLoaderInitialized = true;
 
         // AS3: _roomContentLoader.visualizationFactory = _visualizationFactory
         this._contentLoader.visualizationFactory = this._visualizationFactory;
