@@ -516,7 +516,6 @@ export class HabboCommunicationManager extends Component implements IHabboCommun
 
         this._connection = this.communicationManager.createConnection(this);
         this._connection.registerMessageClasses(this._messageConfig);
-        this._connection.isConfigured();
 
         if(this._pendingMessageEvents.length > 0)
         {
