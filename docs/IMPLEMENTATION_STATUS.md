@@ -1,5 +1,12 @@
 # Vortex - Implementation Status
 
+> **The counts now live in `docs/status.yaml`, and they are checked.** A local script re-measures
+> every module and source against the tree and fails when a row has drifted, which the tables in
+> this file could never do — it found one on its first run (`habbo/window` said 114 TS files, there
+> were 113). Where this file and that one disagree about a number, that one is right. What this
+> file still carries that the data cannot is the *reasoning*: why a count moved, which findings
+> turned out to be noise, what was measured and how.
+
 > **Last updated**: 2026-09-07 (snapshot re-measured and the four tools re-run; previous full
 > re-measure of every *module* table 2026-08-13 — those rows below still carry their 2026-08-13
 > figures and several are known stale, see "Current Priorities")
