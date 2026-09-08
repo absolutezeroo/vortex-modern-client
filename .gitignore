@@ -57,6 +57,10 @@ packages/vortex-client/.vortex-dev/
 # a clone without them still commits normally.
 /scripts/
 
+# The port's own progress tracking, and the tool that regenerates it. Working notes,
+# not documentation for anyone else.
+/docs/status.yaml
+
 # Python bytecode from scripts/origins/
 __pycache__/
 *.pyc
