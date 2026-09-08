@@ -50,6 +50,12 @@ const CONFIGURATIONS = join(ASSETS, 'configurations');
 // nine files, so packaging them would ship a second copy that could drift from the tracked one.
 const PACKED_DIRS = ['configurations', 'images', 'sounds', 'window-layouts', 'window-skins'];
 
+// ...except these two, which live in configurations/ but are not derived dump content: they are
+// the packer's own deployment configuration. Shipping them would point a stranger's client at
+// whatever hotel the archive was built on, and would stop step 5 from ever writing the local
+// defaults, since it leaves an existing file alone. See writeConfiguration().
+const DEPLOYMENT_CONFIGURATION = ['common_configuration_txt.txt', 'localization_configuration_txt.txt'];
+
 const DEFAULT_ARCHIVE = join(repoRoot, 'vortex-client-assets.zip');
 
 // The services the client talks to, and the one URL on each that proves it is really there.
@@ -616,7 +622,7 @@ function pack()
     for(const name of PACKED_DIRS)
     {
         const dir = join(ASSETS, name);
-        const files = existsSync(dir) ? listFiles(dir) : [];
+        const files = (existsSync(dir) ? listFiles(dir) : []).filter(file => !DEPLOYMENT_CONFIGURATION.includes(file));
 
         if(files.length === 0)
         {

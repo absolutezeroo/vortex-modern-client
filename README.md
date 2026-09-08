@@ -220,6 +220,11 @@ this shows up before you can sign in.
 **`pnpm install` refuses, or the build fails in odd ways.** Check `node -v` and `pnpm -v` against
 the requirements above. npm and yarn cannot resolve this workspace at all.
 
+**On Windows, `git clone` fails with `Filename too long`.** The deepest path in the repository is
+157 characters and Windows stops at 260, so the directory you clone into has to be shorter than
+about 100. Clone to `C:\vortex` rather than somewhere under `Documents`, or lift the limit with
+`git config --global core.longpaths true`.
+
 ---
 
 ## Contributing
