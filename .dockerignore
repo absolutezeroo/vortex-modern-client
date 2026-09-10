@@ -1,0 +1,34 @@
+# Everything here is kept out of the build context. Size is the point: the context is uploaded to
+# the daemon on every build, and this repository carries a Flash dump and two caches that dwarf
+# everything the image actually needs.
+
+# --- installed and generated trees ---------------------------------------------------------------
+**/node_modules/
+**/dist/
+.vortex-dev/
+
+# --- the dumps -------------------------------------------------------------------------------------
+# install.mjs prefers a dump under sources/ over vortex-client-assets.zip when both are present.
+# Excluding it is deliberate, not an oversight: the image must build from the committed archive so
+# that the same commit produces the same client, rather than from whatever a developer happens to
+# have unpacked locally. Re-pack with `node install.mjs --pack` and commit when the dump changes.
+sources/
+
+# --- the imager's caches ------------------------------------------------------------------------
+# Both are gitignored, generated, and together ~570 MB. static/ is a pre-render fast path and
+# cache/ is runtime state; the imager recreates what it needs and both belong on a volume.
+packages/vortex-imager/static/
+packages/vortex-imager/cache/
+
+# --- version control and local tooling -------------------------------------------------------------
+.git/
+.github/
+.husky/
+.idea/
+.vscode/
+
+# --- not needed to build ---------------------------------------------------------------------------
+docs/
+perf/
+mockup/
+**/*.log

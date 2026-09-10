@@ -1,0 +1,51 @@
+# syntax=docker/dockerfile:1
+
+# =================================================================================================
+# vortex-imager
+# =================================================================================================
+# Build context is the REPOSITORY ROOT, not this directory — the imager depends on vortex-engine
+# through the `workspace:` protocol and cannot be installed on its own. In Coolify set
+# "Dockerfile Location" to /packages/vortex-imager/Dockerfile and leave the base directory at /.
+
+FROM node:22-slim AS build
+RUN corepack enable
+WORKDIR /src
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/vortex-client/package.json packages/vortex-client/
+COPY packages/vortex-engine/package.json packages/vortex-engine/
+COPY packages/vortex-glaze/package.json packages/vortex-glaze/
+COPY packages/vortex-imager/package.json packages/vortex-imager/
+COPY packages/vortex-web/package.json packages/vortex-web/
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+RUN pnpm --filter vortex-imager build
+
+# =================================================================================================
+# Runtime
+# =================================================================================================
+# The whole workspace is carried over rather than dist/ alone. esbuild bundles the TypeScript, but
+# `@napi-rs/canvas` is a native module — it cannot be bundled, and pnpm's node_modules is a tree of
+# symlinks into .pnpm/, so copying the directory alone would carry broken links. Copying /src keeps
+# both halves consistent. The image is larger than it strictly needs to be; that is the trade, and
+# a `pnpm deploy --prod` refinement is the upgrade path if it ever matters.
+FROM node:22-slim AS runtime
+WORKDIR /src
+
+COPY --from=build /src /src
+
+# The same Nitro asset tree the front serves. The imager reads it from disk to render — mount the
+# SAME host directory in both containers, or an avatar renders against assets the client does not
+# have and the two drift silently.
+VOLUME /assets
+
+ENV IMAGER_PORT=8081 \
+    IMAGER_ASSETS_ROOT=/assets \
+    IMAGER_CACHE_DIR=/cache
+
+VOLUME /cache
+
+EXPOSE 8081
+
+CMD ["node", "packages/vortex-imager/dist/index.js"]

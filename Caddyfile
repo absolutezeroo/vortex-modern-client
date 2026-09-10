@@ -1,0 +1,80 @@
+# =================================================================================================
+# One origin for the whole hotel.
+# =================================================================================================
+# The client resolves everything against the origin it was served from — install.mjs leaves
+# `url.prefix` and `pocket.api` EMPTY on purpose and App.ts::fillOriginPrefixes() fills them at
+# boot, and packages/vortex-client/index.html dials `wss://<origin>/ws` for anything that is not
+# localhost. So the client needs no build-time knowledge of where the hotel lives: it only needs
+# every service to answer on its own origin, which is this file's whole job.
+#
+# The upside is not tidiness. One origin means no CORS policy to keep in sync, no cross-site
+# cookie to age out, one certificate, and an emulator that needs no public domain at all — it is
+# reached over the Docker network by the internal hostname Coolify assigns it.
+
+{
+	# Coolify's proxy terminates TLS in front of this container, so Caddy serves plain HTTP on :80
+	# and must not try to obtain a certificate of its own — it has no public address to validate
+	# against and would retry ACME forever.
+	auto_https off
+}
+
+:80 {
+	encode zstd gzip
+
+	# --- the web API ---------------------------------------------------------------------------
+	# `handle_path` strips the matched prefix, which is exactly the rewrite the dev server does
+	# (packages/vortex-client/vite.config.ts). The client's shipped configuration says
+	# `web.api.en=/webapi`, an origin-root path, and asks for `<web.api>/api/public/...`; the
+	# emulator serves `/api/public/...`. Without the strip every call arrives one segment deep and
+	# answers 404 — with a 200-shaped index.html if it fell through to the SPA, which is the
+	# failure that costs the most time to read.
+	handle_path /webapi/* {
+		reverse_proxy {$EMULATOR_HOST}:8080
+	}
+
+	# Some calls are made against the origin root rather than through `web.api`. `handle`, not
+	# `handle_path`: these keep their prefix.
+	handle /api/* {
+		reverse_proxy {$EMULATOR_HOST}:8080
+	}
+
+	# --- the game socket -----------------------------------------------------------------------
+	# reverse_proxy upgrades WebSocket connections on its own; no extra directive is needed. The
+	# emulator must be listening on 0.0.0.0 for this to reach it — its default is 127.0.0.1, which
+	# inside a container is the container's own loopback and nothing else.
+	handle /ws {
+		reverse_proxy {$EMULATOR_HOST}:30001
+	}
+
+	# --- avatars, badges, furni thumbnails -------------------------------------------------------
+	handle /habbo-imaging/* {
+		reverse_proxy {$IMAGER_HOST}:8081
+	}
+
+	# --- the Nitro asset tree --------------------------------------------------------------------
+	# Served straight off the mounted volume, not proxied: these are the biggest and most numerous
+	# requests the client makes, and a proxy hop buys nothing.
+	#
+	# `gamedata/hashes.json` is the first file the client fetches after its own configuration, and
+	# every other asset is a URL found INSIDE it. If that file still carries absolute
+	# `http://vortex-assets.local/...` URLs, nothing here can save it — the browser will dial a
+	# hostname that resolves nowhere for a visitor. See DEPLOYMENT.md.
+	@assets path /gamedata/* /gordon/* /c_images/* /dcr/*
+	handle @assets {
+		root * /assets
+		file_server
+
+		# The tree is content-addressed through hashes.json, so a long max-age is safe and is what
+		# keeps a room from re-fetching a thousand files on every visit.
+		header Cache-Control "public, max-age=604800"
+	}
+
+	# --- the client itself -------------------------------------------------------------------------
+	# Last, so it only catches what nothing above claimed. `try_files` gives the SPA its fallback:
+	# a deep link must answer with index.html rather than 404.
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
