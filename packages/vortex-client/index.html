@@ -30,7 +30,7 @@
             //
             // SocketConnection accepts a full ws://|wss:// URL as `host` and ignores `ports` then.
             host: ['localhost', '127.0.0.1'].includes(window.location.hostname)
-                ? '127.0.0.1'
+                ? 'ws://ourvjasausgxlxmrunm7ys1w.72.60.91.223.sslip.io'
                 : `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/ws`,
             ports: [40001],
             ...existingConnection,
