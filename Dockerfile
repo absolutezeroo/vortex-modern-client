@@ -40,6 +40,18 @@ RUN node install.mjs --skip-install --skip-checks
 
 # `prebuild` (tools/bundle-assets.mjs) runs on its own and turns the unpacked tree into the
 # .bundle files index.html loads.
+#
+# NODE_OPTIONS is not tuning, it is what makes this step finish. `tsc && vite build` over this
+# codebase exhausted V8's old space and aborted with exit 134 — the trace ends in
+# Heap::CollectGarbage and "Aborted (core dumped)", which is the JavaScript heap filling up, not a
+# compile error and not the kernel's OOM killer (that one is 137).
+#
+# Node sizes its default heap from the memory it believes it has, and inside a container with a
+# memory limit that guess is routinely wrong in this direction. Naming the number removes the
+# guess. If the step now dies with 137 instead, the limit is the container's and belongs in
+# Coolify's Resource Limits — or the machine genuinely does not have the memory, and the build has
+# to happen somewhere with more.
+ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN pnpm --filter vortex-client build
 
 # =================================================================================================

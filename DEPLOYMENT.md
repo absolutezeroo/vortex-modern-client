@@ -245,6 +245,27 @@ The route is authenticated, so a report is always attached to an account, and ra
 per five minutes per address (`Vortex:WebApi:ReportRateLimit`) — loose enough not to swallow honest
 reports, tight enough that a stuck retry loop cannot fill the audit table.
 
+## If the front build dies
+
+Two failures look alike and are not:
+
+| Exit | Meaning | Fix |
+|---|---|---|
+| **134**, trace ending in `Heap::CollectGarbage`, `Aborted (core dumped)` | V8's JavaScript heap filled up | `NODE_OPTIONS=--max-old-space-size` in the Dockerfile — already set to 4096 |
+| **137**, killed with no trace | the *kernel* or the container limit took the process | raise Coolify's Resource Limits for the app, add swap on the server, or build elsewhere |
+
+`tsc && vite build` over this client is the heaviest thing in the whole deployment. Check what the
+server actually has before assuming a setting will fix it:
+
+```bash
+free -h            # total memory and swap
+nproc              # cores; the build is mostly single-threaded, so this matters less
+```
+
+Under about 4 GB with no swap, no flag will make that step fit. The way out is to build the image
+somewhere with more memory and push it to a registry, rather than building on the deployment
+server.
+
 ## What this does not cover
 
 Honest list, so nothing here reads as more finished than it is.
