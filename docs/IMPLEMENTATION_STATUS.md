@@ -4549,6 +4549,93 @@ other window's clip moved. This is the one-pass equivalent of AS3's per-`BitmapD
 
 ## Recent Work Recorded
 
+- 🆕 **The two stub visualizations, ported — 2026-09-10.** These were the only remaining items on
+  this file's own "what is actually left" list that were a missing *file* rather than an
+  architecture task or live exercise.
+
+  - **`FurnitureMannequinVisualization`: 16 lines → 340, and its stated blocker was stale.** The
+    file said "requires IAvatarRenderManager (0% implemented)"; `AvatarRenderManager`,
+    `IAvatarImageListener` and `IAvatarImage.getServerRenderData()` were all present and had been
+    for some time. The only genuinely missing piece was `AvatarFurnitureVisualizationData`, the
+    eight-line AS3 wrapper the factory maps `furniture_mannequin` to — so mannequins fell through to
+    a plain `FurnitureVisualizationData` and showed no figure at all. Ported whole: the per-object
+    asset name, the shared per-scale placeholder body while the real figure downloads,
+    `avatarImageReady()`, the `-width/2` / `-height` sprite offsets, and the static instance counter
+    that frees the placeholders with the last mannequin. Wired in `RoomObjectVisualizationFactory`
+    (data branch plus the render-manager injection, including the late setter, which only knew about
+    `AvatarVisualizationData` and would have left every mannequin without a renderer).
+  - **`FurnitureWaterAreaVisualization`: 40 lines → 600, plus two files that did not exist.**
+    `ShoreMaskCreatorUtility` (~250 l. AS3) and `room/utils/Rasterizer` — the latter's name recovered
+    from PRODUCTION, where `ShoreMaskCreatorUtility.as` l.250 calls `Rasterizer.getFlipHBitmapData()`.
+    AS3's `BitmapData` work maps to `OffscreenCanvas`: `copyPixels` with an alpha channel becomes
+    `destination-in`, and an asset built from a canvas keeps it as its texture source, so drawing
+    into that canvas and calling `source.update()` is AS3's in-place BitmapData mutation.
+
+  **Two renames TypeScript forced, both noted at the declaration.** AS3 declares `_data` and
+  `_scale` on the mannequin *beside* the base class's own private fields of the same names — legal in
+  AS3, a compile error here. This is not cosmetic: reusing the base's `_scale` would make
+  `this._scale !== scale` permanently false, because `super.updateObject()` has already written it,
+  and the figure would never be re-rendered on a zoom change.
+
+  **The check is `scripts/check-shore-borders.mjs`** — 16 assertions over the state-bit unpacking,
+  the half of the shore port that is pure integer maths and needs no room, canvas or server. What it
+  pins is the consumption order (bottom row right-to-left, then each middle row's RIGHT cell before
+  its LEFT working upwards, then the top row right-to-left); read any other way the shore is cut on
+  the wrong sides, which looks plausible on screen. The masks themselves are pixel work and are not
+  checked — a live pool is still owed.
+
+  **It also found a real structural fault in passing, not fixed here.**
+  `RoomObjectSpriteVisualization.ts` l.20 imports `Vortex`, the application root, for
+  `Vortex.instance.application.renderer.extract`. That one import pulls the entire client into any
+  bundle containing a visualization *and* closes a cycle back through the visualization factory —
+  under node it throws `Class extends value undefined` before a line runs. The check stubs it; the
+  cycle is its own task.
+
+- 🆕 **`TS-only:` and "name derived" are claims of absence, and three of them were false —
+  2026-09-10.** Both markers assert that something does not exist in any tree, which is the one
+  assertion in this port that stops all further reading. Three were checked and none survived:
+
+  - **`_assetLibrary` in `FurnitureDataParser`/`ProductDataParser` was annotated "name derived".**
+    The primary tree obfuscates the field to `_SafeStr_6050`, but PRODUCTION declares it
+    `private var _assetLib:AssetLibrary` — recoverable, not derived. Renamed in both. The `_url`
+    beside it *is* genuinely derived and now says why no tree can recover it: the 2016 build has no
+    retry path at all, its `loadData(k)` passes the url straight to `loadAssetFromFile()` and stores
+    nothing.
+  - **`RoomContentLoader.getAssetByName()` was marked `TS-only: AS3 has no counterpart`.** AS3 has
+    `getAssetXML(type)`, declared on `IRoomContentLoader.as` itself, whose body runs the identical
+    `getAssetLibrary(type)` → asset lookup. It is a `DEVIATION:` — a `.nitro` bundle carries the
+    `roomVisualization` JSON *and* its textures in one asset where Flash's textures arrived
+    separately as `BitmapDataAsset`s, so the room path needs the asset, not the XML inside it.
+  - **`IBitmapWrapperWindow.bitmapData` was marked `TS-only`,** claiming AS3 exposes it read-only.
+    `BitmapWrapperController.as` l.39 declares `public function set bitmapData()` forwarding to
+    `bitmap`, the getter is `BitmapDataController.as` l.69, and both are declared by the interface
+    they implement (`core/window/utils/_SafeCls_1989.as`). Assigning through the alias is exactly
+    what AS3 does.
+
+  **The detector was re-run and re-proved.** `audit-tsonly.mjs` (scratchpad, not committed —
+  rewrite it from `project_tsonly_audit_detector`) now matches AS3 **declarations** rather than any
+  occurrence, which is what the 2026-08-19 run lacked: `GroupForumController.send` matched
+  `connection.send()` call sites. It also skips a marker whose own text names why the identifier is
+  there (a `flash.*` type's property, a field of an anonymous object literal). 1,907 markers, 931 in
+  files that cite AS3 at all, 723 with a checkable member name, 50 raw hits → **1 real**, the
+  `bitmapData` above. The other 976 markers sit in files citing no AS3 whatsoever — `habbo/vortex/fishing`,
+  `onBoardingHcUi`, `login`, `habbicons`, `perf`, `core/reactive` — where a counterpart cannot exist.
+
+  **`as3-member-coverage.mjs` went 7 absents → 2 in this pass, and none of it is work.** The
+  `DEVIATION:` written on `WindowXmlAssetParser.parseSkinXml()` names `parseLayout()`,
+  `parseLayoutEntityList()`, `parseTemplateEntityList()` and `parseState()` in prose to say where
+  they went; the tool greps the porting TS file for the member name, so naming them marked them
+  present. The two left are `WINDOW_STATE_ACTIVE`/`WINDOW_STATE_HOVERING`. Nothing was ported —
+  a comment moved a counter, which is the clearest available demonstration that this number is a
+  worklist and never a score.
+
+  **What this measure cannot see, and it is the same shape as the miss it just found.** It joins on
+  the *member name*, so it only catches a marker whose name AS3 also uses. `getAssetByName()` was
+  invisible to it precisely because the port renamed the member — AS3 calls it `getAssetXML()`.
+  A marker that renames as it mislabels stays hidden, and the only thing that finds one is reading
+  the AS3 file the class already traces to. Before writing `TS-only:`, grep the member in that file
+  **and in its `I<Class>.as`**; before writing "derived", open the PRODUCTION file.
+
 - 🆕 **Six gaps the four measures cannot see, found by asking a different question — 2026-09-07.**
   With `wire-coverage`, `as3-member-coverage`, `todo-inventory` and `audit-as3-traces` all green,
   the honest answer to "is anything left" was still yes, because every one of them asks whether a

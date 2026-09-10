@@ -66,6 +66,7 @@ import {FurniturePlanetSystemVisualization} from './visualization/furniture/Furn
 // Avatar Visualization
 import {AvatarVisualization} from './visualization/avatar/AvatarVisualization';
 import {AvatarVisualizationData} from './visualization/avatar/AvatarVisualizationData';
+import {AvatarFurnitureVisualizationData} from './visualization/furniture/AvatarFurnitureVisualizationData';
 
 // Visualization Data
 import {FurnitureVisualizationData} from './visualization/furniture/FurnitureVisualizationData';
@@ -167,7 +168,7 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
 
         for(const data of this._visualizationDataCache.values())
         {
-            if(data instanceof AvatarVisualizationData)
+            if(data instanceof AvatarVisualizationData || data instanceof AvatarFurnitureVisualizationData)
             {
                 data.avatarRenderManager = value;
             }
@@ -392,6 +393,29 @@ export class RoomObjectVisualizationFactory implements IRoomObjectVisualizationF
             this._visualizationDataCache.set(id, gameVizData);
 
             return gameVizData;
+        }
+
+        // AS3: `case "furniture_mannequin": _loc8_ = AvatarFurnitureVisualizationData; break;`
+        // followed by `else if(_loc7_ is AvatarFurnitureVisualizationData){ _loc9_.avatarRenderer =
+        // _habboAvatar; }`. The mannequin is the only type in this branch: it needs a normal
+        // furniture visualization data (its own layers still parse) that can additionally render an
+        // avatar, which a plain FurnitureVisualizationData cannot.
+        if(type === RoomObjectVisualizationEnum.FURNITURE_MANNEQUIN)
+        {
+            const mannequinVizData = new AvatarFurnitureVisualizationData();
+
+            if(!mannequinVizData.initialize(data))
+            {
+                mannequinVizData.dispose();
+
+                return null;
+            }
+
+            mannequinVizData.avatarRenderManager = this._avatarRenderManager;
+
+            this._visualizationDataCache.set(id, mannequinVizData);
+
+            return mannequinVizData;
         }
 
         // Avatar visualization types use AvatarVisualizationData
