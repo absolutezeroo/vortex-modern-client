@@ -48,10 +48,17 @@ export class ProductDataParser
      * `await fetch(url)` with nothing owning it, so a replaced parser still finished and refilled
      * the map a newer one already owned. See FurnitureDataParser, where the same gap crashed.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_assetLibrary
-    private _assetLibrary: AssetLibrary | null;
+    // Name recovered, not derived: the primary tree obfuscates this field to
+    //   `private var _SafeStr_6050:AssetLibrary` (l.24), and PRODUCTION's own ProductDataParser
+    //   declares it `private var _assetLib:AssetLibrary` (l.18).
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_assetLib
+    private _assetLib: AssetLibrary | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::MAX_DOWNLOAD_RETRIES
     private static readonly MAX_DOWNLOAD_RETRIES: number = 2;
+    // Name derived, and PRODUCTION cannot recover it: the field is `private var _SafeStr_8577:String`
+    //   (l.26) in the primary tree, and the 2016 build has no retry path at all — its constructor
+    //   passes the url straight to loadAssetFromFile() and stores nothing. Named here from the only
+    //   thing this field does: hold that url for retryLoadIfPossible().
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_url
     private _url: string;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::_downloadRetriesLeft
@@ -60,7 +67,7 @@ export class ProductDataParser
     constructor(url: string, products: Map<string, IProductData>)
     {
         this._products = products;
-        this._assetLibrary = new AssetLibrary(Core.instance as IContext, 'ProductDataParserAssetLib');
+        this._assetLib = new AssetLibrary(Core.instance as IContext, 'ProductDataParserAssetLib');
         this._url = url;
         this._downloadRetriesLeft = ProductDataParser.MAX_DOWNLOAD_RETRIES;
 
@@ -128,12 +135,12 @@ export class ProductDataParser
 
         this._disposed = true;
 
-        // AS3: `if(_assetLibrary){ _assetLibrary.dispose(); _assetLibrary = null; }` — the request
+        // AS3: `if(_SafeStr_6050){ _SafeStr_6050.dispose(); _SafeStr_6050 = null; }` — the request
         // goes with the library.
-        if(this._assetLibrary !== null)
+        if(this._assetLib !== null)
         {
-            this._assetLibrary.dispose();
-            this._assetLibrary = null;
+            this._assetLib.dispose();
+            this._assetLib = null;
         }
 
         this._events.removeAllListeners();
@@ -146,23 +153,23 @@ export class ProductDataParser
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/product/ProductDataParser.as::requestData()
     private requestData(url: string): void
     {
-        if(this._assetLibrary === null) return;
+        if(this._assetLib === null) return;
 
         // `hasAsset()` first: getAssetByName() warns on a miss, and a miss is the expected answer
         // until a retry re-requests under the same name.
-        if(this._assetLibrary.hasAsset('productdata'))
+        if(this._assetLib.hasAsset('productdata'))
         {
-            const existing = this._assetLibrary.getAssetByName('productdata');
+            const existing = this._assetLib.getAssetByName('productdata');
 
             if(existing !== null)
             {
-                const removed = this._assetLibrary.removeAsset(existing);
+                const removed = this._assetLib.removeAsset(existing);
 
                 if(removed !== null) removed.dispose();
             }
         }
 
-        const loader = this._assetLibrary.loadAssetFromFile('productdata', url, 'text/plain');
+        const loader = this._assetLib.loadAssetFromFile('productdata', url, 'text/plain');
 
         // One handler for AS3's two listeners; this port's struct emits every type under `event`.
         const onEvent = (event: AssetLoaderEvent): void =>
@@ -180,7 +187,7 @@ export class ProductDataParser
                 return;
             }
 
-            const content = this._assetLibrary?.getAssetByName('productdata')?.content ?? null;
+            const content = this._assetLib?.getAssetByName('productdata')?.content ?? null;
             const body = typeof content === 'string' ? content : null;
 
             if(body === null)

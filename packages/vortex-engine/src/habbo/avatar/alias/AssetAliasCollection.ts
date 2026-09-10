@@ -38,10 +38,16 @@ export class AssetAliasCollection
         this._assetLibrary = assetLibrary;
     }
 
+    // DEVIATION: AS3 builds every alias here in one pass, walking `_assets.getManifests()` and
+    //   reading each manifest's `..alias` nodes. That list cannot exist at this point in the port:
+    //   avatar assets arrive as separate `.nitro` bundles over the network, so there is no set of
+    //   manifests to enumerate when init() runs. The same aliases are registered per bundle instead,
+    //   in `onAvatarAssetsLibraryReady()` below (l.84, `this._aliases.set(aliasName, ...)`), which is
+    //   called once per library as it lands. This body is deliberately empty, not unfinished — but
+    //   AS3 declares it and `reset()` calls it, so it stays.
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::init()
     public init(): void
     {
-        // Initialization handled by onAvatarAssetsLibraryReady
     }
 
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/avatar/alias/AssetAliasCollection.as::reset()

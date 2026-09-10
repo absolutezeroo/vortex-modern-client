@@ -55,10 +55,18 @@ export class FurnitureDataParser
      * own dispose() had just nulled — `TypeError: Cannot read properties of null (reading 'set')`
      * out of storeItem(), and the manager left with no furniture data at all.
      */
-    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_assetLibrary
-    private _assetLibrary: AssetLibrary | null;
+    // Name recovered, not derived: the primary tree obfuscates this field to
+    //   `private var _SafeStr_6050:AssetLibrary` (l.33), and PRODUCTION's own FurnitureDataParser
+    //   declares it `private var _assetLib:AssetLibrary` (l.22) — same class, same single
+    //   assignment of `new AssetLibrary("FurniDataParserAssetLib")`.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_assetLib
+    private _assetLib: AssetLibrary | null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::MAX_DOWNLOAD_RETRIES
     private static readonly MAX_DOWNLOAD_RETRIES: number = 2;
+    // Name derived, and PRODUCTION cannot recover it: the field is `private var _SafeStr_8577:String`
+    //   (l.37) in the primary tree, and the 2016 build has no retry path at all — its `loadData(k)`
+    //   passes the url straight to loadAssetFromFile() and stores nothing. Named here from the only
+    //   thing this field does: hold that url for retryLoadIfPossible().
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_url
     private _url: string | null = null;
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::_downloadRetriesLeft
@@ -82,7 +90,7 @@ export class FurnitureDataParser
         this._critical = critical;
         // AS3: `_SafeStr_6050 = new AssetLibrary("FurniDataParserAssetLib")`. The port's
         // AssetLibrary is a Component and needs the context AS3's does not.
-        this._assetLibrary = new AssetLibrary(Core.instance as IContext, 'FurniDataParserAssetLib');
+        this._assetLib = new AssetLibrary(Core.instance as IContext, 'FurniDataParserAssetLib');
     }
 
     /**
@@ -121,24 +129,24 @@ export class FurnitureDataParser
     // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/session/furniture/FurnitureDataParser.as::requestData()
     private requestData(url: string): void
     {
-        if(this._assetLibrary === null) return;
+        if(this._assetLib === null) return;
 
         // `hasAsset()` rather than `getAssetByName()`: the latter warns on a miss, and a miss is the
         // expected answer on the first request.
-        if(this._assetLibrary.hasAsset('furnidata'))
+        if(this._assetLib.hasAsset('furnidata'))
         {
-            const existing = this._assetLibrary.getAssetByName('furnidata');
+            const existing = this._assetLib.getAssetByName('furnidata');
 
             if(existing !== null)
             {
-                const removed = this._assetLibrary.removeAsset(existing);
+                const removed = this._assetLib.removeAsset(existing);
 
                 if(removed !== null) removed.dispose();
             }
         }
 
         const downloadStart = performance.now();
-        const loader = this._assetLibrary.loadAssetFromFile('furnidata', url, 'text/plain');
+        const loader = this._assetLib.loadAssetFromFile('furnidata', url, 'text/plain');
 
         // AS3 registers two listeners on the AssetLoaderStruct, one per event type, and drops both
         // in removeLoaderListeners(). This port's struct emits every type under one `event` name,
@@ -161,7 +169,7 @@ export class FurnitureDataParser
                 return;
             }
 
-            const content = this._assetLibrary?.getAssetByName('furnidata')?.content ?? null;
+            const content = this._assetLib?.getAssetByName('furnidata')?.content ?? null;
             const data = typeof content === 'string' ? content : null;
 
             if(data === null || data.length === 0)
@@ -944,12 +952,12 @@ export class FurnitureDataParser
         // a real failure if one is already queued.
         this._disposed = true;
 
-        // AS3: `if(_assetLibrary){ _assetLibrary.dispose(); _assetLibrary = null; }` — this is what
+        // AS3: `if(_SafeStr_6050){ _SafeStr_6050.dispose(); _SafeStr_6050 = null; }` — this is what
         // stops the download. Nothing else in this method could.
-        if(this._assetLibrary !== null)
+        if(this._assetLib !== null)
         {
-            this._assetLibrary.dispose();
-            this._assetLibrary = null;
+            this._assetLib.dispose();
+            this._assetLib = null;
         }
 
         this._events.removeAllListeners();

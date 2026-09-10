@@ -26,8 +26,11 @@ export interface IBitmapWrapperWindow extends IWindow, IBitmapDataContainer
     /**
      * The underlying bitmap data (alias for bitmap).
      */
-    // TS-only: AS3 exposes `bitmapData` read-only through `_SafeCls_1989`; this port's
-    // ported callers assign the bitmap through this alias rather than through `bitmap`.
+    // The getter is `BitmapDataController.as::get bitmapData()` (l.69), declared by the interface
+    //   both controllers implement, `core/window/utils/_SafeCls_1989.as::get bitmapData()`; the
+    //   setter is BitmapWrapperController's own and forwards to `bitmap`, which is why assigning
+    //   through this alias is the same thing AS3 does.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/core/window/components/BitmapWrapperController.as::set bitmapData()
     bitmapData: ImageBitmap | null;
 
     /**
