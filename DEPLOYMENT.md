@@ -5,7 +5,7 @@ the Docker network.
 
 ```
                       ┌──────────────────────────────────────────────┐
-  hotel.example.com ──▶│  vortex-front  (this repo's Dockerfile)      │
+  vortex-hotel.online ──▶│  vortex-front  (this repo's Dockerfile)      │
         (the only      │  Caddy :80                                   │
          public name)  │                                              │
                        │  /              built vortex-client          │
@@ -34,11 +34,26 @@ Not tidiness. The client resolves every service against the origin it was served
   localhost.
 - The shipped configuration says `web.api.en=/webapi`, an origin-root path.
 
-So a client served from `hotel.example.com` asks `hotel.example.com` for everything, and **no
+So a client served from `vortex-hotel.online` asks `vortex-hotel.online` for everything, and **no
 source change is needed to deploy it**. What that buys: no CORS policy to keep in sync, no
 cross-site cookie, one certificate, and an emulator with no public address at all.
 
 ---
+
+## 0. DNS
+
+One name, because there is one public service. At the registrar for `vortex-hotel.online`:
+
+| Type | Name | Value |
+|---|---|---|
+| A | `@` | the Coolify server's IP |
+| A | `www` | the same IP |
+
+Nothing for the emulator, the imager or the assets: they are all paths under this one host. Do this
+first — Let's Encrypt validates over HTTP against the name, so Coolify cannot issue the certificate
+before the record resolves.
+
+`www` is optional but cheap, and Coolify will redirect it to the apex.
 
 ## 1. Stable names on the network
 
@@ -119,7 +134,7 @@ Rewrite it once on the server:
 ```bash
 cd /data/vortex-assets/gamedata
 cp hashes.json hashes.json.bak
-sed -i 's#http://vortex-assets\.local#https://hotel.example.com#g' hashes.json
+sed -i 's#http://vortex-assets\.local#https://vortex-hotel.online#g' hashes.json
 grep -c 'vortex-assets.local' hashes.json    # must print 0
 ```
 
@@ -154,7 +169,7 @@ assumed.
 
 New Coolify application, same repository, `Dockerfile` at the root.
 
-- **Domains** — `https://hotel.example.com`. This is the only public name in the whole setup;
+- **Domains** — `https://vortex-hotel.online`. This is the only public name in the whole setup;
   Coolify obtains the certificate.
 - **Ports Exposes** — `80`.
 - **Persistent Storage** — `/data/vortex-assets` → `/assets`.
@@ -182,16 +197,16 @@ Do them in this order — each one is only checkable once the previous is up.
 4. **Front**. Then, from your own machine:
 
 ```bash
-curl -sS https://hotel.example.com/webapi/api/public/info/hello        # JSON, not HTML
-curl -sI https://hotel.example.com/gamedata/hashes.json | head -1      # 200
-npx wscat -c wss://hotel.example.com/ws                                # opens and stays open
+curl -sS https://vortex-hotel.online/webapi/api/public/info/hello        # JSON, not HTML
+curl -sI https://vortex-hotel.online/gamedata/hashes.json | head -1      # 200
+npx wscat -c wss://vortex-hotel.online/ws                                # opens and stays open
 ```
 
 If `/webapi/...` answers HTML with a 200, the prefix was not stripped and the request fell through
 to the SPA fallback — that is `handle_path` vs `handle` in the Caddyfile, and it is the single
 most confusing failure in this setup because it does not look like a failure.
 
-Then open `https://hotel.example.com` in a browser. The login screen proves the API; a room that
+Then open `https://vortex-hotel.online` in a browser. The login screen proves the API; a room that
 draws proves the assets; an avatar on the selection screen proves the imager.
 
 ---
