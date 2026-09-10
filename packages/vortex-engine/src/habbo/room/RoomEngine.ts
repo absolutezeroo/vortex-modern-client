@@ -8030,13 +8030,25 @@ export class RoomEngine extends Component implements IRoomEngine,
      */
     private onRoomContentReady(): void 
     {
-        const asset = this.findAssetByName('room') as NitroAsset | null;
+        // Not `findAssetByName()`: that reads this component's own library, and the room bundle is
+        // registered in the content loader's per-type AssetLibraryCollection. Both misses below used
+        // to return in silence, which is how the floor and the walls ended up painted in their flat
+        // base colour — RoomPlane falls back to `_color` whenever it has no rasterizer.
+        const asset = this._contentLoader.getAssetByName(RoomEngine.OBJECT_TYPE_ROOM) as NitroAsset | null;
 
-        if(!asset) return;
+        if(!asset)
+        {
+            log.warn(`No '${RoomEngine.OBJECT_TYPE_ROOM}' asset in the content loader — the room planes will render untextured`);
+            return;
+        }
 
         const jsonData = asset.jsonData;
 
-        if(!jsonData) return;
+        if(!jsonData)
+        {
+            log.warn('Room bundle has no JSON data — the room planes will render untextured');
+            return;
+        }
 
         // Extract room visualization data from bundle JSON
         // The room.nitro bundle contains a "roomVisualization" key with floor/wall/landscape data

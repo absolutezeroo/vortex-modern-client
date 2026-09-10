@@ -15,6 +15,7 @@ import type {IRoomObject} from '@room/object/IRoomObject';
 import type {IRoomObjectController} from '@room/object/IRoomObjectController';
 import type {IRoomObjectVisualizationFactory} from '@room/object/IRoomObjectVisualizationFactory';
 import type {IGraphicAssetCollection} from '@room/object/visualization/utils/IGraphicAssetCollection';
+import type {IAsset} from '@core/assets/IAsset';
 import type {IAssetLibrary} from '@core/assets/IAssetLibrary';
 import {AssetLibraryCollection} from '@core/assets/AssetLibraryCollection';
 import {Core} from '@core/Core';
@@ -1697,6 +1698,19 @@ export class RoomContentLoader implements IRoomContentLoader, IFurniDataListener
         }
 
         return assetLibrary;
+    }
+
+    // DEVIATION: this is `getAssetXML()` returning the asset instead of the XML inside it. AS3 does
+    //   the identical lookup — `getXML()` calls the same private `getAssetLibrary(type)` and pulls
+    //   the asset out of it — and can stop at the XML because in Flash the room's textures arrive
+    //   separately, as BitmapDataAssets off the component's own library. A .nitro bundle carries the
+    //   `roomVisualization` JSON *and* its textures in one asset, and `onRoomContentReady()` needs
+    //   both, so it needs the asset. `getAssetXML()` (l.967) stays as it is and still serves every
+    //   caller that only wants the `_assets` slice.
+    // AS3: sources/WIN63-202607011411-782849652/src/com/sulake/habbo/room/_SafeCls_2288.as::getAssetXML()
+    getAssetByName(type: string): IAsset | null
+    {
+        return this.getAssetLibrary(type)?.getAssetByName(type) ?? null;
     }
 
     /**
