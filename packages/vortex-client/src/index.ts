@@ -1,8 +1,15 @@
 import {Logger} from '@core/utils/Logger';
 import {VortexLoadingScreen} from './VortexLoadingScreen';
 import {VortexApp} from './App';
+import {installBugReporter} from './BugReporter';
 
 const log = Logger.getLogger('client.index');
+
+// Before the app, deliberately: the reporter wraps console.error and listens for unhandled
+// rejections, and a boot failure is exactly the report worth having. Installed later, the client
+// could only report what happened after it managed to start.
+installBugReporter();
+
 const loadingScreen = new VortexLoadingScreen();
 const app = new VortexApp(loadingScreen);
 

@@ -82,6 +82,12 @@ the main host, and a prefixed copy is ignored in silence.
 Docker network. TLS is terminated at the edge, which is where it belongs, but the emulator has to
 be told that it is deliberate rather than refuse to start.
 
+**Persistent Storage** — one named volume on `/app/logs`. The emulator logs to the console only,
+so `docker logs` is the live view and Coolify shows it; what this volume is actually for is
+`logs/audit-dead-letter.jsonl`, where `AuditWriterService` writes the audit records whose database
+write failed. Those are the events you most want after an incident, and without the volume they
+die with the container that could not persist them.
+
 ## 3. The asset tree
 
 The Nitro tree (`gamedata/`, `gordon/`, `c_images/`, `dcr/`) is a hotel's own data — the README is
@@ -190,12 +196,38 @@ draws proves the assets; an avatar on the selection screen proves the imager.
 
 ---
 
+## Before opening it to testers
+
+### Back up the database
+
+Not optional for a beta, and not something any file here can do for you. On the MySQL resource in
+Coolify: **Backups → add a scheduled backup**, daily, with a retention you can live with, and an
+S3 destination if you have one — a backup on the same disk as the database survives a mistake but
+not a dead disk. Then **restore one into a scratch database once**, before you need to. An untested
+backup is a belief, not a backup.
+
+### Know where the bug reports land
+
+`POST /api/user/reports` records what a player tells you, as an audit record with category
+**`PlayerReport`** and action `player.bug_report`. In the dashboard, that is the investigation /
+audit view, filtered on that category.
+
+They arrive with the page, the browser, and the tail of the browser console alongside the player's
+own words — enough to tell a rendering bug from a connection one without a second exchange. The
+button is in the client itself (`packages/vortex-client/src/BugReporter.ts`), plain DOM rather than
+the client's window manager, so it still works when the canvas is what is broken.
+
+The route is authenticated, so a report is always attached to an account, and rate-limited to 10
+per five minutes per address (`Vortex:WebApi:ReportRateLimit`) — loose enough not to swallow honest
+reports, tight enough that a stuck retry loop cannot fill the audit table.
+
 ## What this does not cover
 
 Honest list, so nothing here reads as more finished than it is.
 
-- **No backup of the database.** Coolify can schedule one on the MySQL resource; nothing in this
-  setup does it for you, and an open beta is exactly when you find out.
+- **A bug report does not carry the room id.** Reading it would mean coupling the reporter to the
+  room engine, and the endpoint already accepts the field: `RoomId` on the audit record is there,
+  and wiring it is one line the day the reports say it is worth it.
 - **`vortex-web` (the CMS) is not deployed.** A built `vortex-client` sets its base to `/` and
   wants the root, so the two cannot share an origin without changing `base` in
   `packages/vortex-client/vite.config.ts`. Registration and login live in the client itself
