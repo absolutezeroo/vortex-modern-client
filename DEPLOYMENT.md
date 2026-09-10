@@ -125,31 +125,51 @@ so `docker logs` is the live view and Coolify shows it; what this volume is actu
 write failed. Those are the events you most want after an incident, and without the volume they
 die with the container that could not persist them.
 
-## 3. The asset tree
+## 3. The asset tree, as an image
 
 The Nitro tree (`gamedata/`, `gordon/`, `c_images/`, `dcr/`) is a hotel's own data — the README is
-explicit that this repository does not ship or generate it. Put it on the server once:
+explicit that this repository does not ship or generate it. On the tree this was written against it
+is **2.9 GB across 218 000 files**, so how it reaches the server is a real decision and not a
+detail.
+
+It ships as a Docker image, built **on the machine where the files already live** and pushed to a
+registry. Coolify then pulls an image instead of cloning gigabytes of binaries it would re-clone on
+every deploy — and a registry pull moves only the layers that actually changed.
+
+**The recipe lives with the tree, not in this repository**: `Dockerfile` and `.dockerignore` sit
+inside the asset directory itself (`C:/Laragon/www/vortex-assets` on the machine this was set up
+from). Nothing about the assets belongs in the client's source — and the build context has to be
+that directory anyway.
+
+### Publishing assets
 
 ```bash
-rsync -avz --progress ./vortex-assets/ root@<vps>:/data/vortex-assets/
+cd C:/Laragon/www/vortex-assets
+docker build -t ghcr.io/<you>/vortex-assets:latest .
+docker push  ghcr.io/<you>/vortex-assets:latest
 ```
 
-Then mount that **same host path** into the two resources that read it, through Persistent Storage
-→ **Directory mount**:
+Then Redeploy the assets resource in Coolify, which pulls the new layers.
 
-| App | Source Directory | Destination Directory |
-|---|---|---|
-| vortex-assets | `/data/vortex-assets` | `/assets` |
-| vortex-imager | `/data/vortex-assets` | `/assets` |
+**What "incremental" actually means here**, because it is not automatic:
 
-A Directory mount (a host bind), not a Volume mount: two resources must see the same bytes, or the
-imager renders against assets the client does not have and the two drift without any error. A
-Volume mount is a Docker-managed volume, private to one app — right for a cache or logs, useless
-for sharing.
+- A layer is content-addressed. One that has not changed is not rebuilt, not re-pushed and not
+  re-pulled — locally, over the wire, and on the server.
+- That `Dockerfile` therefore splits the tree into eleven `COPY` layers rather than one. A single
+  `COPY . /assets` would make every edit cost 2.9 GB.
+- **Docker invalidates a changed layer and every layer after it**, so the file orders from most
+  stable to most edited. `gamedata` is last: republishing furnidata or external_variables moves
+  64 MB. Put it first and every edit would rebuild the whole tree.
+- The 75 000 furni bundles are split six ways by first letter, which puts a new furni at roughly
+  300 MB instead of 1.8 GB. Split further if that becomes the thing you do daily.
 
-The directory must **exist and be populated on the host before the deploy**. Docker creates a
-missing bind source as an empty directory, which is a perfectly valid mount over nothing: the hotel
-loads, the login works, and no room ever draws.
+### Nothing mounts it
+
+No Persistent Storage on the assets resource: the files are *in* the image. And the imager does not
+need the tree on disk either — `packages/vortex-imager/src/shim/globals.ts:45` only installs its
+file-backed fetch when `IMAGER_ASSETS_ROOT` is set, and falls back to fetching over HTTP from
+`IMAGER_ASSETS_BASE_URL` otherwise. Leave it unset and both the client and the imager read the same
+served copy, which is also what stops them drifting.
 
 ### The one file that will bite you
 
@@ -158,28 +178,37 @@ client loads is a URL found inside it. A tree built for local development carrie
 `http://vortex-assets.local/...` URLs — a hostname that resolves to the *visitor's own* loopback,
 so every asset fails and the room stays blank while the login screen works perfectly.
 
-Rewrite it once on the server:
+Rewrite it in the source tree, before the image is built — it is baked in, so a fix after the fact
+means another build:
 
 ```bash
-cd /data/vortex-assets/gamedata
+cd C:/Laragon/www/vortex-assets/gamedata
 cp hashes.json hashes.json.bak
 sed -i 's#http://vortex-assets\.local#https://assets.vortex-hotel.online#g' hashes.json
 grep -c 'vortex-assets.local' hashes.json    # must print 0
 ```
 
-## 4. The assets app
+It lives in the layer that rebuilds most cheaply, which is not an accident.
 
-New Coolify application, same Git repository. It compiles nothing — Caddy plus one config file —
-so its deploys take seconds, and publishing new assets is an `rsync` onto the host rather than a
-redeploy.
+### Keep the recipe
 
-- **Build Pack** — `Dockerfile`.
-- **Dockerfile Location** — `/Dockerfile.assets`, **Base Directory** `/`.
+That `Dockerfile` is ninety lines of decisions — the layer split, and above all the ordering that
+makes an edit cost 64 MB instead of 2.9 GB. It sits in a directory nothing version-controls. Run
+`git init` there with a `.gitignore` holding a single `*` plus `!Dockerfile` and `!.dockerignore`,
+so the recipe is tracked and the three gigabytes never are.
+
+## 4. The assets resource
+
+In Coolify this is a **Docker Image** resource, not an application: there is no repository to clone
+and nothing to build on the server — the image was built where the files are and pushed to a
+registry.
+
+- **Image** — `ghcr.io/<you>/vortex-assets:latest` (add the registry credentials in Coolify if the
+  package is private).
 - **Domains** — `https://assets.vortex-hotel.online`.
-- **Ports Exposes** — `80`, and **Port** `80` in the build configuration.
-- **Persistent Storage** — Directory mount, `/data/vortex-assets` → `/assets`.
-
-No environment variables: what it serves is the mount, and where it answers is the domain.
+- **Ports Exposes** — `80`.
+- **Persistent Storage** — none. The files are in the image.
+- **Environment** — none. What it serves is the image, where it answers is the domain.
 
 ## 5. The imager app
 
@@ -195,13 +224,13 @@ New Coolify application, same Git repository:
   `workspace:` protocol needs the lockfile and every manifest in the tree.
 - **Domains** — none.
 - **Ports Exposes** — `8081`.
-- **Persistent Storage** — `/data/vortex-assets` → `/assets`, plus a named volume on `/cache`.
+- **Persistent Storage** — one Volume mount on `/cache`. Nothing else: it reads the asset tree over
+  HTTP from the assets resource, not from disk.
 
 Environment:
 
 ```
 IMAGER_PORT=8081
-IMAGER_ASSETS_ROOT=/assets
 IMAGER_ASSETS_BASE_URL=https://assets.vortex-hotel.online
 IMAGER_CACHE_DIR=/cache
 IMAGER_DB_HOST=<the hotel's MySQL host>
