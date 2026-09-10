@@ -1,0 +1,37 @@
+# =================================================================================================
+# The asset host
+# =================================================================================================
+# Serves the Nitro tree — gamedata/, gordon/, c_images/, dcr/ — and nothing else. Its own resource
+# rather than a path on the hotel: it is the one part of the deployment with a plausible future
+# somewhere else (a CDN, or a machine picked for bandwidth), and the client already reaches it by
+# following URLs read out of gamedata/hashes.json rather than by assuming a path. Moving it means
+# editing that one file.
+#
+# Nothing here is built. The image is Caddy plus this config; the tree itself arrives on a mounted
+# directory, so publishing new assets is an rsync, never a redeploy.
+
+{
+	# Coolify's proxy terminates TLS in front of this container, so Caddy serves plain HTTP on :80
+	# and must not try to obtain a certificate of its own.
+	auto_https off
+}
+
+:80 {
+	encode zstd gzip
+
+	root * /assets
+	file_server
+
+	# The header the split pays for, and the reason to get it right the first time: the client
+	# reads hashes.json, furnidata, figuredata and every .nitro through fetch/XHR, and loads images
+	# into WebGL textures. Cross-origin, all of that needs this — and without it the hotel's login
+	# screen works perfectly while no room ever draws, with nothing obvious in the network tab.
+	#
+	# `*` rather than the hotel's origin: these are public files fetched without credentials, and a
+	# wildcard needs no `Vary: Origin` to stay cacheable at a CDN later.
+	header Access-Control-Allow-Origin "*"
+
+	# The tree is content-addressed through hashes.json, so a long max-age is safe and is what keeps
+	# a room from re-fetching a thousand files on every visit.
+	header Cache-Control "public, max-age=604800"
+}

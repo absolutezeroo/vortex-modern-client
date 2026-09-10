@@ -1,0 +1,21 @@
+# syntax=docker/dockerfile:1
+
+# =================================================================================================
+# vortex-assets
+# =================================================================================================
+# Caddy and one config file. There is nothing to compile: the Nitro tree is a hotel's own data,
+# arrives on a mounted directory, and is far larger than any image should be. Publishing new assets
+# is therefore an rsync onto the host, not a redeploy — this image only changes when the way they
+# are *served* changes.
+#
+# In Coolify: Build Pack "Dockerfile", Dockerfile Location /Dockerfile.assets, Base Directory /.
+
+FROM caddy:2-alpine
+
+COPY Caddyfile.assets /etc/caddy/Caddyfile
+
+# Mount the same host directory the imager reads from. Both must see the same bytes, or an avatar
+# renders against assets the client does not have and the two drift with no error anywhere.
+VOLUME /assets
+
+EXPOSE 80

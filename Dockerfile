@@ -65,10 +65,8 @@ FROM caddy:2-alpine AS runtime
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /src/packages/vortex-client/dist /srv
 
-# The Nitro asset tree is NOT baked in — it is a hotel's own data, far larger than this image, and
-# it changes on its own schedule. Mount it here. Serving an empty directory is a hotel where the
-# client reaches its login screen and no room ever draws, so DEPLOYMENT.md makes checking it the
-# first step after the first deploy.
-VOLUME /assets
+# No /assets volume here: the Nitro tree is its own resource (Dockerfile.assets) on its own
+# hostname, and this container never reads it. The client finds it through the URLs inside
+# gamedata/hashes.json.
 
 EXPOSE 80

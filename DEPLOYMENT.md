@@ -1,32 +1,36 @@
 # Deploying the hotel
 
-Three containers on one Coolify server. Two public names, both answered by the same container —
-Caddy tells them apart by `Host`. The emulator and the imager have no public address at all.
+One Coolify resource per service, the same way the database and phpMyAdmin already are. Four of
+them here, two with a public name:
 
 ```
-                            ┌────────────────────────────────────────────┐
-    vortex-hotel.online ───▶│  vortex-front   Caddy :80                  │
-                            │                                            │
-                            │  hotel host:                               │
-                            │    /                 built vortex-client   │
-                            │    /webapi/*  ───┐                         │
-                            │    /api/*     ───┤                         │
-                            │    /ws        ───┼──┐                      │
-                            │    /habbo-imaging ──┼──┐                   │
-                            │                  │  │  │                   │
-    assets.vortex-          │  assets host:    │  │  │                   │
-      hotel.online   ───▶   │    the Nitro tree from /assets             │
-                            └──────────────────┼──┼──┼───────────────────┘
-                                               │  │  │  coolify network
-                     ┌─────────────────────────▼──▼┐ │
-                     │ vortex-emulator             │ │
-                     │ :8080 web API               │ │
-                     │ :30001 game WebSocket       │ │
-                     └─────────────────────────────┘ │
-                                     ┌───────────────▼──────┐
-                                     │ vortex-imager :8081  │
-                                     └──────────────────────┘
+                          ┌─────────────────────────────────────────┐
+  vortex-hotel.online ───▶│  vortex-front        Caddy :80          │
+                          │    /                 vortex-client      │
+                          │    /webapi/*  /api/*  ──┐               │
+                          │    /ws                ──┤               │
+                          │    /habbo-imaging     ──┼──┐            │
+                          └─────────────────────────┼──┼────────────┘
+                                                    │  │
+  assets.vortex-          ┌──────────────────────┐  │  │  coolify
+    hotel.online   ──────▶│ vortex-assets  :80   │  │  │  network
+                          │ the Nitro tree,      │  │  │
+                          │ read from /assets    │  │  │
+                          └──────────────────────┘  │  │
+                                                    │  │
+                          ┌─────────────────────────▼┐ │
+                          │ vortex-emulator          │ │
+                          │ :8080 web API            │ │
+                          │ :30001 game WebSocket    │ │
+                          └──────────────────────────┘ │
+                          ┌────────────────────────────▼─┐
+                          │ vortex-imager :8081          │
+                          │ also reads /assets           │
+                          └──────────────────────────────┘
 ```
+
+The emulator and the imager have no public address: the front reaches them over the Docker network
+by their **network alias**.
 
 ## Why the services share the hotel's origin
 
@@ -57,7 +61,7 @@ host, which the Caddyfile sets. Without it the login screen works perfectly and 
 
 ## 0. DNS
 
-One name, because there is one public service. At the registrar for `vortex-hotel.online`:
+At the registrar for `vortex-hotel.online`:
 
 | Type | Name | Value |
 |---|---|---|
@@ -130,15 +134,22 @@ explicit that this repository does not ship or generate it. Put it on the server
 rsync -avz --progress ./vortex-assets/ root@<vps>:/data/vortex-assets/
 ```
 
-Then mount that **same host path** into both containers, through Persistent Storage:
+Then mount that **same host path** into the two resources that read it, through Persistent Storage
+→ **Directory mount**:
 
-| App | Host path | Container path |
+| App | Source Directory | Destination Directory |
 |---|---|---|
-| vortex-front | `/data/vortex-assets` | `/assets` |
+| vortex-assets | `/data/vortex-assets` | `/assets` |
 | vortex-imager | `/data/vortex-assets` | `/assets` |
 
-A host bind, not a named volume: two apps must see the same bytes, or the imager renders against
-assets the client does not have and the two drift without any error.
+A Directory mount (a host bind), not a Volume mount: two resources must see the same bytes, or the
+imager renders against assets the client does not have and the two drift without any error. A
+Volume mount is a Docker-managed volume, private to one app — right for a cache or logs, useless
+for sharing.
+
+The directory must **exist and be populated on the host before the deploy**. Docker creates a
+missing bind source as an empty directory, which is a perfectly valid mount over nothing: the hotel
+loads, the login works, and no room ever draws.
 
 ### The one file that will bite you
 
@@ -156,7 +167,21 @@ sed -i 's#http://vortex-assets\.local#https://assets.vortex-hotel.online#g' hash
 grep -c 'vortex-assets.local' hashes.json    # must print 0
 ```
 
-## 4. The imager app
+## 4. The assets app
+
+New Coolify application, same Git repository. It compiles nothing — Caddy plus one config file —
+so its deploys take seconds, and publishing new assets is an `rsync` onto the host rather than a
+redeploy.
+
+- **Build Pack** — `Dockerfile`.
+- **Dockerfile Location** — `/Dockerfile.assets`, **Base Directory** `/`.
+- **Domains** — `https://assets.vortex-hotel.online`.
+- **Ports Exposes** — `80`, and **Port** `80` in the build configuration.
+- **Persistent Storage** — Directory mount, `/data/vortex-assets` → `/assets`.
+
+No environment variables: what it serves is the mount, and where it answers is the domain.
+
+## 5. The imager app
 
 New Coolify application, same Git repository:
 
@@ -202,31 +227,31 @@ It reads the same database the emulator does — group badges and furni definiti
 Read-only in practice, but give it its own MySQL user if you want that guaranteed rather than
 assumed.
 
-## 5. The front app
+## 6. The front app
 
 New Coolify application, same repository.
 
 - **Build Pack** — `Dockerfile`. Same warning as above: the auto-detected pack ignores this file.
 - **Dockerfile Location** — `/Dockerfile`, **Base Directory** `/`.
-- **Domains** — **both**, comma-separated:
-  `https://vortex-hotel.online,https://assets.vortex-hotel.online`. They reach the same container
-  on the same port; Caddy splits them by `Host`, and Coolify obtains a certificate for each. One
-  app, two names — no second application for the assets.
+- **Domains** — `https://vortex-hotel.online`.
 - **Ports Exposes** — `80`, and **Port** `80` in the build configuration — not the 3000 the form
   offers by default. Caddy listens on 80.
-- **Persistent Storage** — `/data/vortex-assets` → `/assets`.
+- **Persistent Storage** — none. This container never reads the asset tree; the client fetches it
+  from the assets host directly.
 
 Environment:
 
 ```
 EMULATOR_UPSTREAM=vortex-emulator
 IMAGER_UPSTREAM=vortex-imager
-ASSETS_HOST=assets.vortex-hotel.online
 ```
 
-The first two are the network aliases from step 1. `ASSETS_HOST` is what the Caddyfile matches on
-to decide a request is for the asset tree rather than the hotel — set it without a scheme, it is a
-hostname and not a URL.
+Those are the network aliases from step 1, and Caddy reads them out of the environment at load
+time. Named `*_UPSTREAM` and not `*_HOST` on purpose: `IMAGER_HOST` is the imager's own bind
+address, so the same name across two resources would mean opposite things.
+
+This is the heaviest build in the deployment — `tsc && vite build` over the whole client. See
+[If the front build dies](#if-the-front-build-dies).
 
 ---
 
@@ -234,23 +259,26 @@ hostname and not a URL.
 
 Do them in this order — each one is only checkable once the previous is up.
 
-1. **Emulator**, with the four listener variables. Nothing to check from outside yet; the container
-   log reaching `Starting Vortex Emulator` without an `OptionsValidationException` is the signal.
-2. **Assets** on disk, `hashes.json` rewritten. `ls /data/vortex-assets/gamedata/hashes.json`.
-3. **Front** — before the imager, which downloads its configuration from the asset host at boot and
-   crashloops until that answers. Then, from your own machine:
+1. **The tree on disk**, `hashes.json` rewritten.
+   `ls /data/vortex-assets/gamedata/hashes.json` — everything below reads it.
+2. **Emulator**, with the four listener variables. Nothing to check from outside; the container log
+   reaching `Starting Vortex Emulator` without an `OptionsValidationException` is the signal.
+3. **Assets app.** Seconds to build. Then, from your own machine:
+
+```bash
+curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | head -1              # 200
+curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | grep -i access-contr # the header
+```
+
+4. **Imager** — after the assets app, whose host it downloads its configuration from at boot; it
+   crashloops until that answers. Its log should reach a listening line on 8081 with no
+   `Missing embedded avatar asset` warnings.
+5. **Front.** Then:
 
 ```bash
 curl -sS https://vortex-hotel.online/webapi/api/public/info/hello        # JSON, not HTML
 npx wscat -c wss://vortex-hotel.online/ws                                # opens and stays open
-
-# the asset host, and the header that makes it usable cross-origin
-curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | head -1
-curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | grep -i access-control
 ```
-
-4. **Imager**. Its log should reach a listening line on 8081 with no `Missing embedded avatar
-   asset` warnings.
 
 If `/webapi/...` answers HTML with a 200, the prefix was not stripped and the request fell through
 to the SPA fallback — that is `handle_path` vs `handle` in the Caddyfile, and it is the single
