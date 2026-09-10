@@ -171,31 +171,42 @@ file-backed fetch when `IMAGER_ASSETS_ROOT` is set, and falls back to fetching o
 `IMAGER_ASSETS_BASE_URL` otherwise. Leave it unset and both the client and the imager read the same
 served copy, which is also what stops them drifting.
 
-### The one file that will bite you
+### The manifest, and what Apache used to do for it
 
-`gamedata/hashes.json` maps a logical name to **the URL that serves it**, and everything else the
-client loads is a URL found inside it. A tree built for local development carries absolute
-`http://vortex-assets.local/...` URLs — a hostname that resolves to the *visitor's own* loopback,
-so every asset fails and the room stays blank while the login screen works perfectly.
+`gamedata/hashes.json` maps a logical name to **the URL that serves it**, and everything the client
+loads afterwards is a URL found inside it. Get its host wrong and the login screen still works
+while no room ever draws.
 
-Rewrite it in the source tree, before the image is built — it is baked in, so a fix after the fact
-means another build:
+Under Laragon it was not a file at all. Two Apache-only pieces produced it:
 
-```bash
-cd C:/Laragon/www/vortex-assets/gamedata
-cp hashes.json hashes.json.bak
-sed -i 's#http://vortex-assets\.local#https://assets.vortex-hotel.online#g' hashes.json
-grep -c 'vortex-assets.local' hashes.json    # must print 0
-```
+| | did |
+|---|---|
+| `gamedata/hashes.php` | generated the manifest per request, `md5_file()` per entry, base URL hardcoded |
+| `gamedata/.htaccess` | rewrote `<name>/<hash>` to the real file, seven times over |
 
-It lives in the layer that rebuilds most cheaply, which is not an accident.
+Neither survives in a static container, so **the image generates the manifest at build time** and
+the seven rewrites became Caddy matchers. Both live in that `Dockerfile`.
+
+That is better than editing a checked-in file, not just different:
+
+- the hashes are recomputed from the files actually being shipped, so they cannot go stale against
+  the content the way a hand-edited manifest can;
+- the base URL is `ARG ASSETS_BASE_URL`, so the source tree keeps naming `vortex-assets.local` and
+  local development goes on working untouched;
+- the build **fails** if the manifest still names the development host, rather than shipping a
+  hotel where nothing draws;
+- `md5sum` is what `md5_file()` produced, so a browser holding a cached copy from the Apache days
+  does not re-download the world on the first boot after the move.
+
+To point the tree somewhere else — a CDN, another host — rebuild with
+`--build-arg ASSETS_BASE_URL=https://…`. Nothing else changes anywhere.
 
 ### Keep the recipe
 
-That `Dockerfile` is ninety lines of decisions — the layer split, and above all the ordering that
-makes an edit cost 64 MB instead of 2.9 GB. It sits in a directory nothing version-controls. Run
-`git init` there with a `.gitignore` holding a single `*` plus `!Dockerfile` and `!.dockerignore`,
-so the recipe is tracked and the three gigabytes never are.
+That directory now holds `Dockerfile`, `.dockerignore`, `.gitattributes` and
+`.github/workflows/publish.yml` — the layer split, the ordering that makes an edit cost 64 MB
+instead of 2.9 GB, and the manifest generator. Worth version control on its own; whether the
+2.9 GB goes in with it is the separate decision above.
 
 ## 4. The assets resource
 
