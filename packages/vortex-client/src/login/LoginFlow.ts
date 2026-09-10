@@ -471,6 +471,27 @@ export class LoginFlow extends Sprite implements ILoginContext, ILoginViewer
         this._localization?.loadDefaultEmbedLocalizations(this.getProperty('environment.id') ?? environmentId);
         log.debug(`[LoginFlow] updated environment to: ${environmentId}`);
         this._communication?.updateHostParameters();
+
+        // AS3's `initEnvironment()` (`communication/demo/_SafeCls_98.as` l.291-309) does two more
+        // things here, and the port did neither — so switching hotel kept talking to the previous
+        // one. `HabboWebApiSession` captures its server in its constructor
+        // (`new HabboWebApiSession(server)`), so the session standing after `updateHostParameters()`
+        // still points at the old host and carries that hotel's cookie.
+        this._communication?.resetHabboWebApiSession();
+
+        // The second is AS3's `else` branch, and it is the one that applies. AS3 reads
+        // `_SafeStr_4624.useWebApi`, which is NOT a configuration property: `_SafeCls_1883.as` l.140
+        // looks up a selectable child window named `useTicket` and returns **false when there is
+        // none**. This port's login builds no such checkbox — `${connection.login.useTicket}` is a
+        // label on `SsoTokenView`'s input field, a separate screen, and nothing in `login/` reads
+        // `isSelected` — so `useWebApi` is false and the branch taken is `environmentReady()`.
+        //
+        // Not re-initialising the provider here is also what makes the reset above sufficient rather
+        // than destructive: `showScreen()` calls `_provider.init(_communication)` on both
+        // SCREEN_LOGIN and SCREEN_REGISTER (l.306, l.338), so the next login screen rebuilds the
+        // session against the new host, exactly as AS3's l.254 does.
+        this.environmentReady();
+
         this._localization?.requestLocalizationInit();
     }
 

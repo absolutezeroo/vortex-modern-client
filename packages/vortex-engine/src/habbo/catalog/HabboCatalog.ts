@@ -2717,10 +2717,19 @@ export class HabboCatalog extends Component implements IHabboCatalog, ILinkEvent
         {
             case RoomSessionEvent.RSE_STARTED:
                 this._roomSession = event.session;
+
+                // AS3 tells the recycler in both branches (`_SafeStr_4719.setRoomSessionActive()`),
+                // and the port had dropped both calls: `RecyclerLogic.setRoomSessionActive()` was
+                // fully ported and reached by nothing. Leaving a room therefore left the recycler
+                // still holding its items with a stale button, and the "you must be in your own
+                // room" warning could never fire.
+                if(this._recycler !== null) this._recycler.setRoomSessionActive(true);
                 break;
 
             case RoomSessionEvent.RSE_ENDED:
                 this._roomSession = null;
+
+                if(this._recycler !== null) this._recycler.setRoomSessionActive(false);
                 break;
         }
 
