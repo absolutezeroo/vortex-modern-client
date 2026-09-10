@@ -142,8 +142,14 @@ grep -c 'vortex-assets.local' hashes.json    # must print 0
 
 New Coolify application, same Git repository:
 
-- **Dockerfile Location** — `/packages/vortex-imager/Dockerfile` (base directory stays `/`: the
-  imager depends on `vortex-engine` through the workspace protocol and cannot build alone).
+- **Build Pack** — `Dockerfile`, not the auto-detected one. Anything else builds the repository its
+  own way and never reads `Dockerfile` or `Caddyfile` at all — a build that succeeds and ships
+  nothing you wrote.
+- **Dockerfile Location** — `/Dockerfile.imager`, **Base Directory** `/`. The file sits at the root
+  rather than beside the package on purpose: given a Dockerfile deeper in the tree, the builder
+  took that directory as the build context, and every `COPY` from the root failed with
+  `"/pnpm-workspace.yaml": not found`. The imager cannot be installed from its own directory — the
+  `workspace:` protocol needs the lockfile and every manifest in the tree.
 - **Domains** — none.
 - **Ports Exposes** — `8081`.
 - **Persistent Storage** — `/data/vortex-assets` → `/assets`, plus a named volume on `/cache`.
@@ -167,11 +173,14 @@ assumed.
 
 ## 5. The front app
 
-New Coolify application, same repository, `Dockerfile` at the root.
+New Coolify application, same repository.
 
+- **Build Pack** — `Dockerfile`. Same warning as above: the auto-detected pack ignores this file.
+- **Dockerfile Location** — `/Dockerfile`, **Base Directory** `/`.
 - **Domains** — `https://vortex-hotel.online`. This is the only public name in the whole setup;
   Coolify obtains the certificate.
-- **Ports Exposes** — `80`.
+- **Ports Exposes** — `80`, and **Port** `80` in the build configuration — not the 3000 the form
+  offers by default. Caddy listens on 80.
 - **Persistent Storage** — `/data/vortex-assets` → `/assets`.
 
 Environment:

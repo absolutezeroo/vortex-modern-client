@@ -3,9 +3,16 @@
 # =================================================================================================
 # vortex-imager
 # =================================================================================================
-# Build context is the REPOSITORY ROOT, not this directory — the imager depends on vortex-engine
-# through the `workspace:` protocol and cannot be installed on its own. In Coolify set
-# "Dockerfile Location" to /packages/vortex-imager/Dockerfile and leave the base directory at /.
+# This file lives at the repository root rather than next to the package it builds, and that is not
+# tidiness — it is the only way the build context is right.
+#
+# The imager depends on vortex-engine through the `workspace:` protocol, so it cannot be installed
+# on its own: the install needs the lockfile, the workspace manifest and every package.json in the
+# tree. Under packages/vortex-imager/ the builder took THAT directory as the context, and every
+# COPY from the root failed with "/pnpm-workspace.yaml: not found" while the root .dockerignore was
+# never read either. A Dockerfile at the root cannot be given the wrong context by any setting.
+#
+# In Coolify: "Dockerfile Location" = /Dockerfile.imager, "Base Directory" = /.
 
 FROM node:22-slim AS build
 RUN corepack enable
