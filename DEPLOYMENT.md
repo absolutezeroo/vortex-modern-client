@@ -1,32 +1,37 @@
 # Deploying the hotel
 
-Three containers on one Coolify server, and **one public domain**. Everything else is reached over
-the Docker network.
+Three containers on one Coolify server. Two public names, both answered by the same container —
+Caddy tells them apart by `Host`. The emulator and the imager have no public address at all.
 
 ```
-                      ┌──────────────────────────────────────────────┐
-  vortex-hotel.online ──▶│  vortex-front  (this repo's Dockerfile)      │
-        (the only      │  Caddy :80                                   │
-         public name)  │                                              │
-                       │  /              built vortex-client          │
-                       │  /gamedata …    the Nitro tree, from /assets │
-                       │  /webapi/*  ────┐                            │
-                       │  /api/*     ────┤                            │
-                       │  /ws        ────┤                            │
-                       │  /habbo-imaging ┤                            │
-                       └─────────────────┼────────────────────────────┘
-                                         │  coolify network
-                       ┌─────────────────▼──────────┐  ┌──────────────────────┐
-                       │ vortex-emulator            │  │ vortex-imager        │
-                       │ :8080 web API              │  │ :8081                │
-                       │ :30001 game WebSocket      │  │                      │
-                       │ no public domain           │  │ no public domain     │
-                       └────────────────────────────┘  └──────────────────────┘
+                            ┌────────────────────────────────────────────┐
+    vortex-hotel.online ───▶│  vortex-front   Caddy :80                  │
+                            │                                            │
+                            │  hotel host:                               │
+                            │    /                 built vortex-client   │
+                            │    /webapi/*  ───┐                         │
+                            │    /api/*     ───┤                         │
+                            │    /ws        ───┼──┐                      │
+                            │    /habbo-imaging ──┼──┐                   │
+                            │                  │  │  │                   │
+    assets.vortex-          │  assets host:    │  │  │                   │
+      hotel.online   ───▶   │    the Nitro tree from /assets             │
+                            └──────────────────┼──┼──┼───────────────────┘
+                                               │  │  │  coolify network
+                     ┌─────────────────────────▼──▼┐ │
+                     │ vortex-emulator             │ │
+                     │ :8080 web API               │ │
+                     │ :30001 game WebSocket       │ │
+                     └─────────────────────────────┘ │
+                                     ┌───────────────▼──────┐
+                                     │ vortex-imager :8081  │
+                                     └──────────────────────┘
 ```
 
-## Why one origin
+## Why the services share the hotel's origin
 
-Not tidiness. The client resolves every service against the origin it was served from:
+Not tidiness. The client resolves them against the origin it was served from, and it does that on
+its own:
 
 - `install.mjs` writes `url.prefix` and `pocket.api` **empty on purpose**, and
   `App.ts::fillOriginPrefixes()` fills them at boot with the origin actually serving the page.
@@ -34,9 +39,19 @@ Not tidiness. The client resolves every service against the origin it was served
   localhost.
 - The shipped configuration says `web.api.en=/webapi`, an origin-root path.
 
-So a client served from `vortex-hotel.online` asks `vortex-hotel.online` for everything, and **no
-source change is needed to deploy it**. What that buys: no CORS policy to keep in sync, no
-cross-site cookie, one certificate, and an emulator with no public address at all.
+So the API, the socket and the imager need **no source change to deploy**, no CORS policy and no
+cross-site cookie: a client served from `vortex-hotel.online` asks `vortex-hotel.online` for all
+three.
+
+## Why the assets do not
+
+The asset tree is the deliberate exception. It is the one part with a plausible future somewhere
+else — behind a CDN, or on a box chosen for bandwidth rather than CPU — and the client already
+follows URLs for it rather than assuming a path: everything it loads is a URL found inside
+`gamedata/hashes.json`. Moving the tree means editing that one file, and nothing else.
+
+The price is real and paid once: cross-origin fetches need `Access-Control-Allow-Origin` on that
+host, which the Caddyfile sets. Without it the login screen works perfectly and no room ever draws.
 
 ---
 
@@ -48,12 +63,15 @@ One name, because there is one public service. At the registrar for `vortex-hote
 |---|---|---|
 | A | `@` | the Coolify server's IP |
 | A | `www` | the same IP |
+| A | `assets` | the same IP |
+| A | `*` | the same IP |
 
-Nothing for the emulator, the imager or the assets: they are all paths under this one host. Do this
-first — Let's Encrypt validates over HTTP against the name, so Coolify cannot issue the certificate
-before the record resolves.
+Nothing for the emulator or the imager: neither is ever addressed from outside. `assets` is its own
+name so the tree can move behind a CDN or onto another server later without the client learning a
+new shape — only `hashes.json` would change. The wildcard makes the next subdomain free.
 
-`www` is optional but cheap, and Coolify will redirect it to the apex.
+Do this first — Let's Encrypt validates over HTTP against each name, so Coolify cannot issue a
+certificate before the record resolves.
 
 ## 1. Stable names on the network
 
@@ -134,7 +152,7 @@ Rewrite it once on the server:
 ```bash
 cd /data/vortex-assets/gamedata
 cp hashes.json hashes.json.bak
-sed -i 's#http://vortex-assets\.local#https://vortex-hotel.online#g' hashes.json
+sed -i 's#http://vortex-assets\.local#https://assets.vortex-hotel.online#g' hashes.json
 grep -c 'vortex-assets.local' hashes.json    # must print 0
 ```
 
@@ -159,7 +177,7 @@ Environment:
 ```
 IMAGER_PORT=8081
 IMAGER_ASSETS_ROOT=/assets
-IMAGER_ASSETS_BASE_URL=https://vortex-hotel.online
+IMAGER_ASSETS_BASE_URL=https://assets.vortex-hotel.online
 IMAGER_CACHE_DIR=/cache
 IMAGER_DB_HOST=<the hotel's MySQL host>
 IMAGER_DB_PORT=3306
@@ -190,8 +208,10 @@ New Coolify application, same repository.
 
 - **Build Pack** — `Dockerfile`. Same warning as above: the auto-detected pack ignores this file.
 - **Dockerfile Location** — `/Dockerfile`, **Base Directory** `/`.
-- **Domains** — `https://vortex-hotel.online`. This is the only public name in the whole setup;
-  Coolify obtains the certificate.
+- **Domains** — **both**, comma-separated:
+  `https://vortex-hotel.online,https://assets.vortex-hotel.online`. They reach the same container
+  on the same port; Caddy splits them by `Host`, and Coolify obtains a certificate for each. One
+  app, two names — no second application for the assets.
 - **Ports Exposes** — `80`, and **Port** `80` in the build configuration — not the 3000 the form
   offers by default. Caddy listens on 80.
 - **Persistent Storage** — `/data/vortex-assets` → `/assets`.
@@ -201,10 +221,12 @@ Environment:
 ```
 EMULATOR_UPSTREAM=vortex-emulator
 IMAGER_UPSTREAM=vortex-imager
+ASSETS_HOST=assets.vortex-hotel.online
 ```
 
-Those are the network aliases from step 1, and Caddy reads them out of the environment at load
-time.
+The first two are the network aliases from step 1. `ASSETS_HOST` is what the Caddyfile matches on
+to decide a request is for the asset tree rather than the hotel — set it without a scheme, it is a
+hostname and not a URL.
 
 ---
 
@@ -215,18 +237,28 @@ Do them in this order — each one is only checkable once the previous is up.
 1. **Emulator**, with the four listener variables. Nothing to check from outside yet; the container
    log reaching `Starting Vortex Emulator` without an `OptionsValidationException` is the signal.
 2. **Assets** on disk, `hashes.json` rewritten. `ls /data/vortex-assets/gamedata/hashes.json`.
-3. **Imager**. Its log should reach a listening line on 8081.
-4. **Front**. Then, from your own machine:
+3. **Front** — before the imager, which downloads its configuration from the asset host at boot and
+   crashloops until that answers. Then, from your own machine:
 
 ```bash
 curl -sS https://vortex-hotel.online/webapi/api/public/info/hello        # JSON, not HTML
-curl -sI https://vortex-hotel.online/gamedata/hashes.json | head -1      # 200
 npx wscat -c wss://vortex-hotel.online/ws                                # opens and stays open
+
+# the asset host, and the header that makes it usable cross-origin
+curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | head -1
+curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | grep -i access-control
 ```
+
+4. **Imager**. Its log should reach a listening line on 8081 with no `Missing embedded avatar
+   asset` warnings.
 
 If `/webapi/...` answers HTML with a 200, the prefix was not stripped and the request fell through
 to the SPA fallback — that is `handle_path` vs `handle` in the Caddyfile, and it is the single
 most confusing failure in this setup because it does not look like a failure.
+
+If the asset host answers 200 but `access-control-allow-origin` is missing, the client will still
+show its login screen and no room will ever draw: the browser fetches the tree cross-origin, and
+without that header it refuses the reads without anything obvious in the network tab.
 
 Then open `https://vortex-hotel.online` in a browser. The login screen proves the API; a room that
 draws proves the assets; an avatar on the selection screen proves the imager.

@@ -21,6 +21,10 @@
 :80 {
 	encode zstd gzip
 
+	# ASSETS_HOST is the hostname the asset tree answers on. It has to be a variable rather than a
+	# literal because this file ships in the repository and the hotel's domain is a deployment fact,
+	# and because the whole point of the separate host is that it can be pointed elsewhere.
+	#
 	# EMULATOR_UPSTREAM and IMAGER_UPSTREAM are the other containers' network aliases. Named
 	# *_UPSTREAM and not *_HOST deliberately: IMAGER_HOST is already the imager's OWN bind address
 	# (its config.ts defaults it to 0.0.0.0), so the same name on two apps in the same panel would
@@ -58,17 +62,30 @@
 	}
 
 	# --- the Nitro asset tree --------------------------------------------------------------------
-	# Served straight off the mounted volume, not proxied: these are the biggest and most numerous
+	# On its own host, so the tree can move behind a CDN or onto another server later without the
+	# client learning a new shape — the URLs it follows come out of hashes.json, and only that file
+	# changes. Same container and same mounted directory today; the split is about where this can go
+	# tomorrow.
+	#
+	# Served straight off the volume rather than proxied: these are the biggest and most numerous
 	# requests the client makes, and a proxy hop buys nothing.
 	#
 	# `gamedata/hashes.json` is the first file the client fetches after its own configuration, and
-	# every other asset is a URL found INSIDE it. If that file still carries absolute
-	# `http://vortex-assets.local/...` URLs, nothing here can save it — the browser will dial a
-	# hostname that resolves nowhere for a visitor. See DEPLOYMENT.md.
-	@assets path /gamedata/* /gordon/* /c_images/* /dcr/*
-	handle @assets {
+	# every other asset is a URL found INSIDE it. It must name THIS host — if it still carries the
+	# `http://vortex-assets.local/...` of a development tree, nothing here can save it: the browser
+	# dials a name that resolves nowhere for a visitor. See DEPLOYMENT.md.
+	@assets_host host {$ASSETS_HOST}
+	handle @assets_host {
 		root * /assets
 		file_server
+
+		# Not decoration on a separate host: the client fetches hashes.json, furnidata, figuredata
+		# and every .nitro through fetch/XHR, and reads images into WebGL textures. Cross-origin,
+		# all of that needs the header — without it the browser refuses the reads and taints the
+		# canvas for the images, and the room comes out blank with nothing obvious in the network
+		# tab. `*` rather than the hotel's origin because these are public files fetched without
+		# credentials, and a wildcard needs no Vary to stay cacheable.
+		header Access-Control-Allow-Origin "*"
 
 		# The tree is content-addressed through hashes.json, so a long max-age is safe and is what
 		# keeps a room from re-fetching a thousand files on every visit.
