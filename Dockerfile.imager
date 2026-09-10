@@ -27,6 +27,15 @@ COPY packages/vortex-web/package.json packages/vortex-web/
 RUN pnpm install --frozen-lockfile
 
 COPY . .
+
+# Not optional, and not a copy-paste from the front's Dockerfile. The imager reads the client's own
+# avatar configuration — HabboAvatarAnimation.xml and its three siblings — out of
+# packages/vortex-client/src/assets/configurations (see config.ts, `avatarConfigDir`). That
+# directory is gitignored: install.mjs produces it by unpacking vortex-client-assets.zip. Without
+# this line the imager starts, logs four "Missing embedded avatar asset" warnings, and renders
+# nothing that has a body.
+RUN node install.mjs --skip-install --skip-checks
+
 RUN pnpm --filter vortex-imager build
 
 # =================================================================================================

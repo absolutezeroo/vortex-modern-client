@@ -21,6 +21,12 @@
 :80 {
 	encode zstd gzip
 
+	# EMULATOR_UPSTREAM and IMAGER_UPSTREAM are the other containers' network aliases. Named
+	# *_UPSTREAM and not *_HOST deliberately: IMAGER_HOST is already the imager's OWN bind address
+	# (its config.ts defaults it to 0.0.0.0), so the same name on two apps in the same panel would
+	# mean opposite things — and set on the wrong one, the imager would try to bind to a hostname
+	# that is not an interface.
+
 	# --- the web API ---------------------------------------------------------------------------
 	# `handle_path` strips the matched prefix, which is exactly the rewrite the dev server does
 	# (packages/vortex-client/vite.config.ts). The client's shipped configuration says
@@ -29,13 +35,13 @@
 	# answers 404 — with a 200-shaped index.html if it fell through to the SPA, which is the
 	# failure that costs the most time to read.
 	handle_path /webapi/* {
-		reverse_proxy {$EMULATOR_HOST}:8080
+		reverse_proxy {$EMULATOR_UPSTREAM}:8080
 	}
 
 	# Some calls are made against the origin root rather than through `web.api`. `handle`, not
 	# `handle_path`: these keep their prefix.
 	handle /api/* {
-		reverse_proxy {$EMULATOR_HOST}:8080
+		reverse_proxy {$EMULATOR_UPSTREAM}:8080
 	}
 
 	# --- the game socket -----------------------------------------------------------------------
@@ -43,12 +49,12 @@
 	# emulator must be listening on 0.0.0.0 for this to reach it — its default is 127.0.0.1, which
 	# inside a container is the container's own loopback and nothing else.
 	handle /ws {
-		reverse_proxy {$EMULATOR_HOST}:30001
+		reverse_proxy {$EMULATOR_UPSTREAM}:30001
 	}
 
 	# --- avatars, badges, furni thumbnails -------------------------------------------------------
 	handle /habbo-imaging/* {
-		reverse_proxy {$IMAGER_HOST}:8081
+		reverse_proxy {$IMAGER_UPSTREAM}:8081
 	}
 
 	# --- the Nitro asset tree --------------------------------------------------------------------

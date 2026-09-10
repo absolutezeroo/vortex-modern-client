@@ -159,6 +159,7 @@ Environment:
 ```
 IMAGER_PORT=8081
 IMAGER_ASSETS_ROOT=/assets
+IMAGER_ASSETS_BASE_URL=https://vortex-hotel.online
 IMAGER_CACHE_DIR=/cache
 IMAGER_DB_HOST=<the hotel's MySQL host>
 IMAGER_DB_PORT=3306
@@ -166,6 +167,18 @@ IMAGER_DB_USER=<user>
 IMAGER_DB_PASSWORD=<password>
 IMAGER_DB_DATABASE=<database>
 ```
+
+**Do not set `IMAGER_HOST` here.** It is the imager's own bind address (`0.0.0.0` by default), not
+where anything else finds it — the front reaches it through `IMAGER_UPSTREAM`, which is a variable
+on the *front's* app.
+
+`IMAGER_ASSETS_BASE_URL` is not the same thing as `IMAGER_ASSETS_ROOT`, and both are needed. The
+root is where it reads asset files from disk; the base URL is where it *downloads* the hotel's
+configuration over HTTP at boot, and its default (`http://vortex-assets.local`) resolves nowhere in
+a container — the imager exits on the 404 rather than starting without it.
+
+That makes the front a startup dependency: until it serves `/gamedata`, the imager crashloops.
+Deploy the front first, or expect this container to restart until it is up.
 
 It reads the same database the emulator does — group badges and furni definitions live there.
 Read-only in practice, but give it its own MySQL user if you want that guaranteed rather than
@@ -186,8 +199,8 @@ New Coolify application, same repository.
 Environment:
 
 ```
-EMULATOR_HOST=vortex-emulator
-IMAGER_HOST=vortex-imager
+EMULATOR_UPSTREAM=vortex-emulator
+IMAGER_UPSTREAM=vortex-imager
 ```
 
 Those are the network aliases from step 1, and Caddy reads them out of the environment at load
