@@ -73,10 +73,27 @@ Real, against `Vortex.WebApi` (see `src/lib/api.js`, which mirrors
 | Avatar selection | `POST /api/user/avatars/select` |
 | Name availability | `POST /api/newuser/name/check` |
 | The ticket `/hotel` enters with | `GET /api/ssotoken` |
+| The news feed and one article | `GET /api/public/articles`, `…/{slug}` |
+| A name → its profile header | `GET /api/public/users?name=` |
+| A profile: badges, friends, apparts, groups | `GET /api/public/users/{uniqueId}/profile` |
+| The appart gallery, and one appart | `GET /api/public/rooms`, `…/{id}` |
+| The sidebar counters | `GET /api/user/purse` |
 
-Mocked, in `src/lib/mock.js`, because the web API has no route for them: articles, badges, friends,
-groups, rooms, the purse counters, the shop's price list. The shapes match a habbo.com response, so
-wiring a real endpoint later is a swap in one page.
+The profile and appart reads are **anonymous** — a profile is a page a signed-out visitor opens — and
+an appart whose door is invisible is in neither of them, the read by id included.
+
+Two things no route can answer, and where they come from instead:
+
+- **A badge's label.** The hotel's badge texts are in no database: they are `badge_<code>_name` in
+  `gamedata/<lang>/external_flash_texts.json` on the asset host, which is where the CLIENT reads them
+  from. `src/lib/badges.js` fetches that once, shared, and falls back to the code.
+- **Whether a profile is private.** `PlayerEntity` has no visibility column, so `profileVisible` is
+  always `true` even though habbo.com defaults a profile to private and `/registration` renders the
+  box for it.
+
+Mocked, in `src/lib/mock.js`, because the emulator has no concept of them: the private messages and
+the shop's price list. The shapes match a habbo.com response, so wiring a real endpoint later is a
+swap in one page.
 
 The API has **no identity route**. `GET /api/user/avatars` is it: 401 means signed out, a list means
 signed in. `src/lib/session.js` is built on that.
