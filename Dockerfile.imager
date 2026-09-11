@@ -51,15 +51,22 @@ WORKDIR /src
 
 COPY --from=build /src /src
 
-# The same Nitro asset tree the front serves. The imager reads it from disk to render — mount the
-# SAME host directory in both containers, or an avatar renders against assets the client does not
-# have and the two drift silently.
-VOLUME /assets
-
+# IMAGER_ASSETS_ROOT is deliberately NOT set, and that is the whole point of this comment.
+#
+# Setting it does not mean "where the assets are". src/shim/globals.ts replaces `globalThis.fetch`
+# with one that serves every URL under IMAGER_ASSETS_BASE_URL from that directory instead of over
+# the network — and answers `404 Not Found` itself when the file is not there. So a stale value
+# here does not fall back to HTTP: it silently shadows the asset host and manufactures a 404 that
+# is indistinguishable from the server's own. This image carried `IMAGER_ASSETS_ROOT=/assets` from
+# an earlier design where the tree was a shared mount; the tree now lives in its own resource, and
+# the leftover ENV made the imager crashloop against a host that was answering 200 the whole time.
+#
+# Unset, the imager fetches from IMAGER_ASSETS_BASE_URL like the client does — which is also what
+# stops the two rendering against different copies.
 ENV IMAGER_PORT=8081 \
-    IMAGER_ASSETS_ROOT=/assets \
     IMAGER_CACHE_DIR=/cache
 
+# The render cache. The only thing this container keeps.
 VOLUME /cache
 
 EXPOSE 8081

@@ -272,13 +272,19 @@ IMAGER_DB_DATABASE=<database>
 where anything else finds it — the front reaches it through `IMAGER_UPSTREAM`, which is a variable
 on the *front's* app.
 
-`IMAGER_ASSETS_BASE_URL` is not the same thing as `IMAGER_ASSETS_ROOT`, and both are needed. The
-root is where it reads asset files from disk; the base URL is where it *downloads* the hotel's
-configuration over HTTP at boot, and its default (`http://vortex-assets.local`) resolves nowhere in
-a container — the imager exits on the 404 rather than starting without it.
+**Never set `IMAGER_ASSETS_ROOT` here.** It does not mean "where the assets are". When it is set,
+`src/shim/globals.ts` replaces `globalThis.fetch` with one that serves every URL under
+`IMAGER_ASSETS_BASE_URL` off that directory instead of over the network — and returns a `404 Not
+Found` of its own making when the file is not there. It does not fall back to HTTP. A stale value
+shadows the asset host completely and produces a 404 indistinguishable from the server's, against a
+host that is answering 200 the whole time.
 
-That makes the front a startup dependency: until it serves `/gamedata`, the imager crashloops.
-Deploy the front first, or expect this container to restart until it is up.
+`IMAGER_ASSETS_BASE_URL` is where it downloads the hotel's configuration at boot. Its default
+(`http://vortex-assets.local`) resolves nowhere in a container, and the imager exits rather than
+start without it.
+
+That makes the assets resource a startup dependency: until it serves `/gamedata`, the imager
+crashloops. Deploy it first, or expect this container to restart until it is up.
 
 It reads the same database the emulator does — group badges and furni definitions live there.
 Read-only in practice, but give it its own MySQL user if you want that guaranteed rather than
