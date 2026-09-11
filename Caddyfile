@@ -62,6 +62,15 @@
 	}
 
 	# --- the client itself -------------------------------------------------------------------------
+	# Build output first, and deliberately outside the fallback below. Every name under /assets is
+	# content-hashed, so a request for one that is missing is a bug and must answer 404. Inside the
+	# fallback it would answer `index.html` with a 200 — a script or an image served HTML, which
+	# fails later and elsewhere. The site next door shipped with no sprite sheet exactly that way.
+	handle /assets/* {
+		root * /srv
+		file_server
+	}
+
 	# Last, so it only catches what nothing above claimed. `try_files` gives the SPA its fallback:
 	# a deep link must answer with index.html rather than 404.
 	handle {

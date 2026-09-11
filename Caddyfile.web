@@ -32,6 +32,16 @@
 		reverse_proxy {$IMAGER_UPSTREAM}:8081
 	}
 
+	# Build output, before the fallback and deliberately without it. Every name under /assets is
+	# content-hashed, so a request for one that is missing is a bug and has to say so. Under the
+	# fallback below it answered `index.html` with a 200 instead — which is exactly how this site
+	# shipped with no sprite sheet and a green deploy log: the browser asked for an image, got HTML,
+	# and nothing anywhere reported a problem.
+	handle /assets/* {
+		root * /srv
+		file_server
+	}
+
 	handle {
 		root * /srv
 		file_server
