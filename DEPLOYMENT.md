@@ -1,41 +1,53 @@
 # Deploying the hotel
 
-One Coolify resource per service, the same way the database and phpMyAdmin already are. Four of
-them here, two with a public name:
+One Coolify resource per service, the same way the database and phpMyAdmin already are. Five of
+them here, three with a public name:
 
 ```
-                          ┌─────────────────────────────────────────┐
-  vortex-hotel.online ───▶│  vortex-front        Caddy :80          │
-                          │    /                 vortex-client      │
-                          │    /webapi/*  /api/*  ──┐               │
-                          │    /ws                ──┤               │
-                          │    /habbo-imaging     ──┼──┐            │
-                          └─────────────────────────┼──┼────────────┘
-                                                    │  │
-  assets.vortex-          ┌──────────────────────┐  │  │  coolify
-    hotel.online   ──────▶│ vortex-assets  :80   │  │  │  network
-                          │ the Nitro tree,      │  │  │
-                          │ read from /assets    │  │  │
-                          └──────────────────────┘  │  │
-                                                    │  │
-                          ┌─────────────────────────▼┐ │
-                          │ vortex-emulator          │ │
-                          │ :8080 web API            │ │
-                          │ :30001 game WebSocket    │ │
-                          └──────────────────────────┘ │
-                          ┌────────────────────────────▼─┐
-                          │ vortex-imager :8081          │
-                          │ also reads /assets           │
-                          └──────────────────────────────┘
+                           ┌────────────────────────────────────────┐
+   vortex-hotel.online ───▶│ vortex-web            Caddy :80        │
+        (the site)         │   /                   the habbo-web    │
+                           │   /api/*         ──┐      port         │
+                           │   /habbo-imaging ──┼─┐                 │
+                           └────────────────────┼─┼─────────────────┘
+                                                │ │
+   client.vortex-         ┌─────────────────────┼─┼───────────────┐
+     hotel.online   ─────▶│ vortex-client       │ │  Caddy :80    │
+        (the game)        │   /            the built client       │
+                          │   /webapi/*  /api/* ─┤ │              │
+                          │   /ws               ─┤ │              │
+                          │   /habbo-imaging    ─┼─┤              │
+                          └─────────────────────┼─┼──────────────┘
+                                                │ │
+   assets.vortex-         ┌──────────────────┐  │ │   coolify
+     hotel.online   ─────▶│ vortex-assets    │  │ │   network
+                          │ the Nitro tree,  │  │ │
+                          │ baked in         │  │ │
+                          └──────────────────┘  │ │
+                                                │ │
+                          ┌─────────────────────▼┐│
+                          │ vortex-emulator      ││
+                          │ :8080 web API        ││
+                          │ :30001 game socket   ││
+                          └──────────────────────┘│
+                          ┌───────────────────────▼──┐
+                          │ vortex-imager :8081      │
+                          └──────────────────────────┘
 ```
 
-The emulator and the imager have no public address: the front reaches them over the Docker network
-by their **network alias**.
+The emulator and the imager have no public address: the two front containers reach them over the
+Docker network by their **network alias**.
 
-## Why the services share the hotel's origin
+The site and the client are separate resources on separate hosts because they are separate
+packages on separate rhythms — a copy fix on the front page has no business waiting on
+`tsc && vite build` over the whole game client. `/hotel` on the site mounts the client in an
+iframe with the SSO ticket on the query string, which is also what makes the split work: the
+ticket travels in the URL, so the client needs nothing of the site's session cookie.
 
-Not tidiness. The client resolves them against the origin it was served from, and it does that on
-its own:
+## Why each front shares its own origin
+
+Not tidiness. The client resolves its services against the origin it was served from, and it does
+that on its own:
 
 - `install.mjs` writes `url.prefix` and `pocket.api` **empty on purpose**, and
   `App.ts::fillOriginPrefixes()` fills them at boot with the origin actually serving the page.
@@ -44,8 +56,12 @@ its own:
 - The shipped configuration says `web.api.en=/webapi`, an origin-root path.
 
 So the API, the socket and the imager need **no source change to deploy**, no CORS policy and no
-cross-site cookie: a client served from `vortex-hotel.online` asks `vortex-hotel.online` for all
-three.
+cross-site cookie — on whichever host serves the client. That is why moving it to
+`client.vortex-hotel.online` cost nothing: it asks its own host, and its Caddy answers.
+
+The site works the same way for `/api` and `/habbo-imaging`. The only two things it cannot derive
+are the other hosts — the client and the assets — and both already have a seam for it in
+`packages/vortex-web/src/lib/config.js`.
 
 ## Why the assets do not
 
@@ -67,6 +83,7 @@ At the registrar for `vortex-hotel.online`:
 |---|---|---|
 | A | `@` | the Coolify server's IP |
 | A | `www` | the same IP |
+| A | `client` | the same IP |
 | A | `assets` | the same IP |
 | A | `*` | the same IP |
 
@@ -267,13 +284,14 @@ It reads the same database the emulator does — group badges and furni definiti
 Read-only in practice, but give it its own MySQL user if you want that guaranteed rather than
 assumed.
 
-## 6. The front app
+## 6. The client app
 
 New Coolify application, same repository.
 
 - **Build Pack** — `Dockerfile`. Same warning as above: the auto-detected pack ignores this file.
 - **Dockerfile Location** — `/Dockerfile`, **Base Directory** `/`.
-- **Domains** — `https://vortex-hotel.online`.
+- **Domains** — `https://client.vortex-hotel.online`. Its own host, which is what the built client
+  expects: `vite.config.ts` keeps `base: '/'` for a build, so it serves from a root, not a path.
 - **Ports Exposes** — `80`, and **Port** `80` in the build configuration — not the 3000 the form
   offers by default. Caddy listens on 80.
 - **Persistent Storage** — none. This container never reads the asset tree; the client fetches it
@@ -291,7 +309,38 @@ time. Named `*_UPSTREAM` and not `*_HOST` on purpose: `IMAGER_HOST` is the image
 address, so the same name across two resources would mean opposite things.
 
 This is the heaviest build in the deployment — `tsc && vite build` over the whole client. See
-[If the front build dies](#if-the-front-build-dies).
+[If the client build dies](#if-the-client-build-dies).
+
+## 7. The website app
+
+New Coolify application, same repository. Builds in seconds — it is Svelte and Tailwind, none of
+the game engine.
+
+- **Build Pack** — `Dockerfile`.
+- **Dockerfile Location** — `/Dockerfile.web`, **Base Directory** `/`.
+- **Domains** — `https://vortex-hotel.online`. The apex: this is what a visitor lands on.
+- **Ports Exposes** — `80`, and **Port** `80`.
+- **Persistent Storage** — none.
+
+Environment:
+
+```
+EMULATOR_UPSTREAM=vortex-emulator
+IMAGER_UPSTREAM=vortex-imager
+```
+
+The site proxies less than the client does — only `/api/*` (unrewritten: unlike the client's
+`/webapi`, these are already the paths the emulator serves) and `/habbo-imaging/*`.
+
+**The two hosts it cannot derive** are build arguments, not runtime variables, because a browser
+has no environment and the values are baked into the bundle:
+`VITE_CLIENT_URL=https://client.vortex-hotel.online` and
+`VITE_ASSET_BASE=https://assets.vortex-hotel.online`. Both are defaulted in `Dockerfile.web`;
+override them with Coolify's **Build Variables** if the hostnames change. The seam already existed
+in `packages/vortex-web/src/lib/config.js` — nothing in the site's source changes to deploy it.
+
+Leave `VITE_ASSET_BASE` empty and the site asks *this* origin for promo art and badges, which
+nothing here serves: the pages render with every image missing and no error anywhere.
 
 ---
 
@@ -299,37 +348,47 @@ This is the heaviest build in the deployment — `tsc && vite build` over the wh
 
 Do them in this order — each one is only checkable once the previous is up.
 
-1. **The tree on disk**, `hashes.json` rewritten.
-   `ls /data/vortex-assets/gamedata/hashes.json` — everything below reads it.
+1. **The asset image** built and pushed, `hashes.json` generated into it — everything below reads
+   it.
 2. **Emulator**, with the four listener variables. Nothing to check from outside; the container log
    reaching `Starting Vortex Emulator` without an `OptionsValidationException` is the signal.
-3. **Assets app.** Seconds to build. Then, from your own machine:
+3. **Assets resource.** A pull, no build. Then, from your own machine:
 
 ```bash
 curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | head -1              # 200
 curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | grep -i access-contr # the header
 ```
 
-4. **Imager** — after the assets app, whose host it downloads its configuration from at boot; it
-   crashloops until that answers. Its log should reach a listening line on 8081 with no
+4. **Imager** — after the assets resource, whose host it downloads its configuration from at boot;
+   it crashloops until that answers. Its log should reach a listening line on 8081 with no
    `Missing embedded avatar asset` warnings.
-5. **Front.** Then:
+5. **Client app.** Then:
 
 ```bash
-curl -sS https://vortex-hotel.online/webapi/api/public/info/hello        # JSON, not HTML
-npx wscat -c wss://vortex-hotel.online/ws                                # opens and stays open
+curl -sS https://client.vortex-hotel.online/webapi/api/public/info/hello   # JSON, not HTML
+npx wscat -c wss://client.vortex-hotel.online/ws                           # opens and stays open
 ```
 
-If `/webapi/...` answers HTML with a 200, the prefix was not stripped and the request fell through
-to the SPA fallback — that is `handle_path` vs `handle` in the Caddyfile, and it is the single
-most confusing failure in this setup because it does not look like a failure.
+6. **Website app.** Then:
+
+```bash
+curl -sS https://vortex-hotel.online/api/public/info/hello                 # JSON, not HTML
+```
+
+Note the difference, and it is the one worth remembering: the client asks through **`/webapi`**,
+which Caddy strips; the site asks **`/api`** directly, which it does not. Same emulator, two paths,
+two directives — `handle_path` for one and `handle` for the other.
+
+If either answers HTML with a 200, the request fell through to the SPA fallback instead of being
+proxied. That is the single most confusing failure here, because a 200 does not look like one.
 
 If the asset host answers 200 but `access-control-allow-origin` is missing, the client will still
 show its login screen and no room will ever draw: the browser fetches the tree cross-origin, and
 without that header it refuses the reads without anything obvious in the network tab.
 
-Then open `https://vortex-hotel.online` in a browser. The login screen proves the API; a room that
-draws proves the assets; an avatar on the selection screen proves the imager.
+Then open `https://vortex-hotel.online` in a browser. The front page proves the site and its API;
+`/hotel` mounts the client in its iframe; a room that draws proves the assets; an avatar on the
+selection screen proves the imager.
 
 ---
 
@@ -358,7 +417,7 @@ The route is authenticated, so a report is always attached to an account, and ra
 per five minutes per address (`Vortex:WebApi:ReportRateLimit`) — loose enough not to swallow honest
 reports, tight enough that a stuck retry loop cannot fill the audit table.
 
-## If the front build dies
+## If the client build dies
 
 Two failures look alike and are not:
 
@@ -367,7 +426,7 @@ Two failures look alike and are not:
 | **134**, trace ending in `Heap::CollectGarbage`, `Aborted (core dumped)` | V8's JavaScript heap filled up | `NODE_OPTIONS=--max-old-space-size` in the Dockerfile — already set to 4096 |
 | **137**, killed with no trace | the *kernel* or the container limit took the process | raise Coolify's Resource Limits for the app, add swap on the server, or build elsewhere |
 
-`tsc && vite build` over this client is the heaviest thing in the whole deployment. Check what the
+`tsc && vite build` over the game client is the heaviest thing in the whole deployment. Check what the
 server actually has before assuming a setting will fix it:
 
 ```bash
@@ -386,11 +445,11 @@ Honest list, so nothing here reads as more finished than it is.
 - **A bug report does not carry the room id.** Reading it would mean coupling the reporter to the
   room engine, and the endpoint already accepts the field: `RoomId` on the audit record is there,
   and wiring it is one line the day the reports say it is worth it.
-- **`vortex-web` (the CMS) is not deployed.** A built `vortex-client` sets its base to `/` and
-  wants the root, so the two cannot share an origin without changing `base` in
-  `packages/vortex-client/vite.config.ts`. Registration and login live in the client itself
-  (`RegisterView`, `/api/public/registration/new`), so a beta does not need the site — but this is
-  the decision to make before adding it, not after.
+- **The site and the client keep separate sessions.** Each holds its own `habbo-web-session` cookie
+  on its own host, so signing in on one does not sign you in on the other. `/hotel` works anyway —
+  it passes an SSO ticket on the query string rather than relying on a shared cookie — but a player
+  who opens `client.vortex-hotel.online` directly logs in again. Sharing one cookie would mean
+  issuing it for `.vortex-hotel.online` and is a deliberate decision, not a fix to apply blindly.
 - **The imager's font rendering is unverified in a slim image.** `@napi-rs/canvas` ships its own
   Skia, but text drawn without fontconfig can fall back oddly. If badges come out with the wrong
   glyphs, `apt-get install -y fontconfig` in its runtime stage is the fix.
