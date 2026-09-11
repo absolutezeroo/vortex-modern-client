@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "api:types": "openapi-typescript ../../../vortex-emulator/Vortex.WebApi/openapi.json -o src/lib/api.generated.ts"
   },
   "dependencies": {
     "@fontsource/ubuntu": "^5.3.0",
@@ -16,8 +18,11 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tailwindcss/vite": "^4.3.1",
+    "openapi-typescript": "^7.13.0",
     "svelte": "^5.56.3",
+    "svelte-check": "^4.7.6",
     "tailwindcss": "^4.3.1",
+    "typescript": "^5.9.3",
     "vite": "^8.0.16"
   }
 }

@@ -12,7 +12,12 @@ export default tseslint.config(
             // Vendor reference dumps, never our code: the AS3 trees at the repo root and
             // packages/vortex-web/sources/ (habbo.com's own bundle + its extracted templates).
             '**/sources/**',
-            '**/*.d.ts'
+            '**/*.d.ts',
+            // Written by `pnpm --filter vortex-web api:types` out of the emulator's OpenAPI
+            // document. Its top-level interfaces are openapi-typescript's fixed names — `paths`,
+            // `components`, `operations` — which this config's `I` prefix rule refuses, and the
+            // fix for a generated file is never to edit it.
+            '**/*.generated.ts'
         ]
     },
     js.configs.recommended,

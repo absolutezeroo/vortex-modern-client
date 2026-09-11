@@ -27,7 +27,10 @@
     let src = $state('');
     let error = $state('');
     let fullscreen = $state(false);
-    let frame;
+    // `$state` because `bind:this` assigns it and Svelte 5 warns about a plain `let` being written
+    // that way. Nothing reactive reads it — the only read is `requestFullscreen()` in a click
+    // handler, which is why this never misbehaved — but the checker is worth keeping at zero.
+    let frame = $state();
 
     // The ticket is fetched ONCE, on the first time the client is shown, and never again: it is
     // single use — the emulator burns it on the handshake — so asking for a second one on the next
