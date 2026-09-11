@@ -68,21 +68,25 @@
         </ul>
     </div>
 
-    <div class="relative z-[201] flex h-[70px] items-center">
-        <button type="button" onclick={() => (open = !open)}
-                class="w-[145px] shrink-0 rounded-[3px] border-2 border-pill-line bg-pill py-[5px] pr-[39px] pl-3 font-condensed text-white uppercase shadow-pill xs:w-[171px]">
+    <!-- `.user-menu__toggle` is ONE control, and the head is INSIDE it:
+         `<a ng-click="toggle = !toggle" class="user-menu__toggle"><div class="user-menu__name__wrapper">
+         …</div><habbo-imager class="user-menu__avatar">`. Clicking the head opens the menu — it
+         links nowhere, and the profile is a row in the menu that opens. This port hung an
+         `<a href="/profile">` on the head instead, so every click that landed a few pixels off the
+         pill navigated away rather than opening anything. -->
+    <button type="button" onclick={() => (open = !open)}
+            class="relative z-[201] flex h-[70px] items-center">
+        <span class="block w-[145px] shrink-0 rounded-[3px] border-2 border-pill-line bg-pill py-[5px] pr-[39px] pl-3 font-condensed text-white uppercase shadow-pill xs:w-[171px]">
             <span class="relative block truncate pl-6 text-right leading-[22px] normal-case">
                 <Sprite name="caret" className="absolute left-0 top-1/2 -translate-y-1/2 transition-transform duration-300 {open ? 'rotate-180' : ''}" />
                 {$me?.name ?? 'Habbo'}
             </span>
-        </button>
+        </span>
 
         <!-- The head OVERLAPS the pill — that is what the pill's 39px of right padding is reserving
              (`.user-menu__name__wrapper { padding: 5px 39px 5px 12px }`), and it is why the name is
              right-aligned inside it. Pulling the well back over that padding is the whole trick: sat
              beside the pill instead, the two read as two separate controls. -->
-        <a href="/profile" use:link class="-ml-[33px] block shrink-0 hover:border-b-0">
-            <Avatar user={$me?.name ?? ''} figure={$me?.figureString ?? ''} well={46} className="shadow-pill" />
-        </a>
-    </div>
+        <Avatar user={$me?.name ?? ''} figure={$me?.figureString ?? ''} well={46} className="-ml-[33px] shadow-pill" />
+    </button>
 </div>

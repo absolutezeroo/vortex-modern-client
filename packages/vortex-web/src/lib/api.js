@@ -139,6 +139,56 @@ export function getArticle(slug)
     return request(`/api/public/articles/${encodeURIComponent(slug)}`);
 }
 
+// -> ProfileUser, or 404 `user_not_found`. habbo.com's own two-step: the site routes on
+// /profile/:name and the profile read takes the id this hands back.
+export function getUser(name)
+{
+    return request(`/api/public/users?name=${encodeURIComponent(name)}`);
+}
+
+// -> { user, badges, friends, rooms, groups }. Anonymous: a profile is a page a signed-out visitor
+// can open. A badge carries its CODE and no label — the hotel's badge texts are not in the database,
+// they are `badge_<code>_name` in the asset host's external_flash_texts (see lib/badges.js).
+export function getProfile(uniqueId)
+{
+    return request(`/api/public/users/${encodeURIComponent(uniqueId)}/profile`);
+}
+
+// -> { page, pageSize, total, items: [RoomSummary] }, busiest first. A room whose door is invisible
+// is in neither this nor getRoom(): the web API would otherwise walk around the door the client
+// enforces.
+export function getRooms(options = {})
+{
+    const query = new URLSearchParams();
+
+    if(options.page)
+    {
+        query.set('page', String(options.page));
+    }
+
+    if(options.pageSize)
+    {
+        query.set('pageSize', String(options.pageSize));
+    }
+
+    const suffix = query.size ? `?${query}` : '';
+
+    return request(`/api/public/rooms${suffix}`);
+}
+
+// -> RoomSummary, or 404 `room_not_found`.
+export function getRoom(id)
+{
+    return request(`/api/public/rooms/${encodeURIComponent(id)}`);
+}
+
+// -> { credits, diamonds, duckets, habboClubDays, buildersFurniLimit } for the SELECTED avatar,
+// falling back to the account's first. 401 when signed out.
+export function getPurse()
+{
+    return request('/api/user/purse');
+}
+
 // -> { requiresOnboarding: boolean }. A 401 carrying `pocket.auth.mfa_required` is not a refusal,
 // it is the server asking for the second factor — see needsMfa().
 export function login(email, password, code)

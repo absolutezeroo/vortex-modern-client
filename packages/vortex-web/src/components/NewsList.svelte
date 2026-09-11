@@ -6,7 +6,7 @@
     //   /community/category (`columns={1}`) a flat single-column list, no lead
     //
     // Common to both, and the part that was wrong here before:
-    //   .news-header__title    { font-size: 24px; margin: 0 }   (32px for the lead)
+    //   .news-header__title    { font-size: 24px; margin: 0 }   (36px, line-height 1, for the lead)
     //   .news-header__info     { font-size: 14px; color: #999; font-style: italic }
     //   .news-header__date::after { content: " | " }             between the date and the categories
     //   .news-header__summary  { font-size: 14px }
@@ -45,13 +45,18 @@
          over a dark wash, from 767px. Below that the two stack. -->
     <article class="relative mb-6 md:h-[300px]">
         <a href={href(first)} use:link class="block hover:border-b-0">
-            <div class="overflow-hidden shadow-[3px_3px_rgba(0,0,0,0.3)] md:absolute md:inset-0 md:shadow-none">
+            <div class="overflow-hidden shadow-[3px_3px_rgba(0,0,0,0.3)] md:absolute md:inset-0 md:max-w-[759px]">
                 <img src="{IMAGES}{first.image}" alt=""
                      class="h-[200px] w-full object-cover [image-rendering:auto] md:h-[300px]" />
             </div>
 
-            <div class="relative p-3 md:h-full md:max-w-[330px] md:bg-black/45 md:pt-3 md:pr-3 md:pb-0 md:pl-3">
-                <h2 class="mt-0 mb-1.5">{first.title}</h2>
+            <!-- No wash: `.news-header__wrapper` carries margin/max-width/padding and NO background
+                 in app.5ac3d2f8.css, at any width. The dark left third of habbo.fr's lead is painted
+                 into the banner artwork itself, which is why the title is readable over it — put a
+                 `bg-black/45` here instead (as this did) and an article WITHOUT a banner renders as a
+                 dark plate floating on the page, which is exactly what it looked like. -->
+            <div class="relative p-3 md:h-full md:max-w-[330px] md:pt-3 md:pr-3 md:pb-0 md:pl-3">
+                <h2 class="mt-0 mb-1.5 text-4xl leading-none">{first.title}</h2>
                 <p class="m-0 text-sm text-[#ccc] italic">{when(first.date)} | {label(first.category)}</p>
                 <p class="mt-3 text-sm text-white">{first.summary}</p>
             </div>

@@ -94,6 +94,10 @@ export const SPRITE = {
     // with 29px of padding reserved for it.
     more: [527, 359, 23, 22],
 
+    // The single arrow after a profile card's "Tout voir" (`.profile-modal__link::before`, right 0,
+    // 22px of padding reserved). Same band of the sheet as `heart`, a different cut.
+    profileMore: [920, 878, 16, 22],
+
     // The shop's six credit-bundle icons (98px squares). The last two sit in a different band of
     // the sheet than the first four — not a typo.
     credit1: [1216, 738, 98, 98],

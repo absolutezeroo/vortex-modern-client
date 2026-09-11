@@ -14,21 +14,41 @@
     // with the client's own renderer — so the picture here is the room, not a stock thumbnail.
     // `.room-picture__wrapper` is black with a 25px shadow falling from its top edge.
     //
-    // Appart data is mocked (lib/mock.js -> ROOMS): the navigator lives behind the game socket.
+    // Real since 2026-09-11: GET /api/public/rooms/{id} — habbo.com's own route ("/public/rooms/:id").
+    // It answers 404 for a room whose door is invisible as well as for one that does not exist, so
+    // this page cannot be used to confirm a hidden appart exists.
     import {link} from 'svelte-spa-router';
     import Sprite from '../components/Sprite.svelte';
     import Avatar from '../components/Avatar.svelte';
-    import {ROOMS} from '../lib/mock.js';
+    import * as api from '../lib/api.js';
     import {roomUrl, hideOnError} from '../lib/config.js';
     import {t} from '../lib/i18n.js';
     import {signedIn} from '../lib/session.js';
 
     let {params = {}} = $props();
 
-    const room = $derived(ROOMS.find((entry) => String(entry.id) === String(params.id)) ?? null);
+    let room = $state(null);
+    let loading = $state(true);
+
+    $effect(() =>
+    {
+        const id = params.id;
+        let cancelled = false;
+
+        loading = true;
+
+        void api.getRoom(id)
+            .then((answer) => !cancelled && (room = answer))
+            .catch(() => !cancelled && (room = null))
+            .finally(() => !cancelled && (loading = false));
+
+        return () => (cancelled = true);
+    });
 </script>
 
-{#if !room}
+{#if loading}
+    <main class="mx-auto max-w-[1200px] px-3 py-6"></main>
+{:else if !room}
     <main class="mx-auto max-w-[1200px] px-3 py-6">
         <h1>Cet appart n'existe pas</h1>
         <p><a href="/community/rooms" use:link>{t('ROOMS_TITLE')}</a></p>
@@ -46,9 +66,9 @@
 
                     <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
                         <div class="min-w-0 flex-1">
-                            <a href="/profile/{room.owner}" use:link class="flex items-center gap-3 hover:border-b-0">
-                                <Avatar user={room.owner} well={46} />
-                                <span class="font-bold">{room.owner}</span>
+                            <a href="/profile/{room.ownerName}" use:link class="flex items-center gap-3 hover:border-b-0">
+                                <Avatar user={room.ownerName} well={46} />
+                                <span class="font-bold">{room.ownerName}</span>
                             </a>
 
                             <!-- `.room-info`: a label column and a value column, not a paragraph. -->
@@ -85,11 +105,11 @@
                                 <dl class="px-3 py-3">
                                     <div class="flex justify-between gap-3 py-0.5">
                                         <dt class="font-bold">{t('ROOM_RATING')}</dt>
-                                        <dd>{room.rating ?? 0}</dd>
+                                        <dd>{room.score ?? 0}</dd>
                                     </div>
                                     <div class="flex justify-between gap-3 py-0.5">
                                         <dt class="font-bold">{t('ROOM_MAX_USERS')}</dt>
-                                        <dd>{room.maxUsers}</dd>
+                                        <dd>{room.maximumVisitors}</dd>
                                     </div>
                                 </dl>
                             </div>
