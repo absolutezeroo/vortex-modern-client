@@ -20,9 +20,8 @@ import {Logger} from '@core/utils/Logger';
 import type {IElementDescriptionData} from '@habbo/window';
 import type {RoomUI} from '@habbo/ui/RoomUI';
 import type {RoomDesktop} from '@habbo/ui/RoomDesktop';
-import {VortexLoadingScreen} from './VortexLoadingScreen';
+import type {VortexLoadingScreen} from './VortexLoadingScreen';
 import {AssetBundle} from './AssetBundle';
-import {LoginFlow} from './login/LoginFlow';
 import {OnBoardingHcFlow} from './onBoardingHc/OnBoardingHcFlow';
 import {Stage} from './onBoardingHcUi/display/Stage';
 import {LoginAssets} from './onBoardingHcUi/LoginAssets';
@@ -982,28 +981,35 @@ export class VortexApp
         this._imageBundle = imageBundle;
         this._xmlBundle = xmlBundle;
 
-        // AS3: HabboAir.as::createLoginFlowOrLoadingScreen() — with no SSO ticket the login
-        // flow is shown and _loadingScreen is never created, which makes the very next call,
-        // startCoreInitializationIfPossible(), return on `if(_loadingScreen == null)`. Nothing
-        // of the game loads until a ticket exists; in particular SessionDataManager (and its
-        // furnidata/productdata downloads) is only constructed once the core starts. So the
-        // engine boot lives *after* this gate, not before it.
+        // The gate itself is AS3's: with no SSO ticket nothing of the game loads — in particular
+        // SessionDataManager (and its furnidata/productdata downloads) is only constructed once
+        // the core starts. So the engine boot lives *after* this gate, not before it.
+        //
+        // DEVIATION: AS3 answers a missing ticket by showing its own login screen, and this port
+        //   carried a file-for-file copy of `WIN63-202607011411-782849652/src/login/` to do the
+        //   same. That copy is deleted: `vortex-web` authenticates against the very
+        //   `Vortex.WebApi` routes the screen drove (`/api/public/authentication/login`,
+        //   `/api/ssotoken`) and hands the client a ticket on `?sso=`, so the in-client one was a
+        //   second auth surface for one session — reachable by anyone who opened /client directly,
+        //   and its `RegisterView` (invented; the dump's `src/login/` registers no account) let a
+        //   visitor skip the terms and birthdate the site's registration form asks for. Nothing
+        //   here calls it, so it is a redirect, not a screen.
+        // AS3: sources/WIN63-202607011411-782849652/src/binaryData/HabboAir.as::createLoginFlowOrLoadingScreen()
         const configuredTicket = window.VortexConfig?.connection?.ssoTicket;
 
         if(!configuredTicket)
         {
-            // AS3 shows one or the other, never both: createLoginFlowOrLoadingScreen() returns
-            // before createLoadingScreen() when the login flow takes over, and
-            // onLoginFlowFinished() then does `_loadingScreen = null; createLoadingScreen();`.
-            // Ours is already on screen (index.ts puts it up while the bundles download), so
-            // drop it for the duration of the login and stand a fresh one up afterwards.
-            this._loadingScreen?.dispose();
-            this._loadingScreen = null;
+            // The site owns the origin root and serves this client under it (`/client`). When it
+            // does not — the client alone at the root — there is nobody to send the visitor to and
+            // a redirect would only reload this page, so say so rather than loop.
+            if(window.location.pathname === '/')
+            {
+                throw new Error('[VortexApp] No SSO ticket, and no site at the origin root to get one from');
+            }
 
-            await this.showLoginFlow(vortexConfig);
+            window.location.replace('/');
 
-            // AS3: onLoginFlowFinished() -> createLoadingScreen()
-            this._loadingScreen = new VortexLoadingScreen();
+            return;
         }
 
         const vortex = await this.bootstrapEngine(vortexConfig);
@@ -1536,86 +1542,6 @@ export class VortexApp
         this._mouseDownWindow = null;
         this._isInRoom = false;
         this._activeRoomId = -1;
-    }
-
-    /**
-     * Shows the login flow overlay and waits for the user to complete login.
-     *
-     * AS3: HabboAir creates LoginFlow when no SSO ticket is in FlashVars.
-     * The LoginFlow runs as a standalone Sprite before the main client starts.
-     * When complete, it provides an SSO token that is passed to the engine.
-     *
-     * It runs on its own embedded-only configuration (LoginFlow.createConfiguration), so the
-     * engine is still unbooted here — connecting is the caller's job, once init() has booted
-     * it. The one screen that needs an engine boots it through the ensureEngine callback.
-     *
-     * @see sources/WIN63-202607011411-782849652/src/login/LoginFlow.as
-     * @returns Promise that resolves when the login flow finishes
-     */
-    private async showLoginFlow(vortexConfig: IVortexConfig): Promise<void>
-    {
-        const container = document.getElementById('vortex-ui');
-
-        if(!container)
-        {
-            throw new Error('[VortexApp] No #vortex-ui container to mount the login flow in');
-        }
-
-        // AS3 reaches its login artwork through [Embed]ed classes, which are ready as soon as the
-        // SWF loads. Ours has to be decoded out of the image bundle first — the bundle is already
-        // downloaded by this point, so this only costs the decode.
-        if(this._imageBundle)
-        {
-            await LoginAssets.load(this._imageBundle);
-        }
-
-        const stage = new Stage(container);
-
-        return new Promise((resolve, reject) =>
-        {
-            const loginFlow = new LoginFlow(vortexConfig.embeddedConfigurations ?? {}, container);
-
-            // AS3: HabboAir adds the flow to the stage, then calls init() — which reads `stage`.
-            stage.addChild(loginFlow);
-
-            void loginFlow.mount().then(() => loginFlow.init());
-
-            loginFlow.loginEvents.once(LoginFlow.LOGIN_FLOW_FINISHED_EVENT, () =>
-            {
-                try
-                {
-                    const token = loginFlow.ssoToken;
-
-                    if(!token)
-                    {
-                        throw new Error('[VortexApp] Login flow finished without SSO ticket');
-                    }
-
-                    // Hand the ticket over the same way AS3 does — back into the FlashVars-equivalent
-                    // config, which init() reads once the engine is up.
-                    if(!window.VortexConfig?.connection)
-                    {
-                        // connect() reads host/ports from here too, so a missing block is a
-                        // misconfiguration, not something to paper over with a partial object.
-                        throw new Error('[VortexApp] No connection configuration to attach the SSO ticket to');
-                    }
-
-                    window.VortexConfig.connection.ssoTicket = token;
-
-                    loginFlow.dispose();
-                    stage.dispose();
-                    LoginAssets.dispose();
-                    resolve();
-                }
-                catch (error)
-                {
-                    const message = error instanceof Error ? error.message : String(error);
-
-                    loginFlow.showErrorMessage(message);
-                    reject(error);
-                }
-            });
-        });
     }
 
     /**
