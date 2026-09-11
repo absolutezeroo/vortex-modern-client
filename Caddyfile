@@ -21,12 +21,14 @@
 :80 {
 	encode zstd gzip
 
-	# The asset tree is NOT here — it is its own resource (Dockerfile.assets), on its own hostname,
-	# and the client finds it through the URLs in gamedata/hashes.json rather than through a path on
-	# this host.
+	# The asset tree is its own resource (Dockerfile.assets) on its own hostname, but the client
+	# still asks THIS host for it — see the asset section below. Reaching it only through the
+	# absolute URLs in gamedata/hashes.json was the original plan and it does not hold: hashes.json
+	# is absolute, external_variables is not.
 	#
-	# EMULATOR_UPSTREAM and IMAGER_UPSTREAM are the other containers' network aliases. Named
-	# *_UPSTREAM and not *_HOST deliberately: IMAGER_HOST is already the imager's OWN bind address
+	# EMULATOR_UPSTREAM, IMAGER_UPSTREAM and ASSETS_UPSTREAM are the other containers' network
+	# aliases. Named *_UPSTREAM and not *_HOST deliberately: IMAGER_HOST is already the imager's OWN
+	# bind address
 	# (its config.ts defaults it to 0.0.0.0), so the same name on two apps in the same panel would
 	# mean opposite things — and set on the wrong one, the imager would try to bind to a hostname
 	# that is not an interface.
@@ -59,6 +61,40 @@
 	# --- avatars, badges, furni thumbnails -------------------------------------------------------
 	handle /habbo-imaging/* {
 		reverse_proxy {$IMAGER_UPSTREAM}:8081
+	}
+
+	# --- the asset tree --------------------------------------------------------------------------
+	# Five paths, one upstream, and none of them optional.
+	#
+	# `external_variables` — the runtime configuration the client fetches through hashes.json — is
+	# written in terms of `${url.prefix}`, which App.ts::fillOriginPrefixes() fills with the origin
+	# the client was served from. So `furnidata.load.url`, `flash.client.url`, `dynamic.download.url`
+	# and `image.library.badgepart.url` all resolve to THIS host, whatever hostname the asset tree
+	# answers on. hashes.json itself is absolute and misled the first reading of this: the manifest
+	# loads from anywhere, everything the manifest points at does not.
+	#
+	# These are exactly the paths vite.config.ts proxies in development, plus /gamecenter. Without
+	# them each one falls into the SPA fallback at the bottom of this file and answers index.html
+	# with a 200 — which is why the client crashed on `Failed loading gamedata hashes`: JSON.parse
+	# on a 379-byte HTML document, reported as a parse error rather than a routing one.
+	handle /gamedata/* {
+		reverse_proxy {$ASSETS_UPSTREAM}:80
+	}
+
+	handle /c_images/* {
+		reverse_proxy {$ASSETS_UPSTREAM}:80
+	}
+
+	handle /dcr/* {
+		reverse_proxy {$ASSETS_UPSTREAM}:80
+	}
+
+	handle /gordon/* {
+		reverse_proxy {$ASSETS_UPSTREAM}:80
+	}
+
+	handle /gamecenter/* {
+		reverse_proxy {$ASSETS_UPSTREAM}:80
 	}
 
 	# --- the client itself -------------------------------------------------------------------------

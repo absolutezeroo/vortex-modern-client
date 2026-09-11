@@ -106,8 +106,15 @@ alias**:
 |---|---|
 | the emulator | `vortex-emulator` |
 | the imager | `vortex-imager` |
+| the assets | `vortex-assets` |
 
-Those two names are what the front container dials, and they survive redeploys.
+Those three names are what the front container dials, and they survive redeploys.
+
+The assets alias is needed even though the tree has a public hostname of its own. The client asks
+its **own** origin for every asset path — `external_variables` is written in terms of
+`${url.prefix}`, filled at boot with the origin the client was served from — so the front proxies
+`/gamedata`, `/c_images`, `/dcr`, `/gordon` and `/gamecenter` to this alias. `assets.vortex-hotel.online`
+stays public anyway: the imager and the website reach it by URL.
 
 ## 2. The emulator app
 
@@ -300,14 +307,15 @@ New Coolify application, same repository.
   expects: `vite.config.ts` keeps `base: '/'` for a build, so it serves from a root, not a path.
 - **Ports Exposes** — `80`, and **Port** `80` in the build configuration — not the 3000 the form
   offers by default. Caddy listens on 80.
-- **Persistent Storage** — none. This container never reads the asset tree; the client fetches it
-  from the assets host directly.
+- **Persistent Storage** — none. This container never reads the asset tree from disk; it proxies
+  it from the assets container.
 
 Environment:
 
 ```
 EMULATOR_UPSTREAM=vortex-emulator
 IMAGER_UPSTREAM=vortex-imager
+ASSETS_UPSTREAM=vortex-assets
 ```
 
 Those are the network aliases from step 1, and Caddy reads them out of the environment at load
