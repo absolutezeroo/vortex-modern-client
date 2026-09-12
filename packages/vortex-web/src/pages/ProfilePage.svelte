@@ -147,6 +147,12 @@
 <main class="mx-auto max-w-[1200px] px-3">
     {#if error}
         <EmptyResults className="py-12" />
+    {:else if user && !user.profileVisible}
+        <!-- The server answers a private profile with its header and four empty lists, so without
+             this the page would be a name, a motto and a blank space — which reads as broken rather
+             than as closed. habbo.com ships no key for the sentence, so `PROFILE_VISIBILITY_INFO` —
+             the one the registration form uses to promise this very behaviour — says it. -->
+        <p class="py-12 text-center">{t('PROFILE_VISIBILITY_INFO')}</p>
     {:else if !loading}
         <!-- `.profile__section{margin-left:-12px}` against `.profile__card__aligner{padding-left:12px}`:
              a 12px gutter, and two cards a row from 767px. -->

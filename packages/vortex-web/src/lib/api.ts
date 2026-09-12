@@ -38,6 +38,9 @@ export type ISsoTicketResponse = Schemas['SsoTicketResponse'];
 export type INameCheckResponse = Schemas['NameCheckResponse'];
 export type INameSelectResponse = Schemas['NameSelectResponse'];
 export type IEmptyResponse = Schemas['EmptyResponse'];
+export type IPlayerPreferences = Schemas['PlayerPreferencesResponse'];
+export type ITwoFactorStatus = Schemas['TwoFactorStatusResponse'];
+export type ITwoFactorEnrolment = Schemas['TwoFactorEnrolmentResponse'];
 
 const ERRORS: Record<string, string> = {
     'pocket.auth.missing_credentials': 'Il manque ton nom ou ton mot de passe.',
@@ -312,6 +315,43 @@ export function checkName(name: string): Promise<INameCheckResponse>
 export function selectName(name: string, playerId: number): Promise<INameSelectResponse>
 {
     return request('/api/newuser/name/select', {method: 'POST', body: {name, playerId}});
+}
+
+// The selected avatar's preferences. One field: `profileVisible`. habbo.com's own privacy form
+// carries six more and none of them has anywhere to be stored here — see PlayerPreferencesResponse.
+export function getPreferences(): Promise<IPlayerPreferences>
+{
+    return request('/api/user/preferences');
+}
+
+export function savePreferences(profileVisible: boolean): Promise<IPlayerPreferences>
+{
+    return request('/api/user/preferences/save', {method: 'POST', body: {profileVisible}});
+}
+
+// The second factor. Enrolment is two calls on purpose: `startTwoFactor` hands out a secret and
+// stores nothing, and only `enableTwoFactor` — which needs a code computed from it — writes it. A
+// visitor who closes the dialog halfway has therefore not locked themselves out.
+export function getTwoFactor(): Promise<ITwoFactorStatus>
+{
+    return request('/api/user/twofactor');
+}
+
+// 409 `pocket.auth.mfa_already_enabled` when one is already enrolled: replacing means disabling
+// first, which demands a code from the factor being removed.
+export function startTwoFactor(): Promise<ITwoFactorEnrolment>
+{
+    return request('/api/user/twofactor/startregistration', {method: 'POST'});
+}
+
+export function enableTwoFactor(secret: string, code: string): Promise<IEmptyResponse>
+{
+    return request('/api/user/twofactor/enable', {method: 'POST', body: {secret, code}});
+}
+
+export function disableTwoFactor(code: string): Promise<IEmptyResponse>
+{
+    return request('/api/user/twofactor/disable', {method: 'POST', body: {code}});
 }
 
 export function saveLook(

@@ -57,8 +57,18 @@
     <main>
         <section class="mx-auto max-w-[1200px] px-3 py-6">
             <div class="flex gap-3">
-                <div class="shrink-0 bg-[#6796b1] shadow-[3px_3px_rgba(0,0,0,0.3)]">
+                <!-- `.room__thumbnail` is NOT the gallery's plate, which this port used here:
+                     114x114 on #01353c, a 2px #267b91 border, rounded 3px and the pill's shadow —
+                     against `.room-item__thumbnail`'s 110x110 on #6796b1 with a 3px offset shadow.
+                     Two plates, one per screen.
+
+                     `.room__thumbnail__image` then lays the appart's own picture over the default
+                     one at 0,0, which is why the sprite stays underneath rather than being replaced:
+                     it is what shows when the imager is down or the room has never been rendered. -->
+                <div class="relative shrink-0 rounded-[3px] border-2 border-pill-line bg-[#01353c] shadow-pill">
                     <Sprite name="roomThumbnail" />
+                    <img src={roomUrl(room.id)} alt="" onerror={hideOnError}
+                         class="absolute top-0 left-0 h-[110px] w-[110px] object-cover" />
                 </div>
 
                 <div class="min-w-0 flex-1">
