@@ -27,7 +27,12 @@
 <!-- `w-full` is load-bearing next to `mx-auto`: this element is a direct child of #app, which is the
      page's flex column, and `margin-inline: auto` on a flex item overrides `align-self: stretch` —
      without it the header shrinks to its own content and floats in the middle of the page. -->
-<header class="mx-auto flex h-[70px] w-full max-w-[1200px] items-center px-3">
+<!-- `.header__wrapper{position:relative; z-index:200}` against `.navigation{z-index:100}`, and that
+     pair is the whole reason the logo works: it is 73px tall with `margin-bottom:-12px`, so it hangs
+     BELOW a 70px header and has to paint OVER the navigation it hangs into. Without the stacking the
+     navigation wins — it comes later in the document and carries a z-index of its own — and the
+     bottom of the wordmark is sliced off by the white bar. -->
+<header class="relative z-[200] mx-auto flex h-[70px] w-full max-w-[1200px] items-center px-3">
     <a href="/" use:link class="block hover:border-b-0 md:-mb-3">
         <span class="md:hidden"><Sprite name="logo" label="Vortex Hotel" /></span>
         <span class="hidden md:block"><Sprite name="bigLogo" label="Vortex Hotel" /></span>
