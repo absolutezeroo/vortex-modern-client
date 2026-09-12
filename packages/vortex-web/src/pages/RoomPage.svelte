@@ -27,6 +27,9 @@
     import {t} from '../lib/i18n.js';
     import {signedIn} from '../lib/session.js';
 
+    // `.room-restricted__content::before` — the key over "L'accès à l'appart est restreint."
+    const ROOM_KEY = new URL('../assets/room_key.png', import.meta.url).href;
+
     let {params = {}} = $props();
 
     let room = $state(null);
@@ -54,6 +57,33 @@
     <main class="mx-auto max-w-[1200px] px-3 py-6">
         <h1>Cet appart n'existe pas</h1>
         <p><a href="/community/rooms" use:link>{t('ROOMS_TITLE')}</a></p>
+    </main>
+{:else if !room.doorOpen}
+    <!-- `room.html` branches before anything else: `<habbo-room-restricted ng-if="room.doorMode !=
+         'open'">` against `<habbo-room-open ng-if="room.doorMode == 'open'">`. A room behind a
+         doorbell or a password does NOT get the full page — it gets the key, its name, the
+         explanation, and the enter button, because entering is still allowed: what the web page
+         cannot show is what is inside.
+
+         `.room-restricted__content` is centred with the 264x212 key as a `::before`. -->
+    <main class="mx-auto max-w-[1200px] px-3 pt-3 pb-6">
+        <section class="text-center">
+            <img src={ROOM_KEY} alt="" class="mx-auto mb-3 block h-[212px] w-[264px] [image-rendering:pixelated]" />
+
+            <h3>{t('ROOM_RESTRICTED_TITLE')}</h3>
+            <h4 class="normal-case">{room.name}</h4>
+            <div class="mb-6">{t('ROOM_RESTRICTED_TEXT')}</div>
+
+            {#if $signedIn}
+                <a href="/hotel" use:link
+                   class="inline-block rounded-[5px] border-2 border-[#ffea00] bg-[#ffb900] py-1.5 pr-1.5 pl-3 text-center font-condensed text-base leading-[1.2] uppercase text-black shadow-btn hover:border-b-2 hover:border-[#fffd70] hover:bg-[#ffd400] active:translate-y-[2px] active:border-[#ffce37] active:bg-[#f89400] active:shadow-btn-active">
+                    <span class="relative block pr-[27px] text-right leading-[26px]">
+                        {t('ROOM_ENTER_BUTTON')}
+                        <Sprite name="enterRoom" className="absolute top-1/2 right-0 -translate-y-1/2" />
+                    </span>
+                </a>
+            {/if}
+        </section>
     </main>
 {:else}
     <main>

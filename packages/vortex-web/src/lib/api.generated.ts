@@ -777,6 +777,8 @@ export interface components {
             /** Format: int32 */
             habboClubDays: number;
             /** Format: int32 */
+            buildersClubDays: number;
+            /** Format: int32 */
             buildersFurniLimit: number;
         };
         ProfileBadge: {
@@ -864,6 +866,7 @@ export interface components {
             /** Format: int32 */
             score: number;
             tags: string[];
+            doorOpen: boolean;
         };
         SafetyLockRequest: {
             locked?: boolean | null;

@@ -11,6 +11,7 @@
     // different pages: the store has a country picker over a grid, prepaid has the voucher form,
     // transactions has a list beside the purse. One file branching on the URL flattened all three.
     import Tabs from '../../components/Tabs.svelte';
+    import ShopFooter from './ShopFooter.svelte';
     import {SHOP_TABS} from '../../lib/tabs.js';
 
     let {children} = $props();
@@ -21,3 +22,7 @@
 <main class="mx-auto max-w-[1200px] px-3 py-6">
     {@render children()}
 </main>
+
+<!-- `<habbo-shop-footer class="wrapper wrapper--content">` sits in the SHELL, so it shows under all
+     three tabs — the consumer notice is not a property of the store page. -->
+<ShopFooter />

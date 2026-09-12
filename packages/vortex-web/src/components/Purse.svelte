@@ -1,16 +1,34 @@
-<script>
-    // `.purse`: the five counters at the top of the sidebar, laid out two per row. The rule under
-    // it is TWO lines — a dark one (--page) and a light one (--rule) a pixel below — which is what
-    // gives the divider its engraved edge; a single border reads flat.
+<script lang="ts">
+    // `shop/purse/purse.html`, and it is a whole aside of its own — not five counters someone else
+    // wraps:
     //
-    // Real since 2026-09-11: GET /api/user/purse, the wallet of the SELECTED avatar. It is refetched
-    // when that selection changes — the five counters belong to one avatar, not to the account, and
+    //   <aside><h3 translate="SHOP_PURSE_TITLE">        "Porte-monnaie"
+    //     <div class="purse"><div class="purse__columns">
+    //       <div class="purse__column">  credits, diamonds, silver
+    //       <div class="purse__column">  habbo club, builders club
+    //     <div class="purse__footer"><a href="/hotel?link=habboUI/open/hccenter"
+    //                                   translate="SHOP_PURSE_HC_LINK">
+    //
+    // Every label is one of habbo.com's own interpolated keys — "{{creditBalance}} crédits",
+    // "{{habboClubDays}} jours de HC" — and each membership has a SECOND key for zero: "Non HC",
+    // "Non BC". This port had hand-written French in their place ("diamants", "duckets", "Habbo
+    // Club") and printed a bare number with no unit at all, which is the shape of thing a copy is
+    // not: the wording is not ours to choose.
+    //
+    // `.purse` carries the same TWO-line rule as the profile's cards — a dark #0c3a65 border with a
+    // #2a9cde line a pixel below it — which is what gives the divider its engraved edge.
+    //
+    // Real since 2026-09-11: GET /api/user/purse, the wallet of the SELECTED avatar, refetched when
+    // that selection changes. The five counters belong to one avatar, not to the account, and
     // switching avatars without refetching would show one player another's credits.
     import Sprite from './Sprite.svelte';
     import * as api from '../lib/api.js';
+    import type {IPlayerPurse} from '../lib/api.js';
     import {selectedId, signedIn} from '../lib/session.js';
+    import {CLIENT_URL} from '../lib/config.js';
+    import {t} from '../lib/i18n.js';
 
-    let purse = $state(null);
+    let purse = $state<IPlayerPurse | null>(null);
 
     $effect(() =>
     {
@@ -34,26 +52,59 @@
         return () => (cancelled = true);
     });
 
-    const ITEMS = $derived(purse === null ? [] : [
-        {icon: 'credits', value: purse.credits, label: 'credits'},
-        {icon: 'diamonds', value: purse.diamonds, label: 'diamants'},
-        {icon: 'silver', value: purse.duckets, label: 'duckets'},
-        {icon: 'habboClub', value: `${purse.habboClubDays} j`, label: 'Habbo Club'},
-        {icon: 'buildersClub', value: purse.buildersFurniLimit, label: 'Builders Club'},
+    // Two columns of items, in habbo.com's own order. A membership at zero says so rather than
+    // printing "0 jours".
+    const COLUMNS = $derived(purse === null ? [] : [
+        [
+            {icon: 'credits', label: t('SHOP_PURSE_CREDITS', {creditBalance: purse.credits})},
+            {icon: 'diamonds', label: t('SHOP_PURSE_DIAMONDS', {diamondBalance: purse.diamonds})},
+            {icon: 'silver', label: t('SHOP_PURSE_SILVER', {silverBalance: purse.duckets})},
+        ],
+        [
+            {
+                icon: 'habboClub',
+                label: purse.habboClubDays
+                    ? t('SHOP_PURSE_HC_DAYS', {habboClubDays: purse.habboClubDays})
+                    : t('SHOP_PURSE_NO_HC'),
+            },
+            {
+                icon: 'buildersClub',
+                label: purse.buildersClubDays
+                    ? t('SHOP_PURSE_BC_DAYS', {buildersClubDays: purse.buildersClubDays})
+                    : t('SHOP_PURSE_NO_BC'),
+            },
+        ],
     ]);
 </script>
 
-{#if ITEMS.length}
-    <div class="relative mb-3 border-b border-page after:absolute after:-bottom-[2px] after:left-0 after:h-px after:w-full after:overflow-hidden after:bg-rule after:content-['']">
-        <div class="-mx-3 mb-3 flex flex-wrap">
-            {#each ITEMS as item (item.icon)}
-                <div class="w-1/2 px-3">
-                    <p class="relative whitespace-nowrap py-1.5 pl-[26px] leading-[22px]" title={item.label}>
-                        <Sprite name={item.icon} className="absolute left-0 top-1/2 -translate-y-1/2" />
-                        {item.value}
-                    </p>
-                </div>
-            {/each}
+{#if COLUMNS.length}
+    <aside class="overflow-hidden rounded-[3px] bg-card px-3 py-6 xs:px-6">
+        <!-- The panel's own title band, the same one `Panel` draws: habbo.com's purse carries its
+             heading itself, so the pages that show it no longer invent one ("Mon compte"). -->
+        <h2 class="-mx-3 -mt-6 mb-3 bg-panel-head px-3 py-1.5 [text-shadow:0_1px_#000] xs:-mx-6 xs:px-6">
+            {t('SHOP_PURSE_TITLE')}
+        </h2>
+
+        <div class="relative mb-3 border-b border-page after:absolute after:-bottom-[2px] after:left-0 after:h-px after:w-full after:overflow-hidden after:bg-rule after:content-['']">
+            <div class="-mx-3 mb-3 flex flex-wrap">
+                {#each COLUMNS as column, index (index)}
+                    <div class="w-1/2 px-3">
+                        {#each column as item (item.icon)}
+                            <p class="relative whitespace-nowrap py-1.5 pl-[26px] leading-[22px]">
+                                <Sprite name={item.icon} className="absolute left-0 top-1/2 -translate-y-1/2" />
+                                {item.label}
+                            </p>
+                        {/each}
+                    </div>
+                {/each}
+            </div>
         </div>
-    </div>
+
+        <!-- `.purse__footer`. habbo.com's link opens the client's own HC centre through its deep
+             link (`/hotel?link=habboUI/open/hccenter`); the client here reads the same `link`
+             parameter, so the path is the one CLIENT_URL points at. -->
+        <p class="m-0">
+            <a href="{CLIENT_URL}?link=habboUI/open/hccenter">{t('SHOP_PURSE_HC_LINK')}</a>
+        </p>
+    </aside>
 {/if}

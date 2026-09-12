@@ -142,9 +142,7 @@
         </div>
 
         <aside class="w-full shrink-0 lg:w-[300px]">
-            <Panel title="Mon compte">
-                <Purse />
-            </Panel>
+            <Purse />
         </aside>
     </section>
 </ShopShell>

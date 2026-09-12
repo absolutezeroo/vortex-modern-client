@@ -14,6 +14,7 @@
 // it, instead of an `undefined` nobody sees until the screen is blank. The aliases below exist only
 // so the pages import a name rather than a subscript chain.
 import type {components} from './api.generated';
+import {t} from './i18n.js';
 
 type Schemas = components['schemas'];
 
@@ -68,16 +69,25 @@ export const SHOP_ORDER = {
     NEEDS_INTERVENTION: 4,
 } as const;
 
+// The API's refusal codes, worded.
+//
+// A key wherever habbo.com has one — and it has one for most of these, which is the point: the
+// hotel's own sentence for "that is not your current password" is
+// `ERROR_INCORRECT_PASSWORD`, and writing a shorter French one here would be inventing wording that
+// already exists, in a file (`fr.json`) that is also where a second language would come from.
+//
+// A literal only where habbo.com has nothing, because its own API never answers that case: a hotel
+// outage, a withdrawn shop product, an order id that is not yours. Those are ours to word.
 const ERRORS: Record<string, string> = {
     'pocket.auth.missing_credentials': 'Il manque ton nom ou ton mot de passe.',
     'pocket.auth.invalid_login': 'Nom ou mot de passe incorrect.',
     'pocket.auth.mfa_required': 'Entre le code de ton application d\'authentification.',
     'pocket.auth.invalid_code': 'Ce code n\'est pas valide.',
-    'pocket.auth.password_too_short': 'Ce mot de passe est trop court.',
-    'pocket.auth.wrong_password': 'Mot de passe actuel incorrect.',
+    'pocket.auth.password_too_short': t('ERROR_PASSWORD_MIN_LENGTH'),
+    'pocket.auth.wrong_password': t('ERROR_INCORRECT_PASSWORD'),
     'pocket.auth.no_avatars': 'Ce compte n\'a pas encore d\'avatar.',
-    'pocket.auth.name_taken': 'Ce nom est deja pris.',
-    'email_taken': 'Cette adresse e-mail est deja utilisee.',
+    'pocket.auth.name_taken': t('ERROR_FIELD_NAME_TAKEN'),
+    'email_taken': t('ERROR_EMAIL_CHANGE_USED'),
     'avatar_not_owned': 'Cet avatar n\'appartient pas a ce compte.',
     'invalid_request': 'Requete invalide.',
     'article_not_found': 'Cet article n\'existe pas.',
@@ -86,14 +96,15 @@ const ERRORS: Record<string, string> = {
     'unknown_product': 'Ce produit n\'est plus en vente.',
     'too_many_open_orders': 'Tu as trop de commandes en attente. Termine-les d\'abord.',
     'shop_unavailable': 'La boutique n\'est pas disponible pour le moment.',
-    // The voucher codes are the grain's own, so the client's redeem dialog and this page say the
-    // same thing about the same code.
-    'not_found': 'Ce code n\'existe pas.',
+    // The voucher codes are the GRAIN's own, so the client's redeem dialog and this page say the
+    // same thing about the same code. habbo.com words three of the five; `inactive` and
+    // `max_redemptions_reached` are this emulator's own refusals and have no counterpart.
+    'not_found': t('ERROR_VOUCHER_CODE_NONEXISTENT'),
+    'already_redeemed': t('ERROR_VOUCHER_CODE_REDEEMED'),
+    'grant_failed': t('ERROR_VOUCHER_CODE_FAILED'),
     'inactive': 'Ce code n\'est plus actif.',
     'expired': 'Ce code a expire.',
-    'already_redeemed': 'Tu as deja utilise ce code.',
     'max_redemptions_reached': 'Ce code a atteint sa limite d\'utilisations.',
-    'grant_failed': 'Le credit n\'a pas pu etre applique. Reessaie.',
 };
 
 export class ApiError extends Error

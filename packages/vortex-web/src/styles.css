@@ -192,6 +192,64 @@
     }
 }
 
+/* `.transactions-history` — habbo.com's purchase table, and real CSS rather than utilities for the
+   same reason `.static-content` is: the whole point of the component is that it is ONE table that
+   becomes stacked cards below 532px, and that transformation lives in rules a class list cannot
+   express — `thead th{display:none}`, `tbody td{display:block}`, and
+   `td::before{content: attr(data-th) ": "}` putting each column's heading back in front of its own
+   value. Without it a narrow screen gets three unlabelled numbers in a row.
+
+   The zebra is habbo.com's own #113f62 / #13486f, and the alignment flips: everything is
+   right-aligned except the middle column, which is the only one holding words. */
+@layer components {
+    .transactions-history thead th {
+        display: none;
+    }
+
+    .transactions-history tbody td {
+        display: block;
+        padding-left: 6px;
+        white-space: nowrap;
+    }
+
+    .transactions-history tbody td::before {
+        content: attr(data-th) ": ";
+        display: inline-block;
+        font-weight: 700;
+        margin-right: 12px;
+        width: 25%;
+    }
+
+    .transactions-history tbody tr:nth-child(odd) {
+        background-color: #113f62;
+    }
+
+    .transactions-history tbody tr:nth-child(even) {
+        background-color: #13486f;
+    }
+
+    @media (min-width: 532px) {
+        .transactions-history tbody td::before {
+            display: none;
+        }
+
+        .transactions-history thead th,
+        .transactions-history tbody td {
+            display: table-cell;
+            padding: 6px 24px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .transactions-history thead th:nth-child(2),
+        .transactions-history tbody td:nth-child(2) {
+            text-align: left;
+            white-space: normal;
+            width: 99%;
+        }
+    }
+}
+
 /* `.static-content` — habbo.com's own rules for the HTML its CMS injects
    (components/WebPage.svelte). This block is real CSS and not utilities for one reason: the markup
    it styles is habbo.com's, mirrored verbatim by tools/fetch-web-pages.mjs, and it carries no

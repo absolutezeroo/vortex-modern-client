@@ -47,6 +47,10 @@ const ASSETS = {
     // `image-rendering: pixelated` — it is a room shot, so smoothing it turns the pixels to mush).
     'profile_header.png': 'backgrounds/profile.69262798.png',
 
+    // The key over "L'accès à l'appart est restreint." (`.room-restricted__content::before`,
+    // 264x212, centred with 12px under it).
+    'room_key.png': 'room_key.6e69d1d8.png',
+
     // The four profile-card illustrations.
     'teaser_profile_badges.png': 'teaser_profile_badges.b20597b3.png',
     'teaser_profile_friends.png': 'teaser_profile_friends.45ec1e42.png',

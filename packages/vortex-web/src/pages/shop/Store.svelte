@@ -238,10 +238,9 @@
         </div>
 
         <aside class="w-full shrink-0 lg:w-[300px]">
-            <!-- `shop/purse/purse.html` is a SHOP component: the counters belong here. -->
-            <Panel title="Mon compte" className="mb-6">
-                <Purse />
-            </Panel>
+            <!-- `<habbo-purse habbo-require-session class="aside aside--box">`. It carries its own
+                 "Porte-monnaie" heading, so there is no wrapper title to invent here. -->
+            <div class="mb-6"><Purse /></div>
 
             <!-- store.html's own `<aside>`: the voucher form lives on the store page too, not only
                  on /shop/prepaid. -->
