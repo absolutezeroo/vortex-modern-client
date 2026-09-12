@@ -71,9 +71,40 @@
     const rooms = $derived(profile?.rooms ?? []);
     const groups = $derived(profile?.groups ?? []);
 
+    // What each CARD shows, which is not the first five of each list.
+    //
+    //   badges  <habbo-badge-list badges="ProfileController.profile.selectedBadges">
+    //   friends ng-init="fiveFriends = (items.friends | orderBy: random | limitTo: 5)"
+    //   rooms   ng-init="fiveRooms   = (items.rooms   | orderBy: random | limitTo: 5)"
+    //   groups  ng-init="fiveGroups  = (items.groups  | orderBy: random | limitTo: 5)"
+    //
+    // Two rules, and this port had neither. The badges card is the player's SELECTED badges — the
+    // five they pinned to their avatar — not the first five of everything they own, and it is the
+    // one card with no limit because the game already caps the selection at five. The other three
+    // are a random five, re-rolled on every load, which is what makes a profile with forty apparts
+    // show a different handful each time instead of the same alphabetical five forever.
+    //
+    // `random` is habbo.com's own comparator, `.5 - Math.random()`, evaluated once per page through
+    // `ng-init`. `$derived` here is the same: it recomputes when the profile arrives, not on every
+    // read, so the five do not reshuffle while the page is open.
+    const cardBadges = $derived(user?.selectedBadges ?? []);
+    const cardFriends = $derived(fiveOf(friends));
+    const cardRooms = $derived(fiveOf(rooms));
+    const cardGroups = $derived(fiveOf(groups));
+
+    // `orderBy: random | limitTo: 5`. Copied before sorting: `toSorted` leaves the source list alone,
+    // and the modal renders that same list in its own order.
+    function fiveOf(list)
+    {
+        return list.toSorted(() => 0.5 - Math.random()).slice(0, FIVE);
+    }
+
     $effect(() =>
     {
         const name = wanted;
+        // Read here rather than inside the async body so the effect re-runs when the signed-in
+        // avatar changes: which of the two profile routes to use depends on it.
+        const mine = $me?.uniqueId ?? '';
         let cancelled = false;
 
         loading = true;
@@ -95,7 +126,14 @@
             try
             {
                 const found = await api.getUser(name);
-                const answer = await api.getProfile(found.uniqueId);
+
+                // habbo.com's `ProfileController` picks the route the same way:
+                //   hasSession() && profile.uniqueId === user.uniqueId ? Profile.private() : …items()
+                // The private read ignores the visibility flag, which is what lets a player who has
+                // hidden their profile still look at it.
+                const answer = found.uniqueId === mine
+                    ? await api.getOwnProfile()
+                    : await api.getProfile(found.uniqueId);
 
                 // The badge texts are a second fetch and a big one; the page must not wait on it to
                 // render, so the labels fill in when it lands.
@@ -160,17 +198,22 @@
 <main class="mx-auto max-w-[1200px] px-3">
     {#if error}
         <EmptyResults className="py-12" />
-    {:else if user && !user.profileVisible}
-        <!-- The server answers a private profile with its header and four empty lists, so without
-             this the page would be a name, a motto and a blank space — which reads as broken rather
-             than as closed. habbo.com ships no key for the sentence, so `PROFILE_VISIBILITY_INFO` —
-             the one the registration form uses to promise this very behaviour — says it. -->
-        <p class="py-12 text-center">{t('PROFILE_VISIBILITY_INFO')}</p>
     {:else if !loading}
         <!-- `.profile__section{margin-left:-12px}` against `.profile__card__aligner{padding-left:12px}`:
-             a 12px gutter, and two cards a row from 767px. -->
+             a 12px gutter, and two cards a row from 767px.
+
+             A hidden profile needs no branch of its own. `.profile__section` carries an ng-if over
+             all four lists, and the server answers a visitor with four empty ones, so the section
+             simply does not render and the page is the header, "A rejoint Habbo le…" and the hearts
+             — which is exactly what habbo.com shows. This port used to print a sentence there,
+             borrowed from the registration form's promise. It addressed the VISITOR about somebody
+             else's profile in the second person, and no key in fr.json fits because habbo.com has
+             nothing to say here. -->
         <div class="md:-ml-3 md:flex md:flex-wrap md:items-start">
-            {#if badges.length}
+            <!-- `ng-if="ProfileController.profile.selectedBadges.length > 0"` — the card appears for
+                 a player who has PINNED badges, not for one who merely owns some. The other three
+                 gate on the list itself. -->
+            {#if cardBadges.length}
                 {@render card('badges', TEASERS.badges, t('PROFILE_BADGES_TITLE'), '', badgeItems)}
             {/if}
 
@@ -231,7 +274,7 @@
      breaks the word instead (`.item-list--stacked .item__title{word-break:break-all}`), which is
      why the same string reads correctly there. -->
 {#snippet badgeItems()}
-    {#each badges.slice(0, FIVE) as badge (badge.code)}
+    {#each cardBadges as badge (badge.code)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full border-[3px] border-card-line">
                 <img src={badgeUrl(badge.code)} alt="" width="40" height="40" onerror={hideOnError} />
@@ -242,7 +285,7 @@
 {/snippet}
 
 {#snippet friendItems()}
-    {#each friends.slice(0, FIVE) as friend (friend.uniqueId)}
+    {#each cardFriends as friend (friend.uniqueId)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/profile/{friend.name}" use:link class="block hover:border-b-0">
                 <Avatar figure={friend.figureString} well={60} className="mx-auto" />
@@ -261,7 +304,7 @@
      default plate the two other screens already use goes in instead — the same 110px sprite, which
      is the size `.room-icon__thumbnail` is positioned for at -10,-10. -->
 {#snippet roomItems()}
-    {#each rooms.slice(0, FIVE) as room (room.id)}
+    {#each cardRooms as room (room.id)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/room/{room.id}" use:link class="block hover:border-b-0">
                 <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center overflow-hidden rounded-full border-[3px] border-card-line">
@@ -275,7 +318,7 @@
 
 <!-- groups: the group's OWN room, not a group page — habbo.com has none. -->
 {#snippet groupItems()}
-    {#each groups.slice(0, FIVE) as group (group.id)}
+    {#each cardGroups as group (group.id)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/room/{group.roomId}" use:link class="block hover:border-b-0">
                 <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full border-[3px] border-card-line">

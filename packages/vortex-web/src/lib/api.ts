@@ -234,9 +234,24 @@ export function getUser(name: string): Promise<IProfileUser>
 // Anonymous: a profile is a page a signed-out visitor can open. A badge carries its CODE and no
 // label — the hotel's badge texts are not in the database, they are `badge_<code>_name` in the asset
 // host's external_flash_texts (see lib/badges.ts).
+//
+// A player who has hidden their profile answers with the header and four EMPTY lists. That is the
+// honest answer to a visitor and the wrong one for the owner — see getOwnProfile().
 export function getProfile(uniqueId: string): Promise<IPlayerProfile>
 {
     return request(`/api/public/users/${encodeURIComponent(uniqueId)}/profile`);
+}
+
+// The signed-in avatar's own profile, hidden or not, and habbo.com's own route for it. Its
+// `ProfileController` picks between the two on
+// `Session.hasSession() && profile.uniqueId === user.uniqueId`, and this is why: hiding a profile
+// hides it from VISITORS, and showing its owner "this profile is private" about themselves turns a
+// setting into what looks like a malfunction.
+//
+// It takes no id. One would make it "read anyone's profile ignoring their privacy setting".
+export function getOwnProfile(): Promise<IPlayerProfile>
+{
+    return request('/api/user/profile');
 }
 
 // Busiest first. A room whose door is invisible is in neither this nor getRoom(): the web API would
