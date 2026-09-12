@@ -404,6 +404,11 @@ export class Graphics extends Container
         return this;
     }
 
+    cut(): this
+    {
+        return this;
+    }
+
     fill(): this
     {
         return this;
