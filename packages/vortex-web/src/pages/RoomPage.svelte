@@ -9,13 +9,12 @@
     //                             .room__actions — "Rapporter l'appart"
     //   <habbo-room-picture>      `room.imageUrl`, full width UNDER the section
     //
-    // That last element is ABSENT here, and so is the picture over the thumbnail, on purpose.
-    // habbo.com feeds both from `room.imageUrl` / `room.thumbnailUrl`: a PHOTO taken in-game with the
-    // camera and set by the owner, not a render of the appart. This port had been filling them with
-    // packages/vortex-imager's room render, which is a different thing that happens to look
-    // plausible. Until the camera is ported there is nothing to put there, so the thumbnail is the
-    // default plate the sprite sheet carries and the picture section does not exist — habbo.com's own
-    // `habbo-remove-on-error` removes it too when there is no image.
+    // The two are fed from the same kind of field on habbo.com — `room.imageUrl` /
+    // `room.thumbnailUrl`, a PHOTO taken in-game with the camera and chosen by the owner — and this
+    // port answers neither. They are NOT treated the same way, and the difference is the size of the
+    // slot: the full-width band gets packages/vortex-imager's render of the appart, because it is
+    // the same subject at the same size and the band is a big empty rectangle without it, while the
+    // 114px thumbnail keeps the default plate — see lib/config.ts.
     //
     // Real since 2026-09-11: GET /api/public/rooms/{id} — habbo.com's own route ("/public/rooms/:id").
     // It answers 404 for a room whose door is invisible as well as for one that does not exist, so
@@ -24,6 +23,7 @@
     import Sprite from '../components/Sprite.svelte';
     import Avatar from '../components/Avatar.svelte';
     import * as api from '../lib/api.js';
+    import {roomUrl, hideOnError} from '../lib/config.js';
     import {t} from '../lib/i18n.js';
     import {signedIn} from '../lib/session.js';
 
@@ -173,10 +173,17 @@
             </div>
         </section>
 
-        <!-- `<habbo-room-picture>` goes here on habbo.com: `.room-picture__wrapper`, black, centred,
-             with a 25px shadow off its top edge, holding `room.imageUrl`. Nothing answers that field
-             yet — see the note at the top of the file — and habbo.com's own `habbo-remove-on-error`
-             takes the element away when the image does not load, so an empty black band would be
-             less faithful than no band at all. -->
+        <!-- `<habbo-room-picture>`: `.room-picture__wrapper`, black, centred, with a 25px shadow off
+             its top edge. This is the ONE place the imager's render belongs — it is the same subject
+             at the same size in the same slot, where on a 110px plate it was a different kind of
+             picture standing in for one nobody took (see lib/config.ts).
+
+             `hideOnError` is habbo.com's own `habbo-remove-on-error`: the imager is a separate
+             process and is routinely not running, and a broken-image glyph reads as a bug in the
+             page where an empty band reads as what it is. -->
+        <div class="relative w-full overflow-hidden bg-black text-center after:absolute after:top-0 after:left-0 after:h-[25px] after:w-full after:bg-gradient-to-b after:from-black/50 after:to-transparent after:content-['']">
+            <img src={roomUrl(room.id)} alt={room.name} onerror={hideOnError}
+                 class="mx-auto max-w-full [image-rendering:auto]" />
+        </div>
     </main>
 {/if}
