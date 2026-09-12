@@ -64,19 +64,16 @@ export class RoomStack
     private _roomManager: RoomManager;
     private _floorItems: Map<number, IFurnitureData> = new Map();
     private _wallItems: Map<number, IFurnitureData> = new Map();
-    private _assetLibrary: IAssetLibrary;
     private _roomVisualizationData: RoomVisualizationData | null = null;
 
     /** Types whose load has already been awaited, successfully or not. */
     private _settledContent: Set<string> = new Set();
 
     private constructor(
-        assetLibrary: IAssetLibrary,
         contentLoader: RoomContentLoader,
         roomManager: RoomManager
     )
     {
-        this._assetLibrary = assetLibrary;
         this._contentLoader = contentLoader;
         this._roomManager = roomManager;
     }
@@ -106,13 +103,17 @@ export class RoomStack
         const objectFactory = new RoomObjectFactory();
         const roomManager = new RoomManager(context);
 
-        const stack = new RoomStack(assetLibrary, contentLoader, roomManager);
+        const stack = new RoomStack(contentLoader, roomManager);
 
         await stack.loadFurniData(configuration);
 
         contentLoader.sessionDataManager = stack.createFurniDataSource();
         contentLoader.visualizationFactory = visualizationFactory;
-        contentLoader.initialize(new EventEmitter(), assetLibrary, configuration);
+        // Two arguments, not three: `initialize()` stopped taking an asset library when content
+        // types got one collection each. The stray one was landing in `configurationManager`,
+        // and only went unnoticed because `AssetLibrary` is a `Component` and its `getProperty()`
+        // forwards to the same configuration anyway.
+        contentLoader.initialize(new EventEmitter(), configuration);
 
         roomManager.setObjectFactory(objectFactory);
         roomManager.setVisualizationFactory(visualizationFactory);
@@ -350,10 +351,17 @@ export class RoomStack
 	 * that method's too and is not optional: the bundle's spritesheet frames carry the prefix
 	 * (`room_floor_texture_64_0_floor_basic`) and the `roomVisualization` JSON references them
 	 * without it.
+	 *
+	 * The lookup goes through the *content loader*, not the core asset library it was handed:
+	 * `addAssetLibraryCollection()` gives every content type an `AssetLibraryCollection` of its
+	 * own, so `room` is registered in a library named after it and nowhere else. This used to
+	 * read the shared library because that is where the port put every asset before those
+	 * per-type collections existed, and the miss is silent — the warning below is all it says,
+	 * and a flat white floor is a plausible enough room to ship.
 	 */
     private loadRoomVisualizationData(): void
     {
-        const asset = this._assetLibrary.getAssetByName(ROOM_CONTENT_TYPE) as NitroAsset | null;
+        const asset = this._contentLoader.getAssetByName(ROOM_CONTENT_TYPE) as NitroAsset | null;
         const data = asset?.jsonData as { roomVisualization?: unknown } | null;
         const visualization = data?.roomVisualization ?? null;
 
