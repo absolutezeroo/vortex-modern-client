@@ -19,6 +19,7 @@
     import Avatar from '../components/Avatar.svelte';
     import Sprite from '../components/Sprite.svelte';
     import EmptyResults from '../components/EmptyResults.svelte';
+    import ProfileListModal from '../components/ProfileListModal.svelte';
     import {me} from '../lib/session.js';
     import * as api from '../lib/api.js';
     import {loadBadgeTexts, badgeName} from '../lib/badges.js';
@@ -41,10 +42,11 @@
 
     let {params = {}} = $props();
 
-    // habbo.com's footer opens `habbo-profile-modal` over the page with the full list. There is no
-    // modal here yet, so "Tout voir" unfolds the card in place — same items, same order, one state
-    // per card. Swap the body for a modal when one exists; the footer markup does not change.
-    let expanded = $state({badges: false, friends: false, rooms: false, groups: false});
+    // "Tout voir" opens `habbo-profile-modal` over the page — the full list, searchable, in its
+    // STACKED form. This port unfolded the card in place instead, which is a different screen: the
+    // card is capped at five deliberately, and the descriptions the modal exists to show are hidden
+    // in the grid by `.item-list--grid .item__description{display:none}`.
+    let opened = $state('');
 
     const FIVE = 5;
 
@@ -208,7 +210,7 @@
             <!-- `.profile__card__footer{border-top:1px solid #2a9cde;padding:12px 0 0;text-align:center}`
                  holding `.profile-modal__link` (20px, uppercase, the arrow pinned right in 22px). -->
             <div class="mt-3 border-t border-rule pt-3 text-center">
-                <button type="button" onclick={() => (expanded[kind] = !expanded[kind])}
+                <button type="button" onclick={() => (opened = kind)}
                         class="relative inline-block pr-[22px] font-condensed text-xl leading-7 text-white uppercase">
                     {t('SEE_ALL')}
                     <Sprite name="profileMore" className="absolute top-1/2 right-0 -translate-y-1/2" />
@@ -221,24 +223,30 @@
 <!-- `.item-list--grid .item__title` is #7ecaee and centred — but `a[href] .item__title` turns it
      white, so only the badges (the one list whose items link nowhere) keep the blue. And
      `.item-list--grid .item__description{display:none}`: the occupancy and the group motto below
-     belong to the stacked list, not to this one. -->
+     belong to the stacked list, not to this one.
+
+     `overflow-hidden` is habbo.com's own on that rule and it is load-bearing: a title with no space
+     in it — a badge whose label falls back to its CODE, `ACH_RoomDecoFurniCount5` — does not wrap,
+     overflows its fifth of the row and lands on top of its neighbours. The grid clips; the modal
+     breaks the word instead (`.item-list--stacked .item__title{word-break:break-all}`), which is
+     why the same string reads correctly there. -->
 {#snippet badgeItems()}
-    {#each (expanded.badges ? badges : badges.slice(0, FIVE)) as badge (badge.code)}
+    {#each badges.slice(0, FIVE) as badge (badge.code)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full border-[3px] border-card-line">
                 <img src={badgeUrl(badge.code)} alt="" width="40" height="40" onerror={hideOnError} />
             </span>
-            <span class="mt-1.5 block px-1.5 text-ink">{badgeName(texts, badge.code)}</span>
+            <span class="mt-1.5 block overflow-hidden px-1.5 text-ink">{badgeName(texts, badge.code)}</span>
         </li>
     {/each}
 {/snippet}
 
 {#snippet friendItems()}
-    {#each (expanded.friends ? friends : friends.slice(0, FIVE)) as friend (friend.uniqueId)}
+    {#each friends.slice(0, FIVE) as friend (friend.uniqueId)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/profile/{friend.name}" use:link class="block hover:border-b-0">
                 <Avatar figure={friend.figureString} well={60} className="mx-auto" />
-                <span class="mt-1.5 block px-1.5">{friend.name}</span>
+                <span class="mt-1.5 block overflow-hidden px-1.5">{friend.name}</span>
             </a>
         </li>
     {/each}
@@ -253,13 +261,13 @@
      default plate the two other screens already use goes in instead — the same 110px sprite, which
      is the size `.room-icon__thumbnail` is positioned for at -10,-10. -->
 {#snippet roomItems()}
-    {#each (expanded.rooms ? rooms : rooms.slice(0, FIVE)) as room (room.id)}
+    {#each rooms.slice(0, FIVE) as room (room.id)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/room/{room.id}" use:link class="block hover:border-b-0">
                 <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center overflow-hidden rounded-full border-[3px] border-card-line">
                     <Sprite name="roomThumbnail" className="shrink-0 scale-[0.65]" />
                 </span>
-                <span class="mt-1.5 block px-1.5">{room.name}</span>
+                <span class="mt-1.5 block overflow-hidden px-1.5">{room.name}</span>
             </a>
         </li>
     {/each}
@@ -267,13 +275,13 @@
 
 <!-- groups: the group's OWN room, not a group page — habbo.com has none. -->
 {#snippet groupItems()}
-    {#each (expanded.groups ? groups : groups.slice(0, FIVE)) as group (group.id)}
+    {#each groups.slice(0, FIVE) as group (group.id)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/room/{group.roomId}" use:link class="block hover:border-b-0">
                 <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full border-[3px] border-card-line">
                     <img src={groupBadgeUrl(group.badgeCode)} alt="" width="40" height="40" onerror={hideOnError} />
                 </span>
-                <span class="mt-1.5 block px-1.5">{group.name}</span>
+                <span class="mt-1.5 block overflow-hidden px-1.5">{group.name}</span>
             </a>
         </li>
     {/each}
@@ -289,4 +297,13 @@
             <Sprite name="heart" />
         </div>
     </footer>
+{/if}
+
+<!-- `habbo-profile-modal`: one component for all four lists, because habbo.com has one — the type
+     picks which list renders inside it and which `PROFILE_<TYPE>_TITLE` it carries. -->
+{#if opened}
+    <ProfileListModal kind={opened} texts={texts}
+                      title={t(`PROFILE_${opened.toUpperCase()}_TITLE`)}
+                      badges={badges} friends={friends} rooms={rooms} groups={groups}
+                      onClose={() => (opened = '')} />
 {/if}
