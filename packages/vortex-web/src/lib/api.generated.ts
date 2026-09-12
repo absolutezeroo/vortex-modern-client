@@ -276,6 +276,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/public/shop/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What the hotel sells, grouped into the store page's sections. */
+        get: operations["ShopProducts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/shop/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** This avatar's orders, newest first. */
+        get: operations["ShopOrders"];
+        put?: never;
+        /** Open an order for one product and start its payment. */
+        post: operations["StartShopOrder"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/shop/orders/{orderId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One order's state. What the return-from-payment page reads. */
+        get: operations["ShopOrder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/user/shop/voucher": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Redeem a prepaid code. */
+        post: operations["RedeemVoucher"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/public/shop/webhook/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** A payment provider's signed notification. The only thing that grants. */
+        post: operations["ShopWebhook"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/user/purse": {
         parameters: {
             query?: never;
@@ -725,6 +811,10 @@ export interface components {
             respectReceived: number;
             selectedBadges: components["schemas"]["ProfileBadge"][];
         };
+        RedeemVoucherRequest: {
+            code?: string | null;
+            readonly isValid: boolean;
+        };
         RegisterRequest: {
             email?: string | null;
             password?: string | null;
@@ -782,6 +872,54 @@ export interface components {
             uniqueId?: string | null;
             readonly isValid: boolean;
         };
+        ShopCatalog: {
+            sections: components["schemas"]["ShopSection"][];
+        };
+        ShopOrder: {
+            id: string;
+            productCode: string;
+            kind: components["schemas"]["ShopProductKind"];
+            /** Format: int32 */
+            amount: number;
+            /** Format: int32 */
+            priceMinor: number;
+            currency: string;
+            state: components["schemas"]["ShopOrderState"];
+            provider: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        ShopOrderStart: {
+            order: components["schemas"]["ShopOrder"];
+            redirectUrl?: string | null;
+        };
+        /**
+         * Format: int32
+         * @enum {integer}
+         */
+        ShopOrderState: 0 | 1 | 2 | 3 | 4;
+        ShopProduct: {
+            code: string;
+            kind: components["schemas"]["ShopProductKind"];
+            /** Format: int32 */
+            amount: number;
+            /** Format: int32 */
+            priceMinor: number;
+            currency: string;
+            section: string;
+            /** Format: int32 */
+            icon: number;
+            featured: boolean;
+        };
+        /**
+         * Format: int32
+         * @enum {integer}
+         */
+        ShopProductKind: 0 | 1 | 2 | 3 | 4;
+        ShopSection: {
+            code: string;
+            products: components["schemas"]["ShopProduct"][];
+        };
         SiteLanguage: {
             code: string;
             label: string;
@@ -792,6 +930,10 @@ export interface components {
         };
         SsoTicketResponse: {
             ssoToken: string;
+        };
+        StartOrderRequest: {
+            productCode?: string | null;
+            readonly isValid: boolean;
         };
         SubmitReportRequest: {
             message?: string | null;
@@ -1316,6 +1458,253 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RoomSummary"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ShopProducts: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShopCatalog"];
+                };
+            };
+        };
+    };
+    ShopOrders: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShopOrder"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    StartShopOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartOrderRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShopOrderStart"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ShopOrder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                orderId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShopOrder"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    RedeemVoucher: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedeemVoucherRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EmptyResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    ShopWebhook: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
                 };
             };
             /** @description Not Found */

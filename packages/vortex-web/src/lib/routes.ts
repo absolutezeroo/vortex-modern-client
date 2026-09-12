@@ -73,10 +73,13 @@ export const routes = {
 
     '/habbo-nft': open(() => import('../pages/StaticPage.svelte')),
 
-    // shop — three genuinely different templates.
+    // shop — three genuinely different templates, plus one route habbo.com has no need of: a SPA
+    // needs somewhere for a payment provider to send the browser BACK to. It only reads the order's
+    // state — see pages/shop/Order.svelte for why that is the whole point.
     '/shop': open(() => import('../pages/shop/Store.svelte')),
     '/shop/prepaid': open(() => import('../pages/shop/Prepaid.svelte')),
     '/shop/history': open(() => import('../pages/shop/Transactions.svelte')),
+    '/shop/order/:id': guarded(() => import('../pages/shop/Order.svelte')),
 
     '/profile': guarded(() => import('../pages/ProfilePage.svelte')),
     '/profile/:name': open(() => import('../pages/ProfilePage.svelte')),

@@ -78,6 +78,10 @@ Real, against `Vortex.WebApi` (see `src/lib/api.js`, which mirrors
 | A profile: badges, friends, apparts, groups | `GET /api/public/users/{uniqueId}/profile` |
 | The appart gallery, and one appart | `GET /api/public/rooms`, `…/{id}` |
 | The sidebar counters | `GET /api/user/purse` |
+| What the shop sells | `GET /api/public/shop/products` |
+| Opening an order, and reading one | `POST /api/user/shop/orders`, `GET …/{id}` |
+| The purchase history | `GET /api/user/shop/orders` |
+| A prepaid code | `POST /api/user/shop/voucher` |
 
 The profile and appart reads are **anonymous** — a profile is a page a signed-out visitor opens — and
 an appart whose door is invisible is in neither of them, the read by id included.
@@ -87,13 +91,29 @@ Two things no route can answer, and where they come from instead:
 - **A badge's label.** The hotel's badge texts are in no database: they are `badge_<code>_name` in
   `gamedata/<lang>/external_flash_texts.json` on the asset host, which is where the CLIENT reads them
   from. `src/lib/badges.js` fetches that once, shared, and falls back to the code.
-- **Whether a profile is private.** `PlayerEntity` has no visibility column, so `profileVisible` is
-  always `true` even though habbo.com defaults a profile to private and `/registration` renders the
-  box for it.
+- **A product's name.** The shop answers a KIND and an AMOUNT — `{kind: 0, amount: 100}` — never a
+  label, because a label is a language. `src/lib/shop.ts` assembles the wording from habbo.com's own
+  keys, so a second language is a translation and not a second copy of the logic.
 
-Mocked, in `src/lib/mock.js`, because the emulator has no concept of them: the private messages and
-the shop's price list. The shapes match a habbo.com response, so wiring a real endpoint later is a
-swap in one page.
+Mocked, in `src/lib/mock.js`: the private messages, and only those. The shape matches a habbo.com
+response, so wiring a real endpoint later is a swap in one page.
+
+### The shop, and the one rule it rests on
+
+**Nothing reachable from a browser grants anything.** `POST /api/user/shop/orders` takes a *product
+code* and no price: the amount and the price are read server-side off the product row and snapshot
+onto the order. The payment happens at the provider, on the provider's own page — the hotel never
+sees a card number. The credits arrive on a *signed webhook*, and `/shop/order/:id` (the page a
+provider sends the browser back to) only READS the order's state, because arriving at a URL is
+something anybody can do.
+
+That makes the payment the pivot, and it happens outside the hotel: an order that is paid and could
+not be handed over is **owed**, never refunded, and sits past its pivot in the commerce journal where
+the emulator's existing "stuck past its pivot" alert finds it. `Vortex.Shop` is where all of that
+lives; the site's half is `src/lib/shop.ts` and `src/pages/shop/`.
+
+Prepaid codes go to the same `VoucherGrain` the game client's own redeem packet calls, so the two
+say the same thing about the same code.
 
 The API has **no identity route**. `GET /api/user/avatars` is it: 401 means signed out, a list means
 signed in. `src/lib/session.js` is built on that.

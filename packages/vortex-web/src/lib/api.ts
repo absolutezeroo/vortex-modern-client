@@ -43,6 +43,30 @@ export type IAccountEmail = Schemas['AccountEmailResponse'];
 export type ISafetyLock = Schemas['SafetyLockResponse'];
 export type ITwoFactorStatus = Schemas['TwoFactorStatusResponse'];
 export type ITwoFactorEnrolment = Schemas['TwoFactorEnrolmentResponse'];
+export type IShopProduct = Schemas['ShopProduct'];
+export type IShopSection = Schemas['ShopSection'];
+export type IShopCatalog = Schemas['ShopCatalog'];
+export type IShopOrder = Schemas['ShopOrder'];
+export type IShopOrderStart = Schemas['ShopOrderStart'];
+
+// The two shop enums come across as their numbers, which is what the wire carries. Naming them here
+// keeps `state === 2` out of the pages — see `ShopProductKind` / `ShopOrderState` in the emulator's
+// Vortex.Primitives/Shop/ShopContracts.cs, which is where the numbers are decided.
+export const SHOP_KIND = {
+    CREDITS: 0,
+    DUCKETS: 1,
+    DIAMONDS: 2,
+    CLUB: 3,
+    CLUB_VIP: 4,
+} as const;
+
+export const SHOP_ORDER = {
+    PENDING: 0,
+    PAID: 1,
+    FULFILLED: 2,
+    CANCELLED: 3,
+    NEEDS_INTERVENTION: 4,
+} as const;
 
 const ERRORS: Record<string, string> = {
     'pocket.auth.missing_credentials': 'Il manque ton nom ou ton mot de passe.',
@@ -58,6 +82,18 @@ const ERRORS: Record<string, string> = {
     'invalid_request': 'Requete invalide.',
     'article_not_found': 'Cet article n\'existe pas.',
     'hotel_unreachable': 'L\'hotel ne repond pas.',
+    'order_not_found': 'Cette commande n\'existe pas.',
+    'unknown_product': 'Ce produit n\'est plus en vente.',
+    'too_many_open_orders': 'Tu as trop de commandes en attente. Termine-les d\'abord.',
+    'shop_unavailable': 'La boutique n\'est pas disponible pour le moment.',
+    // The voucher codes are the grain's own, so the client's redeem dialog and this page say the
+    // same thing about the same code.
+    'not_found': 'Ce code n\'existe pas.',
+    'inactive': 'Ce code n\'est plus actif.',
+    'expired': 'Ce code a expire.',
+    'already_redeemed': 'Tu as deja utilise ce code.',
+    'max_redemptions_reached': 'Ce code a atteint sa limite d\'utilisations.',
+    'grant_failed': 'Le credit n\'a pas pu etre applique. Reessaie.',
 };
 
 export class ApiError extends Error
@@ -234,6 +270,45 @@ export function getRoom(id: number | string): Promise<IRoomSummary>
 export function getPurse(): Promise<IPlayerPurse>
 {
     return request('/api/user/purse');
+}
+
+// What the hotel sells. Anonymous: the store page renders for a visitor who has not signed in.
+export function getShopProducts(): Promise<IShopCatalog>
+{
+    return request('/api/public/shop/products');
+}
+
+// A PRODUCT CODE and nothing else. The amount and the price are read server-side off the product
+// row and snapshot onto the order — sending them from here would be a request field somebody can
+// edit, which is exactly what the API refuses to have.
+//
+// Answers the order plus where to pay. `redirectUrl` is null when the hotel's provider hosts no
+// payment page (the `manual` one does not), and the page then shows the order as pending rather
+// than navigating nowhere.
+export function startShopOrder(productCode: string): Promise<IShopOrderStart>
+{
+    return request('/api/user/shop/orders', {method: 'POST', body: {productCode}});
+}
+
+// This avatar's orders, newest first. 401 signed out.
+export function getShopOrders(): Promise<IShopOrder[]>
+{
+    return request('/api/user/shop/orders');
+}
+
+// One order's STATE. This is what the page a payment provider sends the browser back to reads: it
+// reports, it never grants — the credits arrive on a signed webhook the browser has no part in. A
+// 404 covers both "no such order" and "not yours".
+export function getShopOrder(orderId: string): Promise<IShopOrder>
+{
+    return request(`/api/user/shop/orders/${encodeURIComponent(orderId)}`);
+}
+
+// A prepaid code. Refusals carry the grain's own code (`expired`, `already_redeemed`, …), which
+// ERRORS above turns into French.
+export function redeemVoucher(code: string): Promise<IEmptyResponse>
+{
+    return request('/api/user/shop/voucher', {method: 'POST', body: {code}});
 }
 
 // A 401 carrying `pocket.auth.mfa_required` is not a refusal, it is the server asking for the second
