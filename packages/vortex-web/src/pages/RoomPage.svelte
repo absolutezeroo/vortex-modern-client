@@ -32,6 +32,31 @@
 
     let {params = {}} = $props();
 
+    // habbo.com's enter button POSTs `/public/rooms/{id}/forward` and its server pushes the player
+    // into the room over the game socket. There is no such route here and no forward queue behind
+    // it, so this takes the client's OWN deep link instead — `navigator/goto/{id}` reaches
+    // `HabboNewNavigator.linkReceived()`, which calls `goToPrivateRoom(roomId)`.
+    //
+    // DEVIATION with a known ceiling: the link rides in on the iframe's URL, and the client is
+    // mounted once and never reloaded (components/Client.svelte). So it lands the first time the
+    // hotel is opened in a session and not on a second click. Closing that needs either habbo.com's
+    // server-side forward or a message channel into the iframe; until then it beats what this was
+    // doing, which was opening the hotel and dropping the visitor in their own room.
+    function enterLink(roomId)
+    {
+        return `/hotel?link=${encodeURIComponent(`navigator/goto/${roomId}`)}`;
+    }
+
+    /** `navigator/report/<id>/<base64 name>`, built the way `RoomOpenController` builds it. */
+    function reportLink(roomId, name)
+    {
+        // Non-ASCII stripped BEFORE btoa, which is habbo.com's own `replace(/[^\x00-\x7F]/g, "")`:
+        // btoa throws on anything above U+00FF, and an appart called "★ L'HÔTEL" is not rare.
+        const ascii = btoa((name ?? '').replace(/[^\x00-\x7F]/g, '').trim());
+
+        return `/hotel?link=${encodeURIComponent(`navigator/report/${roomId}/${ascii}`)}`;
+    }
+
     let room = $state(null);
     let loading = $state(true);
 
@@ -75,7 +100,7 @@
             <div class="mb-6">{t('ROOM_RESTRICTED_TEXT')}</div>
 
             {#if $signedIn}
-                <a href="/hotel" use:link
+                <a href={enterLink(room.id)} use:link
                    class="inline-block rounded-[5px] border-2 border-[#ffea00] bg-[#ffb900] py-1.5 pr-1.5 pl-3 text-center font-condensed text-base leading-[1.2] uppercase text-black shadow-btn hover:border-b-2 hover:border-[#fffd70] hover:bg-[#ffd400] active:translate-y-[2px] active:border-[#ffce37] active:bg-[#f89400] active:shadow-btn-active">
                     <span class="relative block pr-[27px] text-right leading-[26px]">
                         {t('ROOM_ENTER_BUTTON')}
@@ -136,7 +161,7 @@
                                  belongs to the navigation's hotel button — and it carries a little
                                  door in the 27px of padding it reserves on its right. -->
                             {#if $signedIn}
-                                <a href="/hotel" use:link
+                                <a href={enterLink(room.id)} use:link
                                    class="mt-6 mb-3 inline-block rounded-[5px] border-2 border-[#ffea00] bg-[#ffb900] py-1.5 pr-1.5 pl-3 text-center font-condensed text-base leading-[1.2] uppercase text-black shadow-btn hover:border-b-2 hover:border-[#fffd70] hover:bg-[#ffd400] active:translate-y-[2px] active:border-[#ffce37] active:bg-[#f89400] active:shadow-btn-active">
                                     <span class="relative block pr-[27px] text-right leading-[26px]">
                                         {t('ROOM_ENTER_BUTTON')}
@@ -161,8 +186,19 @@
                                 </dl>
                             </div>
 
+                            <!-- `RoomOpenController` builds this itself:
+                                   hotelReportLink = "/hotel?link=navigator/report/"
+                                                     + room.uniqueId + "/" + btoa(name)
+                                 — a deep link into the CLIENT's own report flow, which
+                                 `HabboNewNavigator.linkReceived()` already handles as
+                                 `report/<id>/<data>`. This port pointed it at /help, which is a
+                                 CMS page and reports nothing.
+
+                                 The name is base64'd after its non-ASCII is stripped, exactly as
+                                 habbo.com does — `btoa` throws on anything above U+00FF, and an
+                                 appart called "★ L'HÔTEL" is not rare. -->
                             <p class="mt-3">
-                                <a href="/help" use:link class="flex items-center gap-1.5">
+                                <a href={reportLink(room.id, room.name)} use:link class="flex items-center gap-1.5">
                                     <Sprite name="report" />
                                     {t('ROOM_REPORT_ACTION')}
                                 </a>

@@ -21,11 +21,11 @@
     // Real since 2026-09-11: GET /api/user/purse, the wallet of the SELECTED avatar, refetched when
     // that selection changes. The five counters belong to one avatar, not to the account, and
     // switching avatars without refetching would show one player another's credits.
+    import {link} from 'svelte-spa-router';
     import Sprite from './Sprite.svelte';
     import * as api from '../lib/api.js';
     import type {IPlayerPurse} from '../lib/api.js';
     import {selectedId, signedIn} from '../lib/session.js';
-    import {CLIENT_URL} from '../lib/config.js';
     import {t} from '../lib/i18n.js';
 
     let purse = $state<IPlayerPurse | null>(null);
@@ -100,11 +100,12 @@
             </div>
         </div>
 
-        <!-- `.purse__footer`. habbo.com's link opens the client's own HC centre through its deep
-             link (`/hotel?link=habboUI/open/hccenter`); the client here reads the same `link`
-             parameter, so the path is the one CLIENT_URL points at. -->
+        <!-- `.purse__footer`, and habbo.com's own href verbatim: `/hotel?link=habboUI/open/hccenter`
+             opens the CLIENT's HC centre. The client reads that `link` on its way in — see
+             App.svelte, which hands it to the iframe, and vortex-client's App.ts, which fires it the
+             moment the session is authenticated. -->
         <p class="m-0">
-            <a href="{CLIENT_URL}?link=habboUI/open/hccenter">{t('SHOP_PURSE_HC_LINK')}</a>
+            <a href="/hotel?link={encodeURIComponent('habboUI/open/hccenter')}" use:link>{t('SHOP_PURSE_HC_LINK')}</a>
         </p>
     </aside>
 {/if}

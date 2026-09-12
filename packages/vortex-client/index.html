@@ -18,10 +18,19 @@
     // uses: habbo.com puts the ticket in the client's FlashVars rather than making the visitor sign
     // in twice. With no ticket the client runs its own login flow, exactly as before — see
     // App.ts::init(), which branches on connection.ssoTicket.
-    const ssoTicket = new URLSearchParams(window.location.search).get('sso');
+    const query = new URLSearchParams(window.location.search);
+    const ssoTicket = query.get('sso');
+
+    // `?link=<internal link>` is the other half of that handover: `navigator/goto/42`,
+    // `habboUI/open/hccenter`. habbo.com builds the same strings on the site side
+    // (`hotelReportLink = "/hotel?link=navigator/report/" + id + "/" + btoa(name)`), and every
+    // feature already registers an ILinkEventTracker for them — so this adds no vocabulary, only a
+    // way in. Fired once the session is authenticated; see App.ts::installConnectionActions().
+    const startLink = query.get('link');
 
     window.VortexConfig = {
         ...existingConfig,
+        ...(startLink ? {startLink} : {}),
         connection: {
             // Served from this machine, dial it directly. Served from anywhere else — a phone on the
             // LAN, a Cloudflare tunnel — dial the socket back through the SAME origin the page came

@@ -146,6 +146,18 @@ export interface IVortexConfig extends IVortexCoreConfig
      */
     windowAssets?: IVortexWindowAssets;
 
+    /**
+     * An internal link to fire once the session is authenticated — `navigator/goto/42`,
+     * `habboUI/open/hccenter`, `navigator/report/42/VGVzdA==`.
+     *
+     * The same strings every feature already registers an `ILinkEventTracker` for, so this adds no
+     * vocabulary of its own: it is the entry point the WEBSITE needs. habbo.com builds exactly these
+     * (`hotelReportLink = "/hotel?link=navigator/report/" + uniqueId + "/" + btoa(name)`), and
+     * without somewhere to hand one in, its "enter this appart" button can only open the hotel and
+     * drop the visitor in their own room.
+     */
+    startLink?: string;
+
     /** Allow arbitrary configuration properties at the top level */
     [key: string]: unknown;
 }

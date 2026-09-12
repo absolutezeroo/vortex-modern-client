@@ -7,7 +7,7 @@
     // route guards in lib/routes.js read the session store synchronously, so mounting first would
     // bounce a signed-in visitor off a guarded page for as long as the probe was in flight.
     import {onMount} from 'svelte';
-    import Router, {location, replace} from 'svelte-spa-router';
+    import Router, {location, querystring, replace} from 'svelte-spa-router';
     import HeaderSmall from './components/HeaderSmall.svelte';
     import HeaderLarge from './components/HeaderLarge.svelte';
     import LoginModal from './components/LoginModal.svelte';
@@ -22,6 +22,11 @@
 
     // /hotel is the client, full-bleed: habbo.com drops the site chrome around it and so does this.
     const bare = $derived($location === '/hotel');
+
+    // `/hotel?link=navigator/goto/42` — habbo.com's own handover, read here because the client is
+    // mounted by the SHELL and not by the route (see below), so the /hotel page never sees its own
+    // query string. `querystring` is svelte-spa-router's store for the part after `?` in the hash.
+    const startLink = $derived(new URLSearchParams($querystring ?? '').get('link') ?? '');
 
     // The client is mounted HERE, once, and never by the router — `.client` is parked at
     // `left:-9999px` when hidden and its iframe outlives every navigation, which is why habbo.com's
@@ -54,7 +59,7 @@
     <!-- Outside every branch below, so navigating away cannot take it down with the page: closing
          the hotel routes back to `/`, the client goes off-screen, and its socket stays up. -->
     {#if clientOpened}
-        <Client visible={bare} onClose={() => replace('/')} />
+        <Client visible={bare} link={startLink} onClose={() => replace('/')} />
     {/if}
 
     {#if bare}

@@ -22,7 +22,14 @@
     import {CLIENT_URL} from '../lib/config.js';
     import {t} from '../lib/i18n.js';
 
-    let {visible = false, onClose} = $props();
+    // `link` is habbo.com's own `/hotel?link=…` handover — `navigator/goto/42` from an appart's
+    // "Entrer dans l'appart", `habboUI/open/hccenter` from the purse. It rides on the iframe's URL,
+    // which is the ONLY moment it can be delivered: the client is mounted once and never reloaded
+    // (see 1. above), so a link that arrives after that would need a second channel. Clicking the
+    // same button twice in one session therefore opens the appart the first time and does nothing
+    // the second — the ceiling of parking the iframe rather than reloading it, and the price of the
+    // instant return that parking buys.
+    let {visible = false, link = '', onClose} = $props();
 
     let src = $state('');
     let error = $state('');
@@ -52,7 +59,9 @@
 
                 if(!cancelled)
                 {
-                    src = `${CLIENT_URL}/?sso=${encodeURIComponent(result.ssoToken)}`;
+                    const target = link ? `&link=${encodeURIComponent(link)}` : '';
+
+                    src = `${CLIENT_URL}/?sso=${encodeURIComponent(result.ssoToken)}${target}`;
                 }
             }
             catch(failure)

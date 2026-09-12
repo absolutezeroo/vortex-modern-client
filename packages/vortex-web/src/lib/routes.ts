@@ -71,6 +71,15 @@ export const routes = {
     '/playing-habbo/safety': open(() => import('../pages/playing/Safety.svelte')),
     '/playing-habbo/help': open(() => import('../pages/playing/Help.svelte')),
 
+    // The three the FOOTER links to by their `_LINK` keys — `FOOTER_TOS_LINK`,
+    // `FOOTER_PRIVACY_LINK`, `FOOTER_DSA_LINK`. The note at the top of this file already said the
+    // footer points inside playing-habbo, and the routes were missing anyway, so those links landed
+    // on the 404. They have no page of their own here: each is editorial text, which is what
+    // StaticPage renders.
+    '/playing-habbo/terms-of-service': open(() => import('../pages/StaticPage.svelte')),
+    '/playing-habbo/privacy-notice': open(() => import('../pages/StaticPage.svelte')),
+    '/playing-habbo/dsa': open(() => import('../pages/StaticPage.svelte')),
+
     '/habbo-nft': open(() => import('../pages/StaticPage.svelte')),
 
     // shop — three genuinely different templates, plus one route habbo.com has no need of: a SPA

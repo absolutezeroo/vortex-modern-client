@@ -1296,12 +1296,36 @@ export class VortexApp
         vortex.habboCommunication.setConnectionActions({
             setConnecting: () => undefined,
             setConnected: () => undefined,
-            setAuthenticated: () => undefined,
+            setAuthenticated: () => this.fireStartLink(vortex),
             setError: () => undefined,
             setLoginStep: () => undefined,
             reset: () => undefined,
             setDisconnected: () => undefined
         });
+    }
+
+    /**
+     * Fires `VortexConfig.startLink` once, the moment the session is authenticated.
+     *
+     * That moment is the point: `navigator/goto/42` reaches a tracker that sends a composer, and a
+     * composer sent before the handshake completes is a composer nobody reads. `setAuthenticated`
+     * is the only callback here that means "the socket is up and the player exists", which is why
+     * it is the one that stopped being a no-op.
+     *
+     * Cleared after firing. The connection actions are reinstalled on a reconnect, and a link that
+     * survived one would teleport a player out of wherever they had walked to since.
+     */
+    // TS-only: the website needs an entry point for habbo.com's own `/hotel?link=…` handover; AS3
+    //   has no counterpart because the Flash client took it in FlashVars.
+    private fireStartLink(vortex: typeof Vortex.instance): void
+    {
+        const link = window.VortexConfig?.startLink;
+
+        if(typeof link !== 'string' || link.length === 0) return;
+
+        if(window.VortexConfig) window.VortexConfig.startLink = undefined;
+
+        vortex.context.createLinkEvent(link);
     }
 
     private async initClientUi(vortex: typeof Vortex.instance): Promise<void>
