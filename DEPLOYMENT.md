@@ -143,6 +143,21 @@ the main host, and a prefixed copy is ignored in silence.
 Docker network. TLS is terminated at the edge, which is where it belongs, but the emulator has to
 be told that it is deliberate rather than refuse to start.
 
+**The shop is off until you turn it on**, and that is the design rather than an oversight — a hotel
+that took money with no signing key would accept any webhook body anyone posted at it, and the
+failure would look exactly like the feature working:
+
+```
+VORTEX__Vortex__Shop__Enabled=true
+VORTEX__Vortex__Shop__ProviderSecrets__manual=<32 characters or more, generated>
+```
+
+With no secret no order opens and the webhook answers 404, so leaving these out is a safe state and
+not a broken one. `manual` is the provider that ships: it hosts no payment page, so an order waits
+until an operator posts a signed notification for it. A real PSP is one more `ProviderSecrets__<key>`
+and `Vortex__Shop__Provider` pointed at it. The nine bundles on sale are rows seeded by the
+migration — reprice them in the database, not here.
+
 **Persistent Storage** — one named volume on `/app/logs`. The emulator logs to the console only,
 so `docker logs` is the live view and Coolify shows it; what this volume is actually for is
 `logs/audit-dead-letter.jsonl`, where `AuditWriterService` writes the audit records whose database
@@ -358,32 +373,115 @@ nothing here serves: the pages render with every image missing and no error anyw
 
 ---
 
+## Migrations
+
+**A redeploy does not touch the schema.** The emulator never applies migrations at startup — its
+README is explicit that when to migrate is an operations decision, and the only `Database.Migrate()`
+in the repository belongs to the plugin loader. So a deploy that carries a new migration gives you a
+new binary against an old database, and the first query for a column that does not exist yet.
+
+**The runtime image has no SDK.** It is `aspnet:10.0`, so there is no `dotnet ef` inside the emulator
+container and Coolify's terminal on it is no help here. The tooling has to come from somewhere else.
+
+**Migrate before you redeploy, not after.** Every migration so far has been additive — new columns,
+new tables — and EF selects named columns, so the binary already running ignores what it has never
+heard of. The other order is the one that breaks: new code reading a column the database does not
+have yet.
+
+Take a backup first. Coolify → the MySQL resource → **Backups**, and run one by hand rather than
+trusting the schedule to have fired since your last change.
+
+### Where you are
+
+In phpMyAdmin, against the hotel's database:
+
+```sql
+SELECT MigrationId FROM __EFMigrationsHistory ORDER BY MigrationId DESC LIMIT 5;
+```
+
+The top row is the last migration applied. Compare it with the newest file in
+`Vortex.Database/Migrations/` — if they match, there is nothing to do.
+
+### Applying them: a throwaway SDK container
+
+Over SSH on the Coolify server. The repository is not persistently on it — Coolify clones into a
+build directory it owns — so clone it somewhere of your own:
+
+```bash
+git clone <the emulator repository> /tmp/vortex
+
+docker run --rm \
+  --network <the network your MySQL resource is on> \
+  -v /tmp/vortex:/src -w /src/Vortex.Database \
+  -e Vortex__Database__ConnectionString="Server=<internal mysql host>;Port=3306;Database=<db>;User Id=<user>;Password=<pass>;" \
+  -e Vortex__Database__ServerVersion="8.0-mysql" \
+  mcr.microsoft.com/dotnet/sdk:10.0 \
+  sh -c 'dotnet tool install --global dotnet-ef && export PATH="$PATH:/root/.dotnet/tools" && dotnet ef database update'
+```
+
+`docker network ls` names the network; the internal host and the credentials are on the MySQL
+resource's page in Coolify, under its internal connection URL.
+
+Four details, each of which fails quietly rather than loudly:
+
+- **Both variables are UNPREFIXED.** `VortexDbContextFactory` builds its own configuration root with
+  a plain `AddEnvironmentVariables()`, so a `VORTEX__…` copy is ignored in silence and you get the
+  connection string from `appsettings.json` instead.
+- **It reads `Vortex:Database:ServerVersion`**, not the runtime host's `MySqlServerVersion`. Pinning
+  it is what skips `ServerVersion.AutoDetect`, which opens a real connection while the DI container
+  is still being configured — before anything that could retry it.
+- **The working directory must be `Vortex.Database`.** That factory reads `appsettings.json` from
+  `Directory.GetCurrentDirectory()/..`, i.e. the repository root.
+- **`dotnet ef` is not in `.config/dotnet-tools.json`**, hence the `dotnet tool install`.
+
+### Applying them without SSH
+
+Generate the SQL on your own machine and import it through the phpMyAdmin that is already deployed:
+
+```bash
+cd Vortex.Database
+Vortex__Database__ServerVersion="8.0-mysql" dotnet ef migrations script --idempotent -o migrate.sql
+```
+
+`--idempotent` guards every migration with an `IF NOT EXISTS(… __EFMigrationsHistory …)`, so the
+script applies only what is missing whatever state the database is in — and no connection is needed
+to *generate* it, which is why the server version is pinned here too. Add a `<from>` migration id
+before `--idempotent` to narrow it to the ones you actually added.
+
+The script uses `DELIMITER //`, which is a client directive rather than SQL: paste it into
+phpMyAdmin's **SQL** tab rather than the Import tab if the import chokes on it.
+
+---
+
 ## Order, and how to know each step worked
 
 Do them in this order — each one is only checkable once the previous is up.
 
 1. **The asset image** built and pushed, `hashes.json` generated into it — everything below reads
    it.
-2. **Emulator**, with the four listener variables. Nothing to check from outside; the container log
+2. **Migrations**, before the emulator's first start and before any redeploy that carries a new one
+   — see [Migrations](#migrations). On a fresh database this is what creates the schema at all: it is
+   not created for you, and an emulator started against an empty database fails on its first query.
+3. **Emulator**, with the four listener variables. Nothing to check from outside; the container log
    reaching `Starting Vortex Emulator` without an `OptionsValidationException` is the signal.
-3. **Assets resource.** A pull, no build. Then, from your own machine:
+4. **Assets resource.** A pull, no build. Then, from your own machine:
 
 ```bash
 curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | head -1              # 200
 curl -sI https://assets.vortex-hotel.online/gamedata/hashes.json | grep -i access-contr # the header
 ```
 
-4. **Imager** — after the assets resource, whose host it downloads its configuration from at boot;
+5. **Imager** — after the assets resource, whose host it downloads its configuration from at boot;
    it crashloops until that answers. Its log should reach a listening line on 8081 with no
    `Missing embedded avatar asset` warnings.
-5. **Client app.** Then:
+6. **Client app.** Then:
 
 ```bash
 curl -sS https://client.vortex-hotel.online/webapi/api/public/info/hello   # JSON, not HTML
 npx wscat -c wss://client.vortex-hotel.online/ws                           # opens and stays open
 ```
 
-6. **Website app.** Then:
+7. **Website app.** Then:
 
 ```bash
 curl -sS https://vortex-hotel.online/api/public/info/hello                 # JSON, not HTML
@@ -469,3 +567,12 @@ Honest list, so nothing here reads as more finished than it is.
   glyphs, `apt-get install -y fontconfig` in its runtime stage is the fix.
 - **One silo, `AllowUnclusteredOutsideDevelopment`.** Fine for a beta; it is a deliberate
   single-node deployment, and `MultiSiloReady` refuses a second silo anyway.
+- **Migrating is a manual step, every time.** Nothing here reminds you that a deploy carries a new
+  migration, and the emulator will not tell you either — it starts fine and fails on the first query
+  that needs the missing column. Reading `Vortex.Database/Migrations/` against
+  `__EFMigrationsHistory` before a deploy is the whole of the process. An opt-in
+  `MigrateOnStartup` would remove the step, and would also mean a rolling deploy migrating from two
+  containers at once; that is why the emulator does not have one.
+- **The shop has no real payment provider.** `manual` means an operator settles each order by hand,
+  which is honest for a beta and does not scale past one. A PSP is one `IShopPaymentProvider`
+  implementation — nothing in the endpoints, the service or the site knows a provider by name.
