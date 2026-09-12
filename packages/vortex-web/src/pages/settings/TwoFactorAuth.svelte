@@ -105,12 +105,18 @@
         <!-- The status has not answered yet, or the visitor is signed out. Nothing is claimed
              either way: a box saying "disabled" before the answer arrives is a lie half the time. -->
     {:else if enabled && !disabling}
+        <!-- `two-factor-auth-edit.html` pairs `_ON` with `_ENABLED_DESCRIPTION`, and this had
+             `_DISABLED_DESCRIPTION` under it — so the box headed "L'AUTHENTIFICATION À DEUX FACTEURS
+             EST ACTIVÉE" went on to say it was disabled for this account. The button was
+             `_EDIT_OR_ENABLE` ("MODIFIER OU ACTIVER") on a control whose only job is to turn it off;
+             habbo.com's is `_DISABLE`. Two keys, and between them the box claimed the opposite of
+             the state it was reporting. -->
         <MessageBox type="2fa-on">
             <h3 class="mt-0">{t('TWO_FACTOR_AUTHENTICATION_ON')}</h3>
-            <p>{t('TWO_FACTOR_AUTHENTICATION_DISABLED_DESCRIPTION')}</p>
+            <p>{t('TWO_FACTOR_AUTHENTICATION_ENABLED_DESCRIPTION')}</p>
 
             <Button className="mt-3" onclick={() => (disabling = true)}>
-                {t('TWO_FACTOR_AUTHENTICATION_EDIT_OR_ENABLE')}
+                {t('TWO_FACTOR_AUTHENTICATION_DISABLE')}
             </Button>
         </MessageBox>
     {:else if disabling}

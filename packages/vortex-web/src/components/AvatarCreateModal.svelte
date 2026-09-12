@@ -32,9 +32,26 @@
     let error = $state('');
     let timer;
 
-    const valid = $derived(name.trim().length >= 3
-        && name.trim().length <= 15
+    // habbo.com's own `ng-minlength="3" ng-maxlength="15"`, named so the messages can quote them:
+    // `ERROR_FIELD_MINLENGTH` is "au moins {{min}} caractères".
+    const MIN_NAME = 3;
+    const MAX_NAME = 15;
+
+    const valid = $derived(name.trim().length >= MIN_NAME
+        && name.trim().length <= MAX_NAME
         && NAME_PATTERN.test(name.trim()));
+
+    /** Which of habbo.com's four messages this name earns, in its own order. */
+    function nameError(value)
+    {
+        const trimmed = value.trim();
+
+        if(!trimmed) return 'ERROR_FIELD_REQUIRED';
+        if(trimmed.length < MIN_NAME) return 'ERROR_FIELD_MINLENGTH';
+        if(trimmed.length > MAX_NAME) return 'ERROR_FIELD_MAXLENGTH';
+
+        return 'ERROR_FIELD_NAME_FORMAT';
+    }
 
     // Trailing 500ms, the debounce habbo.com puts on the field: one request per keystroke against a
     // rate-limited endpoint is how a visitor gets 429'd while typing.
@@ -141,9 +158,13 @@
 
                 <Field name="avatar-name" label={t('AVATAR_CREATE_LABEL')} bind:value={name} maxlength={15} />
 
+                <!-- `avatar-create-form.html` lists FOUR `ng-message`s for this one field, and each
+                     says what is actually wrong: too short (with the minimum), too long (with the
+                     maximum), the wrong characters, or taken. This showed the character rule for all
+                     of them, so a two-letter name was answered with a sentence about punctuation. -->
                 <div class="min-h-[22px] text-sm">
                     {#if name.trim() && !valid}
-                        <span class="text-error">{t('ERROR_FIELD_NAME_FORMAT')}</span>
+                        <span class="text-error">{t(nameError(name), {min: MIN_NAME, max: MAX_NAME})}</span>
                     {:else if checking}
                         <span>...</span>
                     {:else if available === true}
