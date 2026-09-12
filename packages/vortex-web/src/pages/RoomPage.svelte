@@ -79,9 +79,13 @@
 
                     <div class="flex flex-col gap-6 lg:flex-row lg:items-start">
                         <div class="min-w-0 flex-1">
-                            <a href="/profile/{room.ownerName}" use:link class="flex items-center gap-3 hover:border-b-0">
+                            <!-- The same `<habbo-avatar>` as the gallery card, and the name is its
+                                 `<h6 class="avatar__title">` — condensed and white at 400, never
+                                 bold. `.room__owner--user .avatar__image` puts 6px between them,
+                                 where the gallery's puts 3. -->
+                            <a href="/profile/{room.ownerName}" use:link class="flex items-center gap-1.5 hover:border-b-0">
                                 <Avatar user={room.ownerName} well={46} />
-                                <span class="font-bold">{room.ownerName}</span>
+                                <h6 class="m-0 truncate">{room.ownerName}</h6>
                             </a>
 
                             <!-- `.room-info`: a label column and a value column, not a paragraph. -->

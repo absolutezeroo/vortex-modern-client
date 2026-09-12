@@ -61,10 +61,16 @@
 
             <p class="my-1.5 text-sm">{room.description}</p>
 
+            <!-- `<habbo-avatar user="…">`: the head, then the name as an `<h6 class="avatar__title">`
+                 — condensed, 16px, white, not body text — with `.room-item__owner--user
+                 .avatar__title` putting 3px between them, not the 12px this had.
+
+                 There is NO visitor count on habbo.com's card. `usersNow` is what the gallery is
+                 ORDERED by, which is where it earns its place; printing it here was invented. -->
             <div class="relative block">
-                <a href="/profile/{room.ownerName}" use:link class="flex items-center gap-3 hover:border-b-0">
+                <a href="/profile/{room.ownerName}" use:link class="flex items-center gap-[3px] hover:border-b-0">
                     <Avatar user={room.ownerName} well={46} />
-                    <span>{room.ownerName} — {room.usersNow}/{room.maximumVisitors} habbos</span>
+                    <h6 class="m-0 truncate">{room.ownerName}</h6>
                 </a>
             </div>
         </div>
