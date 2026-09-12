@@ -40,6 +40,7 @@ export type INameSelectResponse = Schemas['NameSelectResponse'];
 export type IEmptyResponse = Schemas['EmptyResponse'];
 export type IPlayerPreferences = Schemas['PlayerPreferencesResponse'];
 export type IAccountEmail = Schemas['AccountEmailResponse'];
+export type ISafetyLock = Schemas['SafetyLockResponse'];
 export type ITwoFactorStatus = Schemas['TwoFactorStatusResponse'];
 export type ITwoFactorEnrolment = Schemas['TwoFactorEnrolmentResponse'];
 
@@ -316,6 +317,27 @@ export function checkName(name: string): Promise<INameCheckResponse>
 export function selectName(name: string, playerId: number): Promise<INameSelectResponse>
 {
     return request('/api/newuser/name/select', {method: 'POST', body: {name, playerId}});
+}
+
+// The account safety lock. While it is on the account cannot spend, and the SERVER enforces it —
+// the client's own hidden screens are a courtesy, not the lock.
+export function getSafetyLock(): Promise<ISafetyLock>
+{
+    return request('/api/user/safetylock');
+}
+
+// The password is required in both directions: a thief holding the session must not be able to
+// throw the lock either.
+export function setSafetyLock(
+    locked: boolean,
+    currentPassword: string,
+    code?: string
+): Promise<ISafetyLock>
+{
+    return request('/api/user/safetylock', {
+        method: 'POST',
+        body: {locked, currentPassword, ...(code ? {code} : {})},
+    });
 }
 
 // The sign-in address. `verified` is always false — nothing in this hotel can send to an address,

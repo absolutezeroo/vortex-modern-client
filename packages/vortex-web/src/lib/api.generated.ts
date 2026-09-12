@@ -481,6 +481,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/user/safetylock": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Whether the account's safety lock is on. */
+        get: operations["GetSafetyLock"];
+        put?: never;
+        /** Throw or lift the account's safety lock, against the current password. */
+        post: operations["SetSafetyLock"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/user/preferences": {
         parameters: {
             query?: never;
@@ -739,6 +757,15 @@ export interface components {
             /** Format: int32 */
             score: number;
             tags: string[];
+        };
+        SafetyLockRequest: {
+            locked?: boolean | null;
+            currentPassword?: string | null;
+            code?: string | null;
+            readonly isValid: boolean;
+        };
+        SafetyLockResponse: {
+            locked: boolean;
         };
         SaveFigureRequest: {
             figureString?: string | null;
@@ -1853,6 +1880,77 @@ export interface operations {
             };
             /** @description Conflict */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    GetSafetyLock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyLockResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+        };
+    };
+    SetSafetyLock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyLockRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyLockResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
