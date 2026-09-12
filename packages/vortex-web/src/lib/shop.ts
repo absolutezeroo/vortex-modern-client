@@ -100,7 +100,25 @@ export function priceTag(priceMinor: number, currency: string): {amount: string;
         maximumFractionDigits: 2,
     }).format(priceMinor / 100);
 
-    return {amount, currency, condensed: amount.length > 5};
+    return {amount, currency: currencySymbol(currency), condensed: amount.length > 5};
+}
+
+/**
+ * The SYMBOL, not the ISO code: habbo.com's ribbon reads "11,49" over "€", and this port was
+ * printing "EUR" under the amount.
+ *
+ * `formatToParts` is asked rather than a table of symbols, because the answer is a property of the
+ * locale and the currency together — the same EUR is "€" in French and "€" after the number in
+ * English — and a table would be a second, drifting copy of data the platform already has. A
+ * currency the runtime does not know comes back as its own code, which is exactly the right
+ * fallback.
+ */
+function currencySymbol(currency: string): string
+{
+    const parts = new Intl.NumberFormat('fr-FR', {style: 'currency', currency})
+        .formatToParts(0);
+
+    return parts.find((part) => part.type === 'currency')?.value ?? currency;
 }
 
 /**

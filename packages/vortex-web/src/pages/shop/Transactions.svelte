@@ -26,6 +26,7 @@
     import ShopShell from './ShopShell.svelte';
     import Purse from '../../components/Purse.svelte';
     import EmptyResults from '../../components/EmptyResults.svelte';
+    import WebPage from '../../components/WebPage.svelte';
     import * as api from '../../lib/api.js';
     import type {IShopOrder} from '../../lib/api.js';
     import {formatPrice, orderLabel, productName} from '../../lib/shop.js';
@@ -126,7 +127,11 @@
         </div>
 
         <aside class="w-full shrink-0 lg:w-[300px]">
-            <Purse />
+            <div class="mb-6"><Purse /></div>
+
+            <!-- `transactions.html`'s second aside:
+                 `<habbo-web-pages key="common/box_account_issues" class="aside aside--box">`. -->
+            <WebPage key="common/box_account_issues" className="static-content--box overflow-hidden rounded-[3px] bg-card px-3 py-6 xs:px-6" />
         </aside>
     </section>
 </ShopShell>

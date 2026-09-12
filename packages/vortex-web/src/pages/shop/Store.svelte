@@ -37,6 +37,7 @@
     import FormError from '../../components/FormError.svelte';
     import Purse from '../../components/Purse.svelte';
     import VoucherRedeem from '../../components/VoucherRedeem.svelte';
+    import WebPage from '../../components/WebPage.svelte';
     import * as api from '../../lib/api.js';
     import type {IShopCatalog, IShopProduct} from '../../lib/api.js';
     import {orderSections, priceTag, productDescription, productIcon, productName, sectionTitle} from '../../lib/shop.js';
@@ -214,11 +215,15 @@
                 <p>{t('EMPTY_RESULTS_TEXT')}</p>
             {/if}
 
+            <!-- Each family is a BOX, not a bare heading over a grid: `habbo-shop-sections` is
+                 `#103960`, rounded 3px, `padding: 24px 12px` widening to 24 from 532px, with 24px
+                 under it. Without it the headings float on the page background and the three
+                 families read as one long list. -->
             {#each sections as section (section.code)}
-                <section>
+                <section class="mb-6 overflow-hidden rounded-[3px] bg-box px-3 py-6 last:mb-0 xs:px-6">
                     <!-- `.inventory__section__title{text-transform:none}` — the one heading on the
                          site that keeps its case. -->
-                    <h3 class="normal-case">{sectionTitle(section.code)}</h3>
+                    <h3 class="mt-0 normal-case">{sectionTitle(section.code)}</h3>
 
                     <div class="-mt-3 grid grid-cols-1 gap-x-6 md:grid-cols-2">
                         {#each rowsOf(section.products) as row, index (index)}
@@ -245,10 +250,16 @@
             <!-- store.html's own `<aside>`: the voucher form lives on the store page too, not only
                  on /shop/prepaid. -->
             {#if $signedIn}
-                <Panel title={t('SHOP_REDEEM_TITLE')}>
+                <Panel title={t('SHOP_REDEEM_TITLE')} className="mb-6">
                     <VoucherRedeem />
                 </Panel>
             {/if}
+
+            <!-- `<habbo-web-pages key="common/box_mall_info" class="aside aside--box">` — the
+                 "Info & aide" box. It was already mirrored into src/webpages/ and simply never
+                 rendered; it is what tells a player that buying credits anywhere else is how you get
+                 scammed and banned, so it is not filler. -->
+            <WebPage key="common/box_mall_info" className="static-content--box overflow-hidden rounded-[3px] bg-card px-3 py-6 xs:px-6" />
         </aside>
     </section>
 </ShopShell>
