@@ -39,6 +39,7 @@ export type INameCheckResponse = Schemas['NameCheckResponse'];
 export type INameSelectResponse = Schemas['NameSelectResponse'];
 export type IEmptyResponse = Schemas['EmptyResponse'];
 export type IPlayerPreferences = Schemas['PlayerPreferencesResponse'];
+export type IAccountEmail = Schemas['AccountEmailResponse'];
 export type ITwoFactorStatus = Schemas['TwoFactorStatusResponse'];
 export type ITwoFactorEnrolment = Schemas['TwoFactorEnrolmentResponse'];
 
@@ -315,6 +316,27 @@ export function checkName(name: string): Promise<INameCheckResponse>
 export function selectName(name: string, playerId: number): Promise<INameSelectResponse>
 {
     return request('/api/newuser/name/select', {method: 'POST', body: {name, playerId}});
+}
+
+// The sign-in address. `verified` is always false — nothing in this hotel can send to an address,
+// so none was ever confirmed, and there is no resend route to call.
+export function getEmail(): Promise<IAccountEmail>
+{
+    return request('/api/user/email');
+}
+
+// 409 `email_taken` when another account already signs in with it; 400 for a wrong password, a
+// second factor still owed (`pocket.auth.mfa_required`) or an address that is not one.
+export function changeEmail(
+    currentPassword: string,
+    email: string,
+    code?: string
+): Promise<IAccountEmail>
+{
+    return request('/api/user/email/change', {
+        method: 'POST',
+        body: {currentPassword, email, ...(code ? {code} : {})},
+    });
 }
 
 // The selected avatar's preferences. One field: `profileVisible`. habbo.com's own privacy form
