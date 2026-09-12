@@ -28,6 +28,10 @@
     // `.profile__card__wrapper--<kind> .profile__card__aligner::before`: a 140px-tall illustration
     // hanging ABOVE each card, which the aligner's own `margin-top:140px` reserves the room for.
     // The four PNGs were already mirrored into src/assets/ and had never been used.
+    // `.profile__header`'s own background — fetched by tools/fetch-assets.mjs like every other
+    // habbo.com bitmap here, and gitignored with them.
+    const HEADER_BAND = new URL('../assets/profile_header.png', import.meta.url).href;
+
     const TEASERS = {
         badges: new URL('../assets/teaser_profile_badges.png', import.meta.url).href,
         friends: new URL('../assets/teaser_profile_friends.png', import.meta.url).href,
@@ -127,8 +131,15 @@
     });
 </script>
 
-<!-- `.profile__header`: the avatar stands on the page's own background, name and motto beside it. -->
-<header class="mx-auto flex max-w-[1200px] items-end gap-6 px-3 py-6">
+<!-- `.profile__header`: a room shot behind the avatar, name and motto, `left bottom / 100%` and
+     `image-rendering: pixelated` — it IS pixel art, and smoothing it turns the tiles to mush. The
+     `::before` under it is a 2px gradient, which is what stops the band ending on a hard line.
+
+     habbo.com hangs this on the small header itself (`habbo-header-small class="profile__header"`)
+     rather than on a band of its own; this port keeps its own header element and takes the
+     background, which lands in the same place without moving the site header into this page. -->
+<header class="relative mx-auto mb-6 flex max-w-[1200px] items-end gap-6 bg-[length:100%] bg-[position:left_bottom] bg-no-repeat px-3 py-6 [image-rendering:pixelated] after:absolute after:-bottom-[2px] after:left-0 after:h-[2px] after:w-full after:bg-gradient-to-b after:from-black/30 after:to-transparent after:content-['']"
+        style="background-image:url({HEADER_BAND})">
     <Avatar figure={user?.figureString ?? ''} size="l" direction={2} className="shrink-0" />
 
     <div class="min-w-0 flex-1">

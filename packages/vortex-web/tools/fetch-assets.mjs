@@ -43,6 +43,10 @@ const ASSETS = {
     'teaser_frank_closed.png': 'teaser_frank_closed.88816de8.png',
     'teaser_frank_looking.png': 'teaser_frank_looking.374ad9d0.png',
 
+    // The band behind a profile's name and motto (`.profile__header`, drawn `left bottom/100%` and
+    // `image-rendering: pixelated` — it is a room shot, so smoothing it turns the pixels to mush).
+    'profile_header.png': 'backgrounds/profile.69262798.png',
+
     // The four profile-card illustrations.
     'teaser_profile_badges.png': 'teaser_profile_badges.b20597b3.png',
     'teaser_profile_friends.png': 'teaser_profile_friends.45ec1e42.png',
