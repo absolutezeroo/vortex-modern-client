@@ -68,13 +68,23 @@ export function groupBadgeUrl(code: string): string
     return `/habbo-imaging/badge/${code}.png`;
 }
 
-// The appart render habbo.com puts under a room page (`habbo-room-picture`). packages/vortex-imager
-// serves it at the same shape as everything else it draws — `GET /habbo-imaging/room/:roomId`, the
-// room's own furniture through the client's own renderer.
-export function roomUrl(roomId: number | string): string
-{
-    return `/habbo-imaging/room/${roomId}`;
-}
+// There is deliberately no roomUrl() here any more, and the reason is worth writing down because the
+// mistake is an easy one to make twice.
+//
+// habbo.com's three appart pictures — `.room-item__thumbnail__image` in the gallery,
+// `.room__thumbnail__image` on a room page, and `<habbo-room-picture>` under it — are all fed from a
+// field on the room itself: `room.thumbnailUrl` / `room.imageUrl`. That is a PHOTO, taken in-game
+// with the camera and set by the owner. It is not a render of the appart, and no hotel renders one:
+// the picture on habbo.com is a framed moment somebody chose.
+//
+// This port had been filling all three with packages/vortex-imager's `GET /habbo-imaging/room/:id`,
+// which draws the room's actual furniture. It looks plausible next to habbo.com and is a different
+// thing, so the pictures are back to the default plate the sprite sheet already carries
+// (`.room-item__thumbnail::before` and `.room__thumbnail::before` — habbo.com draws it underneath,
+// which is exactly what shows when a room has no photo).
+//
+// The imager's route still exists and still works; nothing on the site calls it. Wiring the real
+// picture needs the camera feature and a column to hold the photo, neither of which is ported.
 
 // The imager is a separate process and is routinely not running while the site is worked on. A
 // broken-image glyph in its place reads as a bug in the page; an empty slot reads as what it is.

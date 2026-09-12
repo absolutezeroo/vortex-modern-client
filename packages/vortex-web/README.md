@@ -86,7 +86,7 @@ Real, against `Vortex.WebApi` (see `src/lib/api.js`, which mirrors
 The profile and appart reads are **anonymous** — a profile is a page a signed-out visitor opens — and
 an appart whose door is invisible is in neither of them, the read by id included.
 
-Two things no route can answer, and where they come from instead:
+Three things no route can answer, and where they come from instead:
 
 - **A badge's label.** The hotel's badge texts are in no database: they are `badge_<code>_name` in
   `gamedata/<lang>/external_flash_texts.json` on the asset host, which is where the CLIENT reads them
@@ -94,6 +94,15 @@ Two things no route can answer, and where they come from instead:
 - **A product's name.** The shop answers a KIND and an AMOUNT — `{kind: 0, amount: 100}` — never a
   label, because a label is a language. `src/lib/shop.ts` assembles the wording from habbo.com's own
   keys, so a second language is a translation and not a second copy of the logic.
+- **An appart's picture.** habbo.com's three of them — the gallery card, the room page's thumbnail,
+  and `<habbo-room-picture>` under it — all read `room.thumbnailUrl` / `room.imageUrl`, which is a
+  PHOTO taken in-game with the camera and set by the owner. Not a render of the room, and no hotel
+  renders one. This port filled all three with `vortex-imager`'s `GET /habbo-imaging/room/:id` for a
+  while: it draws the actual furniture, looks plausible beside habbo.com, and is a different thing.
+  They are back to the default plate the sprite sheet carries (`.room-item__thumbnail::before`,
+  `.room__thumbnail::before` — what habbo.com shows underneath when a room has no photo), and the
+  full-width picture section is absent rather than empty. The imager's route still works; nothing on
+  the site calls it. The real picture needs the camera feature and a column to hold it.
 
 Mocked, in `src/lib/mock.js`: the private messages, and only those. The shape matches a habbo.com
 response, so wiring a real endpoint later is a swap in one page.

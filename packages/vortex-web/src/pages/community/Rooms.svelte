@@ -22,7 +22,6 @@
     import Avatar from '../../components/Avatar.svelte';
     import EmptyResults from '../../components/EmptyResults.svelte';
     import * as api from '../../lib/api.js';
-    import {roomUrl, hideOnError} from '../../lib/config.js';
     import {t} from '../../lib/i18n.js';
 
     let rooms = $state([]);
@@ -48,13 +47,11 @@
     {#each rooms as room (room.id)}
         <div class="relative mb-6 min-h-[110px] pl-[122px]">
             <a href="/room/{room.id}" use:link class="absolute top-0 left-0 block hover:border-b-0">
-                <!-- `.room-item__thumbnail__image` lays the appart's own picture over the default
-                     one at 0,0 — so the sprite stays underneath as what shows when the imager is
-                     down or the room has never been rendered. -->
-                <span class="relative block bg-[#6796b1] shadow-[3px_3px_rgba(0,0,0,0.3)]">
+                <!-- `.room-item__thumbnail::before` IS the picture here: the default plate off the
+                     sprite sheet. `__image` would lay the owner's photo over it at 0,0, and there is
+                     no photo — see the note in lib/config.ts. -->
+                <span class="block bg-[#6796b1] shadow-[3px_3px_rgba(0,0,0,0.3)]">
                     <Sprite name="roomThumbnail" />
-                    <img src={roomUrl(room.id)} alt="" loading="lazy" onerror={hideOnError}
-                         class="absolute top-0 left-0 h-[110px] w-[110px] object-cover" />
                 </span>
             </a>
 

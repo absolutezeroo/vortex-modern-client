@@ -22,7 +22,7 @@
     import {me} from '../lib/session.js';
     import * as api from '../lib/api.js';
     import {loadBadgeTexts, badgeName} from '../lib/badges.js';
-    import {badgeUrl, groupBadgeUrl, roomUrl, hideOnError} from '../lib/config.js';
+    import {badgeUrl, groupBadgeUrl, hideOnError} from '../lib/config.js';
     import {t} from '../lib/i18n.js';
 
     // `.profile__card__wrapper--<kind> .profile__card__aligner::before`: a 140px-tall illustration
@@ -244,16 +244,20 @@
     {/each}
 {/snippet}
 
-<!-- `.item--room .item__icon{height:90px;width:90px}`: the room picture is BIGGER than the 60px
-     well and overflows it, the way the head does in `Avatar`. The picture is the room itself,
-     rendered by packages/vortex-imager — `hideOnError` leaves the well empty when it is not up,
-     which is what every other imager-backed picture on the site does. -->
+<!-- `.room-icon`: a 90px round frame holding `room.thumbnailUrl` — the owner's in-game PHOTO, which
+     nothing here answers yet (see the note in lib/config.ts).
+
+     DEVIATION: habbo.com draws no default behind it, so a room with no photo is an empty circle.
+     Here EVERY room has no photo until the camera is ported, so the empty circle would be the
+     permanent state rather than an occasional one, and five blank wells read as a broken page. The
+     default plate the two other screens already use goes in instead — the same 110px sprite, which
+     is the size `.room-icon__thumbnail` is positioned for at -10,-10. -->
 {#snippet roomItems()}
     {#each (expanded.rooms ? rooms : rooms.slice(0, FIVE)) as room (room.id)}
         <li class="w-1/2 pb-3 text-center xs:w-1/3 xl:w-1/5">
             <a href="/room/{room.id}" use:link class="block hover:border-b-0">
-                <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center rounded-full border-[3px] border-card-line">
-                    <img src={roomUrl(room.id)} alt="" class="h-[90px] w-[90px] max-w-none object-contain" onerror={hideOnError} />
+                <span class="mx-auto flex h-[60px] w-[60px] items-center justify-center overflow-hidden rounded-full border-[3px] border-card-line">
+                    <Sprite name="roomThumbnail" className="shrink-0 scale-[0.65]" />
                 </span>
                 <span class="mt-1.5 block px-1.5">{room.name}</span>
             </a>
