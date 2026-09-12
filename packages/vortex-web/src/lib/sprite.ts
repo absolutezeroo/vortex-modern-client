@@ -98,6 +98,11 @@ export const SPRITE = {
     // 22px of padding reserved). Same band of the sheet as `heart`, a different cut.
     profileMore: [920, 878, 16, 22],
 
+    // The chevron on an offer's bottom banner (`.inventory-thumbnail__banner::after`, right 12,
+    // vertically centred by `margin-top:-9px`). It is the accordion's whole affordance: habbo.com
+    // spins it 540 degrees — one and a half turns, not a flip — when the offer expands.
+    shopChevron: [212, 612, 18, 18],
+
     // The shop's six credit-bundle icons (98px squares). The last two sit in a different band of
     // the sheet than the first four — not a typo.
     credit1: [1216, 738, 98, 98],

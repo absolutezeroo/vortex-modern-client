@@ -43,12 +43,24 @@ export function productIcon(product: IShopProduct): string
     return `credit${product.icon}`;
 }
 
-// The section's heading. `code` is whatever the operator typed in the product row, so an unknown one
-// is shown as itself rather than dropped — a section with no heading looks like a rendering bug, and
-// a section that vanishes looks like nothing at all.
+// The section headings, off `store/inventory/*.html`. Each `<section>` there leads with an
+// `<h3 class="inventory__section__title">` carrying a fixed key:
+//
+//   credits.html      SHOP_CURRENCIES_TITLE          "Monnaies"
+//   memberships.html  SHOP_OFFERINGS_MEMBERSHIP_TITLE "Adhésions", then an <h5> sub-heading per
+//                     family — SHOP_OFFERINGS_HABBO_CLUB_TITLE for the club one
+//   bundles.html      SHOP_OFFERINGS_BUNDLE_TITLE     "Packs"
+//
+// Not "Crédits": `SHOP_CREDITS_TITLE` is the shop's own tab wording, and the section is "Monnaies"
+// because it sells diamonds and duckets under the same heading.
+//
+// `code` is whatever the operator typed in the product row, so an unknown one shows as itself rather
+// than being dropped — a section with no heading looks like a rendering bug, and a section that
+// vanishes looks like nothing at all.
 const SECTION_TITLES: Record<string, string> = {
-    credits: 'SHOP_CREDITS_TITLE',
-    club: 'SHOP_OFFERINGS_HABBO_CLUB_TITLE',
+    credits: 'SHOP_CURRENCIES_TITLE',
+    club: 'SHOP_OFFERINGS_MEMBERSHIP_TITLE',
+    bundles: 'SHOP_OFFERINGS_BUNDLE_TITLE',
 };
 
 export function sectionTitle(code: string): string
@@ -56,6 +68,54 @@ export function sectionTitle(code: string): string
     const key = SECTION_TITLES[code];
 
     return key ? t(key) : code;
+}
+
+// `store/inventory/inventory.html` renders its three sections in a fixed order — bundles,
+// memberships, credits — and swaps credits to the front while a double-credits promotion is on.
+// The API answers sections in the operator's own order, so this is what puts them in habbo.com's.
+const SECTION_ORDER = ['bundles', 'club', 'credits'];
+
+export function orderSections<T extends {code: string}>(sections: readonly T[]): T[]
+{
+    // A section habbo.com has no slot for sorts last rather than vanishing, and ties keep the
+    // server's order because `toSorted` is stable.
+    const rank = (code: string) =>
+        SECTION_ORDER.indexOf(code) < 0 ? SECTION_ORDER.length : SECTION_ORDER.indexOf(code);
+
+    return [...sections].sort((left, right) => rank(left.code) - rank(right.code));
+}
+
+/**
+ * What the price tag shows: the amount on one line and the currency on the other.
+ *
+ * `.inventory-thumbnail__price` is `#a95219` at 24px, `.inventory-thumbnail__currency` is black at
+ * 18px, and they are two separate `<p>`s inside the tag — not one formatted string. The `condensed`
+ * class drops the amount to 18px past five characters, which is what keeps "1 250,00" inside the
+ * 104px ribbon.
+ */
+export function priceTag(priceMinor: number, currency: string): {amount: string; currency: string; condensed: boolean}
+{
+    const amount = new Intl.NumberFormat('fr-FR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(priceMinor / 100);
+
+    return {amount, currency, condensed: amount.length > 5};
+}
+
+/**
+ * The paragraph under an expanded offer.
+ *
+ * habbo.com's `credit-payment-details` interpolates `SHOP_CREDITS_DESCRIPTION` with the amount, and
+ * its `product-payment-details` prints `item.desc` — a string that travels with the offer and which
+ * this API does not carry. So a currency offer gets habbo.com's own sentence and a club one gets
+ * none, rather than a sentence invented here.
+ */
+export function productDescription(product: IShopProduct): string
+{
+    return product.kind === SHOP_KIND.CREDITS
+        ? t('SHOP_CREDITS_DESCRIPTION', {value: product.amount})
+        : '';
 }
 
 export function formatPrice(priceMinor: number, currency: string): string
