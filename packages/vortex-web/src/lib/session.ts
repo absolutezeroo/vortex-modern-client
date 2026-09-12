@@ -1,5 +1,6 @@
 import {writable, derived, get} from 'svelte/store';
 import * as api from './api.js';
+import type {IAvatarInfo} from './api.js';
 
 // The signed-in account, as far as this tab knows. `avatars` is the API's own list; `selectedId` is
 // the one the site is acting as — the server keeps that on the session but never returns it, so the
@@ -7,7 +8,7 @@ import * as api from './api.js';
 // silently switch avatar under the visitor.
 const STORED_AVATAR = 'vortex-web.avatar';
 
-export const avatars = writable([]);
+export const avatars = writable<IAvatarInfo[]>([]);
 export const selectedId = writable(sessionStorage.getItem(STORED_AVATAR) ?? '');
 export const ready = writable(false);
 
@@ -49,11 +50,11 @@ export async function refresh()
             selectedId.set(list[0].uniqueId);
         }
     }
-    catch(error)
+    catch (error)
     {
         avatars.set([]);
         selectedId.set('');
-        outage.set(api.isAuthError(error) ? '' : error.message);
+        outage.set(api.isAuthError(error) ? '' : (error as Error).message);
     }
     finally
     {
@@ -61,7 +62,7 @@ export async function refresh()
     }
 }
 
-export async function choose(uniqueId)
+export async function choose(uniqueId: string): Promise<void>
 {
     await api.selectAvatar(uniqueId);
     selectedId.set(uniqueId);

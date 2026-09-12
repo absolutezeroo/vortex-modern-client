@@ -44,7 +44,6 @@ export const DISCUSSIONS = [
     },
 ];
 
-
 export const SHOP_SECTIONS = [
     {
         id: 'credits',

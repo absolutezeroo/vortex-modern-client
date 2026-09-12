@@ -33,12 +33,15 @@ function authed()
     return get(signedIn);
 }
 
-function guarded(load)
+// What `svelte-spa-router`'s `wrap` takes: the `() => import('…')` a route is declared with.
+type IAsyncComponent = Parameters<typeof wrap>[0]['asyncComponent'];
+
+function guarded(load: IAsyncComponent)
 {
     return wrap({asyncComponent: load, conditions: [authed]});
 }
 
-function open(load)
+function open(load: IAsyncComponent)
 {
     return wrap({asyncComponent: load});
 }

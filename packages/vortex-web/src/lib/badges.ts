@@ -13,9 +13,9 @@ import {ASSET_BASE} from './config.js';
 
 const TEXTS = `${ASSET_BASE}/gamedata/fr/external_flash_texts.json`;
 
-let pending = null;
+let pending: Promise<IBadgeTexts> | null = null;
 
-export function loadBadgeTexts()
+export function loadBadgeTexts(): Promise<IBadgeTexts>
 {
     // A failed or missing texts file is not a page failure: every badge then shows its code, which
     // is exactly what an unknown code does, so nothing special has to handle it.
@@ -26,12 +26,15 @@ export function loadBadgeTexts()
     return pending;
 }
 
-export function badgeName(texts, code)
+/** The fetched file, or `{}` when it could not be read. */
+export type IBadgeTexts = Record<string, string>;
+
+export function badgeName(texts: IBadgeTexts, code: string): string
 {
     return texts?.[`badge_${code}_name`] ?? texts?.[`badge_name_${code}`] ?? code;
 }
 
-export function badgeDescription(texts, code)
+export function badgeDescription(texts: IBadgeTexts, code: string): string
 {
     return texts?.[`badge_${code}_desc`] ?? texts?.[`badge_desc_${code}`] ?? '';
 }

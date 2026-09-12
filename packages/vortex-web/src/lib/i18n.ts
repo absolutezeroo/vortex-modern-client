@@ -11,16 +11,22 @@
 // and would break the next person who adds a `t()` call for a key that was pruned away.
 import fr from './fr.json';
 
-export function t(key, values)
-{
-    const template = fr[key];
+/** What an interpolated key is given: `t('PROFILE_JOINED', {date: '12 mai 2025'})`. */
+export type ITranslationValues = Record<string, string | number>;
 
-    if(template === undefined)
+export function t(key: string, values?: ITranslationValues): string
+{
+    // A key-presence test rather than a comparison against the value: the styleguide forbids
+    // `| undefined` in an annotation, and an absent key is a question about the MAP, not about what
+    // it holds — the same distinction as the port's own `hasString()` versus `getString()`.
+    if(!Object.hasOwn(fr, key))
     {
         // A missing key is a porting mistake, not a runtime condition — show it rather than an empty
         // space, so it is visible on the page instead of silently blank.
         return key;
     }
+
+    const template = (fr as Record<string, string>)[key];
 
     if(!values)
     {

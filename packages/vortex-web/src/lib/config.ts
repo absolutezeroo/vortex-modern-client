@@ -24,15 +24,33 @@ export const CLIENT_URL = import.meta.env.VITE_CLIENT_URL ?? '/client';
 
 // packages/vortex-imager answers the same routes a real hotel points at, so an avatar URL built
 // here is the same string the client builds.
-export function avatarUrl(options = {})
+/**
+ * What the imager takes. `size` is a token and not a pixel count — the zoom is fixed per token
+ * (s .5 / m 1 / l 2 / b 3) — which is why `Avatar.svelte` reaches its head size in CSS.
+ */
+export interface IAvatarOptions
 {
+    size?: string;
+    direction?: number;
+    headDirection?: number;
+    figure?: string;
+    user?: string;
+    headOnly?: boolean;
+    action?: string;
+    gesture?: string;
+}
+
+export function avatarUrl(options: IAvatarOptions = {}): string
+{
+    // Every value is stringified on the way in: URLSearchParams takes strings, and handing it a
+    // number is a TypeScript error that JavaScript used to paper over.
     const query = new URLSearchParams({
         size: options.size ?? 'm',
-        direction: options.direction ?? 2,
-        head_direction: options.headDirection ?? options.direction ?? 2,
+        direction: String(options.direction ?? 2),
+        head_direction: String(options.headDirection ?? options.direction ?? 2),
         ...(options.figure ? {figure: options.figure} : {}),
         ...(options.user ? {user: options.user} : {}),
-        ...(options.headOnly ? {headonly: 1} : {}),
+        ...(options.headOnly ? {headonly: '1'} : {}),
         ...(options.action ? {action: options.action} : {}),
         ...(options.gesture ? {gesture: options.gesture} : {}),
     });
@@ -40,12 +58,12 @@ export function avatarUrl(options = {})
     return `/habbo-imaging/avatarimage?${query}`;
 }
 
-export function badgeUrl(code)
+export function badgeUrl(code: string): string
 {
     return `${IMAGES}/album1584/${code}.gif`;
 }
 
-export function groupBadgeUrl(code)
+export function groupBadgeUrl(code: string): string
 {
     return `/habbo-imaging/badge/${code}.png`;
 }
@@ -53,14 +71,14 @@ export function groupBadgeUrl(code)
 // The appart render habbo.com puts under a room page (`habbo-room-picture`). packages/vortex-imager
 // serves it at the same shape as everything else it draws — `GET /habbo-imaging/room/:roomId`, the
 // room's own furniture through the client's own renderer.
-export function roomUrl(roomId)
+export function roomUrl(roomId: number | string): string
 {
     return `/habbo-imaging/room/${roomId}`;
 }
 
 // The imager is a separate process and is routinely not running while the site is worked on. A
 // broken-image glyph in its place reads as a bug in the page; an empty slot reads as what it is.
-export function hideOnError(event)
+export function hideOnError(event: Event): void
 {
-    event.currentTarget.style.visibility = 'hidden';
+    (event.currentTarget as HTMLElement).style.visibility = 'hidden';
 }
